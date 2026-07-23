@@ -1,5 +1,14 @@
 # Project Atlas
 
+## Product Development Governance
+
+- Canonical product identity: Phronesis (`PHR-ARCH-010`).
+- Canonical workflow: CTO -> Chief Architect -> Engineer -> Chief Architect conformance -> CTO acceptance (`PHR-WORKFLOW-002`).
+- Durable conversation-derived memory: `docs/product-development/CONVERSATION_HISTORY.md` (`PHR-TECH-002`).
+- Role contracts: `.agents/roles/`.
+- Documentation review: `docs/reviews/2026-07-22-documentation-practices-review.md`.
+- Continuation decision: evolve the current tested architecture; do not restart without a separate evidence-backed CTO decision.
+
 Atlas is the permanent project knowledge base for Phronesis and Project Phronesis (Engineering Initiative).
 
 Project Phronesis is the internal engineering identity for the initiative building an evidence-driven decision intelligence platform for collectible markets. It is not necessarily the future customer-facing product name.

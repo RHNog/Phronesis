@@ -3,6 +3,8 @@
 ## 2026-07-22 Governance And Resumption Prompts
 
 - `PHR-ARCH-010`: migrate all repository content to the Phronesis identity without changing domain behavior or rewriting history.
+- `PHR-WORKFLOW-002`: establish CTO, Chief Architect, and Engineer role contracts with explicit gates and evidence-based handoffs.
+- `PHR-TECH-002`: preserve material CTO conversations as a durable index linked to canonical Feature ID artifacts.
 
 Canonical implementation prompts live in `docs/prompts/`.
 

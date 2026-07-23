@@ -5,6 +5,9 @@
 ### Added
 
 - Phronesis product identity migration (`PHR-ARCH-010`).
+- Three-role Canonical Product Development Workflow for CTO, Chief Architect, and Engineer (`PHR-WORKFLOW-002`).
+- Conversation-derived Product Development Memory and CTO session ledger (`PHR-TECH-002`).
+- 2026-07-22 documentation-practices and rebuild-readiness review.
 - PHR-TECH-001 Documentation-First Development System.
 - Repository-wide documentation-first workflow in `docs/DOCUMENTATION_FIRST_DEVELOPMENT.md`.
 - Feature specification template and implementation prompt template.
@@ -175,6 +178,7 @@
 
 ### Fixed
 
+- Prevented Phronesis roles from resolving Structure commands through Muamba Arte or other cross-project artifacts (`PHR-WORKFLOW-002`).
 - Documented zero-valued Offer Ladder prevention and the Online Marketplace policy correction for low-dollar opportunities.
 - Documented rejection of incomplete evaluation snapshots before persistence.
 - Documented restoration of condition-aware market estimates after Asset Context integration.

@@ -9,7 +9,7 @@ The format is inspired by "Keep a Changelog".
 ## [Unreleased]
 
 ### Added
-- Canonical Phronesis identity.
+- Canonical Phronesis identity, three-role product-development workflow, CTO conversation ledger, and documentation-practices review.
 - Sprint 33 Provider Replay & Fixture Infrastructure under `lib/providers/replay/`.
 - Replay modes `LIVE`, `REPLAY`, and `AUTO` controlled by `PROVIDER_MODE` in local development.
 - Provider fixture loading, validation, optional checksum verification, recording, replay sessions, and replay diagnostics.

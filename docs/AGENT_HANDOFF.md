@@ -1,5 +1,21 @@
 # Agent Handoff
 
+## 2026-07-22 Resumption Handoff
+
+Phronesis now uses the Canonical Product Development Workflow in `PHR-WORKFLOW-002`.
+
+- Primary chat role: CTO (`.agents/roles/cto.md`).
+- Design and conformance role: Chief Architect (`.agents/roles/chief-architect.md`).
+- Implementation and evidence role: Engineer (`.agents/roles/engineer.md`).
+- Durable product memory: `docs/product-development/CONVERSATION_HISTORY.md`.
+- Canonical identity: Phronesis (`PHR-ARCH-010`).
+- Memory system: `PHR-TECH-002`.
+- Canonical role-command source: `docs/product-development/CURRENT_CTO_STRUCTURE.md`.
+
+Bare `Prompt`, `Implement`, and `Review` commands must use the repository-owned Structure file. Muamba Arte, `MA-*`, cloud/global Structure documents, and other project artifacts are not Phronesis authority.
+
+The repository should be evolved from its current baseline. The 2026-07-22 documentation review found no evidence supporting a clean rewrite. The older sprint sections below are historical handoff detail; use the Feature Registry, Git history, this resumption handoff, and the conversation ledger for current governance state.
+
 ## Documentation-First Development Handoff
 
 Documentation is part of implementation.

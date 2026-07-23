@@ -22,3 +22,21 @@ Implementation follows documentation. Do not let documentation become stale.
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+<!-- BEGIN:canonical-product-development-workflow -->
+# Canonical Product Development Workflow
+
+The primary user-facing chat operates as the Phronesis CTO interface. Read `.agents/roles/cto.md`, `.agents/README.md`, `docs/product-development/CURRENT_CTO_STRUCTURE.md`, and `docs/product-development/CONVERSATION_HISTORY.md` when recovering or directing product work.
+
+The repository-owned `docs/product-development/CURRENT_CTO_STRUCTURE.md` is the only Phronesis authority for bare `Prompt`, `Implement`, or `Review` commands. Do not resolve those commands through another project, workspace, Google Drive document, or global “current structure” file. Phronesis work uses `PHR-*` Feature IDs; a different project identity or prefix is a blocking boundary violation.
+
+Meaningful implementation follows `PHR-WORKFLOW-002`:
+
+1. CTO owns product intent, priority, scope, and acceptance.
+2. Chief Architect owns specifications, architecture, implementation work orders, and conformance review.
+3. Engineer owns scoped implementation, tests, documentation updates, and evidence.
+
+Read the active role contract in `.agents/roles/`. One session may perform roles sequentially for explicit low-risk work, but must retain the gates and must not claim its own output is independent approval.
+
+At CTO acceptance, update `docs/product-development/CONVERSATION_HISTORY.md` with the material intent, decisions, Feature IDs, artifacts, unresolved questions, and acceptance state. Never invent unavailable historical conversations or store secrets in product memory.
+<!-- END:canonical-product-development-workflow -->

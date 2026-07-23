@@ -6,6 +6,18 @@ Decision: use Phronesis as the sole product and repository identity. Preserve Gi
 
 Rationale: dual naming created ambiguity across product copy, package metadata, providers, browser storage, documentation, and AI memory.
 
+## PHR-WORKFLOW-002: Product Development Uses Three Accountable Roles
+
+Decision: CTO owns product intent and acceptance, Chief Architect owns design and conformance, and Engineer owns scoped implementation and evidence.
+
+Rule: one session may execute sequential roles for explicit low-risk work, but all gates remain visible and self-review must not be described as independent approval.
+
+## PHR-TECH-002: Repository Artifacts Are Durable Product Memory
+
+Decision: the primary chat is the active CTO interface, while `docs/product-development/CONVERSATION_HISTORY.md` and linked canonical documents are durable memory.
+
+Rule: record material CTO sessions, distinguish intent from decisions and inference, and never reconstruct unavailable transcripts.
+
 ## PHR-TECH-001: Documentation Is Part Of Implementation
 
 Decision: establish a repository-wide Documentation-First Development System.
