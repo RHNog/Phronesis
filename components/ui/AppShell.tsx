@@ -1,22 +1,20 @@
 import type { ReactNode } from "react";
-import Sidebar, { type NavItemLabel } from "@/components/ui/Sidebar";
+import Sidebar from "@/components/ui/Sidebar";
 import Topbar from "@/components/ui/Topbar";
 import type { CommandPaletteContext } from "@/components/search/CommandPaletteRouter";
 
 type AppShellProps = {
   children: ReactNode;
-  selectedNavItem?: NavItemLabel;
   commandPaletteContext?: CommandPaletteContext;
 };
 
 export default function AppShell({
   children,
-  selectedNavItem = "🔥 Hot Opportunities",
   commandPaletteContext = "General",
 }: AppShellProps) {
   return (
     <div className="flex min-h-screen bg-zinc-950 text-white">
-      <Sidebar selectedItem={selectedNavItem} />
+      <Sidebar />
 
       {/* The right side contains the topbar and the current page content. */}
       <div className="flex min-w-0 flex-1 flex-col">

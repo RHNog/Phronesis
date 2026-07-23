@@ -1,5 +1,13 @@
 # Roadmap
 
+## Recently Completed: PHR-UX-006 Application Structure
+
+- Completed: organized production navigation around Discover, Decide, Monitor, and Administer.
+- Completed: retained Manage as a future product area without exposing unavailable destinations.
+- Completed: made Opportunities, Vendor Workspace, Market Watch, and Settings the only primary operational destinations.
+- Completed: preserved Purchase Evaluation and opportunity details as contextual routes.
+- Constraint: this structural phase does not authorize Inventory, Portfolio, Alerts, Cards, Analytics, or mobile implementation.
+
 ## PHR-UX-005 Collector Presentation Rules
 
 - Completed: Treatment and Printing terminology is centralized in the Presentation Layer.

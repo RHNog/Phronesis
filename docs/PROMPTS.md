@@ -553,3 +553,11 @@ Result: presentation model, adapter, formatter, diagnostics, production UI adopt
 Purpose: remove non-distinguishing identity noise and align presentation terminology with experienced collector vocabulary.
 
 Result: Physical Finish presents as Printing, Standard Treatment and regular/unavailable Printing are hidden, shared rendering is connected, and developer visibility is preserved.
+
+## PHR-UX-006 Lifecycle-Based Application Structure
+
+Purpose: establish a durable product map and primary navigation around the professional operator lifecycle before additional modules are implemented.
+
+Core instruction: expose Opportunities, Vendor Workspace, Market Watch, and Settings as the operational primary destinations; preserve evaluation and opportunity details as contextual routes; do not expose unavailable future capabilities through placeholder links.
+
+Status: implemented and verified. Focused tests, lint, production build, and diff checks passed.

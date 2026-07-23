@@ -3,7 +3,7 @@ import BusinessProfilesSettings from "@/features/settings/components/BusinessPro
 
 export default function SettingsPage() {
   return (
-    <AppShell selectedNavItem="Settings">
+    <AppShell>
       <div className="w-full space-y-6">
         <header>
           <h2 className="text-3xl font-semibold tracking-tight text-white">
@@ -19,4 +19,3 @@ export default function SettingsPage() {
     </AppShell>
   );
 }
-

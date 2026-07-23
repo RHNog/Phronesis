@@ -50,6 +50,35 @@ Current CTO chat and user-provided screenshot of a Phronesis Chief Architect tas
 
 Implemented on 2026-07-22. Role-contract, Structure identity, command-routing, and cross-project rejection checks passed. Existing Phronesis product behavior was not changed.
 
+## 2026-07-22 — Application Structure
+
+### Source
+
+Current CTO chat.
+
+### User Intent
+
+- Make application structure the next development objective.
+
+### Decisions
+
+- Organize the product lifecycle around Discover, Decide, Monitor, Manage, and Administer (`PHR-UX-006`).
+- Expose only operational destinations in primary navigation: Opportunities, Vendor Workspace, Market Watch, and Settings.
+- Preserve Purchase Evaluation and opportunity details as contextual routes.
+- Keep Manage, Cards, Alerts, Analytics, Inventory, Portfolio, and mobile behavior outside this implementation scope.
+
+### Resulting Artifacts
+
+- `docs/ux/PHR-UX-006-application-information-architecture.md`
+- `docs/prompts/PHR-UX-006-implementation-prompt.md`
+- `docs/testing/PHR-UX-006-application-structure-validation.md`
+- `docs/release-notes/PHR-UX-006.md`
+- Typed navigation configuration and focused regression tests.
+
+### Acceptance State
+
+Implemented and accepted on 2026-07-22 through the sequential CTO, Chief Architect, Engineer, conformance, and CTO gates. This was same-session review, not independent approval. Focused tests, lint, production build, TypeScript validation, and diff checks passed.
+
 ## 2026-07-22 — Development Resumption and Governance Upkeep
 
 ### Source

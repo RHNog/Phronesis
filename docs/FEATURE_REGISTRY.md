@@ -25,6 +25,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-ARCH-010` | Phronesis Product Identity | Completed | Architecture / Product / Technical | `docs/architecture/PHR-ARCH-010-phronesis-product-identity.md` |
 | `PHR-WORKFLOW-002` | Canonical Product Development Workflow | Completed | Workflow / Architecture | `docs/workflows/PHR-WORKFLOW-002-canonical-product-development.md` |
 | `PHR-TECH-002` | Product Development Memory | Completed | Technical / Workflow | `docs/technical/PHR-TECH-002-product-development-memory.md` |
+| `PHR-UX-006` | Lifecycle-Based Application Structure | Completed | UX / UI / Workflow / Architecture | `docs/ux/PHR-UX-006-application-information-architecture.md` |
 
 ## Registry Rule
 

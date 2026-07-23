@@ -1,5 +1,11 @@
 # Architecture
 
+## Application Information Architecture (PHR-UX-006)
+
+The production shell is organized around Discover, Decide, Monitor, and Administer. Opportunities, Vendor Workspace, Market Watch, and Settings are the primary operational destinations. Purchase Evaluation and opportunity detail are contextual routes owned by Decide and Discover. Developer routes remain outside production navigation, and future Manage capabilities are not exposed until implemented.
+
+`lib/navigation/ProductNavigation.ts` is the source of truth for primary navigation metadata and route ownership. `Sidebar` derives active state from the current pathname; pages no longer duplicate selected-label strings. Route files remain composition boundaries, and domain engines retain their existing ownership.
+
 ## Watch History Boundary (PHR-UX-004)
 
 Watch history belongs to watchlist membership, not canonical identity or the Market Intelligence Repository. `WatchHistoryMetadata` captures membership creation and successful observations acquired while the watch exists. Provider history from before `addedAt` is not copied.

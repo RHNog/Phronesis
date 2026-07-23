@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type NavItemProps = {
   href: string;
   label: string;
@@ -10,7 +12,7 @@ export default function NavItem({
   isSelected = false,
 }: NavItemProps) {
   return (
-    <a
+    <Link
       href={href}
       aria-current={isSelected ? "page" : undefined}
       className={`block rounded-md px-4 py-3 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-zinc-950 ${
@@ -20,6 +22,6 @@ export default function NavItem({
       }`}
     >
       {label}
-    </a>
+    </Link>
   );
 }

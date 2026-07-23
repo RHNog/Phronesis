@@ -1,65 +1,32 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import NavItem from "@/components/ui/NavItem";
+import {
+  primaryNavigation,
+  resolvePrimaryNavigation,
+} from "@/lib/navigation/ProductNavigation";
 
-const navigationItems = [
-  {
-    label: "🔥 Hot Opportunities",
-    href: "/",
-  },
-  {
-    label: "Vendor Workspace",
-    href: "/vendor",
-  },
-  {
-    label: "Purchase Evaluation",
-    href: "/evaluate",
-  },
-  {
-    label: "Watchlists",
-    href: "/watchlists",
-  },
-  {
-    label: "Cards",
-    href: "#",
-  },
-  {
-    label: "Alerts",
-    href: "#",
-  },
-  {
-    label: "Analytics",
-    href: "#",
-  },
-  {
-    label: "Settings",
-    href: "/settings",
-  },
-];
+export default function Sidebar() {
+  const pathname = usePathname();
+  const selectedItem = resolvePrimaryNavigation(pathname);
 
-export type NavItemLabel = (typeof navigationItems)[number]["label"];
-
-type SidebarProps = {
-  selectedItem?: NavItemLabel;
-};
-
-export default function Sidebar({
-  selectedItem = "🔥 Hot Opportunities",
-}: SidebarProps) {
   return (
     <aside className="flex min-h-screen w-[260px] flex-none flex-col border-r border-zinc-800 bg-zinc-950 text-zinc-100">
       {/* App title area at the top of the sidebar. */}
       <div className="border-b border-zinc-800 px-6 py-5">
-        <h1 className="text-lg font-semibold tracking-tight">PriceTrackingLLC</h1>
+        <h1 className="text-lg font-semibold tracking-tight">Phronesis</h1>
       </div>
 
       {/* Main vertical navigation. */}
       <nav aria-label="Primary navigation" className="flex-1 px-4 py-6">
         <ul className="space-y-2">
-          {navigationItems.map((item) => (
-            <li key={item.label}>
+          {primaryNavigation.map((item) => (
+            <li key={item.id}>
               <NavItem
                 href={item.href}
                 label={item.label}
-                isSelected={item.label === selectedItem}
+                isSelected={item.id === selectedItem?.id}
               />
             </li>
           ))}

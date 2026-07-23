@@ -1,5 +1,19 @@
 # Project Atlas
 
+## Application Structure
+
+`PHR-UX-006` defines the lifecycle map used by the production shell:
+
+```text
+Discover   -> Opportunities       -> / and /opportunities/[id]
+Decide     -> Vendor Workspace    -> /vendor and /evaluate
+Monitor    -> Market Watch        -> /watchlists
+Administer -> Settings            -> /settings
+Manage     -> Future capability   -> no production destination
+```
+
+Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Developer routes are intentionally outside this map.
+
 ## Product Development Governance
 
 - Canonical product identity: Phronesis (`PHR-ARCH-010`).

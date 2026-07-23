@@ -29,7 +29,7 @@ export default async function VendorPage({ searchParams }: VendorPageProps) {
   const cards = await getIdentityCards();
 
   return (
-    <AppShell commandPaletteContext="VendorWorkspace" selectedNavItem="Vendor Workspace">
+    <AppShell commandPaletteContext="VendorWorkspace">
       <div className="w-full space-y-6">
         <header>
           <h2 className="text-3xl font-semibold tracking-tight text-white">

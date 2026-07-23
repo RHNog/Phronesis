@@ -4,6 +4,7 @@
 
 ### Added
 
+- Lifecycle-based application structure and typed primary navigation (`PHR-UX-006`).
 - Phronesis product identity migration (`PHR-ARCH-010`).
 - Three-role Canonical Product Development Workflow for CTO, Chief Architect, and Engineer (`PHR-WORKFLOW-002`).
 - Conversation-derived Product Development Memory and CTO session ledger (`PHR-TECH-002`).
