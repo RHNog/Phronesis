@@ -1,12 +1,12 @@
 # Business Strategy
 
-This document owns business strategy for PriceTrackingLLC. It should evolve independently from engineering plans and product roadmap sequencing.
+This document owns business strategy for Phronesis. It should evolve independently from engineering plans and product roadmap sequencing.
 
 ## Vision
 
 Build the professional decision operating system for trading-card buying, inventory decisions, and market intelligence.
 
-PriceTrackingLLC should help serious buyers, stores, and operators make faster and better purchase decisions by converting fragmented card, market, condition, and business evidence into explainable action.
+Phronesis should help serious buyers, stores, and operators make faster and better purchase decisions by converting fragmented card, market, condition, and business evidence into explainable action.
 
 ## Mission
 
@@ -40,7 +40,7 @@ Secondary future customers:
 
 ## Core Value Proposition
 
-PriceTrackingLLC turns a card lookup into a business-aware decision.
+Phronesis turns a card lookup into a business-aware decision.
 
 The platform combines identity resolution, eligibility filtering, provider-backed market evidence, cached intelligence, asset assessment, business profiles, strategy, negotiation, and decision output into one repeatable workflow.
 

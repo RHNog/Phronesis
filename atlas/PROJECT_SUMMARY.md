@@ -62,7 +62,7 @@ Market provider evidence is now stacked by field and selected through `MarketEvi
 
 ## Current Architecture
 
-PriceTrackingLLC is a Next.js, TypeScript, and Tailwind CSS application for professional trading-card buying decisions.
+Phronesis is a Next.js, TypeScript, and Tailwind CSS application for professional trading-card buying decisions.
 
 The runtime architecture separates:
 

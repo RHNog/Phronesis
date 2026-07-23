@@ -1,6 +1,6 @@
 # Monetization
 
-This document captures monetization possibilities for PriceTrackingLLC. It does not choose a final pricing model.
+This document captures monetization possibilities for Phronesis. It does not choose a final pricing model.
 
 ## Monetization Philosophy
 
@@ -142,7 +142,7 @@ Possible models:
 
 ### White-Label
 
-Partners embed PriceTrackingLLC decision intelligence into their own products.
+Partners embed Phronesis decision intelligence into their own products.
 
 Possible models:
 

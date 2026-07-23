@@ -1,5 +1,11 @@
 # Decisions
 
+## PHR-ARCH-010: Phronesis Is The Canonical Identity
+
+Decision: use Phronesis as the sole product and repository identity. Preserve Git history and application architecture; coordinate any external repository or checkout-directory rename separately.
+
+Rationale: dual naming created ambiguity across product copy, package metadata, providers, browser storage, documentation, and AI memory.
+
 ## PHR-TECH-001: Documentation Is Part Of Implementation
 
 Decision: establish a repository-wide Documentation-First Development System.
@@ -135,7 +141,7 @@ Scope: Sprint 31A validates connectivity only. It does not add caching, retries,
 
 0. Certification Intelligence measures collectible characteristics only. It does not decide BUY, NEGOTIATE, PASS, or offer values. Collector Intelligence consumes Certification Intelligence; Strategies consume Collector Intelligence; Negotiation consumes Strategies.
 
-1. PriceTrackingLLC is not a price tracker. It is a decision platform.
+1. Phronesis is not a price tracker. It is a decision platform.
 
 2. Identity and pricing are separate domains. Identity Providers and Market Providers are different provider families.
 

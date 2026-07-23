@@ -2,11 +2,11 @@
 
 ## Product Name
 
-PriceTrackingLLC
+Phronesis
 
 ## Current Positioning
 
-PriceTrackingLLC is a Professional TCG Decision Operating System.
+Phronesis is a Professional TCG Decision Operating System.
 
 It is not a simple price tracker. It exists to help professional trading-card buyers answer decision questions quickly, with enough evidence to act.
 

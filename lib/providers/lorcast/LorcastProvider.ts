@@ -123,7 +123,7 @@ export class LorcastProvider implements IdentityProvider {
 
     try {
       const response = await this.fetcher(url, {
-        headers: { "User-Agent": "PriceTrackingLLC/0.1 (identity provider)" },
+        headers: { "User-Agent": "Phronesis/0.1 (identity provider)" },
       });
       if (!response.ok) {
         if (response.status === 429) return this.failure(query, startedAt, "RATE_LIMITED", "Lorcast rate limit reached.", response.status, url.toString());

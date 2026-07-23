@@ -2,7 +2,7 @@
 
 ## Architecture Philosophy
 
-PriceTrackingLLC is a Professional TCG Decision Operating System, not a generic price tracker.
+Phronesis is a Professional TCG Decision Operating System, not a generic price tracker.
 
 The architecture separates interpretation, market data, business assumptions, intelligence, strategy, negotiation, validation, and decision. Each layer should own one kind of responsibility and pass normalized domain objects to the next layer.
 

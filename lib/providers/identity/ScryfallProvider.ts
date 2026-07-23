@@ -11,7 +11,7 @@ type ScryfallSearchResponse = {
 
 const SCRYFALL_BASE_URL = "https://api.scryfall.com";
 const SCRYFALL_HEADERS = {
-  "User-Agent": "PriceTrackingLLC/0.1 (development identity diagnostics)",
+  "User-Agent": "Phronesis/0.1 (development identity diagnostics)",
 };
 
 type ScryfallSearchCacheRecord = {

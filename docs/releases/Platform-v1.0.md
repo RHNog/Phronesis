@@ -8,7 +8,7 @@ Release type: documentation-only architecture snapshot
 
 ## Release Intent
 
-Platform v1.0 freezes the current PriceTrackingLLC platform as a recoverable baseline. This is not a feature sprint. It records the completed architecture, active workflow boundaries, provider infrastructure, diagnostics surfaces, known limitations, and recovery procedure for the current platform state.
+Platform v1.0 freezes the current Phronesis platform as a recoverable baseline. This is not a feature sprint. It records the completed architecture, active workflow boundaries, provider infrastructure, diagnostics surfaces, known limitations, and recovery procedure for the current platform state.
 
 No functionality, architecture, provider behavior, UI behavior, replay behavior, repository behavior, business logic, or engine logic is changed by this release document.
 
@@ -18,7 +18,7 @@ Platform v1.0 is part of Project Phronesis (Engineering Initiative), the interna
 
 Project Phronesis expresses the platform philosophy of practical judgment: evidence before conclusions, observations separated from reasoning, explainable intelligence, and transparent business decisions.
 
-This is not a commercial rebrand. The legal entity remains PriceTrackingLLC, and the future customer-facing product name remains intentionally undecided.
+This is not a commercial rebrand. The legal entity remains Phronesis, and the future customer-facing product name remains intentionally undecided.
 
 ## Planning Framework
 
@@ -36,7 +36,7 @@ Product-facing ideas should live in the Product Roadmap or Idea Ledger until the
 
 ## Platform Summary
 
-PriceTrackingLLC v1.0 is a professional TCG decision operating system. The platform resolves an asset, validates workflow eligibility, gathers provider-backed market evidence, stores and layers evidence, interprets market conditions, synthesizes asset assessment, applies business context and strategy, builds a negotiation ladder, and resolves a purchase decision.
+Phronesis v1.0 is a professional TCG decision operating system. The platform resolves an asset, validates workflow eligibility, gathers provider-backed market evidence, stores and layers evidence, interprets market conditions, synthesizes asset assessment, applies business context and strategy, builds a negotiation ladder, and resolves a purchase decision.
 
 ### Identity
 

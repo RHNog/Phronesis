@@ -1,6 +1,6 @@
 import type { EvaluationSnapshot } from "@/types/EvaluationSnapshot";
 
-const storageKey = "PriceTrackingLLC:EvaluationHistory";
+const storageKey = "Phronesis:EvaluationHistory";
 
 function cloneSnapshot(snapshot: EvaluationSnapshot): EvaluationSnapshot {
   return JSON.parse(JSON.stringify(snapshot)) as EvaluationSnapshot;

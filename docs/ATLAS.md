@@ -1,6 +1,6 @@
 # Project Atlas
 
-Atlas is the permanent project knowledge base for PriceTrackingLLC and Project Phronesis (Engineering Initiative).
+Atlas is the permanent project knowledge base for Phronesis and Project Phronesis (Engineering Initiative).
 
 Project Phronesis is the internal engineering identity for the initiative building an evidence-driven decision intelligence platform for collectible markets. It is not necessarily the future customer-facing product name.
 
@@ -744,7 +744,7 @@ No sprint is complete until Atlas has been synchronized.
 
 ## Knowledge Base
 
-- PriceTrackingLLC is a Decision Operating System for professional TCG buying.
+- Phronesis is a Decision Operating System for professional TCG buying.
 - Vendor Workspace should minimize time from search to decision to next card.
 - Vendor Workspace VX should feel closer to a command palette than a traditional form.
 - Identity Providers answer what a card is.

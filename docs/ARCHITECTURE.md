@@ -493,7 +493,7 @@ The temporary `/dev/justtcg` page is development-only. It displays the raw SDK r
 
 ## Application Structure
 
-PriceTrackingLLC is a Next.js application using TypeScript and Tailwind CSS.
+Phronesis is a Next.js application using TypeScript and Tailwind CSS.
 
 Top-level structure:
 

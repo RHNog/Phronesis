@@ -22,6 +22,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-ARCH-007` | Cross-Game Identity Ontology | Completed | Architecture / Technical / API / Research | `docs/architecture/PHR-ARCH-007-cross-game-identity-ontology.md` |
 | `PHR-ARCH-009` | Identity Presentation Layer | Completed | Architecture / Technical / UI / UX | `docs/architecture/PHR-ARCH-009-identity-presentation-layer.md` |
 | `PHR-UX-005` | Collector Presentation Rules | Completed | UX / UI / Presentation | `docs/ux/PHR-UX-005-collector-presentation-rules.md` |
+| `PHR-ARCH-010` | Phronesis Product Identity | Completed | Architecture / Product / Technical | `docs/architecture/PHR-ARCH-010-phronesis-product-identity.md` |
 
 ## Registry Rule
 

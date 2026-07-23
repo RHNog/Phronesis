@@ -130,7 +130,7 @@ Do not move JustTCG into production UI yet. Sprint 31A is connectivity only: no 
 
 ## What Is This Project?
 
-PriceTrackingLLC is a Professional TCG Decision Operating System.
+Phronesis is a Professional TCG Decision Operating System.
 
 It helps trading-card buyers discover opportunities, evaluate in-person purchases, and eventually manage portfolio decisions.
 

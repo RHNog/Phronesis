@@ -8,7 +8,7 @@ import type { PrintingVariant } from "@/types/printingVariant";
 
 const SCRYFALL_BASE_URL = "https://api.scryfall.com";
 const SCRYFALL_HEADERS = {
-  "User-Agent": "PriceTrackingLLC/0.1 (development market estimates)",
+  "User-Agent": "Phronesis/0.1 (development market estimates)",
 };
 
 const cardCache = new Map<string, ScryfallCardResponse | null>();

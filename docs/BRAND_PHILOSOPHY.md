@@ -8,7 +8,7 @@ The platform currently has three separate identity layers:
 
 ```text
 Legal Entity
-  -> PriceTrackingLLC
+  -> Phronesis
 
 Future Commercial Product
   -> intentionally undecided
@@ -94,11 +94,11 @@ When writing future partnership documents:
 - Describe it as the internal engineering initiative responsible for building an evidence-driven decision intelligence platform for collectible markets.
 - Do not present Project Phronesis as the commercial brand.
 - Do not imply the future product name has been selected.
-- Preserve PriceTrackingLLC as the current legal or organizational reference where appropriate.
+- Preserve Phronesis as the current legal or organizational reference where appropriate.
 
 Suggested phrasing:
 
-> Project Phronesis is the internal engineering initiative behind PriceTrackingLLC's evidence-driven decision intelligence platform for collectible markets.
+> Project Phronesis is the internal engineering initiative behind Phronesis's evidence-driven decision intelligence platform for collectible markets.
 
 Avoid:
 

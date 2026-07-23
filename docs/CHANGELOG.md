@@ -4,6 +4,7 @@
 
 ### Added
 
+- Phronesis product identity migration (`PHR-ARCH-010`).
 - PHR-TECH-001 Documentation-First Development System.
 - Repository-wide documentation-first workflow in `docs/DOCUMENTATION_FIRST_DEVELOPMENT.md`.
 - Feature specification template and implementation prompt template.

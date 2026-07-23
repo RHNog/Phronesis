@@ -1,5 +1,11 @@
 # Prompt History
 
+## 2026-07-22 Governance And Resumption Prompts
+
+- `PHR-ARCH-010`: migrate all repository content to the Phronesis identity without changing domain behavior or rewriting history.
+
+Canonical implementation prompts live in `docs/prompts/`.
+
 ## PHR-UX-004
 
 Purpose: explain how a watched market evolved during the lifecycle of the watch.
@@ -484,7 +490,7 @@ Result: Evaluation History Engine, append-only repository abstraction, snapshot 
 
 Purpose: introduce the Playability Intelligence Platform.
 
-Core instruction: PriceTrackingLLC should understand why a card is valuable from play demand. Playability measures only; strategies interpret it, the Negotiation Ladder consumes strategies, and the Decision Resolver consumes the ladder.
+Core instruction: Phronesis should understand why a card is valuable from play demand. Playability measures only; strategies interpret it, the Negotiation Ladder consumes strategies, and the Decision Resolver consumes the ladder.
 
 Major files affected: `lib/intelligence/playability/`, `lib/intelligence/framework/`, `lib/engines/cardIntelligence/`, `lib/providers/identity/adapters/ScryfallAdapter.ts`, `features/vendor/components/CardProfilePanel.tsx`, `tests/playability-intelligence.test.ts`, `docs/`.
 

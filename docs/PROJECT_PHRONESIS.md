@@ -1,6 +1,6 @@
 # Project Phronesis
 
-Project Phronesis is the engineering initiative responsible for building the PriceTrackingLLC platform.
+Project Phronesis is the engineering initiative responsible for building the Phronesis platform.
 
 It is not necessarily the future customer-facing product name.
 
@@ -68,7 +68,7 @@ The identities are separate:
 
 ```text
 Legal Entity
-  -> PriceTrackingLLC
+  -> Phronesis
 
 Future Commercial Product
   -> intentionally undecided
@@ -79,7 +79,7 @@ Engineering Initiative
 
 These identities evolve independently.
 
-PriceTrackingLLC can remain the legal or organizational container. The commercial product can be named later. Project Phronesis can remain the engineering initiative and philosophical anchor regardless of the eventual brand.
+Phronesis can remain the legal or organizational container. The commercial product can be named later. Project Phronesis can remain the engineering initiative and philosophical anchor regardless of the eventual brand.
 
 ## Engineering Philosophy
 
@@ -131,4 +131,4 @@ Preferred reference:
 
 `Project Phronesis (Engineering Initiative)`
 
-Use this phrase when introducing the engineering identity in current documents. Do not replace historical references to PriceTrackingLLC.
+Use this phrase when introducing the engineering identity in current documents. Do not replace historical references to Phronesis.

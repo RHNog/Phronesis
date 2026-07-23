@@ -9,6 +9,7 @@ The format is inspired by "Keep a Changelog".
 ## [Unreleased]
 
 ### Added
+- Canonical Phronesis identity.
 - Sprint 33 Provider Replay & Fixture Infrastructure under `lib/providers/replay/`.
 - Replay modes `LIVE`, `REPLAY`, and `AUTO` controlled by `PROVIDER_MODE` in local development.
 - Provider fixture loading, validation, optional checksum verification, recording, replay sessions, and replay diagnostics.
@@ -283,7 +284,7 @@ The format is inspired by "Keep a Changelog".
 - Vendor Workspace now treats a printing and its purchasable finish variant as separate selections.
 - Scryfall adapter now preserves all available finishes instead of collapsing multi-finish printings to foil.
 - Scryfall adapter now maps image data into normalized domain card objects.
-- README now describes PriceTrackingLLC instead of the default Next.js template.
+- README now describes Phronesis instead of the default Next.js template.
 
 ### Fixed
 - Fixed zero-valued Offer Ladder output caused by impossible business policy math being rounded into `0`.

@@ -1,6 +1,6 @@
 # Atlas Development Companion
 
-Atlas is the internal development companion for PriceTrackingLLC.
+Atlas is the internal development companion for Phronesis.
 
 It is not part of the customer-facing application. It does not change Vendor Workspace behavior, production UI, business engines, providers, or runtime evaluation.
 
