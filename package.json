@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --import ./tests/register-test-hooks.mjs --test tests/*.test.ts"
   },
   "dependencies": {
     "justtcg-js": "^0.2.1",
