@@ -7,7 +7,7 @@ This project is governed by the shared **Master Canonical Product Development Wo
 
 - Document ID: `MASTER-CANONICAL-WORKFLOW`
 - Canonical path: `/Volumes/JarvisSSD/Projects/_shared/governance/MASTER_CANONICAL_PRODUCT_DEVELOPMENT_WORKFLOW.md`
-- Adopted revision: `1.2.0`
+- Adopted revision: `1.7.0`
 - Adoption date: `2026-07-26`
 
 ## Project Identity

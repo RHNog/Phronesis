@@ -1,0 +1,11 @@
+{
+  "schema": "jarvis.github-repository/v1",
+  "provider": "github",
+  "owner": "RHNog",
+  "repository": "Phronesis",
+  "name_with_owner": "RHNog/Phronesis",
+  "url": "https://github.com/RHNog/Phronesis",
+  "visibility": "private",
+  "default_branch": "main",
+  "sync_policy": "required-before-release"
+}
