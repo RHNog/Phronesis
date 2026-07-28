@@ -10,7 +10,7 @@ Phronesis uses documentation-first, AI-assisted product development.
 
 ## Objective
 
-Install explicit CTO, Chief Architect, and Engineer role contracts with gated handoffs.
+Maintain explicit CTO, Chief Architect, and Engineer role contracts with autonomous evidence-gated handoffs.
 
 ## Required Reading
 
@@ -24,10 +24,13 @@ Install explicit CTO, Chief Architect, and Engineer role contracts with gated ha
 - Preserve product, architecture, implementation, review, and acceptance authority boundaries.
 - Add a repository-owned Phronesis Structure command source with project identity, Feature ID prefix, readiness, and repository-boundary checks.
 - Make every role reject another project's Structure and work-item identifiers.
+- Make approved objectives advance automatically through architecture, engineering, conformance, bounded remediation, and CTO acceptance.
+- Define narrowly scoped Critical Escalation Conditions that preserve user control over genuinely consequential risk.
 
 ## Constraints
 
-- Do not grant tools or agents authority beyond user authorization.
+- Treat the user's approved objective as standing authority for ordinary, necessary, reversible work within scope.
+- Do not broaden the approved objective or cross a Critical Escalation Condition without user direction.
 - Do not fabricate independent approvals when one agent performs sequential roles.
 - Do not use external/global Structure files to resolve Phronesis commands.
 
@@ -45,4 +48,4 @@ Install explicit CTO, Chief Architect, and Engineer role contracts with gated ha
 
 ## Non-Goals
 
-- Automated orchestration or external issue-tracker integration.
+- External issue-tracker integration.

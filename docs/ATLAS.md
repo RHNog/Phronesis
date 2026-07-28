@@ -17,7 +17,8 @@ Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Dev
 ## Product Development Governance
 
 - Canonical product identity: Phronesis (`PHR-ARCH-010`).
-- Canonical workflow: CTO -> Chief Architect -> Engineer -> Chief Architect conformance -> CTO acceptance (`PHR-WORKFLOW-002`).
+- Canonical workflow: shared `MASTER-CANONICAL-WORKFLOW` revision 1.2.0 through `.agents/WORKFLOW.md`; `PHR-WORKFLOW-002` is historical and `PHR-WORKFLOW-003` records adoption.
+- Canonical repository root: `/Volumes/JarvisSSD/Projects/Phronesis` (`PHR-TECH-003`). The former checkout is rollback-only.
 - Durable conversation-derived memory: `docs/product-development/CONVERSATION_HISTORY.md` (`PHR-TECH-002`).
 - Role contracts: `.agents/roles/`.
 - Documentation review: `docs/reviews/2026-07-22-documentation-practices-review.md`.

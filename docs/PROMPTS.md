@@ -1,9 +1,31 @@
 # Prompt History
 
+## PHR-TECH-003 Verified Repository Relocation
+
+Purpose: relocate the complete Phronesis checkout to JarvisSSD through staged copy, verification, atomic cutover, and retained-source rollback.
+
+Status: completed and accepted under `PHR-STRUCT-20260726-006`. The canonical checkout is `/Volumes/JarvisSSD/Projects/Phronesis`; the old checkout remains rollback-only.
+
+Canonical implementation prompt: `docs/prompts/PHR-TECH-003-repository-relocation-prompt.md`.
+
+Attempt-one retry prompt: `docs/prompts/PHR-TECH-003-staged-copy-retry-prompt.md`. It is historical recovery evidence; the verified pax fallback and cutover are recorded in the completed Structure and validation record.
+
+## PHR-WORKFLOW-003 Shared Master Workflow Adoption
+
+Purpose: adopt `MASTER-CANONICAL-WORKFLOW` by pointer and register Designer, Debugger, and project-local design context while preserving `PHR-WORKFLOW-002` as historical evidence.
+
+Canonical implementation prompt: `docs/prompts/PHR-WORKFLOW-003-shared-master-workflow-adoption-prompt.md`.
+
+## PHR-TECH-004 Canonical Repository Reconciliation
+
+Purpose: reconcile migration, workflow, package-manager, documentation, Git checkpoint, and GitHub publication state from the JarvisSSD checkout.
+
+Canonical implementation prompt: `docs/prompts/PHR-TECH-004-canonical-repository-reconciliation-prompt.md`.
+
 ## 2026-07-22 Governance And Resumption Prompts
 
 - `PHR-ARCH-010`: migrate all repository content to the Phronesis identity without changing domain behavior or rewriting history.
-- `PHR-WORKFLOW-002`: establish CTO, Chief Architect, and Engineer role contracts with explicit gates and evidence-based handoffs.
+- `PHR-WORKFLOW-002`: maintain CTO, Chief Architect, and Engineer role contracts with autonomous evidence gates, bounded remediation, and critical-risk-only user escalation.
 - `PHR-TECH-002`: preserve material CTO conversations as a durable index linked to canonical Feature ID artifacts.
 
 Canonical implementation prompts live in `docs/prompts/`.

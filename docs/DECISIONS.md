@@ -10,7 +10,17 @@ Rationale: dual naming created ambiguity across product copy, package metadata, 
 
 Decision: CTO owns product intent and acceptance, Chief Architect owns design and conformance, and Engineer owns scoped implementation and evidence.
 
+2026-07-26 amendment: once the user approves an objective, role handoffs and bounded non-critical remediation are autonomous. Evidence gates remain intact; user interaction is reserved for the workflow's Critical Escalation Conditions.
+
 Rule: one session may execute sequential roles for explicit low-risk work, but all gates remain visible and self-review must not be described as independent approval.
+
+## PHR-WORKFLOW-003: Shared Workflow Is Canonical
+
+Decision: Phronesis adopts `MASTER-CANONICAL-WORKFLOW` revision 1.2.0 through `.agents/WORKFLOW.md`. Local `PHR-WORKFLOW-002` remains historical and may not override it. Designer and Debugger are conditional role supplements.
+
+## PHR-TECH-004: npm Is The Repository Package Manager
+
+Decision: npm is canonical because `package-lock.json` is tracked with history and supported instructions use npm. Local `pnpm-lock.yaml` and `pnpm-workspace.yaml` are preserved but excluded from Git status; they are not repository authority.
 
 ## PHR-TECH-002: Repository Artifacts Are Durable Product Memory
 

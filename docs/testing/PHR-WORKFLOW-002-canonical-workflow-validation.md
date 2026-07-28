@@ -8,6 +8,9 @@
 - Sequential-role execution cannot be represented as independent approval.
 - `docs/product-development/CURRENT_CTO_STRUCTURE.md` identifies Phronesis, the repository root, `PHR-` Feature IDs, and a governed readiness state.
 - CTO, Chief Architect, Engineer, `.agents/README.md`, and `AGENTS.md` prohibit cross-project Structure authority.
+- CTO, Chief Architect, Engineer, `.agents/README.md`, and `AGENTS.md` require autonomous handoffs after objective approval.
+- Non-critical verification failures enter a bounded Architect/Engineer remediation loop without repeated user authorization.
+- Critical-risk escalation categories are explicit and preserve user control over destructive, production, security, financial, legal, and materially outcome-changing decisions.
 - Bare `Prompt`, `Implement`, and `Review` commands resolve only through the repository-owned Phronesis Structure.
 
 ## Result

@@ -1,3 +1,7 @@
+> **HISTORICAL PROJECT WORKFLOW — NON-AUTHORITATIVE**
+>
+> This document is preserved as project-specific history and evidence. The shared Master Canonical Product Development Workflow at `/Volumes/JarvisSSD/Projects/_shared/governance/MASTER_CANONICAL_PRODUCT_DEVELOPMENT_WORKFLOW.md` governs current workflow. Project-specific requirements in this file remain applicable only when incorporated through this project's pointer, role supplements, or current structure.
+
 # PHR-WORKFLOW-002: Canonical Product Development Workflow
 
 ## Feature ID
@@ -10,7 +14,7 @@ Three-Role Canonical Product Development Workflow
 
 ## Status
 
-Completed
+Historical / Superseded
 
 ## Priority
 
@@ -22,7 +26,7 @@ Workflow / Architecture / Developer Notes / Testing
 
 ## Objective
 
-Establish CTO, Chief Architect, and Engineer as explicit, non-overlapping roles with durable artifacts, approval gates, and evidence-based handoffs.
+Establish CTO, Chief Architect, and Engineer as explicit, non-overlapping roles with durable artifacts, evidence-based gates, and autonomous handoffs that interrupt the user only for critical risk or indispensable product direction.
 
 ## Background
 
@@ -36,19 +40,55 @@ Role names and bare commands can also exist in multiple projects. Without a repo
 
 ## Proposed Solution
 
-Use the following canonical flow:
+Use the following canonical flow. Once the user supplies an outcome, the workflow advances between roles without requiring repeated user commands:
 
 ```text
 Product conversation
   -> CTO product brief and priority
   -> Chief Architect specification and work order
-  -> CTO approval when scope or tradeoffs materially change
+  -> automatic Engineer handoff when the work order remains within intent and the risk envelope
   -> Engineer implementation, tests, and implementation report
-  -> Chief Architect conformance review
+  -> automatic Chief Architect conformance review
+  -> automatic remediation loop when bounded and non-critical
   -> CTO acceptance and memory update
+  -> user interruption only for a Critical Escalation Condition
 ```
 
-Documentation-first work may combine gates in one session only when the scope is explicit, reversible, and does not require a material product choice. The artifacts and role-specific checks remain mandatory.
+Gates are evidence checkpoints, not conversational permission prompts. Documentation-first work may combine roles sequentially in one session when the scope stays within the approved outcome and risk envelope. The agent must declare role transitions, preserve role-specific artifacts and checks, and must not describe same-session review as independent approval.
+
+## Standing Autonomous Authorization
+
+The user's approved objective grants standing authority to perform the ordinary, necessary, and proportionate work needed to reach that objective, including repository inspection, specifications, implementation prompts, local edits, tests, builds, bounded remediation, conformance review, and memory updates.
+
+The workflow must make reasonable low-risk assumptions, record them, and continue. It must not stop merely because a new role begins, a validation attempt fails, documentation needs reconciliation, or a reversible implementation detail must be selected.
+
+Standing authority does not broaden the user's objective. New product scope must be separately justified as necessary to the approved outcome or returned to the user when it materially changes that outcome.
+
+## Critical Escalation Conditions
+
+Pause and obtain user direction only when at least one of these conditions applies:
+
+- an irreversible or destructive operation lacks a verified recovery path;
+- production deployment, public publication, customer-visible release, or mutation of a live external system was not explicitly part of the approved objective;
+- credentials, secrets, personal data, access control, security posture, or privacy could be materially exposed or weakened;
+- force push, published-history rewriting, permanent data deletion, source-checkout deletion, or destruction of the last verified rollback is proposed;
+- the action can create material financial cost, contractual commitment, legal/compliance exposure, or communication to another person or organization;
+- two or more plausible product choices would materially change user-visible behavior, priority, business rules, or the requested outcome and repository evidence cannot resolve the choice;
+- verification shows suspected data loss, repository corruption, security compromise, or a recovery procedure whose safety cannot be established;
+- required authority, credentials, hardware access, or user-controlled external state is genuinely unavailable.
+
+An ordinary test failure, lint error, build defect, documented technical debt item, reversible refactor, recoverable migration phase, or disagreement that can be resolved from the specification is not by itself a critical escalation.
+
+## Autonomous Remediation Loop
+
+When Engineer verification or Chief Architect review finds a non-critical defect:
+
+1. Chief Architect records the deviation and issues a bounded remediation amendment.
+2. Engineer performs the remediation and returns fresh evidence.
+3. Chief Architect repeats conformance review.
+4. The loop continues while it makes meaningful progress and remains within the approved objective and risk envelope.
+
+The CTO records final acceptance automatically when objective evidence satisfies the acceptance criteria. The user receives a concise completion report rather than being asked to approve every internal gate.
 
 ## Functional Requirements
 
@@ -56,7 +96,8 @@ Documentation-first work may combine gates in one session only when the scope is
 - Chief Architect owns system design, boundaries, feature specifications, implementation prompts, risk analysis, and conformance review.
 - Engineer owns only the approved work order, implementation, tests, and factual implementation reporting.
 - No role may claim another role's approval.
-- Material ambiguity, destructive action, external publication, and scope expansion return to the CTO.
+- Role handoffs and bounded remediation proceed automatically without requiring bare `Prompt`, `Implement`, `Review`, or `Final Review` commands.
+- Only Critical Escalation Conditions interrupt the user; other ambiguity is resolved from approved intent, repository evidence, and the safest reversible option.
 - Every meaningful change must have a permanent Feature ID and documentation-first traceability.
 - Every handoff must identify inputs, outputs, decisions, open questions, and the next accountable role.
 - `docs/product-development/CURRENT_CTO_STRUCTURE.md` is the only Phronesis Structure authority for bare `Prompt`, `Implement`, and `Review` commands.
@@ -75,7 +116,7 @@ The workflow must remain usable after a new chat starts with no transient conver
 
 ### Security
 
-Roles must not broaden authorization, disclose secrets, or perform external actions without appropriate approval.
+Roles must not broaden the approved objective, disclose secrets, or cross a Critical Escalation Condition without user direction.
 
 ### Extensibility
 
@@ -86,18 +127,20 @@ Specialist agents may assist a role but do not receive independent product autho
 - As product owner, I want the CTO role to preserve intent and decisions across sessions.
 - As Chief Architect, I want approved product intent before defining implementation boundaries.
 - As Engineer, I want an implementation-grade work order and objective acceptance criteria.
+- As product owner, I want routine role transitions and remediation to happen autonomously so I am interrupted only for consequential decisions or critical risk.
 
 ## Acceptance Criteria
 
 - `AGENTS.md` declares the canonical workflow and default CTO-session behavior.
 - Role contracts exist for all three roles.
 - Handoff gates and escalation conditions are explicit.
+- An approved objective can progress CTO -> Chief Architect -> Engineer -> review -> acceptance without repeated user commands.
 - The conversation ledger records product decisions and session outcomes.
 
 ## Edge Cases
 
 - Small housekeeping may be completed in one session, but must not bypass a required feature specification.
-- Urgent fixes may compress the workflow; retrospective documentation and independent conformance review remain required.
+- Urgent fixes may compress the workflow; retrospective documentation and conformance review remain required.
 - If no Chief Architect or Engineer session is separately available, one agent may execute sequential roles but must label role transitions and may not fabricate independent approval.
 - If a Structure file identifies another project or a non-`PHR-*` work item, the role must stop before producing a prompt or editing files and report a project-boundary violation.
 
@@ -117,7 +160,7 @@ Canonical artifacts are defined in `.agents/README.md`, `.agents/roles/`, and `d
 
 ## Open Questions
 
-- Whether future automation should generate structured session records from chat exports.
+- Whether future tooling should generate machine-readable handoff and escalation records automatically.
 
 ## Traceability
 
@@ -125,5 +168,5 @@ Canonical artifacts are defined in `.agents/README.md`, `.agents/roles/`, and `d
 - Related implementation prompt: `docs/prompts/PHR-WORKFLOW-002-implementation-prompt.md`.
 - Related tests: `docs/testing/PHR-WORKFLOW-002-canonical-workflow-validation.md`.
 - Related release notes: `docs/release-notes/PHR-WORKFLOW-002.md`.
-- Last modified: 2026-07-22.
-- Modification reason: Install the three-role Canonical Workflow and isolate Phronesis role commands from cross-project Structure contamination.
+- Last modified: 2026-07-26.
+- Modification reason: Replace conversational permission gates with autonomous evidence gates and narrowly defined critical-risk escalation.

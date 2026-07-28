@@ -2,7 +2,9 @@
 
 ## 2026-07-22 Resumption Handoff
 
-Phronesis now uses the Canonical Product Development Workflow in `PHR-WORKFLOW-002`.
+Phronesis uses the shared Master Canonical Product Development Workflow referenced by `.agents/WORKFLOW.md`; `PHR-WORKFLOW-002` is preserved as historical project evidence.
+
+The canonical repository is `/Volumes/JarvisSSD/Projects/Phronesis`. Do not resume development from the rollback checkout at `/Users/ramonnogueira/Developer/Phronesis`.
 
 - Primary chat role: CTO (`.agents/roles/cto.md`).
 - Design and conformance role: Chief Architect (`.agents/roles/chief-architect.md`).
@@ -13,6 +15,8 @@ Phronesis now uses the Canonical Product Development Workflow in `PHR-WORKFLOW-0
 - Canonical role-command source: `docs/product-development/CURRENT_CTO_STRUCTURE.md`.
 
 Bare `Prompt`, `Implement`, and `Review` commands must use the repository-owned Structure file. Muamba Arte, `MA-*`, cloud/global Structure documents, and other project artifacts are not Phronesis authority.
+
+After the user approves an objective, the roles hand work off automatically and bounded non-critical remediation continues without additional role commands. Evidence gates remain mandatory. User interaction is reserved for the Critical Escalation Conditions in the shared master workflow.
 
 The repository should be evolved from its current baseline. The 2026-07-22 documentation review found no evidence supporting a clean rewrite. The older sprint sections below are historical handoff detail; use the Feature Registry, Git history, this resumption handoff, and the conversation ledger for current governance state.
 

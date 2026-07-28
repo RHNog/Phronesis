@@ -30,13 +30,28 @@ The primary user-facing chat operates as the Phronesis CTO interface. Read `.age
 
 The repository-owned `docs/product-development/CURRENT_CTO_STRUCTURE.md` is the only Phronesis authority for bare `Prompt`, `Implement`, or `Review` commands. Do not resolve those commands through another project, workspace, Google Drive document, or global “current structure” file. Phronesis work uses `PHR-*` Feature IDs; a different project identity or prefix is a blocking boundary violation.
 
-Meaningful implementation follows `PHR-WORKFLOW-002`:
+Meaningful implementation follows the shared master workflow referenced by `.agents/WORKFLOW.md`; `PHR-WORKFLOW-002` is preserved only as historical Phronesis evidence:
 
 1. CTO owns product intent, priority, scope, and acceptance.
 2. Chief Architect owns specifications, architecture, implementation work orders, and conformance review.
 3. Engineer owns scoped implementation, tests, documentation updates, and evidence.
 
+Once the user approves an objective, handoffs between these roles are autonomous. Do not wait for separate `Prompt`, `Implement`, `Review`, or `Final Review` commands. Preserve all evidence gates and interrupt the user only for the Critical Escalation Conditions defined in the shared master workflow referenced by `.agents/WORKFLOW.md`.
+
 Read the active role contract in `.agents/roles/`. One session may perform roles sequentially for explicit low-risk work, but must retain the gates and must not claim its own output is independent approval.
 
 At CTO acceptance, update `docs/product-development/CONVERSATION_HISTORY.md` with the material intent, decisions, Feature IDs, artifacts, unresolved questions, and acceptance state. Never invent unavailable historical conversations or store secrets in product memory.
 <!-- END:canonical-product-development-workflow -->
+
+<!-- BEGIN:master-canonical-workflow -->
+## Master Canonical Product Development Workflow
+
+Before product-development work:
+
+1. Read `/Volumes/JarvisSSD/Projects/_shared/governance/MASTER_CANONICAL_PRODUCT_DEVELOPMENT_WORKFLOW.md`.
+2. Read `.agents/WORKFLOW.md` and verify this project's identity and root.
+3. Read the current CTO Structure, product memory, active role supplement, and design context when applicable.
+4. Apply the master workflow. Local guidance may add project-specific facts or stricter controls but may not silently weaken or override it.
+
+Canonical workflow revision adopted: `1.2.0`.
+<!-- END:master-canonical-workflow -->

@@ -1,6 +1,6 @@
 # Phronesis AI Product Development System
 
-This directory defines the operational roles for `PHR-WORKFLOW-002`.
+This directory defines Phronesis role supplements under the shared master workflow referenced by `.agents/WORKFLOW.md`.
 
 ## Project Boundary And Structure Commands
 
@@ -16,7 +16,9 @@ Never use another workspace, Google Drive document, global â€œcurrent structureâ
 4. Chief Architect verifies architectural and specification conformance.
 5. CTO accepts, rejects, or redirects the result and updates Product Development Memory.
 
-One AI session may perform sequential roles for an explicit, low-risk scope. It must identify the role transition in its work, retain all gates, and never describe its own output as independent approval.
+After the user approves an objective, these handoffs are automatic. Do not wait for separate `Prompt`, `Implement`, `Review`, or `Final Review` messages when the next role can proceed safely from repository evidence. One AI session may perform roles sequentially; it must identify role transitions, retain all gates, and never describe its own output as independent approval.
+
+Non-critical defects enter an automatic Architect -> Engineer -> Architect remediation loop. Interrupt the user only for the Critical Escalation Conditions defined in the shared master workflow.
 
 ## Required Artifacts
 
@@ -39,4 +41,4 @@ Every handoff identifies:
 
 ## Authority Boundary
 
-Specialist tools and agents may assist a role. They do not gain authority to change product intent, approve architectural deviations, accept implementation, publish externally, or perform destructive actions.
+Specialist tools and agents may assist a role. They do not gain independent product authority. Ordinary reversible work within the approved objective is authorized; critical-risk actions still require user direction under the shared master workflow.

@@ -26,6 +26,9 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-WORKFLOW-002` | Canonical Product Development Workflow | Completed | Workflow / Architecture | `docs/workflows/PHR-WORKFLOW-002-canonical-product-development.md` |
 | `PHR-TECH-002` | Product Development Memory | Completed | Technical / Workflow | `docs/technical/PHR-TECH-002-product-development-memory.md` |
 | `PHR-UX-006` | Lifecycle-Based Application Structure | Completed | UX / UI / Workflow / Architecture | `docs/ux/PHR-UX-006-application-information-architecture.md` |
+| `PHR-TECH-003` | Verified Repository Relocation To JarvisSSD | Completed | Technical / Infrastructure / Developer Workflow | `docs/technical/PHR-TECH-003-verified-repository-relocation.md` |
+| `PHR-WORKFLOW-003` | Shared Master Workflow Adoption | Completed | Workflow / Architecture / Developer Workflow | `docs/workflows/PHR-WORKFLOW-003-shared-master-workflow-adoption.md` |
+| `PHR-TECH-004` | Canonical Repository Reconciliation | Completed | Technical / Documentation / Developer Workflow | `docs/technical/PHR-TECH-004-canonical-repository-reconciliation.md` |
 
 ## Registry Rule
 

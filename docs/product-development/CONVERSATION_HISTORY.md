@@ -2,6 +2,81 @@
 
 This ledger preserves material product-development context across chat sessions. It does not claim to be a verbatim transcript unless a transcript is explicitly attached and identified. Never store credentials or unnecessary sensitive information here.
 
+## 2026-07-28 — Canonical Repository Reconciliation
+
+### User Intent
+
+- Confirm that development from JarvisSSD is connected to GitHub and adequately documented.
+- Reconcile the canonical repository after review found unpublished commits, uncommitted governance and relocation records, new shared-workflow artifacts, and stale completion metadata.
+
+### CTO Direction
+
+- Assign `PHR-WORKFLOW-003` to the shared master-workflow adoption and `PHR-TECH-004` to repository reconciliation.
+- Operate only from `/Volumes/JarvisSSD/Projects/Phronesis`; retain the former checkout and migration evidence as rollback.
+- Record npm as canonical, preserve pnpm artifacts locally without committing them, and exclude `.DS_Store` noise.
+- Reconcile documentation, verify the known baseline, create intentional commits, and publish ordinary `main` without rewriting history.
+
+### Acceptance State
+
+Implementation authorized under `PHR-STRUCT-20260728-001`; final verification, commit identifiers, and publication state pending.
+
+## 2026-07-26 — Autonomous Canonical Workflow Direction
+
+### Source
+
+Current CTO chat.
+
+### User Intent
+
+- Preserve the CTO -> Chief Architect -> Engineer workflow while eliminating manual role-by-role prompting.
+- Continue approved work autonomously and request user interaction only when critically risky input or a materially consequential product decision is required.
+
+### CTO Direction
+
+- Amend `PHR-WORKFLOW-002` so gates are evidence checkpoints rather than conversational permission prompts.
+- Automatically perform role handoffs, bounded remediation, conformance review, and final memory updates within the approved objective.
+- Preserve user control over irreversible destruction without recovery, production/public changes outside the objective, secrets and security, force-push/history rewriting, material financial or legal exposure, suspected loss/corruption, and unresolved choices that materially change the requested outcome.
+- Do not treat ordinary validation failures, reversible implementation choices, or recoverable migration phases as critical escalation by themselves.
+
+### Acceptance State
+
+Workflow governance updated and effective for subsequent Phronesis work. The role boundaries and documentation-first contract remain mandatory; repeated `Prompt`, `Implement`, `Review`, and `Final Review` commands are no longer required after objective approval.
+
+## 2026-07-26 — Repository Relocation Direction
+
+### Source
+
+Current CTO chat.
+
+### User Intent
+
+- Move Phronesis from `/Users/ramonnogueira/Developer/Phronesis` to `/Volumes/JarvisSSD/Projects/Phronesis` without manually moving or renaming project content.
+- Use the most reliable automated method and preserve a rollback path.
+
+### Confirmed State
+
+- The destination exists and is empty.
+- JarvisSSD has sufficient capacity.
+- The source Git repository is healthy, four commits ahead of `origin/main`, and contains two intentional untracked pnpm artifacts.
+- Dependency symlinks and complete local Git state require preservation.
+
+### CTO Direction
+
+- Assigned permanent Feature ID `PHR-TECH-003`.
+- `PHR-STRUCT-20260726-001` authorizes a Chief Architect migration specification and Engineer work order only.
+- The required strategy is staged copy, verification, atomic cutover, new-path validation, and retention of the source as rollback.
+- Migration execution, deletion of the source, push, publication, and external access remain unauthorized pending later CTO gates.
+
+### Acceptance State
+
+Chief Architect specification and Engineer prompt completed. The CTO approved the architecture and `PHR-STRUCT-20260726-002` authorizes execution phases 1–6: preflight, backup/evidence, staged copy, staged verification, atomic cutover, and offline validation. Because the active Codex task remains sandboxed to the old workspace, documentation-path updates are deferred until the user reopens Codex at the destination. Source cleanup, commit, push, publication, dependency installation, and network access remain unauthorized.
+
+Attempt one created and verified the Git bundle but produced an incomplete 1.6 MiB staging copy with only 53 files, an incomplete `.git`, missing dependency content, and broken symlinks. Attempt two correctly classified volatile Codex refs but Apple `rsync -E` again failed on healthy provenance-tagged Git content. Both failures were preserved under quarantine.
+
+The autonomous workflow issued bounded remediation through `PHR-STRUCT-20260726-005`: a macOS pax archive copied the repository while excluding only root `.next/`. Attempt three verified 42,248 files and 811,862,702 bytes, exact Git and content state, zero broken symlinks, matching required metadata, and no missing source extended attributes. `PHR-STRUCT-20260726-006` authorized and completed atomic cutover.
+
+The canonical checkout is now `/Volumes/JarvisSSD/Projects/Phronesis`. The old `/Users/ramonnogueira/Developer/Phronesis` checkout remains intact as rollback. Backup bundles, archives, evidence, and both failed-stage quarantines remain preserved. Offline validation passed Git integrity and lint; the full suite remains at the documented 142-pass/17-failure baseline, and standalone TypeScript retains the documented 27 `TS5097` errors. No dependency installation, network access, commit, push, deployment, source cleanup, or compatibility symlink occurred.
+
 ## 2026-07-22 — Checkpoint Stabilization Direction
 
 ### Source

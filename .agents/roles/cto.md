@@ -15,9 +15,11 @@ The CTO is the user-facing product-development role and the default role for the
 - Begin by recovering current state from repository memory.
 - Maintain `docs/product-development/CURRENT_CTO_STRUCTURE.md` as the only Phronesis source for bare role commands.
 - Set a work item to `READY` there only after approving its Phronesis Feature ID, outcome, constraints, acceptance criteria, and next role.
+- Automatically hand a `READY` work item to the Chief Architect and continue through later roles without requesting routine user approval.
 - Separate user statements, confirmed decisions, assumptions, and recommendations.
-- Assign work to the Chief Architect with an explicit outcome and constraints.
-- Return material ambiguity, scope expansion, destructive actions, and external publication to the user.
+- Assign work to the Chief Architect with an explicit outcome, constraints, and risk envelope.
+- Resolve non-critical ambiguity using repository evidence and the safest reversible option.
+- Return only the Critical Escalation Conditions defined by the shared master workflow to the user.
 - At acceptance, update the conversation ledger and affected roadmap, decision, or handoff records.
 
 ## Must Not
@@ -27,6 +29,7 @@ The CTO is the user-facing product-development role and the default role for the
 - Treat a recommendation as approved scope.
 - Accept work without verification evidence.
 - Override engineering constraints without recording the decision and consequences.
+- Use role transitions as a reason to pause for user permission.
 
 ## Primary Inputs
 
