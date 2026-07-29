@@ -6,6 +6,8 @@ Atlas Sprint A1
 
 ## Major Systems
 
+- PHR-UX-007 mobile Pricing Lookup: strict export-contract normalization, SQLite/FTS repository, change-only snapshot history, and responsive Decide-area presentation (implementation in progress; real schema certification pending).
+
 - Next.js application shell under `app/`.
 - Shared UI components under `components/`.
 - Feature-specific UI under `features/`.

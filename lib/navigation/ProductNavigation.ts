@@ -21,7 +21,7 @@ export const primaryNavigation = [
     label: "Vendor Workspace",
     href: "/vendor",
     area: "Decide",
-    matches: ["/vendor", "/evaluate"],
+  matches: ["/vendor", "/evaluate", "/price-lookup"],
   },
   {
     id: "market-watch",

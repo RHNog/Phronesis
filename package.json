@@ -6,8 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "evidence:web": "JARVIS_RUNTIME_EVIDENCE=1 next dev --webpack --hostname 127.0.0.1",
+    "evidence:preflight": "python3 tests/jarvis_runtime_evidence.py --preflight",
+    "evidence:validate": "python3 tests/jarvis_runtime_evidence.py --validate-evidence",
+    "evidence:validator-test": "python3 -m unittest discover -s tests -t tests -p jarvis_runtime_evidence_test.py -v",
     "lint": "eslint",
-    "test": "node --import ./tests/register-test-hooks.mjs --test tests/*.test.ts"
+    "test": "node --import ./tests/register-test-hooks.mjs --test tests/*.test.ts",
+    "pricing:import": "node --import ./tests/register-test-hooks.mjs scripts/import-pricing-export.ts"
   },
   "dependencies": {
     "justtcg-js": "^0.2.1",

@@ -1,5 +1,11 @@
 # Decisions
 
+## PHR-UX-007: Pricing Exports Are A Strict File Contract
+
+Decision: consume singles and sealed products through one normalized import path, using a versioned externally supplied schema contract, SKU plus condition identity, transactional idempotency, change-only SQLite history, configurable categories, and explicit missing-data states. Production column names must not be inferred without the authoritative sanitized Pricing Tool export and schema/version.
+
+Rationale: a field buying tool is useful only if delivered prices and uncertainty are trustworthy. Strict schema rejection and explicit unknown states are safer than silently accepting drift or fabricating sealed shipping.
+
 ## PHR-ARCH-010: Phronesis Is The Canonical Identity
 
 Decision: use Phronesis as the sole product and repository identity. Preserve Git history and application architecture; coordinate any external repository or checkout-directory rename separately.

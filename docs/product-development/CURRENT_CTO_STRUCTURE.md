@@ -5,37 +5,41 @@
 - Project: Phronesis
 - Canonical repository root: `/Volumes/JarvisSSD/Projects/Phronesis`
 - Rollback checkout: `/Users/ramonnogueira/Developer/Phronesis`
-- Feature ID: `PHR-TECH-004`
-- Governing workflow: shared `MASTER-CANONICAL-WORKFLOW` revision 1.2.0 via `.agents/WORKFLOW.md`
-- Document ID: `PHR-STRUCT-20260728-001`
-- Status: `COMPLETE`
+- Assignment ID: `019fa79e-34a1-75e9-9516-99399a01cbcf`
+- Feature ID: `PHR-UX-007`
+- Governing workflow: shared `MASTER-CANONICAL-WORKFLOW` revision 2.8.0 via `.agents/WORKFLOW.md`
+- Document ID: `PHR-STRUCT-20260729-001`
+- Status: `CANONICAL ADOPTION COMPLETE`
 
-## Final CTO Acceptance
+This repository-owned file is the only canonical Structure authority for Phronesis role commands.
 
-`REPOSITORY RECONCILED`
+## Accepted Outcome — Mobile Pricing Lookup
 
-The JarvisSSD checkout, migration and workflow records, npm ownership, local-only artifacts, intentional commit boundary, and GitHub publication are reconciled. Commit `b96450b` published the accepted local history through an ordinary fast-forward from `658afef`; no history rewriting occurred. The rollback checkout and migration evidence remain preserved.
+The approved Mobile Pricing Lookup gives Ramon a phone-first, one-lookup delivered-price reference for English Pokémon singles and sealed products, including condition-aware results, movement history, freshness, shipping treatment, and explicit uncertainty.
 
-## Boundaries
+The exact Product Review-approved implementation from assignment `019fa79e-34a1-75e9-9516-99399a01cbcf` has been reconciled onto the maintained JarvisSSD repository without replaying product planning, architecture, engineering, visual verification, or Product Review. The product implementation is unchanged from the reviewed patch; only the three concurrently advanced documentation ledgers were merged with the later repository-reconciliation record.
 
-- New development occurs only at the canonical JarvisSSD root.
-- Rollback deletion, compatibility symlinks, force push, history rewriting, dependency installation, deployment, and production mutation remain unauthorized.
-- Known behavioral and standalone TypeScript baseline debt remains visible.
+## Canonical Artifacts
 
-## Verification
+- Specification: `docs/ux/PHR-UX-007-mobile-pricing-lookup.md`
+- Designer direction: `docs/design/PHR-UX-007-mobile-pricing-lookup.md`
+- Implementation prompt: `docs/prompts/PHR-UX-007-implementation-prompt.md`
+- Engineer report: `docs/implementation-reports/PHR-UX-007-engineer-report.md`
+- Debugger recovery record: `docs/implementation-reports/PHR-UX-007-debugger-recovery.md`
+- Validation record: `docs/testing/PHR-UX-007-mobile-pricing-lookup-validation.md`
+- Release note: `docs/release-notes/PHR-UX-007.md`
 
-- Documentation, Feature IDs, prompts, validation, release notes, and memory agree.
-- npm is canonical; pnpm artifacts remain present locally and excluded through `.git/info/exclude`.
-- `.DS_Store` was restored and excluded from the checkpoint.
-- `git diff --check`, Git integrity, and lint passed.
-- Full suite: 159 tests, 142 passed, 17 known behavioral failures.
-- Standalone TypeScript: 27 known `TS5097` errors.
-- Ordinary GitHub push succeeded; final local/remote equality is required after this acceptance record is published.
+## Preserved Boundaries
+
+- Production import certification still requires a representative sanitized Pricing Tool export and its authoritative schema/version; columns are not guessed.
+- Deployment, credentials, purchases, external mutation, destructive operations, rollback deletion, force push, and history rewriting remain outside this adoption.
+- Known repository baseline debt remains visible and is not represented as a PHR-UX-007 regression.
 
 ## Next Gate
 
-The CTO may select the next product objective. New development occurs only from the JarvisSSD root.
+The adopted result may proceed to a separately authorized testable release or deployment. New product scope requires a new approved objective; it must not be folded into this completed assignment.
 
 ## Revision History
 
-- 2026-07-28: `PHR-STRUCT-20260728-001` reconciled the canonical repository and GitHub checkpoint.
+- 2026-07-29: `PHR-STRUCT-20260729-001` reconciled and adopted the Product Review-approved `PHR-UX-007` implementation into the canonical JarvisSSD repository while preserving later repository-governance history.
+- 2026-07-28: `PHR-STRUCT-20260728-001` reconciled the canonical repository and GitHub checkpoint under `PHR-TECH-004`.

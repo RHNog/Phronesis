@@ -1,4 +1,8 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source ".";
+@source "../components";
+@source "../features";
+@source "../lib";
 
 :root {
   --background: #ffffff;
@@ -8,8 +12,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +27,90 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Desktop browser zoom shrinks the CSS viewport while retaining a wider screen.
+   Reflow both field controls so neither can cover decision content. Ordinary
+   coarse-pointer phone layouts retain the approved sticky interaction. */
+.pricing-lookup[data-browser-zoom-reflow="true"] .pricing-search-panel,
+.pricing-lookup[data-browser-zoom-reflow="true"] .pricing-condition-panel {
+  position: static;
+}
+
+/* The serialized Worker receives an explicit zoom scenario because its
+   emulated pointer and screen metrics are not stable browser-zoom signals.
+   This affects only its non-shipping evidence route; ordinary phone captures
+   retain the approved sticky condition control. */
+.pricing-lookup[data-evidence-zoom-reflow="true"] .pricing-search-panel,
+.pricing-lookup[data-evidence-zoom-reflow="true"] .pricing-condition-panel {
+  position: static;
+}
+
+/* Browser zoom can report inconsistent devicePixelRatio/screen metrics during
+   hydration. A narrow fine-pointer viewport is the stable layout signal for
+   desktop zoom: reflow before React runs, while coarse-pointer phones retain
+   the approved sticky condition control. */
+@media (hover: hover) and (pointer: fine) and (max-width: 48rem) {
+  .pricing-lookup .pricing-search-panel,
+  .pricing-lookup .pricing-condition-panel {
+    position: static;
+  }
+}
+
+/* Long imported identity text must wrap instead of widening the viewport at
+   200%/400% zoom. */
+.pricing-lookup,
+.pricing-lookup section,
+.pricing-lookup li,
+.pricing-lookup [data-pricing-result-identity] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pricing-lookup [data-pricing-product-name],
+.pricing-lookup [data-pricing-printing-identity] {
+  overflow-wrap: anywhere;
+}
+
+/* Keep the field instrument stable when the browser requests less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .pricing-lookup,
+  .pricing-lookup * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Strengthen boundaries and secondary copy for browser high-contrast mode. */
+@media (prefers-contrast: more) {
+  .pricing-lookup {
+    --pricing-contrast-border: #d4d4d8;
+  }
+
+  .pricing-lookup .border-zinc-700,
+  .pricing-lookup .border-zinc-800 {
+    border-color: var(--pricing-contrast-border);
+  }
+
+  .pricing-lookup .text-zinc-400 {
+    color: #f4f4f5;
+  }
+}
+
+/* A resilient fallback for every native keyboard target in Price Lookup. */
+.pricing-lookup :focus,
+.pricing-lookup :focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px #09090b;
+}
+
+@media (forced-colors: active) {
+  .pricing-lookup :focus,
+  .pricing-lookup :focus-visible {
+    outline-color: Highlight;
+    box-shadow: none;
+  }
 }

@@ -1,4 +1,5 @@
 import AppShell from "@/components/ui/AppShell";
+import Link from "next/link";
 import { mockCards } from "@/data/mockCards";
 import {
   defaultStrategyId,
@@ -31,13 +32,15 @@ export default async function VendorPage({ searchParams }: VendorPageProps) {
   return (
     <AppShell commandPaletteContext="VendorWorkspace">
       <div className="w-full space-y-6">
-        <header>
-          <h2 className="text-3xl font-semibold tracking-tight text-white">
+        <header className="flex flex-wrap items-end justify-between gap-4">
+          <div><h2 className="text-3xl font-semibold tracking-tight text-white">
             Vendor Workspace
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
             Search, price, and evaluate an in-person buying opportunity.
           </p>
+          </div>
+          <Link href="/price-lookup" className="inline-flex min-h-11 items-center rounded-lg border border-cyan-800 bg-cyan-950/40 px-4 text-sm font-semibold text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300">Open price lookup</Link>
         </header>
 
         <VendorWorkspace

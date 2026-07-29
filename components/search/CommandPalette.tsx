@@ -231,7 +231,7 @@ export default function CommandPalette({ context, open, onClose }: CommandPalett
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-4 pt-[10vh] backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section aria-label="Global command palette" aria-modal="true" className="w-full max-w-2xl overflow-hidden rounded-xl border border-zinc-700 bg-zinc-950 shadow-2xl shadow-black" onKeyDown={handleKeyDown} role="dialog">
         <div className="flex items-center gap-3 border-b border-zinc-800 px-4">
-          <span className="text-zinc-500" aria-hidden="true">⌕</span>
+          <span className="text-zinc-400" aria-hidden="true">⌕</span>
           <input
             aria-autocomplete="list"
             aria-controls="command-palette-results"
@@ -246,7 +246,7 @@ export default function CommandPalette({ context, open, onClose }: CommandPalett
           <span className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-[11px] text-zinc-400">Cards</span>
         </div>
 
-        <div className="flex items-center justify-between border-b border-zinc-900 px-4 py-2 text-xs text-zinc-500">
+        <div className="flex items-center justify-between border-b border-zinc-900 px-4 py-2 text-xs text-zinc-400">
           <span>{step === "search" ? "Collectible" : `${identity?.name ?? "Collectible"} / ${step === "finish" ? "printing" : step}`}</span>
           {process.env.NODE_ENV === "development" ? <button className="hover:text-cyan-300" onClick={() => setDeveloperMode((value) => !value)} type="button">Developer</button> : null}
         </div>
@@ -277,7 +277,7 @@ export default function CommandPalette({ context, open, onClose }: CommandPalett
 
         {developerMode ? <div className="grid grid-cols-3 gap-2 border-t border-zinc-800 bg-zinc-900/70 px-4 py-3 text-[10px] text-zinc-400"><span>Provider: {identityDiagnostics?.providerSelected ?? "None"}</span><span>Provider confidence: {identityDiagnostics?.providerConfidence ?? 0}</span><span>Normalization: {identityDiagnostics?.normalizationSource ?? "None"}</span><span>Canonical: {identityDiagnostics?.canonicalIdentities[0] ?? "None"}</span><span>Fallback: {identityDiagnostics?.fallbackProvider ?? "None"}</span><span>Latency: {identityDiagnostics?.searchLatencyMs ?? 0}ms</span><span>Eligibility: {eligibilityCount}</span><span>Status: {identityDiagnostics?.status ?? "Idle"}</span><span>Image cache: PHR-UI-001</span></div> : null}
 
-        <footer className="flex items-center justify-between border-t border-zinc-800 px-4 py-3 text-xs text-zinc-500">
+        <footer className="flex items-center justify-between border-t border-zinc-800 px-4 py-3 text-xs text-zinc-400">
           <span>↑↓ Navigate · Enter Select · Tab Focus · Esc Back</span>
           {step === "condition" && variant ? <button className="rounded-md bg-cyan-300 px-3 py-2 font-semibold text-zinc-950 hover:bg-cyan-200" onClick={() => completeSelection()} type="button">{getWorkflowActionLabel(context)}</button> : <span>⌘K</span>}
         </footer>
@@ -291,5 +291,5 @@ function LoadingRows() {
 }
 
 function Message({ title, detail }: { title: string; detail: string }) {
-  return <div className="px-6 py-12 text-center"><p className="font-medium text-zinc-200">{title}</p><p className="mt-2 text-sm text-zinc-500">{detail}</p></div>;
+  return <div className="px-6 py-12 text-center"><p className="font-medium text-zinc-200">{title}</p><p className="mt-2 text-sm text-zinc-400">{detail}</p></div>;
 }

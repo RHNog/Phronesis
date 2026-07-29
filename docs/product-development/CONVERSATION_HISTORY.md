@@ -1,5 +1,62 @@
 # CTO Product Development Conversation History
 
+## 2026-07-28 — PHR-UX-007 Bridge-v34 VoiceOver Isolation Recovery
+
+The Product Owner directed canonical Debugger recovery for the preserved assignment `019fa79e-34a1-75e9-9516-99399a01cbcf`. The latest compact-native matrix was rejected as product-defect evidence because its first run was interrupted while system VoiceOver was enabled and its fourth run inherited that device-wide state, preventing ordinary scrolling semantics. Jarvis bridge v34 now verifies VoiceOver OFF before and after every serialized native scenario and enforces finite 120/180-second allowances. Debugger preserved every product change, the authority artifacts, and the assignment identity; no fresh reproducible Phronesis defect justified another source edit. Acceptance remains pending one fresh bridge-v34 matrix, followed by Designer and Chief Architect conformance if it passes.
+
+## 2026-07-28 — PHR-UX-007 Compact Native Evidence Recovery
+
+The latest authority-receipted Worker generation passed complete web semantic evidence and genuine native VoiceOver utterance capture. Its compact iPhone run failed `testSealedExpansion`: the expander remained at approximately y=904 below the viewport, eight 0.08-second drags left the scroll indicator at 0%, and accessibility exposed only the 20-point text-label frame. Debugger fingerprint `phronesis/runtime-evidence/policy-v31-compact-sealed-expander-noop-scroll-v1` now gives the label a full-width 44-point hit target and uses re-resolved interior coordinates with a 0.2-second hold inside the owning `ScrollView`. Focused pricing tests, runtime-evidence preflight, and diff validation passed; native runtime conformance remains unclaimed until serialized Mac Worker validation. No customer-facing pricing behavior changed. The preserved assignment then returns to Designer and Chief Architect conformance if fresh evidence passes.
+
+## 2026-07-28 — PHR-UX-007 Decision-Critical Spoken Semantics Repair
+
+Fresh conformance review accepted the Worker generation's authority and artifact integrity but found that web and native spoken evidence omitted decision-critical result content. Engineering added complete semantic result summaries on web, replaced truncation-prone combined native cards with separately traversable facts, strengthened genuine VoiceOver transcript assertions, and made the VoiceOver test plus complete result content mandatory in the Worker contract. Deterministic checks pass. Accessibility conformance remains unclaimed until a fresh internally coherent serialized Mac Worker generation supplies matching immutable artifacts and hashes.
+
+## 2026-07-28 — Mobile Pricing Lookup
+
+### Source And Intent
+
+Jarvis assignment `019fa79e-34a1-75e9-9516-99399a01cbcf` supplied an approved Product Brief, Chief Architect Structure, and Designer Direction. Ramon needs a phone-first, one-lookup delivered-price reference for English Pokémon singles and sealed product, with movement history and explicit uncertainty.
+
+### Decisions And Scope
+
+- Assigned `PHR-UX-007`.
+- One strict file-contract importer and row model serve singles and sealed products.
+- SKU plus condition is the price identity; collector number is search-only.
+- Change-only SQLite history, FTS-backed repository boundaries, configurable categories and thresholds, market-price movement, and strict sealed-shipping rules preserve the approved architecture.
+- Initial bounded configuration is `$20` asking-price threshold, seven-day stale threshold, and `$1.27` assumed single shipping.
+- No live extraction, recommendations, fees/profit, deployment, credentials, external mutation, or Pricing Tool change is authorized.
+
+### Dependencies And Acceptance State
+
+The required 200%/400% zoom remediation was strengthened after review: pointer-media emulation is no longer used as the Worker gate. Explicit non-shipping zoom scenario URLs place only the Singles condition panel in normal flow, preserving sticky search and ordinary sticky phone behavior. Focused tests, preflight, scoped lint, and production build pass; fresh serialized Mac Worker evidence is still required before zoom or final conformance can be claimed.
+
+Policy-v26 evidence was internally coherent but did not prove web reduced-motion or increased-contrast behavior and attributed contrast only to native evidence. Engineering added explicit scoped web media-query behavior and a stricter target contract requiring separate web diagnostics, screenshots, and web-scoped manifest results. Focused deterministic checks pass. Final conformance still requires a fresh serialized Mac Worker generation and matching authority receipt; prior evidence was not altered or promoted.
+
+Fresh host evidence subsequently reproduced `testSealedExpansion` at its pre-tap hittability assertion across accessibility-environment runs. The UI test had been swiping the application container rather than the SwiftUI scroll view that owns the expander. Engineering narrowly redirected the bounded scroll loop to that owning scroll view, used slow settled gestures, and added the runtime hierarchy to any remaining failure diagnostic. Product behavior is unchanged and fresh serialized Mac Worker execution remains required.
+
+Engineering implementation and deterministic repository checks are complete. Fresh host-preflight remediation added a local Next.js evidence entry point, a non-shipping executable iOS app/UI-test host, and a project-native machine-readable preflight harness. A subsequent visual retry produced no captures while preserving the assignment. Debugger recovery verified the evidence route in the compiled manifest, pinned the evidence server to Webpack, and added an explicit readiness contract for the isolated browser.
+
+The preserved policy-v10 evidence generation then misclassified web and iOS as not applicable despite listing both in its changed-surface plan and requested a local web entry point that already existed. Later generations reached the route and exercised native targets. Policy v14 is nevertheless rejected as final authority because its referenced server-log hash does not match the artifact, its focus artifact reports the Singles condition selector without visible focus while the manifest says the check passed, and its claimed web screen-reader pass cites only iOS accessibility nodes. Engineering added an explicit selector focus outline and made separate hashed web focus and screen-reader artifacts mandatory in the target contract. One fresh internally coherent serialized Mac Worker generation remains required, and no runtime pass is claimed. Production import certification is blocked on a representative sanitized Pricing Tool export plus authoritative schema/version; columns were not guessed. Locked dependencies were restored offline, relevant local Next.js 16.2.10 guides were read, focused tests/lint/build passed, and the full suite retained its documented 150-pass/17-failure baseline. Designer/Architect conformance and CTO acceptance have not occurred.
+
+Policy v15 then captured keyboard and focus traversal against Next.js's HTTP 500 error document after the evidence server logged an incomplete generated JSON read. Engineering isolated Worker output from ordinary Next.js activity by pairing `JARVIS_RUNTIME_EVIDENCE=1` with `.next-evidence` and made repository preflight enforce both sides. The rejected generation remains historical evidence; fresh Worker execution is still required.
+
+Fresh host review subsequently returned keyboard-operation and visible-focus failures without diagnostics. Engineering added a scoped focus-visible fallback with forced-colors behavior and made separate diagnostic-bearing keyboard and focus artifacts mandatory in the Worker contract. Deterministic checks pass, but runtime conformance remains unclaimed until the Worker produces one fresh coherent generation.
+
+Fresh host evidence later declared 18 native controls but recorded zero forward and reverse Tab targets, so visible focus had no reachable control to inspect. Engineering added a bounded fallback that waits for native Tab behavior and advances in logical DOM order only when focus remains unchanged, plus an opaque `:focus` treatment alongside `:focus-visible`. Repository preflight now guards both repairs. Fresh serialized Mac Worker evidence remains required; no runtime pass is inferred from source.
+
+The next fresh host generation still declared 18 controls but observed zero forward and reverse Tab targets. The unchanged-focus fallback had completed from a zero-delay `keydown` timer, allowing the serialized runner to inspect focus first. Engineering moved unchanged-focus completion to synchronous `keyup` handling while retaining native traversal and a short missing-keyup safeguard. The opaque focus treatment is unchanged. Deterministic verification passes, but keyboard and visible-focus conformance remain unclaimed pending fresh Worker evidence.
+
+Policy v20 again returned `keyboard_operation: fail` with `no diagnostic`. Because focused product checks passed and the host supplied no actionable product trace, Engineering did not mutate lookup behavior blindly. The Worker handoff now requires structured forward/reverse traversal and activation traces plus non-empty failure diagnostics naming the control, key, before/after states, and page URL. Fresh serialized evidence remains required.
+
+Policy v19 then returned contrast and keyboard-operation failures without top-level diagnostics. Its underlying artifacts demonstrated six command-palette labels at 4.12:1 and Space-key failures on Price Lookup disclosures. Engineering raised those labels to zinc-400, added explicit Space operation to the disclosures, and made non-null contrast, keyboard, and focus diagnostics mandatory. Focused checks and production build pass; a fresh serialized generation is still required.
+
+Designer review of a fresh coherent generation then found four bounded defects: only one sealed row appeared before the compact expander, the error scenario also rendered the loaded-category empty state, the search focus artifact lacked a visible indicator, and the large-iPhone evidence used only a special accessibility environment. Engineering restored the approved two-row sealed cap, made error and empty states mutually exclusive, added an explicit opaque search focus outline/ring, and split baseline versus accessibility large-iPhone Worker requirements. Fresh runtime conformance remains unclaimed pending the next serialized generation.
+
+The next host generation's top-level iOS summary obscured two actionable per-device failures. Its compact-iPhone log identified a too-small `pricing-search` hit area, while its failed VoiceOver transcript began in the unrelated Coin app because system assistive focus was not reset after service activation. Engineering gave the evidence-host search field an explicit 44-point target, reactivated and foreground-verified Phronesis before VoiceOver traversal, and added preflight guards for both repairs. Focused checks, lint, and the production build pass; the full-suite and standalone-TypeScript baselines are unchanged. Fresh serialized Mac Worker evidence remains required, so no runtime acceptance is claimed.
+
+Fresh web zoom evidence then failed at 200% and 400%. Its diagnostics ruled out horizontal overflow and isolated every failure to the sticky Singles condition panel covering the Singles heading or first card identity. Engineering added a fine-pointer CSS reflow fallback for the Worker's 640px and 320px desktop zoom viewports while retaining sticky behavior on coarse-pointer phones, updated the evidence contract, and added deterministic guards. Fresh serialized Mac Worker evidence remains required; rejected artifacts are diagnostic history only.
+
 This ledger preserves material product-development context across chat sessions. It does not claim to be a verbatim transcript unless a transcript is explicitly attached and identified. Never store credentials or unnecessary sensitive information here.
 
 ## 2026-07-28 — Canonical Repository Reconciliation
@@ -19,6 +76,32 @@ This ledger preserves material product-development context across chat sessions.
 ### Acceptance State
 
 Accepted. Documentation and ownership were reconciled under `PHR-TECH-003`, `PHR-WORKFLOW-003`, and `PHR-TECH-004`. Lint, diff hygiene, and Git integrity passed. The supported suite remained at 142/159 with the same 17 behavioral failures, and standalone TypeScript retained the same 27 `TS5097` errors. Commit `b96450b` published the four previously local July commits plus the reconciliation checkpoint to `origin/main` through an ordinary fast-forward. No force push, history rewrite, deployment, dependency installation, rollback cleanup, pnpm deletion, or secret publication occurred.
+
+## 2026-07-28 — PHR-UX-007 Development-Chrome And Stale-Date Repair
+
+Authoritative rendered review rejected otherwise coherent evidence because the Next.js development indicator covered narrow-layout product controls and result text, while the stale scenario showed conflicting category and row snapshot dates. Engineering disabled the indicator only for the isolated evidence runtime, aligned every visible stale fixture price with category-scoped freshness, and added deterministic source/preflight guards. Fresh serialized Mac Worker evidence remains required; production import certification remains blocked on the authoritative sanitized Pricing Tool export schema.
+
+## 2026-07-28 — PHR-UX-007 Sealed Expansion Evidence Repair
+
+Fresh serialized Mac Worker evidence failed the native sealed-expansion UI test. Engineering preserved the assignment and repaired the bounded evidence interaction: the disclosure now toggles explicitly, and the test re-resolves its stable accessibility identifier after SwiftUI inserts the third card and changes the control's frame. Repository-owned deterministic checks cover the contract. No runtime conformance is claimed until the Mac Worker reruns the native target; production import certification remains blocked on the authoritative sanitized export schema.
+
+The next serialized run still failed `testSealedExpansion`. The remaining stale handle was the element captured before the bounded scroll: the test re-resolved only after activation. Engineering now queries by stable identifier throughout scrolling, re-resolves immediately before tapping, asserts the control is hittable and exposes the expected `collapsed` label/value, then independently re-resolves the post-insertion `expanded` state. Deterministic source checks cover both re-resolution boundaries. Fresh serialized evidence remains required.
+
+## 2026-07-28 — PHR-UX-007 Policy-v31 Evidence-Contract Repair
+
+Designer conformance confirmed the authority receipt and all referenced hashes but rejected incomplete zoom diagnostics, a development-runtime-contaminated and duplicate-heavy web spoken sequence, and inconsistent accessible names in keyboard/focus artifacts. Engineering added explicit names for the lookup and condition controls and strengthened the repository-owned Worker contract to require complete zoom measurements and clean product-rooted semantic reading order. No rejected evidence was promoted or modified. Fresh serialized Mac Worker evidence remains required, and production import certification remains blocked on the authoritative sanitized export schema.
+
+Fresh review then showed the zoom artifacts could still report pass with null controls and empty identities while exposing only aggregate zero-intersection counts. Engineering added stable SKU/value probes to every rendered result identity and replaced prose-only zoom diagnostics with an exact schema requiring unique visible controls, positive control/result/field bounds, at least one non-empty identity, and explicit search/condition intersection outcomes for every identity. Runtime conformance remains unclaimed pending a new coherent Worker generation and matching authority receipt.
+
+## 2026-07-28 — PHR-UX-007 Mandatory Zoom Remediation
+
+Fresh review required a source change rather than another evidence-only retry. Engineering found that zoom CSS made search static while its rendered element still carried sticky utility classes, allowing host tooling to continue treating it as an overlay. The bounded repair now structurally removes sticky classes from both search and the Singles condition panel during 200%/400% reflow, exposes separate reflow markers, and requires fresh Worker diagnostics to prove both controls are static/non-sticky, non-intersecting, and free of horizontal overflow. Ordinary phone layouts retain sticky controls. Runtime conformance remains unclaimed pending a fresh serialized Mac Worker generation.
+
+Fresh review kept 200% and 400% zoom failed because sticky/fixed controls could obscure decision content. Engineering found the current zoom CSS also put search into normal flow, contradicting the approved Designer Direction. The bounded repair now keeps search sticky while structurally removing sticky positioning only from the Singles condition panel. Deterministic tests and the Worker preflight require sticky search, static/non-sticky condition state, zero condition/result-identity intersections, and zero horizontal overflow. Focused tests, scoped lint, preflight, diff validation, and production build pass; the established full-suite and standalone-TypeScript baselines are unchanged. Runtime zoom conformance remains unclaimed until a fresh internally coherent serialized Mac Worker generation supplies matching immutable artifacts and hashes.
+
+The final Engineer pass found obsolete search selectors still present in all zoom CSS paths and a Worker contract that still expected `position: static`. Those selectors were removed, the contract now requires sticky search plus zero search/result intersections, and the conflicting Designer text was reconciled. Focused tests passed 10/10, preflight/scoped lint/diff/build passed, and the full suite and standalone-TypeScript checks reproduced the established 152-pass/17-failure and 27-`TS5097` baselines. Fresh Worker evidence remains the conformance gate.
+
+The next authority-receipted generation reached the Price Lookup and passed every recorded web and iOS check except web screen-reader output, whose source accessibility tree was empty and named zero nodes. Debugger recovery identified the repository contract error: `Accessibility.getPartialAXTree` with relatives disabled cannot supply a descendant subtree. The contract now uses `Accessibility.queryAXTree` on the unique `.pricing-lookup` backend node within the navigation page-target session, records query provenance, reconstructs AX order from relationships, and rejects empty output. No customer-facing behavior changed; the same assignment returns to serialized Mac Worker validation before Designer conformance.
 
 ## 2026-07-26 — Autonomous Canonical Workflow Direction
 

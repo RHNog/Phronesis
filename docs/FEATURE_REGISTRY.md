@@ -29,6 +29,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-TECH-003` | Verified Repository Relocation To JarvisSSD | Completed | Technical / Infrastructure / Developer Workflow | `docs/technical/PHR-TECH-003-verified-repository-relocation.md` |
 | `PHR-WORKFLOW-003` | Shared Master Workflow Adoption | Completed | Workflow / Architecture / Developer Workflow | `docs/workflows/PHR-WORKFLOW-003-shared-master-workflow-adoption.md` |
 | `PHR-TECH-004` | Canonical Repository Reconciliation | Completed | Technical / Documentation / Developer Workflow | `docs/technical/PHR-TECH-004-canonical-repository-reconciliation.md` |
+| `PHR-UX-007` | Mobile Pricing Lookup | Completed | Product / UX / UI / Database / Import Workflow | `docs/ux/PHR-UX-007-mobile-pricing-lookup.md` |
 
 ## Registry Rule
 

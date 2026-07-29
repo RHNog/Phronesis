@@ -200,3 +200,6 @@ Engineering roadmap: `docs/ROADMAP.md`
 Business strategy: `docs/BUSINESS_STRATEGY.md`
 
 Idea ledger: `docs/IDEA_LEDGER.md`
+# Active Delivery — PHR-UX-007 Mobile Pricing Lookup
+
+Build the phone-first English Pokémon buying reference from the existing Pricing Tool export contract. Engineering is active; authoritative export schema binding, durable hosted persistence, Mac Worker runtime evidence, and production deployment are later gates.
