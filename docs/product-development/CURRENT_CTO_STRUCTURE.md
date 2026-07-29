@@ -19,6 +19,8 @@ The approved Mobile Pricing Lookup gives Ramon a phone-first, one-lookup deliver
 
 The exact Product Review-approved implementation from assignment `019fa79e-34a1-75e9-9516-99399a01cbcf` has been reconciled onto the maintained JarvisSSD repository without replaying product planning, architecture, engineering, visual verification, or Product Review. The product implementation is unchanged from the reviewed patch; only the three concurrently advanced documentation ledgers were merged with the later repository-reconciliation record.
 
+Canonical implementation commit: `8de8670e67c5df2a8dd1c8da93d218610ac40210`.
+
 ## Canonical Artifacts
 
 - Specification: `docs/ux/PHR-UX-007-mobile-pricing-lookup.md`
