@@ -53,5 +53,5 @@ Before product-development work:
 3. Read the current CTO Structure, product memory, active role supplement, and design context when applicable.
 4. Apply the master workflow. Local guidance may add project-specific facts or stricter controls but may not silently weaken or override it.
 
-Canonical workflow revision adopted: `1.7.0`.
+Canonical workflow revision adopted: `2.8.0`.
 <!-- END:master-canonical-workflow -->
