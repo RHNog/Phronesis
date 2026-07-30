@@ -1,5 +1,6 @@
 import type { Card, CardImageUrls } from "@/types/card";
 import type { SearchMatch } from "@/lib/pricing/types";
+import { artworkIdentityName } from "@/lib/pricing/domain";
 
 function normalized(value: string | null | undefined): string {
   return (value ?? "")
@@ -68,6 +69,19 @@ function normalizedCollectorNumber(value: string | null | undefined): string {
 function usableArtwork(card: Card): CardImageUrls | undefined {
   const urls = card.imageUrls ?? (card.imageUrl ? { normal: card.imageUrl } : undefined);
   return urls && (urls.small || urls.normal || urls.large) ? urls : undefined;
+}
+
+export function providerArtworkQuery(
+  categoryId: string,
+  query: string,
+  matches: SearchMatch[],
+): string {
+  const firstSingleName = matches.find((match) => match.productType === "SINGLE")?.name;
+  if (!firstSingleName || !new Set(["pokemon-en", "lorcana-en"]).has(categoryId)) return query;
+  const identityName = artworkIdentityName(firstSingleName);
+  return categoryId === "lorcana-en"
+    ? identityName.replace(/\s+[-\u2013\u2014]\s+/g, " ")
+    : identityName;
 }
 
 export function resolveSnapshotArtwork(

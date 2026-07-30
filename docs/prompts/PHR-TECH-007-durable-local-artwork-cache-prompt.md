@@ -31,3 +31,21 @@ Implement a secure, ignored, same-origin local cache for already-authorized rast
 - One Piece results can show strictly matched official images through the durable local cache.
 - Repeated image retrieval performs no second provider request.
 - Invalid inputs fail closed and all existing pricing behavior remains available.
+
+## 2026-07-30 Bounded Remediation Amendment
+
+### Objective
+
+Restore artwork that the strict resolver already maps but the durable cache cannot fetch, and make partial Lorcana catalogue searches produce a provider-compatible lookup without broadening identity matching.
+
+### Required Work
+
+- Send a stable, non-secret Phronesis User-Agent with provider image downloads; preserve the existing allowlist, redirect, size, MIME, signature, checksum, and atomic-write controls.
+- Derive Pokémon and Lorcana provider queries from the first exact single-card catalogue result. For Lorcana only, replace the TCGplayer name/version separator with whitespace before querying Lorcast.
+- Keep strict set and collector-number resolution unchanged; do not attach an image based only on text similarity.
+- Add focused regression tests for request headers and Lorcana query formation.
+- Verify the exact Mox Opal and Mulan examples through the running local/private service, then prewarm only the verified mapped thumbnails.
+
+### Constraints
+
+No pricing, buying-decision, inventory, provider-account, credential, schedule, Riftbound, public-deployment, provider-wide bulk-download, force-push, history-rewrite, or destructive-cache change.

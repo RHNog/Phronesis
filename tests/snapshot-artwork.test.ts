@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
+import { providerArtworkQuery, resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
 import type { SearchMatch } from "../lib/pricing/types";
 import type { Card } from "../types/card";
 
@@ -42,6 +42,17 @@ function card(overrides: Partial<Card> = {}): Card {
 test("snapshot artwork resolves a verified set and collector-number match", () => {
   const artwork = resolveSnapshotArtwork([match()], [card()]);
   assert.equal(artwork["snapshot:bolt"].small, "https://cards.scryfall.io/small/front/a/b/bolt.jpg");
+});
+
+test("provider artwork query expands the first exact Lorcana result without punctuation that Lorcast treats as syntax", () => {
+  const matches = [match({
+    categoryId: "lorcana-en",
+    name: "Mulan - Resourceful Recruit",
+    setName: "Winterspell",
+    collectorNumber: "69/204",
+  })];
+  assert.equal(providerArtworkQuery("lorcana-en", "Mulan - res", matches), "Mulan Resourceful Recruit");
+  assert.equal(providerArtworkQuery("magic-en", "Mox Opal", matches), "Mox Opal");
 });
 
 test("snapshot artwork tolerates presentation-only name differences when printing identity is unique", () => {

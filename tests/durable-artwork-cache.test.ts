@@ -18,12 +18,14 @@ const avif = new Uint8Array([
 test("durable artwork cache writes an approved raster once and serves local bytes thereafter", async () => {
   const root = await mkdtemp(join(tmpdir(), "phronesis-artwork-"));
   let calls = 0;
+  let requestHeaders: Headers | undefined;
   try {
     const createCache = () => new DurableArtworkCache({
       root,
       now: () => new Date("2026-07-29T23:00:00-04:00"),
-      fetcher: async () => {
+      fetcher: async (_input, init) => {
         calls += 1;
+        requestHeaders = new Headers(init?.headers);
         return new Response(png, { status: 200, headers: { "Content-Type": "image/png" } });
       },
     });
@@ -31,6 +33,8 @@ test("durable artwork cache writes an approved raster once and serves local byte
     const first = await createCache().get(source);
     const second = await createCache().get(source);
     assert.equal(calls, 1);
+    assert.equal(requestHeaders?.get("user-agent"), "Phronesis/0.1 (durable artwork cache)");
+    assert.match(requestHeaders?.get("accept") ?? "", /image\/jpeg/);
     assert.deepEqual([...second.bytes], [...first.bytes]);
     assert.equal(first.metadata.authorization, "PRODUCT_OWNER_ATTESTED_BANDAI");
     const metadataFiles = (await import("node:fs/promises")).readdir(root, { recursive: true });
