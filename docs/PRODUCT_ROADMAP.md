@@ -4,7 +4,8 @@
 
 - Exact LigaMagic/TCGplayer cross-market identity bridge: Product Review Ready.
 - Brazilian vending evidence inside Vendor Workspace: Product Review Ready.
-- Two-way US↔Brazil arbitrage verification: Product Review Ready; operational ranking awaits owner FX/cost configuration.
+- Official BCB PTAX closing buy/sell automation: Completed and operational (`PHR-API-007`).
+- Two-way US↔Brazil arbitrage verification: Product Review Ready; operational ranking now awaits only owner cost configuration and executable availability.
 - Daily LigaMagic scheduling remains separately gated.
 
 ## Immediate Product Direction — Cross-Game Buying And Intelligence

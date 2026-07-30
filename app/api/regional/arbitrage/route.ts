@@ -3,7 +3,10 @@ import {
   authorizeRequest,
 } from "@/lib/auth/requestAuthorization";
 import type { ArbitrageDirection } from "@/lib/regional/domain";
-import { getRegionalIntelligenceRepository } from "@/lib/regional/server";
+import {
+  getRegionalIntelligenceRepository,
+  getRegionalProfileWithOfficialFx,
+} from "@/lib/regional/server";
 
 export const runtime = "nodejs";
 
@@ -14,6 +17,7 @@ export async function GET(request: Request) {
     200,
     Math.max(1, Number(new URL(request.url).searchParams.get("limit") ?? 50)),
   );
+  await getRegionalProfileWithOfficialFx();
   return Response.json({
     candidates: getRegionalIntelligenceRepository().listCandidates(limit),
   });

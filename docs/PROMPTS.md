@@ -1,5 +1,11 @@
 # Prompt History
 
+# Official BCB PTAX Exchange Rate — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-009` authorizes `PHR-API-007`: automatically retrieve and retain official BCB PTAX closing buy/sell rates, apply the direction-correct side to regional economics, preserve last-good data, and replace manual FX controls with provenance-rich evidence.
+
+Implementation prompt: `docs/prompts/PHR-API-007-official-bcb-ptax-fx-prompt.md`.
+
 ## Regional Vending And Arbitrage Intelligence — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-008` authorized exact cross-market identity (`PHR-ARCH-013`), regional evidence/cost truth (`PHR-API-006`), vending guidance (`PHR-UX-013`), and two-way availability verification (`PHR-WORKFLOW-007`).

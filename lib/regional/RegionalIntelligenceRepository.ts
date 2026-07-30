@@ -82,8 +82,13 @@ export class RegionalIntelligenceRepository {
       CREATE TABLE IF NOT EXISTS regional_cost_profile (
         id INTEGER PRIMARY KEY CHECK(id = 1),
         brl_per_usd REAL,
+        brl_per_usd_buy REAL,
+        brl_per_usd_sell REAL,
         fx_observed_at TEXT,
+        fx_fetched_at TEXT,
+        fx_last_attempt_at TEXT,
         fx_source TEXT,
+        fx_last_error TEXT,
         us_to_brazil_fixed_brl REAL,
         us_to_brazil_percent REAL,
         brazil_to_us_fixed_usd REAL,
@@ -105,6 +110,21 @@ export class RegionalIntelligenceRepository {
       );
       CREATE INDEX IF NOT EXISTS regional_verification_product ON regional_availability_verification(category_id, sku, direction, observed_at DESC);
     `);
+    this.ensureProfileColumn("brl_per_usd_buy", "REAL");
+    this.ensureProfileColumn("brl_per_usd_sell", "REAL");
+    this.ensureProfileColumn("fx_fetched_at", "TEXT");
+    this.ensureProfileColumn("fx_last_attempt_at", "TEXT");
+    this.ensureProfileColumn("fx_last_error", "TEXT");
+  }
+
+  private ensureProfileColumn(name: string, type: "REAL" | "TEXT"): void {
+    const columns = this.database
+      .prepare("PRAGMA table_info(regional_cost_profile)")
+      .all() as Array<{ name: string }>;
+    if (!columns.some((column) => column.name === name))
+      this.database.exec(
+        `ALTER TABLE regional_cost_profile ADD COLUMN ${name} ${type}`,
+      );
   }
 
   getProfile(): RegionalCostProfile {
@@ -113,8 +133,13 @@ export class RegionalIntelligenceRepository {
       .get() as Sql;
     return {
       brlPerUsd: numberOrNull(row.brl_per_usd),
+      brlPerUsdBuy: numberOrNull(row.brl_per_usd_buy),
+      brlPerUsdSell: numberOrNull(row.brl_per_usd_sell),
       fxObservedAt: stringOrNull(row.fx_observed_at),
+      fxFetchedAt: stringOrNull(row.fx_fetched_at),
+      fxLastAttemptAt: stringOrNull(row.fx_last_attempt_at),
       fxSource: stringOrNull(row.fx_source),
+      fxLastError: stringOrNull(row.fx_last_error),
       usToBrazilFixedBrl: numberOrNull(row.us_to_brazil_fixed_brl),
       usToBrazilPercent: numberOrNull(row.us_to_brazil_percent),
       brazilToUsFixedUsd: numberOrNull(row.brazil_to_us_fixed_usd),
@@ -128,12 +153,17 @@ export class RegionalIntelligenceRepository {
     const updatedAt = new Date().toISOString();
     this.database
       .prepare(
-        `UPDATE regional_cost_profile SET brl_per_usd=?, fx_observed_at=?, fx_source=?, us_to_brazil_fixed_brl=?, us_to_brazil_percent=?, brazil_to_us_fixed_usd=?, brazil_to_us_percent=?, updated_at=? WHERE id=1`,
+        `UPDATE regional_cost_profile SET brl_per_usd=?, brl_per_usd_buy=?, brl_per_usd_sell=?, fx_observed_at=?, fx_fetched_at=?, fx_last_attempt_at=?, fx_source=?, fx_last_error=?, us_to_brazil_fixed_brl=?, us_to_brazil_percent=?, brazil_to_us_fixed_usd=?, brazil_to_us_percent=?, updated_at=? WHERE id=1`,
       )
       .run(
         profile.brlPerUsd,
+        profile.brlPerUsdBuy,
+        profile.brlPerUsdSell,
         profile.fxObservedAt,
+        profile.fxFetchedAt,
+        profile.fxLastAttemptAt,
         profile.fxSource,
+        profile.fxLastError,
         profile.usToBrazilFixedBrl,
         profile.usToBrazilPercent,
         profile.brazilToUsFixedUsd,
@@ -141,6 +171,46 @@ export class RegionalIntelligenceRepository {
         updatedAt,
       );
     return this.getProfile();
+  }
+
+  updateCosts(
+    costs: Pick<
+      RegionalCostProfile,
+      | "usToBrazilFixedBrl"
+      | "usToBrazilPercent"
+      | "brazilToUsFixedUsd"
+      | "brazilToUsPercent"
+    >,
+  ): RegionalCostProfile {
+    return this.updateProfile({ ...this.getProfile(), ...costs });
+  }
+
+  recordOfficialFx(input: {
+    buyBrlPerUsd: number;
+    sellBrlPerUsd: number;
+    observedAt: string;
+    fetchedAt: string;
+    source: string;
+  }): RegionalCostProfile {
+    return this.updateProfile({
+      ...this.getProfile(),
+      brlPerUsd: input.sellBrlPerUsd,
+      brlPerUsdBuy: input.buyBrlPerUsd,
+      brlPerUsdSell: input.sellBrlPerUsd,
+      fxObservedAt: input.observedAt,
+      fxFetchedAt: input.fetchedAt,
+      fxLastAttemptAt: input.fetchedAt,
+      fxSource: input.source,
+      fxLastError: null,
+    });
+  }
+
+  recordOfficialFxFailure(attemptedAt: string): RegionalCostProfile {
+    return this.updateProfile({
+      ...this.getProfile(),
+      fxLastAttemptAt: attemptedAt,
+      fxLastError: "Official BCB PTAX refresh is temporarily unavailable.",
+    });
   }
 
   evidenceFor(categoryId: string, sku: string): RegionalMarketEvidence | null {
@@ -313,7 +383,9 @@ export class RegionalIntelligenceRepository {
           row.sku,
           direction,
         ) as Sql | undefined;
-        const verifiedAt = verification ? String(verification.observed_at) : null;
+        const verifiedAt = verification
+          ? String(verification.observed_at)
+          : null;
         const verified = Boolean(
           verifiedAt && Date.now() - Date.parse(verifiedAt) <= 24 * 3_600_000,
         );
@@ -497,6 +569,18 @@ function validateProfile(profile: RegionalCostProfile): void {
     (!Number.isFinite(profile.brlPerUsd) || profile.brlPerUsd <= 0)
   )
     throw new Error("BRL per USD must be positive.");
+  for (const value of [profile.brlPerUsdBuy, profile.brlPerUsdSell])
+    if (value !== null && (!Number.isFinite(value) || value <= 0))
+      throw new Error("Official BRL per USD quotes must be positive.");
+  if (
+    profile.brlPerUsdBuy !== null &&
+    profile.brlPerUsdSell !== null &&
+    profile.brlPerUsdBuy > profile.brlPerUsdSell
+  )
+    throw new Error("Official PTAX buy cannot exceed sell.");
   if (profile.fxObservedAt && Number.isNaN(Date.parse(profile.fxObservedAt)))
     throw new Error("FX observation time must be valid.");
+  for (const value of [profile.fxFetchedAt, profile.fxLastAttemptAt])
+    if (value && Number.isNaN(Date.parse(value)))
+      throw new Error("FX retrieval time must be valid.");
 }

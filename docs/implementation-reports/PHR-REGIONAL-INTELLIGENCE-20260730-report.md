@@ -10,7 +10,7 @@ Phronesis now converts the verified LigaMagic snapshot into exact Brazilian mark
 
 - Versioned exact cross-market identity bridge with source fingerprints, rejection reasons, idempotent rebuild, and Textless quarantine.
 - Regional evidence DAL preserving Compra/Venda semantics and freshness.
-- Owner-managed timestamped BRL/USD and direction-specific cost profile in Settings.
+- Automatically refreshed official BCB PTAX BRL/USD evidence and owner-managed direction-specific cost profile in Settings (`PHR-API-007`).
 - Brazilian quick-sale, market, patient, and dealer-buy benchmark views for exact selected printings.
 - US→Brazil and Brazil→US economics with gross cost, net profit, ROI, and blocker states.
 - Append-only executable availability records requiring price, quantity, counterparty label, observation time, and notes.
@@ -22,6 +22,6 @@ Phronesis now converts the verified LigaMagic snapshot into exact Brazilian mark
 
 ## Remaining Product Configuration
 
-FX and cross-border costs are intentionally empty in the operational profile. The owner must enter current, sourced assumptions in Settings before Phronesis calculates net arbitrage. This is product configuration, not an implementation defect.
+Official FX is operational. Cross-border fixed and variable costs remain intentionally empty in the operational profile. The owner must enter those business-specific assumptions in Settings before Phronesis calculates net arbitrage. This is product configuration, not an implementation defect.
 
 The 03:00 LigaMagic export schedule remains disabled.

@@ -15,8 +15,13 @@ import { RegionalIntelligenceRepository } from "../lib/regional/RegionalIntellig
 
 const completeProfile: RegionalCostProfile = {
   brlPerUsd: 5,
+  brlPerUsdBuy: 5,
+  brlPerUsdSell: 5,
   fxObservedAt: new Date().toISOString(),
+  fxFetchedAt: new Date().toISOString(),
+  fxLastAttemptAt: new Date().toISOString(),
   fxSource: "Owner observation",
+  fxLastError: null,
   usToBrazilFixedBrl: 10,
   usToBrazilPercent: 10,
   brazilToUsFixedUsd: 2,
@@ -73,6 +78,54 @@ test("arbitrage remains gated until explicit costs and availability exist", () =
     availabilityVerified: true,
   });
   assert.equal(actionable.state, "ACTIONABLE");
+});
+
+test("arbitrage uses the conservative direction-specific official PTAX side", () => {
+  const profile = {
+    ...completeProfile,
+    brlPerUsdBuy: 4,
+    brlPerUsdSell: 5,
+    fxSource: "Banco Central do Brasil PTAX — closing bulletin",
+  };
+  const inbound = calculateArbitrage({
+    direction: "US_TO_BRAZIL",
+    profile,
+    usPriceUsd: 10,
+    brazilPriceBrl: 100,
+    identityVerified: true,
+    sourcesFresh: true,
+    availabilityVerified: false,
+  });
+  assert.equal(inbound.totalCost, 65);
+  const outbound = calculateArbitrage({
+    direction: "BRAZIL_TO_US",
+    profile,
+    usPriceUsd: 100,
+    brazilPriceBrl: 40,
+    identityVerified: true,
+    sourcesFresh: true,
+    availabilityVerified: false,
+  });
+  assert.equal(outbound.totalCost, 12.5);
+});
+
+test("official FX failure retains the last-good PTAX quote", () => {
+  const database = new DatabaseSync(":memory:");
+  const repository = new RegionalIntelligenceRepository(database);
+  repository.recordOfficialFx({
+    buyBrlPerUsd: 5.0733,
+    sellBrlPerUsd: 5.0739,
+    observedAt: "2026-07-30T16:07:32.344Z",
+    fetchedAt: "2026-07-30T18:00:00.000Z",
+    source: "Banco Central do Brasil PTAX — closing bulletin",
+  });
+  const failed = repository.recordOfficialFxFailure("2026-07-30T19:00:00.000Z");
+  assert.equal(failed.brlPerUsdBuy, 5.0733);
+  assert.equal(failed.brlPerUsdSell, 5.0739);
+  assert.equal(failed.fxFetchedAt, "2026-07-30T18:00:00.000Z");
+  assert.equal(failed.fxLastAttemptAt, "2026-07-30T19:00:00.000Z");
+  assert.match(failed.fxLastError ?? "", /temporarily unavailable/);
+  database.close();
 });
 
 test("repository adopts one exact identity and quarantines Textless", () => {

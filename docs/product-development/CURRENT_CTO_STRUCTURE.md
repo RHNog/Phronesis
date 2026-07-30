@@ -1,5 +1,27 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Official BCB PTAX Exchange Rate
+
+- Assignment: `PHR-OFFICIAL-FX-20260730`
+- Document ID: `PHR-STRUCT-20260730-009`
+- Status: `CTO ACCEPTED — PRIVATE DEPLOYMENT VERIFIED`
+- Feature: `PHR-API-007`
+- Objective: replace manual BRL/USD input with automatically refreshed official BCB PTAX closing buy/sell evidence and direction-correct regional calculations.
+
+### Authorization And Boundaries
+
+Repository documentation/code/database migration, read-only official BCB requests, deterministic tests/builds, private runtime review, bounded remediation, ordinary feature-branch checkpointing, and private-service restart after verification are authorized autonomously.
+
+New dependencies, unofficial FX fallback, user-controlled provider URLs, credentials, transactions, public deployment, LigaMagic schedule activation, destructive migration, force push, and history rewriting are prohibited.
+
+### Acceptance
+
+Official buy/sell quotes and provenance refresh automatically at most hourly; weekends and holidays resolve to the latest close; last-good values survive failure; calculations use the conservative direction-specific quote; Settings makes FX read-only; all repository and responsive runtime gates pass.
+
+### Verified Result
+
+The private service automatically persisted the official 2026-07-30 PTAX close at buy `5.0733` and sell `5.0739` BRL/USD with BCB provenance. Repeated reads retained the same retrieval timestamp, proving hourly throttling; forced refresh passed. All 245 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, desktop review, 390px regional-panel review, and browser-console checks pass. Direction-specific costs remain unset and therefore continue to gate actionable arbitrage. The LigaMagic schedule remains disabled.
+
 ## Active Assignment — Regional Vending And Arbitrage Intelligence
 
 - Assignment: `PHR-REGIONAL-INTELLIGENCE-20260730`

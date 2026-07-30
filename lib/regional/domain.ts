@@ -33,8 +33,13 @@ export type RegionalMarketEvidence = {
 
 export type RegionalCostProfile = {
   brlPerUsd: number | null;
+  brlPerUsdBuy: number | null;
+  brlPerUsdSell: number | null;
   fxObservedAt: string | null;
+  fxFetchedAt: string | null;
+  fxLastAttemptAt: string | null;
   fxSource: string | null;
+  fxLastError: string | null;
   usToBrazilFixedBrl: number | null;
   usToBrazilPercent: number | null;
   brazilToUsFixedUsd: number | null;
@@ -110,14 +115,27 @@ export function calculateArbitrage(input: {
   if (!positive(input.usPriceUsd) || !positive(input.brazilPriceBrl)) {
     return blocked("IDENTITY_VERIFIED", "Both regional prices are required.");
   }
-  if (!positive(input.profile.brlPerUsd) || !input.profile.fxObservedAt) {
+  const exchangeRate =
+    input.direction === "US_TO_BRAZIL"
+      ? (input.profile.brlPerUsdSell ?? input.profile.brlPerUsd)
+      : (input.profile.brlPerUsdBuy ?? input.profile.brlPerUsd);
+  if (!positive(exchangeRate) || !input.profile.fxObservedAt) {
     return blocked(
       "IDENTITY_VERIFIED",
       "A timestamped BRL/USD observation is required.",
     );
   }
-  if (Date.now() - Date.parse(input.profile.fxObservedAt) > 48 * 3_600_000) {
-    return blocked("STALE", "The BRL/USD observation is older than 48 hours.");
+  const officialPtax = input.profile.fxSource?.startsWith(
+    "Banco Central do Brasil PTAX",
+  );
+  const maximumAge = officialPtax ? 7 * 86_400_000 : 48 * 3_600_000;
+  if (Date.now() - Date.parse(input.profile.fxObservedAt) > maximumAge) {
+    return blocked(
+      "STALE",
+      officialPtax
+        ? "The latest official PTAX close is older than seven days."
+        : "The BRL/USD observation is older than 48 hours.",
+    );
   }
 
   let grossProceeds: number;
@@ -130,7 +148,7 @@ export function calculateArbitrage(input: {
       return blocked("IDENTITY_VERIFIED", "US-to-Brazil costs are incomplete.");
     }
     grossProceeds = input.brazilPriceBrl;
-    const acquisitionBrl = input.usPriceUsd * input.profile.brlPerUsd;
+    const acquisitionBrl = input.usPriceUsd * exchangeRate;
     totalCost =
       acquisitionBrl * (1 + input.profile.usToBrazilPercent / 100) +
       input.profile.usToBrazilFixedBrl;
@@ -142,7 +160,7 @@ export function calculateArbitrage(input: {
       return blocked("IDENTITY_VERIFIED", "Brazil-to-US costs are incomplete.");
     }
     grossProceeds = input.usPriceUsd;
-    const acquisitionUsd = input.brazilPriceBrl / input.profile.brlPerUsd;
+    const acquisitionUsd = input.brazilPriceBrl / exchangeRate;
     totalCost =
       acquisitionUsd * (1 + input.profile.brazilToUsPercent / 100) +
       input.profile.brazilToUsFixedUsd;

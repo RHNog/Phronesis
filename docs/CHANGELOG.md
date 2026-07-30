@@ -4,6 +4,8 @@
 
 ### Added
 
+- Automatic official Banco Central do Brasil PTAX closing buy/sell rates with direction-correct arbitrage costing, last-good retention, and read-only Settings provenance (`PHR-API-007`).
+
 - Exact LigaMagic/TCGplayer reconciliation, regional Compra/Venda evidence, explicit FX/cost profiles, Brazilian vending guidance, and verified two-way arbitrage (`PHR-ARCH-013`, `PHR-API-006`, `PHR-UX-013`, `PHR-WORKFLOW-007`).
 
 - User-scoped server-backed Market Watch, one-action Vendor tracking, verified-checkpoint refresh, and separate estimate/listing/observed-sale evidence (`PHR-WORKFLOW-005`, `PHR-API-003`).

@@ -14,7 +14,7 @@ API / Market Evidence / Database / Business Rule
 
 ## Objective
 
-Expose LigaMagic and TCGplayer observations as separate, timestamped evidence and calculate cross-market economics only from explicit exchange-rate and cost inputs.
+Expose LigaMagic and TCGplayer observations as separate, timestamped evidence and calculate cross-market economics only from official exchange-rate evidence and explicit cost inputs.
 
 ## Problem Statement
 
@@ -22,13 +22,13 @@ Raw `Compra` and `Venda` fields are valuable but semantically easy to reverse. C
 
 ## Proposed Solution
 
-Persist regional evidence with source semantics and freshness, plus owner-managed FX/cost profiles. `Compra` is Brazilian consumer retail evidence. `Venda` is a Brazilian store buy benchmark, not a guaranteed executable offer. Calculations expose gross and net spreads, missing-input reasons, and staleness.
+Persist regional evidence with source semantics and freshness, plus official BCB PTAX FX and owner-managed cost profiles. `Compra` is Brazilian consumer retail evidence. `Venda` is a Brazilian store buy benchmark, not a guaranteed executable offer. Calculations expose gross and net spreads, missing-input reasons, and staleness.
 
 ## Functional Requirements
 
 - Preserve low, average, and high LigaMagic `Compra` and `Venda` observations in BRL.
 - Preserve TCGplayer market/listing/delivered observations in USD.
-- Store timestamped BRL-per-USD observations with source label and operator notes.
+- Store automatically refreshed official BCB PTAX closing buy/sell observations with provenance and last-good retention under `PHR-API-007`.
 - Store direction-specific costs for US-to-Brazil and Brazil-to-US analysis.
 - Never convert an unknown cost to zero implicitly.
 - Return minimal authorized DTOs from a server-only DAL.
@@ -53,8 +53,9 @@ Persist regional evidence with source semantics and freshness, plus owner-manage
 - `PHR-ARCH-013`
 - `PHR-API-005`
 - `PHR-API-003`
+- `PHR-API-007`
 
 ## Traceability
 
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
-- Last modified: 2026-07-30.
+- Last modified: 2026-07-30 for official BCB PTAX automation.

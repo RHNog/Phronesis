@@ -1,5 +1,11 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Automatic Official BCB PTAX FX
+
+The Product Owner directed Phronesis to make regional FX automatic using official information. `PHR-API-007` now retrieves the latest Banco Central do Brasil PTAX closing USD quotation on authorized regional use, at most hourly, and preserves separate buy and sell evidence. US→Brazil costing uses the official sell quote; Brazil→US costing uses the official buy quote. The provider searches an eight-day period for weekend/holiday resilience, validates the response, coalesces concurrent work, and preserves last-good evidence with a sanitized error on failure.
+
+The private JarvisSSD deployment persisted the July 30 close at buy 5.0733 and sell 5.0739 BRL/USD. Settings makes FX provenance read-only and retains only operating costs as owner inputs. All 245 tests, standalone TypeScript, lint, production build, diff hygiene, live API, desktop, 390px regional-panel, forced-refresh, throttle, and browser-console checks pass. Same-session Chief Architect conformance passes and CTO accepts the increment under the autonomous canonical workflow. Direction-specific costs remain unset, so actionable arbitrage is still gated. No LigaMagic schedule, credential, transaction, dependency, unofficial provider, or public deployment was introduced.
+
 ## 2026-07-30 — LigaMagic Authenticated Export Snapshot
 
 The Product Owner defined LigaMagic pricing semantics (`Compra` is the consumer price paid to a store; `Venda` is the store's buy offer) and authorized one supervised export plus a complete non-scheduled dry run across the account's collections. The initial Playwright-launched persistent browser could not support the required login. Read-only inspection of the existing TCGPlayer Pricing Tool established its proven boundary: ordinary Chrome owns manual authentication, and Playwright attaches over CDP only after the saved session exists. Phronesis adopted that pattern without reading or copying Safari/default-browser cookies.

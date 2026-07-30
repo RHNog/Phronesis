@@ -19,7 +19,7 @@ Verdict: **PASS — PRODUCT REVIEW READY**
 
 - Compra renders as Brazilian consumer retail evidence.
 - Venda renders as a dealer-buy benchmark with an explicit executable-offer warning.
-- Missing or older-than-48-hour FX, incomplete direction costs, stale source data, and missing availability each prevent `ACTIONABLE`.
+- Missing or stale official FX, incomplete direction costs, stale source data, and missing availability each prevent `ACTIONABLE`; `PHR-API-007` subsequently made PTAX automatic.
 - A verification record supplies the executable acquisition price used in recalculation; it is not a boolean override.
 - Verification is rejected until the candidate is fully costed.
 
