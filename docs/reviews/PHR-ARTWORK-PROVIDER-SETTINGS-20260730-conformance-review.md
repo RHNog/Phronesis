@@ -1,0 +1,15 @@
+# Artwork And Provider Settings Conformance Review
+
+Date: 2026-07-30
+Assignment: `PHR-ARTWORK-PROVIDER-SETTINGS-20260730`
+Verdict: **CONFORMS — CTO ACCEPTED; SECRET REGISTRATION GATED**
+
+This is a same-session review and is not represented as independent approval.
+
+- Magic artwork discovery uses exact visible names instead of user-added search qualifiers.
+- Provider set-label drift is crossed only for Magic when exact name and collector number leave one candidate; ambiguity remains an honest placeholder.
+- The reported Store Championship Foil SKU resolves to the verified Scryfall UUID and renders through the same-origin durable cache.
+- Settings is now the provider control/status surface and exposes no credential values.
+- Compatibility mode cannot mutate provider credentials. Authenticated owner-only encrypted registration remains a separate security work order.
+- Employee activation instructions preserve OPTIONAL-first verification before REQUIRED enforcement.
+- 234/234 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private endpoint checks, visual checks, and browser console checks pass.

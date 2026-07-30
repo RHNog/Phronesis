@@ -90,10 +90,12 @@ export function providerArtworkQueries(
   matches: SearchMatch[],
   limit = 8,
 ): string[] {
-  if (!new Set(["pokemon-en", "lorcana-en"]).has(categoryId)) return [providerArtworkQuery(categoryId, query, matches)];
+  if (!new Set(["magic-en", "pokemon-en", "lorcana-en"]).has(categoryId)) return [providerArtworkQuery(categoryId, query, matches)];
   return [...new Set(matches
     .filter((match) => match.productType === "SINGLE")
-    .map((match) => providerArtworkQuery(categoryId, query, [match]))
+    .map((match) => categoryId === "magic-en"
+      ? artworkIdentityName(match.name)
+      : providerArtworkQuery(categoryId, query, [match]))
     .filter((value) => value.length >= 2))]
     .slice(0, limit);
 }
@@ -115,10 +117,17 @@ export function resolveSnapshotArtwork(
       ? setCandidates.filter((card) => normalizedCollectorNumber(card.number) === number)
       : setCandidates.filter((card) => normalized(card.name) === name);
     const exactNames = printingCandidates.filter((card) => normalized(card.name) === name);
+    const identityCandidates = cards.filter(
+      (card) =>
+        normalized(card.name) === name &&
+        (!number || normalizedCollectorNumber(card.number) === number),
+    );
     const selected = exactNames.length === 1
       ? exactNames[0]
       : number && printingCandidates.length === 1
         ? printingCandidates[0]
+        : match.categoryId === "magic-en" && printingCandidates.length === 0 && identityCandidates.length === 1
+          ? identityCandidates[0]
         : undefined;
     const urls = selected ? usableArtwork(selected) : undefined;
     if (urls) artwork[match.sku] = urls;

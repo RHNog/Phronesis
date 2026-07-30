@@ -155,7 +155,14 @@ export default function AccessManagement({ active }: { active: boolean }) {
       <h3 id="access-management-title" className="text-lg font-semibold text-white">People and module access</h3>
       {!active ? (
         <div className="mt-3 rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
-          Identity remains in compatibility mode. Run the documented database migration, configure the private GitHub OAuth values and owner invitation, then set <code>PHRONESIS_AUTH_MODE=REQUIRED</code> to activate access management.
+          <p className="font-semibold">Employee login readiness checklist</p>
+          <ol className="mt-2 list-decimal space-y-2 pl-5">
+            <li>Create a private GitHub OAuth App with callback <code>https://ramons-macbook-pro.tailaa2d39.ts.net:9443/api/auth/callback/github</code>.</li>
+            <li>Set <code>BETTER_AUTH_URL</code>, <code>BETTER_AUTH_SECRET</code>, <code>GITHUB_CLIENT_ID</code>, and <code>GITHUB_CLIENT_SECRET</code> in <code>.env.local</code>.</li>
+            <li>Run <code>npm run auth:migrate</code> and <code>npm run auth:bootstrap-owner -- your-github-email</code>.</li>
+            <li>Start with <code>PHRONESIS_AUTH_MODE=OPTIONAL</code>, restart Phronesis, and verify the owner GitHub sign-in.</li>
+            <li>Create the employee code here, test the activation link and assigned modules, then promote the mode to <code>REQUIRED</code>.</li>
+          </ol>
         </div>
       ) : (
         <>

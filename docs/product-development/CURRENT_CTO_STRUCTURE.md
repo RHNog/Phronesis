@@ -1,5 +1,16 @@
 # Current Phronesis CTO Structure
 
+## Active Remediation — Artwork And Provider Settings
+
+- Assignment: `PHR-ARTWORK-PROVIDER-SETTINGS-20260730`
+- Document ID: `PHR-STRUCT-20260730-006`
+- Status: `CTO ACCEPTED — SECURE REGISTRATION GATE PRESERVED`
+- Features: `PHR-API-004-R1`, `PHR-UX-012`
+- Objective: resolve the exact Urza's Saga Store Championship thumbnail and establish Settings as the canonical provider connection/control surface.
+- Authorized: bounded artwork matching remediation, Settings UI, authentication readiness guidance, documentation, tests/build, private restart, local checkpoint.
+- Security boundary: provider secret entry remains prohibited until required owner authentication and an encrypted owner-only credential store have a reviewed work order. No compatibility-mode secret mutation is permitted.
+- Verified result: exact Urza's Saga Store Championship Foil artwork returns `OPERATIONAL` and renders through the durable local image route; Settings shows provider health and the employee-login readiness checklist. Full suite 234/234, standalone TypeScript, lint, production build, diff, private runtime, and browser-console gates pass.
+
 ## Active Assignment — Card-Show Operations
 
 - Assignment: `PHR-CARD-SHOW-OPERATIONS-20260730`

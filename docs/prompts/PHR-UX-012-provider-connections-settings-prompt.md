@@ -1,0 +1,3 @@
+# PHR-UX-012 Engineer Work Order
+
+Add a Provider Connections section to Settings that displays live secret-free health for JustTCG, eBay Browse, and CardTrader, names the required server configuration, and identifies whether secure credential registration is unlocked. Extend the inactive People and Module Access surface with the exact private GitHub OAuth callback and phased activation commands. Do not accept, return, log, or persist provider credentials until authenticated owner-only encrypted storage has a separate security-reviewed work order. Preserve compatibility mode and all existing provider behavior.

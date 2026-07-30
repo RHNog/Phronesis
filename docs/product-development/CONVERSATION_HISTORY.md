@@ -1,5 +1,11 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Store Championship Artwork, Provider Settings, And Login Gate
+
+The Product Owner reported that intelligent catalogue search found the correct Store Championship Urza's Saga but its thumbnail remained blank, directed provider registration/enabling into Settings, and asked what was required to activate Employee login. The artwork failure came from using the user's qualified search text against Scryfall and then requiring equal set labels between Scryfall and the pricing catalogue.
+
+`PHR-API-004-R1` now queries Magic by each visible canonical name and permits provider set-label drift only when exact name plus collector number yields one candidate. The Foil Store Championship SKU now returns and renders the verified Scryfall artwork; the separate Winner product remains a placeholder because no unique provider artwork is available. `PHR-UX-012` makes Settings the provider status/control surface and adds the exact employee-login checklist. Credential entry remains intentionally locked until authenticated owner-only encrypted storage exists, because compatibility mode treats every tailnet request as administrator. Full verification passes 234/234 plus type, lint, build, diff, private runtime, visual, and console gates. External GitHub OAuth application creation and credentials remain the user-controlled activation gate.
+
 ## 2026-07-30 — Card-Show Operations Improvement Program
 
 The Product Owner approved autonomous implementation of the previously discussed improvement brief: repair Market Watch refresh, collect target/notes before manual tracking, lay module-scoped employee-login foundations, show recommended offer immediately, add an event purchase ledger with mixed Bulk, and recover missing sealed/First Partner artwork without false identity matches.

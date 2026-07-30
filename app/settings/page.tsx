@@ -1,6 +1,7 @@
 import AppShell from "@/components/ui/AppShell";
 import BusinessProfilesSettings from "@/features/settings/components/BusinessProfilesSettings";
 import AccessManagement from "@/components/auth/AccessManagement";
+import ProviderConnections from "@/components/settings/ProviderConnections";
 import { getAuthRuntimeStatus } from "@/lib/auth/config";
 
 export default function SettingsPage() {
@@ -18,6 +19,7 @@ export default function SettingsPage() {
         </header>
 
         <BusinessProfilesSettings />
+        <ProviderConnections secureRegistrationReady={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode} />
         <AccessManagement active={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode} />
       </div>
     </AppShell>

@@ -1,5 +1,11 @@
 # Prompt History
 
+## PHR-UX-012 Provider Connections Settings — 2026-07-30
+
+Centralize secret-free provider health and activation guidance in Settings while gating credential entry on authenticated owner-only encrypted storage.
+
+Canonical work order: `docs/prompts/PHR-UX-012-provider-connections-settings-prompt.md`.
+
 ## PHR Card-Show Operations Program — 2026-07-30
 
 Approved autonomous implementation program covering refresh integrity (`PHR-TECH-010`), intentional manual watch creation (`PHR-UX-010`), employee activation and module assignment (`PHR-ARCH-012`), offer-first buying decisions (`PHR-UX-011`), the event purchase ledger (`PHR-WORKFLOW-006`), and sealed/special-product artwork coverage (`PHR-API-004`).

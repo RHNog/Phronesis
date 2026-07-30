@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-07-30 — Artwork And Provider Settings Remediation
+
+Repaired the exact Store Championship Urza's Saga thumbnail by separating user search terms from provider identity queries and allowing only unique Magic name/collector reconciliation across provider set labels. Added secret-free provider status and Employee login activation guidance to Settings. All 234 tests and remaining gates pass; secure credential registration remains gated on owner login.
+
 ## 2026-07-30 — Card-Show Operations Program
 
 Delivered six integrated event-readiness slices: truthful catalogue-first price tracking, intentional manual watch setup, immediate recommended offers, module-scoped employee activation foundations, persistent exact/Bulk purchase receipts, and exact local recovery for missing product artwork. Repaired the private catalogue observer and live Urza's Saga refresh. Verification passes 232/232 tests, standalone TypeScript, lint, build, diff, and private runtime gates; required authentication and unconfigured external providers remain gated.

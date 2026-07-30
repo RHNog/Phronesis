@@ -204,3 +204,15 @@ test("the manual watch composer and offer-first checkout are wired into producti
   assert.match(vendor, /VendorCheckout/);
   assert.match(vendor, /Owner image override/);
 });
+
+test("Settings owns provider health and employee-login readiness without accepting secrets", () => {
+  const settings = readFileSync(new URL("../app/settings/page.tsx", import.meta.url), "utf8");
+  const providers = readFileSync(new URL("../components/settings/ProviderConnections.tsx", import.meta.url), "utf8");
+  const access = readFileSync(new URL("../components/auth/AccessManagement.tsx", import.meta.url), "utf8");
+  assert.match(settings, /ProviderConnections/);
+  assert.match(providers, /provider-health/);
+  assert.match(providers, /Secret entry remains locked/);
+  assert.doesNotMatch(providers, /type=["']password/);
+  assert.match(access, /api\/auth\/callback\/github/);
+  assert.match(access, /PHRONESIS_AUTH_MODE=OPTIONAL/);
+});

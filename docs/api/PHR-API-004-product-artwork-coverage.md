@@ -65,3 +65,4 @@ Separate card-art resolution from product-art resolution. Prefer an authoritativ
 - Related implementation prompt: `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`.
 - Related tests: `docs/testing/PHR-CARD-SHOW-OPERATIONS-20260730-validation.md`.
 - Last modified: 2026-07-30.
+- Remediation: Magic provider queries now use exact visible card names, and unique name/collector identity may bridge provider set-label drift without weakening Pokémon or ambiguous-printing safeguards.

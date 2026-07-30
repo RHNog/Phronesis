@@ -43,6 +43,7 @@
 - Added tailnet-only phone review through `PHR-TECH-005`, with loopback binding, HTTPS, persistent recovery, mobile verification, and no public deployment.
 
 ### Added
+- Provider Connections and Employee login readiness sections in Settings, with live secret-free provider state and the exact private GitHub callback.
 
 - Desktop-first Snapshot-Powered Vendor Workspace for Magic, Pokémon, and One Piece.
 - Read-only observer of verified Pricing Update Tool catalogue completions.
@@ -67,6 +68,9 @@ The format is inspired by "Keep a Changelog".
 - Card-show operations program: catalogue-first watch refresh, manual watch composer, offer-first decisions, module-scoped employee activation, persistent exact/Bulk vendor checkout, and exact-SKU curated product artwork.
 - Automatic eBay client-credentials token exchange with bounded in-memory token reuse.
 - Node-safe watch/evidence repository boundary so the four-daily catalogue observer remains operational outside Next.js.
+
+### Fixed
+- Magic artwork lookup now strips search qualifiers by querying each visible canonical card name and safely resolves the unique Store Championship Urza's Saga despite provider set-label drift.
 - Canonical Phronesis identity, three-role product-development workflow, CTO conversation ledger, and documentation-practices review.
 - Sprint 33 Provider Replay & Fixture Infrastructure under `lib/providers/replay/`.
 - Replay modes `LIVE`, `REPLAY`, and `AUTO` controlled by `PROVIDER_MODE` in local development.

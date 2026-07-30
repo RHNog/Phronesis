@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { providerArtworkQuery, resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
+import { providerArtworkQueries, providerArtworkQuery, resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
 import type { SearchMatch } from "../lib/pricing/types";
 import type { Card } from "../types/card";
 
@@ -42,6 +42,38 @@ function card(overrides: Partial<Card> = {}): Card {
 test("snapshot artwork resolves a verified set and collector-number match", () => {
   const artwork = resolveSnapshotArtwork([match()], [card()]);
   assert.equal(artwork["snapshot:bolt"].small, "https://cards.scryfall.io/small/front/a/b/bolt.jpg");
+});
+
+test("Magic artwork queries exact visible names and tolerates unique provider set-label drift", () => {
+  const storePromo = match({
+    name: "Urza's Saga",
+    setName: "Game Day & Store Championship Promos",
+    collectorNumber: "29",
+    sku: "tcg:store-promo",
+    variant: "Foil",
+  });
+  assert.deepEqual(
+    providerArtworkQueries("magic-en", "urza's saga store", [storePromo]),
+    ["Urza's Saga"],
+  );
+  const artwork = resolveSnapshotArtwork(
+    [storePromo],
+    [card({
+      id: "scryfall:store-promo",
+      name: "Urza's Saga",
+      set: "Store Championships 2024",
+      number: "29",
+      imageUrls: { small: "https://cards.scryfall.io/small/front/store-promo.jpg" },
+    })],
+  );
+  assert.equal(artwork[storePromo.sku].small, "https://cards.scryfall.io/small/front/store-promo.jpg");
+  assert.deepEqual(
+    resolveSnapshotArtwork([storePromo], [
+      card({ id: "first", name: "Urza's Saga", set: "Store Championships 2024", number: "29" }),
+      card({ id: "second", name: "Urza's Saga", set: "Other Promo", number: "29" }),
+    ]),
+    {},
+  );
 });
 
 test("provider artwork query expands the first exact Lorcana result without punctuation that Lorcast treats as syntax", () => {

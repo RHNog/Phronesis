@@ -49,6 +49,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-UX-011` | Offer-First Buying Decision | Completed — CTO Accepted | UX / Decision Intelligence / Vendor Workflow | `docs/ux/PHR-UX-011-offer-first-buying-decision.md` |
 | `PHR-WORKFLOW-006` | Event Purchase Ledger | Completed — CTO Accepted | Workflow / Database / Vendor Operations / Audit | `docs/workflows/PHR-WORKFLOW-006-event-purchase-ledger.md` |
 | `PHR-API-004` | Product Artwork Coverage | Completed — CTO Accepted | API / Artwork / Identity / Local Storage | `docs/api/PHR-API-004-product-artwork-coverage.md` |
+| `PHR-UX-012` | Provider Connections Settings | Completed — CTO Accepted; Secure Registration Gated | UX / Settings / Provider Governance / Security | `docs/ux/PHR-UX-012-provider-connections-settings.md` |
 
 ## Registry Rule
 

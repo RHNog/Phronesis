@@ -1,5 +1,12 @@
 # Roadmap
 
+## Accepted Remediation: Artwork And Provider Settings
+
+- Completed: exact-name Magic artwork discovery and unique Store Championship set-label reconciliation.
+- Completed: provider connection health and registration requirements in Settings.
+- Completed: in-app employee-login readiness checklist with the exact private GitHub callback.
+- Gated next slice: authenticated owner-only encrypted credential registration after Employee login is live.
+
 ## Accepted: Card-Show Operations
 
 - Implemented: catalogue-first watch refresh, unique legacy identity reconciliation, truthful failure state, and secret-free provider health (`PHR-TECH-010`).

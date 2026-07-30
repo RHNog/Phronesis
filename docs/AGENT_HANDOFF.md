@@ -1,5 +1,12 @@
 # Agent Handoff
 
+## CTO Accepted — Artwork And Provider Settings
+
+- The Store Championship Foil Urza's Saga thumbnail now renders; the separate Winner product remains an honest placeholder because it has no uniquely verified provider artwork.
+- Settings reports JustTCG configured/disabled, eBay unconfigured, and CardTrader unconfigured without exposing values.
+- The exact owner login activation checklist is visible in Settings. External GitHub OAuth app creation and credential entry are the remaining user-controlled gate.
+- Verification is green at 234/234 tests plus type/lint/build/runtime/browser gates. No provider credential or external account was created.
+
 ## CTO Accepted — Card-Show Operations
 
 - `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, and `PHR-API-004` are implemented under `PHR-STRUCT-20260730-005`.
