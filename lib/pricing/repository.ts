@@ -2,10 +2,22 @@ import { createHash } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { getActivePricingCategory, pricingLookupConfig } from "@/config/pricingLookup";
-import { deliveredPriceFor, isStale, normalizeSearchText, queryClearlyTargetsSingle, searchScore } from "@/lib/pricing/domain";
+import {
+  getActivePricingCategory,
+  pricingLookupConfig,
+} from "@/config/pricingLookup";
+import {
+  deliveredPriceFor,
+  isStale,
+  normalizeSearchText,
+  queryClearlyTargetsSingle,
+  searchScore,
+} from "@/lib/pricing/domain";
 import type { PricingExportContract } from "@/lib/pricing/contract";
-import { parsePricingExport, PricingContractError } from "@/lib/pricing/contract";
+import {
+  parsePricingExport,
+  PricingContractError,
+} from "@/lib/pricing/contract";
 import type {
   NormalizedPricingRow,
   PriceState,
@@ -39,7 +51,8 @@ export class PricingRepository {
   readonly database: DatabaseSync;
 
   constructor(databasePath = ":memory:") {
-    if (databasePath !== ":memory:") mkdirSync(dirname(databasePath), { recursive: true });
+    if (databasePath !== ":memory:")
+      mkdirSync(dirname(databasePath), { recursive: true });
     this.database = new DatabaseSync(databasePath);
     this.database.exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;");
     this.migrate();
@@ -153,55 +166,103 @@ export class PricingRepository {
     this.ensureColumn("pricing_category_state", "contract_version", "TEXT");
   }
 
-  private ensureColumn(table: string, column: string, definition: string): void {
-    const columns = this.database.prepare(`PRAGMA table_info(${table})`).all() as SqlRow[];
+  private ensureColumn(
+    table: string,
+    column: string,
+    definition: string,
+  ): void {
+    const columns = this.database
+      .prepare(`PRAGMA table_info(${table})`)
+      .all() as SqlRow[];
     if (!columns.some((candidate) => candidate.name === column)) {
-      this.database.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+      this.database.exec(
+        `ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`,
+      );
     }
   }
 
-  importCsv(categoryId: string, csv: string, contract: PricingExportContract): ImportResult {
+  importCsv(
+    categoryId: string,
+    csv: string,
+    contract: PricingExportContract,
+  ): ImportResult {
     const category = getActivePricingCategory(categoryId);
-    if (!category) throw new PricingContractError(`Category ${categoryId} is not active. Edit configuration before importing.`);
+    if (!category)
+      throw new PricingContractError(
+        `Category ${categoryId} is not active. Edit configuration before importing.`,
+      );
     if (contract.status !== "AUTHORITATIVE") {
-      throw new PricingContractError("Production imports require an AUTHORITATIVE schema contract. TEST_ONLY contracts are accepted only by deterministic fixtures.");
+      throw new PricingContractError(
+        "Production imports require an AUTHORITATIVE schema contract. TEST_ONLY contracts are accepted only by deterministic fixtures.",
+      );
     }
     const sourceHash = createHash("sha256").update(csv).digest("hex");
-    return this.importNormalizedRows(parsePricingExport(csv, contract, categoryId), {
-      categoryId,
-      sourceHash,
-      contractVersion: contract.contractVersion,
-      sourceSchemaVersion: contract.sourceSchemaVersion,
-    });
+    return this.importNormalizedRows(
+      parsePricingExport(csv, contract, categoryId),
+      {
+        categoryId,
+        sourceHash,
+        contractVersion: contract.contractVersion,
+        sourceSchemaVersion: contract.sourceSchemaVersion,
+      },
+    );
   }
 
-  importTestCsv(categoryId: string, csv: string, contract: PricingExportContract): ImportResult {
-    if (!getActivePricingCategory(categoryId)) throw new PricingContractError(`Category ${categoryId} is not active.`);
+  importTestCsv(
+    categoryId: string,
+    csv: string,
+    contract: PricingExportContract,
+  ): ImportResult {
+    if (!getActivePricingCategory(categoryId))
+      throw new PricingContractError(`Category ${categoryId} is not active.`);
     const sourceHash = createHash("sha256").update(csv).digest("hex");
-    return this.importNormalizedRows(parsePricingExport(csv, contract, categoryId), {
-      categoryId,
-      sourceHash,
-      contractVersion: contract.contractVersion,
-      sourceSchemaVersion: contract.sourceSchemaVersion,
-    });
+    return this.importNormalizedRows(
+      parsePricingExport(csv, contract, categoryId),
+      {
+        categoryId,
+        sourceHash,
+        contractVersion: contract.contractVersion,
+        sourceSchemaVersion: contract.sourceSchemaVersion,
+      },
+    );
   }
 
   hasImport(metadata: NormalizedImportMetadata): boolean {
-    return Boolean(this.database.prepare(
-      "SELECT 1 FROM pricing_catalogue_receipts WHERE category_id = ? AND source_hash = ? AND contract_version = ? AND checkpoint_key = ?",
-    ).get(metadata.categoryId, metadata.sourceHash, metadata.contractVersion, this.receiptKey(metadata)));
+    return Boolean(
+      this.database
+        .prepare(
+          "SELECT 1 FROM pricing_catalogue_receipts WHERE category_id = ? AND source_hash = ? AND contract_version = ? AND checkpoint_key = ?",
+        )
+        .get(
+          metadata.categoryId,
+          metadata.sourceHash,
+          metadata.contractVersion,
+          this.receiptKey(metadata),
+        ),
+    );
   }
 
   private receiptKey(metadata: NormalizedImportMetadata): string {
     return metadata.checkpointAt ?? `source:${metadata.sourceHash}`;
   }
 
-  importNormalizedRows(rows: Iterable<NormalizedPricingRow>, metadata: NormalizedImportMetadata): ImportResult {
+  importNormalizedRows(
+    rows: Iterable<NormalizedPricingRow>,
+    metadata: NormalizedImportMetadata,
+  ): ImportResult {
     if (!getActivePricingCategory(metadata.categoryId)) {
-      throw new PricingContractError(`Category ${metadata.categoryId} is not active.`);
+      throw new PricingContractError(
+        `Category ${metadata.categoryId} is not active.`,
+      );
     }
     if (this.hasImport(metadata)) {
-      return { status: "ALREADY_IMPORTED", sourceHash: metadata.sourceHash, rowsRead: 0, productsUpserted: 0, snapshotsInserted: 0 };
+      return {
+        status: "ALREADY_IMPORTED",
+        sourceHash: metadata.sourceHash,
+        rowsRead: 0,
+        productsUpserted: 0,
+        snapshotsInserted: 0,
+      };
     }
     let snapshotDate: string | null = null;
     let rowsRead = 0;
@@ -242,48 +303,92 @@ export class PricingRepository {
       for (const row of rows) {
         rowsRead += 1;
         if (row.categoryId !== metadata.categoryId) {
-          throw new PricingContractError(`One export must contain exactly category ${metadata.categoryId}.`);
+          throw new PricingContractError(
+            `One export must contain exactly category ${metadata.categoryId}.`,
+          );
         }
         snapshotDate ??= row.snapshotDate;
         if (row.snapshotDate !== snapshotDate) {
-          throw new PricingContractError("One export must contain exactly one snapshot timestamp.");
+          throw new PricingContractError(
+            "One export must contain exactly one snapshot timestamp.",
+          );
         }
         const conditionKey = row.condition ?? "NO_CONDITION";
-        const computedDelivery = deliveredPriceFor(row.productType, row.listingPriceCents, row.shippingCents);
-        const delivery = row.exportedDeliveredPriceCents !== undefined && row.exportedDeliveredPriceCents !== null
-          ? {
-              deliveredPriceCents: row.exportedDeliveredPriceCents,
-              shippingCents: row.shippingCents,
-              shippingSource: row.shippingCents === null ? row.shippingSource : "EXPORTED" as const,
-            }
-          : computedDelivery;
+        const computedDelivery = deliveredPriceFor(
+          row.productType,
+          row.listingPriceCents,
+          row.shippingCents,
+        );
+        const delivery =
+          row.exportedDeliveredPriceCents !== undefined &&
+          row.exportedDeliveredPriceCents !== null
+            ? {
+                deliveredPriceCents: row.exportedDeliveredPriceCents,
+                shippingCents: row.shippingCents,
+                shippingSource:
+                  row.shippingCents === null
+                    ? row.shippingSource
+                    : ("EXPORTED" as const),
+              }
+            : computedDelivery;
         try {
           stageRow.run(
-            row.categoryId, row.sku, conditionKey, row.productType, row.name, row.setName,
-            row.collectorNumber, row.variant, row.language, row.imageUrl,
-            row.marketPriceCents, row.listingPriceCents, delivery.shippingCents,
-            delivery.shippingSource, delivery.deliveredPriceCents, row.snapshotDate,
+            row.categoryId,
+            row.sku,
+            conditionKey,
+            row.productType,
+            row.name,
+            row.setName,
+            row.collectorNumber,
+            row.variant,
+            row.language,
+            row.imageUrl,
+            row.marketPriceCents,
+            row.listingPriceCents,
+            delivery.shippingCents,
+            delivery.shippingSource,
+            delivery.deliveredPriceCents,
+            row.snapshotDate,
             row.sourceSku ?? null,
           );
         } catch (error) {
-          if (error instanceof Error && /UNIQUE constraint failed/.test(error.message)) {
-            throw new PricingContractError(`Duplicate product/condition row: ${row.sku}/${conditionKey}.`);
+          if (
+            error instanceof Error &&
+            /UNIQUE constraint failed/.test(error.message)
+          ) {
+            throw new PricingContractError(
+              `Duplicate product/condition row: ${row.sku}/${conditionKey}.`,
+            );
           }
           throw error;
         }
       }
-      if (rowsRead === 0 || snapshotDate === null) throw new PricingContractError("Export contains no data rows.");
-      const collision = this.database.prepare(`
+      if (rowsRead === 0 || snapshotDate === null)
+        throw new PricingContractError("Export contains no data rows.");
+      const collision = this.database
+        .prepare(
+          `
         SELECT sku FROM pricing_import_stage GROUP BY sku HAVING
           MIN(product_type) IS NOT MAX(product_type) OR MIN(name) IS NOT MAX(name) OR
           MIN(set_name) IS NOT MAX(set_name) OR MIN(COALESCE(collector_number, '')) IS NOT MAX(COALESCE(collector_number, '')) OR
           MIN(variant) IS NOT MAX(variant) OR MIN(language) IS NOT MAX(language) LIMIT 1
-      `).get() as SqlRow | undefined;
-      if (collision) throw new PricingContractError(`Deterministic product-key collision for ${String(collision.sku)}.`);
+      `,
+        )
+        .get() as SqlRow | undefined;
+      if (collision)
+        throw new PricingContractError(
+          `Deterministic product-key collision for ${String(collision.sku)}.`,
+        );
 
-      productsUpserted = Number((this.database.prepare(
-        "SELECT count(DISTINCT sku) AS count FROM pricing_import_stage",
-      ).get() as SqlRow).count);
+      productsUpserted = Number(
+        (
+          this.database
+            .prepare(
+              "SELECT count(DISTINCT sku) AS count FROM pricing_import_stage",
+            )
+            .get() as SqlRow
+        ).count,
+      );
       this.database.exec(`
         INSERT INTO pricing_products(category_id, sku, product_type, name, set_name, collector_number, variant, language, image_url)
         SELECT category_id, sku, MIN(product_type), MIN(name), MIN(set_name), MIN(collector_number), MIN(variant), MIN(language), MAX(image_url)
@@ -294,7 +399,9 @@ export class PricingRepository {
           language=excluded.language, image_url=excluded.image_url;
 
       `);
-      this.database.prepare("DELETE FROM pricing_search WHERE category_id=?").run(metadata.categoryId);
+      this.database
+        .prepare("DELETE FROM pricing_search WHERE category_id=?")
+        .run(metadata.categoryId);
       this.database.exec(`
         INSERT INTO pricing_search(category_id, sku, name, set_name, collector_number, variant)
         SELECT category_id, sku, MIN(name), MIN(set_name), COALESCE(MIN(collector_number), ''), MIN(variant)
@@ -313,7 +420,10 @@ export class PricingRepository {
           OR l.shipping_source IS NOT s.shipping_source
           OR l.delivered_price_cents IS NOT s.delivered_price_cents;
       `);
-      snapshotsInserted = Number((this.database.prepare("SELECT changes() AS count").get() as SqlRow).count);
+      snapshotsInserted = Number(
+        (this.database.prepare("SELECT changes() AS count").get() as SqlRow)
+          .count,
+      );
       this.database.exec(`
         INSERT INTO pricing_latest(
           category_id, sku, condition_key, market_price_cents, listing_price_cents,
@@ -329,37 +439,71 @@ export class PricingRepository {
           source_sku=excluded.source_sku;
       `);
       const importedAt = new Date().toISOString();
-      this.database.prepare(`
+      this.database
+        .prepare(
+          `
         INSERT INTO pricing_category_state(category_id, snapshot_date, imported_at, source_schema_version, checkpoint_at, source_hash, contract_version)
         VALUES(?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(category_id) DO UPDATE SET snapshot_date=excluded.snapshot_date, imported_at=excluded.imported_at,
           source_schema_version=excluded.source_schema_version, checkpoint_at=excluded.checkpoint_at,
           source_hash=excluded.source_hash, contract_version=excluded.contract_version
-      `).run(metadata.categoryId, snapshotDate, importedAt, metadata.sourceSchemaVersion, metadata.checkpointAt ?? null, metadata.sourceHash, metadata.contractVersion);
-      this.database.prepare(`
+      `,
+        )
+        .run(
+          metadata.categoryId,
+          snapshotDate,
+          importedAt,
+          metadata.sourceSchemaVersion,
+          metadata.checkpointAt ?? null,
+          metadata.sourceHash,
+          metadata.contractVersion,
+        );
+      this.database
+        .prepare(
+          `
         INSERT INTO pricing_imports(category_id, source_hash, contract_version, source_schema_version, snapshot_date, imported_at, row_count)
         VALUES(?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(category_id, source_hash, contract_version) DO NOTHING
-      `).run(metadata.categoryId, metadata.sourceHash, metadata.contractVersion, metadata.sourceSchemaVersion, snapshotDate, importedAt, rowsRead);
-      this.database.prepare(`
+      `,
+        )
+        .run(
+          metadata.categoryId,
+          metadata.sourceHash,
+          metadata.contractVersion,
+          metadata.sourceSchemaVersion,
+          snapshotDate,
+          importedAt,
+          rowsRead,
+        );
+      this.database
+        .prepare(
+          `
         INSERT INTO pricing_catalogue_receipts(
           category_id, source_hash, contract_version, checkpoint_key, snapshot_date, imported_at, row_count
         ) VALUES(?, ?, ?, ?, ?, ?, ?)
-      `).run(
-        metadata.categoryId,
-        metadata.sourceHash,
-        metadata.contractVersion,
-        this.receiptKey(metadata),
-        snapshotDate,
-        importedAt,
-        rowsRead,
-      );
+      `,
+        )
+        .run(
+          metadata.categoryId,
+          metadata.sourceHash,
+          metadata.contractVersion,
+          this.receiptKey(metadata),
+          snapshotDate,
+          importedAt,
+          rowsRead,
+        );
       this.database.exec("COMMIT");
     } catch (error) {
       this.database.exec("ROLLBACK");
       throw error;
     }
-    return { status: "IMPORTED", sourceHash: metadata.sourceHash, rowsRead, productsUpserted, snapshotsInserted };
+    return {
+      status: "IMPORTED",
+      sourceHash: metadata.sourceHash,
+      rowsRead,
+      productsUpserted,
+      snapshotsInserted,
+    };
   }
 
   recordSyncState(input: {
@@ -373,30 +517,38 @@ export class PricingRepository {
     result?: ImportResult | null;
     lastError?: string | null;
   }): void {
-    this.database.prepare(`
+    this.database
+      .prepare(
+        `
       INSERT INTO pricing_sync_state(category_id, status, checkpoint_at, started_at, completed_at, source_hash, source_path, rows_read, products_upserted, snapshots_inserted, last_error)
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(category_id) DO UPDATE SET status=excluded.status, checkpoint_at=excluded.checkpoint_at,
         started_at=excluded.started_at, completed_at=excluded.completed_at, source_hash=excluded.source_hash,
         source_path=excluded.source_path, rows_read=excluded.rows_read, products_upserted=excluded.products_upserted,
         snapshots_inserted=excluded.snapshots_inserted, last_error=excluded.last_error
-    `).run(
-      input.categoryId,
-      input.status,
-      input.checkpointAt ?? null,
-      input.startedAt ?? null,
-      input.completedAt ?? null,
-      input.sourceHash ?? null,
-      input.sourcePath ?? null,
-      input.result?.rowsRead ?? null,
-      input.result?.productsUpserted ?? null,
-      input.result?.snapshotsInserted ?? null,
-      input.lastError ?? null,
-    );
+    `,
+      )
+      .run(
+        input.categoryId,
+        input.status,
+        input.checkpointAt ?? null,
+        input.startedAt ?? null,
+        input.completedAt ?? null,
+        input.sourceHash ?? null,
+        input.sourcePath ?? null,
+        input.result?.rowsRead ?? null,
+        input.result?.productsUpserted ?? null,
+        input.result?.snapshotsInserted ?? null,
+        input.lastError ?? null,
+      );
   }
 
   getSyncStates(): PricingSyncState[] {
-    return (this.database.prepare("SELECT * FROM pricing_sync_state ORDER BY category_id").all() as SqlRow[]).map((row) => ({
+    return (
+      this.database
+        .prepare("SELECT * FROM pricing_sync_state ORDER BY category_id")
+        .all() as SqlRow[]
+    ).map((row) => ({
       categoryId: String(row.category_id),
       status: String(row.status) as PricingSyncStatus,
       checkpointAt: row.checkpoint_at as string | null,
@@ -411,45 +563,104 @@ export class PricingRepository {
     }));
   }
 
-  search(categoryId: string, query: string, now = new Date()): PricingSearchResponse {
+  search(
+    categoryId: string,
+    query: string,
+    now = new Date(),
+  ): PricingSearchResponse {
     const category = getActivePricingCategory(categoryId);
     if (!category) {
-      return { query, category: { categoryId, label: categoryId, snapshotDate: null, stale: false, loaded: false }, sealed: [], singles: [], sealedSuppressed: false };
+      return {
+        query,
+        category: {
+          categoryId,
+          label: categoryId,
+          snapshotDate: null,
+          stale: false,
+          loaded: false,
+        },
+        sealed: [],
+        singles: [],
+        sealedSuppressed: false,
+      };
     }
-    const state = this.database.prepare(`
+    const state = this.database
+      .prepare(
+        `
       SELECT c.*, s.status AS sync_status, s.last_error FROM pricing_category_state c
       LEFT JOIN pricing_sync_state s ON s.category_id=c.category_id WHERE c.category_id=?
-    `).get(categoryId) as SqlRow | undefined;
+    `,
+      )
+      .get(categoryId) as SqlRow | undefined;
     const freshness = {
       categoryId,
       label: category.label,
       snapshotDate: (state?.snapshot_date as string | undefined) ?? null,
       stale: isStale((state?.snapshot_date as string | undefined) ?? null, now),
       loaded: Boolean(state),
-      importedAt: state?.imported_at as string | null ?? null,
-      checkpointAt: state?.checkpoint_at as string | null ?? null,
-      sourceSchemaVersion: state?.source_schema_version as string | null ?? null,
-      syncStatus: state?.sync_status as PricingSyncStatus | null ?? null,
-      lastError: state?.last_error as string | null ?? null,
+      importedAt: (state?.imported_at as string | null) ?? null,
+      checkpointAt: (state?.checkpoint_at as string | null) ?? null,
+      sourceSchemaVersion:
+        (state?.source_schema_version as string | null) ?? null,
+      syncStatus: (state?.sync_status as PricingSyncStatus | null) ?? null,
+      lastError: (state?.last_error as string | null) ?? null,
     };
     const trimmed = query.trim();
-    if (!state || trimmed.length < pricingLookupConfig.minimumQueryLength) return { query, category: freshness, sealed: [], singles: [], sealedSuppressed: queryClearlyTargetsSingle(query) };
+    if (!state || trimmed.length < pricingLookupConfig.minimumQueryLength)
+      return {
+        query,
+        category: freshness,
+        sealed: [],
+        singles: [],
+        sealedSuppressed: queryClearlyTargetsSingle(query),
+      };
     const terms = normalizeSearchText(trimmed).split(" ").filter(Boolean);
-    if (!terms.length) return { query, category: freshness, sealed: [], singles: [], sealedSuppressed: queryClearlyTargetsSingle(query) };
-    const ftsQuery = terms.map((term) => `"${term.replaceAll('"', '""')}"*`).join(" AND ");
-    const candidates = this.database.prepare(`
+    if (!terms.length)
+      return {
+        query,
+        category: freshness,
+        sealed: [],
+        singles: [],
+        sealedSuppressed: queryClearlyTargetsSingle(query),
+      };
+    const ftsQuery = terms
+      .map((term) => `"${term.replaceAll('"', '""')}"*`)
+      .join(" AND ");
+    const candidates = this.database
+      .prepare(
+        `
       SELECT p.* FROM pricing_search s
       JOIN pricing_products p ON p.category_id=s.category_id AND p.sku=s.sku
       WHERE pricing_search MATCH ? AND s.category_id=? LIMIT 160
-    `).all(ftsQuery, categoryId) as SqlRow[];
-    const matches = candidates.map((candidate) => this.hydrateMatch(candidate, query)).filter((match) => match.score > 0).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name) || a.sku.localeCompare(b.sku));
+    `,
+      )
+      .all(ftsQuery, categoryId) as SqlRow[];
+    const matches = candidates
+      .map((candidate) => this.hydrateMatch(candidate, query))
+      .filter((match) => match.score > 0)
+      .sort(
+        (a, b) =>
+          b.score - a.score ||
+          a.name.localeCompare(b.name) ||
+          a.sku.localeCompare(b.sku),
+      );
     const sealedSuppressed = queryClearlyTargetsSingle(query);
     return {
       query,
       category: freshness,
       sealedSuppressed,
-      sealed: sealedSuppressed ? [] : matches.filter((match) => match.productType === "SEALED" && match.score >= pricingLookupConfig.sealedRelevanceThreshold).slice(0, pricingLookupConfig.resultLimit),
-      singles: matches.filter((match) => match.productType === "SINGLE").slice(0, pricingLookupConfig.resultLimit),
+      sealed: sealedSuppressed
+        ? []
+        : matches
+            .filter(
+              (match) =>
+                match.productType === "SEALED" &&
+                match.score >= pricingLookupConfig.sealedRelevanceThreshold,
+            )
+            .slice(0, pricingLookupConfig.resultLimit),
+      singles: matches
+        .filter((match) => match.productType === "SINGLE")
+        .slice(0, pricingLookupConfig.resultLimit),
     };
   }
 
@@ -458,20 +669,44 @@ export class PricingRepository {
       .filter((category) => category.active)
       .map((category) => this.search(category.id, query, now));
     const rank = (a: SearchMatch, b: SearchMatch) =>
-      b.score - a.score || a.name.localeCompare(b.name) || a.categoryId.localeCompare(b.categoryId) || a.sku.localeCompare(b.sku);
+      b.score - a.score ||
+      a.name.localeCompare(b.name) ||
+      a.categoryId.localeCompare(b.categoryId) ||
+      a.sku.localeCompare(b.sku);
     return {
       query,
       categories: responses.map((response) => response.category),
       sealedSuppressed: queryClearlyTargetsSingle(query),
-      singles: responses.flatMap((response) => response.singles).sort(rank).slice(0, pricingLookupConfig.unifiedCandidateLimit),
-      sealed: responses.flatMap((response) => response.sealed).sort(rank).slice(0, pricingLookupConfig.resultLimit),
+      singles: responses
+        .flatMap((response) => response.singles)
+        .sort(rank)
+        .slice(0, pricingLookupConfig.unifiedCandidateLimit),
+      sealed: responses
+        .flatMap((response) => response.sealed)
+        .sort(rank)
+        .slice(0, pricingLookupConfig.resultLimit),
     };
+  }
+
+  findBySku(categoryId: string, sku: string): SearchMatch | null {
+    const candidate = this.database
+      .prepare(
+        `
+      SELECT * FROM pricing_products WHERE category_id = ? AND sku = ?
+    `,
+      )
+      .get(categoryId, sku) as SqlRow | undefined;
+    return candidate
+      ? this.hydrateMatch(candidate, String(candidate.name))
+      : null;
   }
 
   private hydrateMatch(candidate: SqlRow, query: string): SearchMatch {
     const categoryId = String(candidate.category_id);
     const sku = String(candidate.sku);
-    const latest = this.database.prepare("SELECT * FROM pricing_latest WHERE category_id=? AND sku=?").all(categoryId, sku) as SqlRow[];
+    const latest = this.database
+      .prepare("SELECT * FROM pricing_latest WHERE category_id=? AND sku=?")
+      .all(categoryId, sku) as SqlRow[];
     const prices: SearchMatch["prices"] = {};
     let sealedPrice: SearchMatch["sealedPrice"] = null;
     for (const row of latest) {
@@ -479,31 +714,56 @@ export class PricingRepository {
         marketPriceCents: row.market_price_cents as number | null,
         listingPriceCents: row.listing_price_cents as number | null,
         shippingCents: row.shipping_cents as number | null,
-        shippingSource: row.shipping_source as "EXPORTED" | "ASSUMED" | "UNKNOWN",
+        shippingSource: row.shipping_source as
+          "EXPORTED" | "ASSUMED" | "UNKNOWN",
         deliveredPriceCents: row.delivered_price_cents as number | null,
         snapshotDate: String(row.snapshot_date),
         sourceSku: row.source_sku as string | null,
       };
-      const history = this.database.prepare(`
+      const history = this.database
+        .prepare(
+          `
         SELECT market_price_cents, snapshot_date FROM pricing_history
         WHERE category_id=? AND sku=? AND condition_key=? ORDER BY snapshot_date DESC, id DESC LIMIT 2
-      `).all(categoryId, sku, String(row.condition_key)) as SqlRow[];
-      state.previousMarketPriceCents = history[1]?.market_price_cents as number | null ?? null;
-      state.previousSnapshotDate = history[1]?.snapshot_date as string | null ?? null;
+      `,
+        )
+        .all(categoryId, sku, String(row.condition_key)) as SqlRow[];
+      state.previousMarketPriceCents =
+        (history[1]?.market_price_cents as number | null) ?? null;
+      state.previousSnapshotDate =
+        (history[1]?.snapshot_date as string | null) ?? null;
       if (row.condition_key === "NO_CONDITION") sealedPrice = state;
       else prices[row.condition_key as PricingCondition] = state;
     }
-    const movementCondition = candidate.product_type === "SEALED" ? "NO_CONDITION" : pricingLookupConfig.defaultCondition;
-    const history = this.database.prepare(`SELECT market_price_cents, snapshot_date FROM pricing_history WHERE category_id=? AND sku=? AND condition_key=? ORDER BY snapshot_date DESC, id DESC LIMIT 2`).all(categoryId, sku, movementCondition) as SqlRow[];
+    const movementCondition =
+      candidate.product_type === "SEALED"
+        ? "NO_CONDITION"
+        : pricingLookupConfig.defaultCondition;
+    const history = this.database
+      .prepare(
+        `SELECT market_price_cents, snapshot_date FROM pricing_history WHERE category_id=? AND sku=? AND condition_key=? ORDER BY snapshot_date DESC, id DESC LIMIT 2`,
+      )
+      .all(categoryId, sku, movementCondition) as SqlRow[];
     const identity = {
-      name: String(candidate.name), setName: String(candidate.set_name), collectorNumber: candidate.collector_number as string | null,
-      variant: String(candidate.variant), productType: candidate.product_type as "SINGLE" | "SEALED",
+      name: String(candidate.name),
+      setName: String(candidate.set_name),
+      collectorNumber: candidate.collector_number as string | null,
+      variant: String(candidate.variant),
+      productType: candidate.product_type as "SINGLE" | "SEALED",
     };
     return {
-      categoryId, sku, ...identity, language: String(candidate.language), imageUrl: candidate.image_url as string | null,
-      score: searchScore(identity, query), prices, sealedPrice,
-      previousMarketPriceCents: history[1]?.market_price_cents as number | null ?? null,
-      previousSnapshotDate: history[1]?.snapshot_date as string | null ?? null,
+      categoryId,
+      sku,
+      ...identity,
+      language: String(candidate.language),
+      imageUrl: candidate.image_url as string | null,
+      score: searchScore(identity, query),
+      prices,
+      sealedPrice,
+      previousMarketPriceCents:
+        (history[1]?.market_price_cents as number | null) ?? null,
+      previousSnapshotDate:
+        (history[1]?.snapshot_date as string | null) ?? null,
     };
   }
 }

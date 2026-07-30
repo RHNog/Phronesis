@@ -7,9 +7,10 @@ import { treatmentFromFinish } from "@/lib/engines/identity/IdentityTreatmentRes
 import { explicitEvidence } from "@/lib/engines/identity/IdentityOntology";
 
 function legacyPhysicalFinish(finish: string) {
-  const value = finish.toLowerCase() === "normal" || finish.toLowerCase() === "nonfoil"
-    ? "Normal"
-    : finish.replace(/\b\w/g, (character) => character.toUpperCase());
+  const value =
+    finish.toLowerCase() === "normal" || finish.toLowerCase() === "nonfoil"
+      ? "Normal"
+      : finish.replace(/\b\w/g, (character) => character.toUpperCase());
   return {
     evidence: explicitEvidence(
       "watchlist-migration",
@@ -27,6 +28,17 @@ function migratePhysicalFinish(entry: WatchlistEntry) {
 
 const storageKey = "project-phronesis-market-watch-v1";
 export const defaultWatchlistId = "default";
+
+export function readPersistedWatchlistEntries(): WatchlistEntry[] | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(storageKey);
+  if (!raw) return null;
+  try {
+    return hydrateWatchlistEntries(JSON.parse(raw) as WatchlistEntry[]);
+  } catch {
+    return null;
+  }
+}
 
 function hoursAgo(hours: number) {
   return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
@@ -62,9 +74,12 @@ export const seedWatchlistEntries: WatchlistEntry[] = [
       image: {
         source: "Repository",
         urls: {
-          small: "https://cards.scryfall.io/small/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
-          normal: "https://cards.scryfall.io/normal/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
-          large: "https://cards.scryfall.io/large/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
+          small:
+            "https://cards.scryfall.io/small/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
+          normal:
+            "https://cards.scryfall.io/normal/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
+          large:
+            "https://cards.scryfall.io/large/front/6/b/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa.jpg?1782715284",
         },
       },
     },
@@ -99,9 +114,12 @@ export const seedWatchlistEntries: WatchlistEntry[] = [
       image: {
         source: "Repository",
         urls: {
-          small: "https://cards.scryfall.io/small/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
-          normal: "https://cards.scryfall.io/normal/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
-          large: "https://cards.scryfall.io/large/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
+          small:
+            "https://cards.scryfall.io/small/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
+          normal:
+            "https://cards.scryfall.io/normal/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
+          large:
+            "https://cards.scryfall.io/large/front/e/7/e768c957-3a1f-42f5-853a-96942f645df5.jpg?1782715389",
         },
       },
     },
@@ -136,9 +154,12 @@ export const seedWatchlistEntries: WatchlistEntry[] = [
       image: {
         source: "Repository",
         urls: {
-          small: "https://cards.scryfall.io/small/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
-          normal: "https://cards.scryfall.io/normal/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
-          large: "https://cards.scryfall.io/large/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
+          small:
+            "https://cards.scryfall.io/small/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
+          normal:
+            "https://cards.scryfall.io/normal/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
+          large:
+            "https://cards.scryfall.io/large/front/c/f/cfa7b456-7e83-4587-a875-9b35fde318c2.jpg?1782712709",
         },
       },
     },
@@ -171,9 +192,12 @@ export const seedWatchlistEntries: WatchlistEntry[] = [
       image: {
         source: "Repository",
         urls: {
-          small: "https://cards.lorcast.io/card/digital/small/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
-          normal: "https://cards.lorcast.io/card/digital/normal/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
-          large: "https://cards.lorcast.io/card/digital/large/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
+          small:
+            "https://cards.lorcast.io/card/digital/small/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
+          normal:
+            "https://cards.lorcast.io/card/digital/normal/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
+          large:
+            "https://cards.lorcast.io/card/digital/large/crd_04bca46a8e2d4e9ba0fbdbfc6c99e51e.avif?1709690747",
         },
       },
     },
@@ -223,21 +247,21 @@ export function loadWatchlistEntries() {
 
 export function hydrateWatchlistEntries(entries: WatchlistEntry[]) {
   return entries.map((entry) => {
-      const repositorySeed = seedWatchlistEntries.find(
-        (seed) => seed.assetIdentity.assetId === entry.assetIdentity.assetId,
-      );
+    const repositorySeed = seedWatchlistEntries.find(
+      (seed) => seed.assetIdentity.assetId === entry.assetIdentity.assetId,
+    );
 
-      return calculateWatchlistMetrics({
-        ...entry,
-        assetIdentity: repositorySeed
-          ? { ...entry.assetIdentity, ...repositorySeed.assetIdentity }
-          : entry.assetIdentity,
-        treatment: entry.treatment ?? treatmentFromFinish(entry.finish),
-        physicalFinish: migratePhysicalFinish(entry),
-        printingDesignFacets: entry.printingDesignFacets ?? [],
-        watchlistId: entry.watchlistId ?? defaultWatchlistId,
-      });
+    return calculateWatchlistMetrics({
+      ...entry,
+      assetIdentity: repositorySeed
+        ? { ...entry.assetIdentity, ...repositorySeed.assetIdentity }
+        : entry.assetIdentity,
+      treatment: entry.treatment ?? treatmentFromFinish(entry.finish),
+      physicalFinish: migratePhysicalFinish(entry),
+      printingDesignFacets: entry.printingDesignFacets ?? [],
+      watchlistId: entry.watchlistId ?? defaultWatchlistId,
     });
+  });
 }
 
 export function saveWatchlistEntries(entries: WatchlistEntry[]) {
@@ -253,7 +277,8 @@ export function updateWatchlistEntry(
   updatedEntry: WatchlistEntry,
 ) {
   return entries.map((entry) =>
-    entry.id === updatedEntry.id && entry.watchlistId === updatedEntry.watchlistId
+    entry.id === updatedEntry.id &&
+    entry.watchlistId === updatedEntry.watchlistId
       ? updatedEntry
       : entry,
   );
@@ -295,6 +320,10 @@ export function restoreWatchlistEntry(
   }
 
   const next = [...entries];
-  next.splice(Math.min(Math.max(removed.index, 0), next.length), 0, removed.entry);
+  next.splice(
+    Math.min(Math.max(removed.index, 0), next.length),
+    0,
+    removed.entry,
+  );
   return next;
 }

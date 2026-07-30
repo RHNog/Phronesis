@@ -2014,3 +2014,6 @@ Production UI shows user-facing readiness blockers. Atlas Inspector shows System
 - Recommendation explanations must add decision context instead of repeating visible metrics.
 - Vendor Workspace shortcuts must preserve normal typing behavior inside inputs and selects.
 - Context invalidation must stay centralized in `ContextInvalidationEngine`.
+# Current Architecture Addendum — Price Monitoring
+
+Market Watch persistence is application-owned SQLite state scoped by Phronesis user and workspace. Local storage is compatibility/rollback state, not authority. Verified catalogue receipts update watched valuations through `WatchlistRepository`; optional external evidence flows through `MarketEvidenceRepository` with immutable evidence-kind semantics. Provider credentials and calls remain server-side, explicit, bounded, and absent from initial page loads.

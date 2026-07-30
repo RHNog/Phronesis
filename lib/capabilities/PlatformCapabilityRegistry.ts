@@ -90,14 +90,16 @@ const magicProfile: GameCapabilityProfile = {
     capability("treatment", "Operational", {
       provider: "Scryfall",
       providerSelected: "Scryfall",
-      reason: "Canonical treatment is resolved from explicit provider finish and printing metadata.",
+      reason:
+        "Canonical treatment is resolved from explicit provider finish and printing metadata.",
       resolution: "Treatment operational.",
       source: "Canonical Identity",
     }),
     capability("physicalVariant", "Operational", {
       provider: "Scryfall",
       providerSelected: "Scryfall",
-      reason: "Scryfall explicitly supplies physical finish availability for Magic printings.",
+      reason:
+        "Scryfall explicitly supplies physical finish availability for Magic printings.",
       resolution: "Printing options operational.",
       source: "Physical Variant Identity",
     }),
@@ -136,7 +138,8 @@ const lorcanaProfile: GameCapabilityProfile = {
     capability("identity", "Operational", {
       provider: "Lorcast",
       providerSelected: "Lorcast",
-      reason: "Lorcast is registered as the operational Lorcana identity provider.",
+      reason:
+        "Lorcast is registered as the operational Lorcana identity provider.",
       resolution: "Identity provider operational.",
       source: "Identity Provider Registry",
     }),
@@ -157,14 +160,16 @@ const lorcanaProfile: GameCapabilityProfile = {
     capability("finish", "Unavailable", {
       provider: "Lorcast",
       providerSelected: "Lorcast",
-      reason: "The connected identity provider does not supply finish availability.",
+      reason:
+        "The connected identity provider does not supply finish availability.",
       resolution: "Provider Does Not Supply Printing",
       source: "Identity Provider Capability",
     }),
     capability("treatment", "Operational", {
       provider: "Lorcast",
       providerSelected: "Lorcast",
-      reason: "Lorcast rarity supplies printing design facets such as Enchanted and Promo.",
+      reason:
+        "Lorcast rarity supplies printing design facets such as Enchanted and Promo.",
       resolution: "Printing design operational.",
       source: "Printing Identity",
     }),
@@ -180,11 +185,13 @@ const lorcanaProfile: GameCapabilityProfile = {
       resolution: "Condition selection available.",
       source: "Workflow",
     }),
-    capability("marketData", "Pending", {
-      futureProvider: "Compatible Lorcana Market Provider",
-      reason: "No compatible Lorcana market provider is connected.",
-      resolution: "Market Provider Not Yet Connected",
-      source: "Market Provider Capability",
+    capability("marketData", "Operational", {
+      provider: "TCGplayer Catalogue Snapshot / Repository",
+      providerSelected: "Verified Catalogue Snapshot",
+      reason:
+        "Verified Lorcana catalogue snapshots supply condition-level market and delivered-low observations.",
+      resolution: "Four-daily repository pricing available.",
+      source: "Pricing Snapshot Repository",
     }),
     capability("marketIntelligence", "Pending", {
       futureProvider: "Compatible Lorcana Market Provider",
@@ -207,17 +214,46 @@ const lorcanaProfile: GameCapabilityProfile = {
 const pendingIdentityProfile = (game: string): GameCapabilityProfile => ({
   game,
   capabilities: (Object.keys(labels) as PlatformCapabilityId[]).map((id) =>
-    capability(id, id === "watchlists" || id === "developerDiagnostics" ? "Operational" : "Pending", {
-      futureProvider: id === "identity" ? `Compatible ${game} Identity Provider` : undefined,
-      reason:
-        id === "watchlists"
-          ? "Watchlist membership can retain a canonical identity when available."
-          : id === "developerDiagnostics"
-            ? "Developer diagnostics are platform-owned."
-            : `${labels[id]} is not yet connected for ${game}.`,
-      resolution: id === "watchlists" || id === "developerDiagnostics" ? "Operational" : "Coming Soon",
-      source: id === "identity" ? "Identity Provider Registry" : "Platform Capability Registry",
-    }),
+    capability(
+      id,
+      id === "watchlists" ||
+        id === "developerDiagnostics" ||
+        id === "marketData"
+        ? "Operational"
+        : "Pending",
+      {
+        futureProvider:
+          id === "identity"
+            ? `Compatible ${game} Identity Provider`
+            : undefined,
+        reason:
+          id === "watchlists"
+            ? "Watchlist membership can retain a canonical identity when available."
+            : id === "marketData"
+              ? `Verified ${game} catalogue snapshots supply condition-level repository prices.`
+              : id === "developerDiagnostics"
+                ? "Developer diagnostics are platform-owned."
+                : `${labels[id]} is not yet connected for ${game}.`,
+        resolution:
+          id === "watchlists" || id === "developerDiagnostics"
+            ? "Operational"
+            : id === "marketData"
+              ? "Four-daily repository pricing available."
+              : "Coming Soon",
+        source:
+          id === "identity"
+            ? "Identity Provider Registry"
+            : id === "marketData"
+              ? "Pricing Snapshot Repository"
+              : "Platform Capability Registry",
+        provider:
+          id === "marketData"
+            ? "TCGplayer Catalogue Snapshot / Repository"
+            : undefined,
+        providerSelected:
+          id === "marketData" ? "Verified Catalogue Snapshot" : undefined,
+      },
+    ),
   ),
 });
 

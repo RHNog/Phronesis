@@ -6,7 +6,7 @@
 
 ## Objective
 
-Implement persistent one-action card tracking and verified four-daily refresh after identity authorization is operational.
+Implement persistent one-action card tracking now behind the reversible identity boundary, then add verified four-daily refresh. Do not require live identity activation to preserve existing watch data.
 
 ## Required Reading
 
@@ -30,6 +30,16 @@ Implement persistent one-action card tracking and verified four-daily refresh af
 - Do not create a second snapshot scheduler.
 - Do not merge market estimates, listings, and observed sales.
 - Do not require advanced configuration to track a card.
+- Do not delete browser-local memberships during migration.
+- Do not silently assign legacy memberships to a real user.
+
+## Expected Architecture
+
+- A server-only watchlist repository owns memberships and watch-owned history.
+- API routes authorize `MARKET_WATCH` access and resolve either the authenticated user or the explicit legacy-local compatibility principal.
+- Browser-local entries are a one-way, idempotent migration input and recoverable cache; the server response becomes authoritative.
+- Vendor Workspace submits the exact selected snapshot identity and receives created-versus-existing status for inline confirmation and undo.
+- Provider acquisition remains outside initial load and is never triggered by tracking.
 
 ## Acceptance Criteria
 

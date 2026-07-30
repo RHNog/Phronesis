@@ -1,5 +1,17 @@
 # Prompt History
 
+## PHR-WORKFLOW-005 Identity-Backed Price Monitoring
+
+Purpose: persist exact user-owned watches server-side, make tracking a one-action Vendor Workspace continuation, and refresh watches from verified catalogue checkpoints.
+
+Canonical work order: `docs/prompts/PHR-WORKFLOW-005-identity-backed-price-monitoring-prompt.md`.
+
+## PHR-API-003 Low-Cost Market Evidence Sources
+
+Purpose: add opt-in budgeted estimates, credential-gated official listing evidence, and first-party observed sales while prohibiting scraping and false sold-copy claims.
+
+Canonical work order: `docs/prompts/PHR-API-003-low-cost-market-evidence-sources-prompt.md`.
+
 ## PHR-UX-009 Visible Buying Intelligence Panel
 
 Date: 2026-07-30

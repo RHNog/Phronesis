@@ -4,6 +4,8 @@
 
 ### Added
 
+- User-scoped server-backed Market Watch, one-action Vendor tracking, verified-checkpoint refresh, and separate estimate/listing/observed-sale evidence (`PHR-WORKFLOW-005`, `PHR-API-003`).
+
 - Pokémon explicit set-alias reconciliation and current Lorcana catalogue/artwork activation (`PHR-TECH-008`).
 - Lifecycle-based application structure and typed primary navigation (`PHR-UX-006`).
 - Phronesis product identity migration (`PHR-ARCH-010`).

@@ -4,8 +4,8 @@
 
 - Completed: `PHR-TECH-009` restored a 204/204 behavioral baseline with clean standalone TypeScript, lint, and production build gates.
 - Implemented / activation gated: `PHR-ARCH-011` invite-only identity, sessions, workspace membership, roles, module entitlements, auditability, and server enforcement. Credentials, owner bootstrap, advisory disposition, and live callback verification remain external gates.
-- Active: `PHR-WORKFLOW-005` persistent one-action tracking and four-daily refresh state.
-- Planned: `PHR-API-003` bounded low-cost estimate, active-listing, and first-party observed-sale evidence without scraping.
+- Product Review ready: `PHR-WORKFLOW-005` user-scoped server persistence, one-action tracking, undo, deterministic legacy migration, and verified-checkpoint refresh.
+- Implemented / external providers gated: `PHR-API-003` bounded JustTCG estimates, official eBay/CardTrader active listings, and first-party observed sales without scraping.
 - Gate: explicit Product Review before canonical adoption and GitHub continuity.
 
 ## Product Review Candidate: Cross-Game Artwork-First Buying

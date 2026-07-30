@@ -12,11 +12,22 @@ test("Magic identity and market are operational", () => {
   assert.equal(canUseCapability("magic", "marketData"), true);
 });
 
-test("Lorcana identity is operational while market is pending", () => {
-  assert.equal(resolveCapability("Lorcana", "identity").providerSelected, "Lorcast");
+test("Lorcana identity and verified snapshot market data are operational", () => {
+  assert.equal(
+    resolveCapability("Lorcana", "identity").providerSelected,
+    "Lorcast",
+  );
   assert.equal(resolveCapability("Lorcana", "artwork").status, "Operational");
-  assert.equal(resolveCapability("Lorcana", "marketData").status, "Pending");
-  assert.equal(canUseCapability("lorcana", "marketData"), false);
+  assert.equal(
+    resolveCapability("Lorcana", "marketData").status,
+    "Operational",
+  );
+  assert.equal(canUseCapability("lorcana", "marketData"), true);
+});
+
+test("Pokémon and One Piece use verified snapshot market data", () => {
+  assert.equal(canUseCapability("Pokemon", "marketData"), true);
+  assert.equal(canUseCapability("One Piece", "marketData"), true);
 });
 
 test("unknown physical finish uses the collector-facing Printing vocabulary", () => {
@@ -24,5 +35,8 @@ test("unknown physical finish uses the collector-facing Printing vocabulary", ()
     resolveFinishDisplay("Lorcana", ["Unknown"]),
     "Provider Does Not Supply Printing",
   );
-  assert.equal(resolveFinishDisplay("Magic", ["Foil", "Nonfoil"]), "Foil, Nonfoil");
+  assert.equal(
+    resolveFinishDisplay("Magic", ["Foil", "Nonfoil"]),
+    "Foil, Nonfoil",
+  );
 });

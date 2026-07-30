@@ -47,7 +47,12 @@ export class JustTCGProvider {
   >();
   private lastRawProviderResponse: JustTCGRawCardResponse | null = null;
 
-  constructor(private readonly clientFactory = () => new JustTCG()) {}
+  constructor(
+    private readonly clientFactory = () =>
+      process.env.JUSTTCG_API_KEY
+        ? new JustTCG({ apiKey: process.env.JUSTTCG_API_KEY })
+        : new JustTCG(),
+  ) {}
 
   createClient(): JustTCGSdkClient {
     return this.clientFactory();

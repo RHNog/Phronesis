@@ -18,6 +18,7 @@
     "pricing:watch": "node --import ./tests/register-test-hooks.mjs scripts/watch-pricing-catalogues.ts",
     "auth:migrate": "node --import ./tests/register-test-hooks.mjs scripts/migrate-auth.ts",
     "auth:bootstrap-owner": "node --import ./tests/register-test-hooks.mjs scripts/bootstrap-owner.ts",
+    "watchlists:claim-legacy": "node --import ./tests/register-test-hooks.mjs scripts/claim-legacy-watchlists.ts",
     "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
     "review:phone:status": "node scripts/private-review-status.mjs"
   },

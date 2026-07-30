@@ -5,6 +5,7 @@ import {
 } from "@/features/watchlist/WatchHistory";
 import type { WatchlistEntry } from "@/features/watchlist/WatchlistRefreshEngine";
 import { formatCurrency, formatMarketValue } from "@/features/watchlist/WatchlistCard";
+import WatchEvidencePanel from "@/features/watchlist/WatchEvidencePanel";
 
 export default function WatchDetails({ entry }: { entry: WatchlistEntry }) {
   const history = entry.watchHistory;
@@ -43,6 +44,7 @@ export default function WatchDetails({ entry }: { entry: WatchlistEntry }) {
       <Detail label="Refresh Source" value={history.refreshSource === "Unavailable" ? "No Data" : history.refreshSource} />
       <Detail label="Notes" value={entry.notes || "None"} wide />
       <Detail label="Reason Added" value={history.reasonAdded || "None"} wide />
+      <WatchEvidencePanel entryId={entry.id} />
     </section>
   );
 }

@@ -6,7 +6,7 @@
 
 ## Status
 
-Planned
+Implemented — External Providers Gated
 
 ## Priority
 
@@ -40,6 +40,14 @@ Retain authorized Pricing Update Tool snapshots as the broad baseline, batch wat
 - First-party sales can be recorded without an external provider.
 - Unsupported sold evidence is displayed as unavailable, not inferred.
 
+## Implemented Provider Boundaries
+
+- JustTCG enrichment is explicit, budget-capped, disabled by default, and runs only after a newly verified catalogue receipt.
+- eBay Browse and CardTrader use official APIs and remain disabled when server credentials are absent.
+- CardTrader requires an exact blueprint identity; the adapter never guesses one.
+- External refresh occurs only after an explicit user action. Initial page loads read saved evidence and make no provider request.
+- Completed-sale evidence is first-party only until a legitimate completed-transaction source is separately authorized.
+
 ## Acceptance Criteria
 
 - Evidence types remain distinct through provider, repository, API, and UI layers.
@@ -58,3 +66,6 @@ Retain authorized Pricing Update Tool snapshots as the broad baseline, batch wat
 - Origin: Product Owner approval and provider research on 2026-07-30.
 - Implementation prompt: `docs/prompts/PHR-API-003-low-cost-market-evidence-sources-prompt.md`.
 - Last modified: 2026-07-30.
+- Validation: `docs/testing/PHR-API-003-low-cost-market-evidence-sources-validation.md`.
+- Engineer report: `docs/implementation-reports/PHR-API-003-low-cost-market-evidence-sources-report.md`.
+- Conformance review: `docs/reviews/PHR-API-003-low-cost-market-evidence-sources-conformance-review.md`.

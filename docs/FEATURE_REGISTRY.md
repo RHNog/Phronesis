@@ -41,8 +41,8 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-UX-009` | Visible Buying Intelligence Panel | Completed | Product / UX / UI / Decision Intelligence | `docs/ux/PHR-UX-009-visible-buying-intelligence-panel.md` |
 | `PHR-TECH-009` | Green Verification Baseline | Completed | Technical / Testing / Reliability | `docs/technical/PHR-TECH-009-green-verification-baseline.md` |
 | `PHR-ARCH-011` | Internal Identity And Module Authorization | Implemented — Activation Pending | Architecture / Security / Authentication / Authorization | `docs/architecture/PHR-ARCH-011-internal-identity-module-authorization.md` |
-| `PHR-WORKFLOW-005` | Identity-Backed Price Monitoring | Planned | Product / Workflow / UX / Database | `docs/workflows/PHR-WORKFLOW-005-identity-backed-price-monitoring.md` |
-| `PHR-API-003` | Low-Cost Market Evidence Sources | Planned | API / Market Evidence / Provider Governance | `docs/api/PHR-API-003-low-cost-market-evidence-sources.md` |
+| `PHR-WORKFLOW-005` | Identity-Backed Price Monitoring | Implemented — Product Review Ready | Product / Workflow / UX / Database | `docs/workflows/PHR-WORKFLOW-005-identity-backed-price-monitoring.md` |
+| `PHR-API-003` | Low-Cost Market Evidence Sources | Implemented — External Providers Gated | API / Market Evidence / Provider Governance | `docs/api/PHR-API-003-low-cost-market-evidence-sources.md` |
 
 ## Registry Rule
 

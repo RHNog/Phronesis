@@ -476,6 +476,14 @@ Consequences:
 
 77. Atlas Developer Mode may display Pipeline Trace. Production users must not see pipeline, trace, undefined, fallback, or zero-default terminology.
 
+78. Price monitoring membership is user/workspace state, not browser state. Local storage is a rollback cache and deterministic legacy-import source only.
+
+79. Verified Pricing Update Tool receipts are the canonical broad watch-refresh clock. Phronesis must not create a competing four-daily provider schedule.
+
+80. Market estimates, active listings, and observed completed sales are different evidence classes and may never be projected into one another.
+
+81. Official marketplace adapters remain disabled without credentials and run only on explicit user action; no scraper is an acceptable substitute.
+
 ## Documentation Rule
 
 Every sprint must update:

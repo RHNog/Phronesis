@@ -1,5 +1,14 @@
 # Project Atlas
 
+## Identity-Backed Price Monitoring And Market Evidence
+
+- `WatchlistRepository` owns user/workspace-scoped default lists, exact variant memberships, soft deletion, history, and deterministic legacy ownership in the shared ignored SQLite boundary.
+- Vendor Workspace creates an exact artwork/finish/condition/language watch in one action; duplicate tracking is idempotent and newly created membership can be undone inline.
+- Verified Pricing Update Tool receipts refresh matching watch entries from the local pricing repository without creating a second provider schedule.
+- `MarketEvidenceRepository` keeps `MARKET_ESTIMATE`, `ACTIVE_LISTING`, and `OBSERVED_SALE` separate and user-owned.
+- JustTCG enrichment is opt-in and budgeted. Official eBay Browse and CardTrader adapters are credential-gated and user-triggered; no provider runs on initial evidence load.
+- Completed sales remain first-party observations until a licensed completed-transaction source is authorized. Active listings and aggregate estimates are never promoted into sold evidence.
+
 ## Internal Identity And Module Authorization
 
 - `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.

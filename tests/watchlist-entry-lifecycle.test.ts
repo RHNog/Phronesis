@@ -65,8 +65,14 @@ test("removal is scoped to current watchlist and undo restores position", () => 
 });
 
 test("older persisted memberships migrate to the default watchlist", () => {
-  const legacy = { ...entry(), watchlistId: undefined } as unknown as WatchlistEntry;
-  assert.equal(hydrateWatchlistEntries([legacy])[0].watchlistId, defaultWatchlistId);
+  const legacy = {
+    ...entry(),
+    watchlistId: undefined,
+  } as unknown as WatchlistEntry;
+  assert.equal(
+    hydrateWatchlistEntries([legacy])[0].watchlistId,
+    defaultWatchlistId,
+  );
 });
 
 test("Lorcana refresh is skipped without calling market acquisition", async () => {
@@ -77,13 +83,16 @@ test("Lorcana refresh is skipped without calling market acquisition", async () =
     throw new Error("Market API must not be called");
   }) as typeof fetch;
   try {
-    const refreshed = await refreshWatchlistEntry({ entry: entry(), manual: true });
+    const refreshed = await refreshWatchlistEntry({
+      entry: entry(),
+      manual: true,
+    });
     assert.equal(called, false);
     assert.equal(refreshed.refreshStatus, "Refresh Skipped");
-    assert.equal(refreshed.marketStatus, "Market Data Pending");
+    assert.equal(refreshed.marketStatus, "Stale Observation");
     assert.match(
       refreshed.developerDiagnostics.providerRequestJustification ?? "",
-      /No compatible Lorcana market provider/i,
+      /verified catalogue checkpoints/i,
     );
   } finally {
     globalThis.fetch = originalFetch;

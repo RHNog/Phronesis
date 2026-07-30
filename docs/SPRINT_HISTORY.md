@@ -562,3 +562,6 @@ Introduced pure presentation model, adapter, formatter, and diagnostics modules 
 Collector Presentation Rules.
 
 Refined presentation terminology so Printing Design Facet appears as Treatment and Physical Finish appears as Printing. Added visibility metadata and centralized rules that hide Standard Treatment plus Regular, Normal, Nonfoil, and provider-unavailable Printing. Introduced shared collector-fact rendering across Command Palette, Vendor results, and Watchlist while developer diagnostics retain canonical values and suppression reasons. Canonical ontology and provider mappings were unchanged.
+# 2026-07-30 — Identity-Backed Price Monitoring
+
+Implemented server-owned exact-variant watches, one-action Vendor Workspace tracking with undo, deterministic legacy import, verified catalogue checkpoint refresh, and user-owned market evidence. Official listing adapters are credential-gated and completed-sale evidence remains first-party. Verification passes 220/220 tests, TypeScript, lint, production build, schema migration, diff hygiene, and desktop/mobile responsive checks.
