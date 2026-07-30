@@ -4,18 +4,19 @@
 
 - Assignment: `PHR-ARTWORK-PROVIDER-SETTINGS-20260730`
 - Document ID: `PHR-STRUCT-20260730-006`
-- Status: `CTO ACCEPTED — SECURE REGISTRATION GATE PRESERVED`
+- Status: `CTO ACCEPTED — PR #5 OPEN; PRIVATE DEPLOYMENT VERIFIED; SECURE REGISTRATION GATE PRESERVED`
 - Features: `PHR-API-004-R1`, `PHR-UX-012`
 - Objective: resolve the exact Urza's Saga Store Championship thumbnail and establish Settings as the canonical provider connection/control surface.
 - Authorized: bounded artwork matching remediation, Settings UI, authentication readiness guidance, documentation, tests/build, private restart, local checkpoint.
 - Security boundary: provider secret entry remains prohibited until required owner authentication and an encrypted owner-only credential store have a reviewed work order. No compatibility-mode secret mutation is permitted.
 - Verified result: exact Urza's Saga Store Championship Foil artwork returns `OPERATIONAL` and renders through the durable local image route; Settings shows provider health and the employee-login readiness checklist. Full suite 234/234, standalone TypeScript, lint, production build, diff, private runtime, and browser-console gates pass.
+- Publication state: the accepted checkpoint is pushed on `codex/phr-price-monitoring-20260730` and included in draft GitHub PR `#5` targeting `main`. The launch-managed private deployment runs from the JarvisSSD checkout and passed loopback, tailnet HTTPS, catalogue-status, and OAuth-start verification.
 
 ## Active Assignment — Card-Show Operations
 
 - Assignment: `PHR-CARD-SHOW-OPERATIONS-20260730`
 - Document ID: `PHR-STRUCT-20260730-005`
-- Status: `CTO ACCEPTED — LOCAL CHECKPOINT COMPLETE; AUTH ACTIVATION GATED`
+- Status: `CTO ACCEPTED — PR #5 OPEN; PRIVATE DEPLOYMENT VERIFIED; AUTH OWNER CALLBACK GATED`
 - Priority: Critical event readiness
 - Delivery lane: Standard, six integrated slices
 - Approved features: `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, `PHR-API-004`
@@ -57,13 +58,13 @@ Every slice must pass its specification, focused tests, the supported full suite
 - The previously failing Urza's Saga watch reconciled uniquely across provider set-label drift and refreshed from the verified catalogue to `$469.04` with HTTP 200 while preserving its watch membership.
 - The four-daily observer no longer exits through the `server-only` import boundary.
 - GitHub/passkey authentication remains activation-gated. JustTCG is configured but enrichment remains deliberately disabled; eBay and CardTrader remain unconfigured. No secret is recorded in repository evidence.
-- CTO acceptance was recorded automatically under `PHR-WORKFLOW-002`. Local feature-branch checkpoint: `6c38c1f`. Nothing was pushed or published.
+- CTO acceptance was recorded automatically under `PHR-WORKFLOW-002`. The integrated branch through `f1a49c5` is pushed in draft GitHub PR `#5`; the private tailnet deployment is verified. Authentication is configured in `OPTIONAL` mode and an initial owner invitation exists locally, but required mode remains gated on successful live owner callback verification.
 
 ## Active Assignment — Identity-Backed Price Monitoring
 
 - Assignment: `PHR-PRICE-MONITORING-20260730`
 - Document ID: `PHR-STRUCT-20260730-004`
-- Status: `PRODUCT REVIEW REQUIRED — S1 ACCEPTED; S2–S5 IMPLEMENTED; EXTERNAL ACTIVATION GATES PRESERVED`
+- Status: `CTO ACCEPTED — PR #5 OPEN; AUTH OPTIONAL PENDING LIVE OWNER CALLBACK`
 - Priority: Critical baseline stabilization followed by high-priority product delivery
 - Delivery lane: Standard, five ordered implementation slices
 - Workflow authority: shared master file at its currently declared revision `2.1.0`; project-pointer revision mismatch is recorded as non-blocking governance debt

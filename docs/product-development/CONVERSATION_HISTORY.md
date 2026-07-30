@@ -1,5 +1,29 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Authentication Configuration And Private Publication
+
+### Source
+
+Current CTO chat.
+
+### User Intent
+
+- Configure GitHub OAuth for the invite-only employee identity system.
+- Bootstrap the initial owner identity.
+- Commit, push, and deploy the accepted development checkpoint before continuing.
+
+### Result
+
+- Rotated authentication credentials are present only in ignored local configuration; no secret or runtime identity database entered repository history.
+- The local identity schema is current and the initial owner invitation is pending a live GitHub callback.
+- Authentication remains `OPTIONAL` until that callback and resulting owner membership are verified.
+- The six-commit implementation branch through `f1a49c5` was pushed as `codex/phr-price-monitoring-20260730`; draft GitHub PR `#5` targets `main`.
+- The launch-managed private JarvisSSD deployment was restarted and returned HTTP 200 through loopback and tailnet HTTPS. Five catalogue checkpoints report `CURRENT`, and OAuth initiation produces the canonical GitHub callback URL.
+
+### Acceptance State
+
+CTO authorized publication and private deployment. Canonical merge and required-auth activation remain gated on PR adoption and successful live owner sign-in respectively.
+
 ## 2026-07-30 — Store Championship Artwork, Provider Settings, And Login Gate
 
 The Product Owner reported that intelligent catalogue search found the correct Store Championship Urza's Saga but its thumbnail remained blank, directed provider registration/enabling into Settings, and asked what was required to activate Employee login. The artwork failure came from using the user's qualified search text against Scryfall and then requiring equal set labels between Scryfall and the pricing catalogue.
