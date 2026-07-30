@@ -1,5 +1,39 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Regional Vending And Arbitrage Intelligence
+
+- Assignment: `PHR-REGIONAL-INTELLIGENCE-20260730`
+- Document ID: `PHR-STRUCT-20260730-008`
+- Status: `PRODUCT REVIEW READY`
+- Delivery lane: Standard, four ordered slices
+- Features: `PHR-ARCH-013`, `PHR-API-006`, `PHR-UX-013`, `PHR-WORKFLOW-007`
+- Objective: convert the verified LigaMagic snapshot into exact regional vending evidence and truthfully gated two-way arbitrage opportunities.
+
+### Authorized Slices
+
+1. Exact LigaMagic-to-TCGplayer crosswalk with ambiguity and Textless quarantine.
+2. Regional evidence, timestamped FX, direction-specific cost profiles, and explicit incomplete/stale states.
+3. Offer-first Brazilian vending intelligence inside the existing Vendor Workspace.
+4. Ranked US↔Brazil arbitrage candidates with append-only executable-availability verification.
+
+### Product Rules
+
+- LigaMagic Compra is consumer retail evidence.
+- LigaMagic Venda is a dealer-buy benchmark, not a guaranteed executable offer.
+- No candidate is actionable until identity, freshness, costs, and real availability are verified.
+- Unknown costs are not silently treated as zero.
+- Existing Phronesis evaluation, checkout, authentication, and module authorization remain canonical.
+
+### Authorization And Boundaries
+
+Repository documentation/code/database migrations, ignored local crosswalk/evidence data, deterministic tests/builds, private desktop/mobile review, bounded remediation, ordinary feature-branch checkpoints, and private-service restart after verification are authorized autonomously.
+
+The 03:00 LigaMagic schedule, public deployment, paid commitments, scraping, transactions, credential capture/disclosure, destructive migration, force push, and history rewriting are prohibited. The Product Owner is interrupted only for a critical financial/security decision or genuine block.
+
+### Acceptance
+
+Every accepted cross-market mapping is unique and auditable; Vendor Workspace shows correctly labelled Brazilian evidence for exact matches; arbitrary financial assumptions cannot produce actionable recommendations; availability verification is persisted and authorized; full tests, TypeScript, lint, build, diff, responsive review, Designer conformance, and Chief Architect conformance pass.
+
 ## Active Assignment — LigaMagic Authenticated Export Dry Run
 
 - Assignment: `PHR-LIGAMAGIC-DRYRUN-20260730`

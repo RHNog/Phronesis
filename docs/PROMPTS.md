@@ -1,5 +1,11 @@
 # Prompt History
 
+## Regional Vending And Arbitrage Intelligence — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-008` authorized exact cross-market identity (`PHR-ARCH-013`), regional evidence/cost truth (`PHR-API-006`), vending guidance (`PHR-UX-013`), and two-way availability verification (`PHR-WORKFLOW-007`).
+
+Canonical work order: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
+
 ## PHR-API-005 LigaMagic Authenticated Export Snapshots — 2026-07-30
 
 Build a dedicated local authenticated LigaMagic export profile, capture one supervised collection export without credential/session disclosure, and create a complete non-scheduled dry-run snapshot across every discovered collection.

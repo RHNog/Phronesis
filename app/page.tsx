@@ -8,6 +8,7 @@ import {
 } from "@/data/seedStrategies";
 import { generateOpportunity } from "@/lib/engines/opportunity/generateOpportunity";
 import { MockMarketProvider } from "@/lib/providers/market/MockMarketProvider";
+import RegionalArbitrageWorkspace from "@/components/opportunities/RegionalArbitrageWorkspace";
 
 export default async function Home() {
   const provider = new MockMarketProvider();
@@ -27,6 +28,7 @@ export default async function Home() {
           strategyProfiles={seedStrategyProfiles}
           defaultStrategyId={defaultStrategyId}
         />
+        <RegionalArbitrageWorkspace />
       </div>
     </AppShell>
   );

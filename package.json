@@ -22,6 +22,7 @@
     "ligamagic:profile": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ligamagic-export.ts profile",
     "ligamagic:pilot": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ligamagic-export.ts pilot",
     "ligamagic:dry-run": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ligamagic-export.ts dry-run",
+    "regional:crosswalk": "node --import ./tests/register-test-hooks.mjs scripts/build-regional-crosswalk.ts",
     "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
     "review:phone:status": "node scripts/private-review-status.mjs"
   },

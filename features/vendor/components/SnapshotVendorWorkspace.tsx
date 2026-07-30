@@ -20,6 +20,7 @@ import {
 } from "@/data/seedStrategies";
 import EvaluationSummary from "@/features/vendor/components/EvaluationSummary";
 import VendorCheckout from "@/features/vendor/components/VendorCheckout";
+import RegionalMarketPanel from "@/features/vendor/components/RegionalMarketPanel";
 import {
   createSnapshotWatchlistEntry,
   watchlistEntryKey,
@@ -292,19 +293,43 @@ function ResultButton({
   );
 }
 
-function OfferFirstSummary({ evaluation }: { evaluation: PurchaseEvaluation | null }) {
+function OfferFirstSummary({
+  evaluation,
+}: {
+  evaluation: PurchaseEvaluation | null;
+}) {
   if (!evaluation || evaluation.status !== "READY") return null;
   const ladder = evaluation.negotiationLadder;
   return (
-    <section aria-label="Recommended buying offer" className="rounded-xl border border-cyan-800 bg-cyan-950/35 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Recommended offer</p>
+    <section
+      aria-label="Recommended buying offer"
+      className="rounded-xl border border-cyan-800 bg-cyan-950/35 p-4"
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">
+        Recommended offer
+      </p>
       <p className="mt-2 text-4xl font-semibold tabular-nums text-white">
         ${evaluation.recommendedOffer.toLocaleString()}
       </p>
       <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-        <div className="rounded-lg bg-zinc-950/70 p-3"><p className="text-zinc-500">Opening</p><p className="mt-1 font-semibold text-zinc-100">${ladder.openingOffer.toLocaleString()}</p></div>
-        <div className="rounded-lg bg-zinc-950/70 p-3"><p className="text-zinc-500">Target</p><p className="mt-1 font-semibold text-cyan-200">${ladder.targetOffer.toLocaleString()}</p></div>
-        <div className="rounded-lg bg-zinc-950/70 p-3"><p className="text-zinc-500">Walk away</p><p className="mt-1 font-semibold text-amber-200">${ladder.maximumBuyPrice.toLocaleString()}</p></div>
+        <div className="rounded-lg bg-zinc-950/70 p-3">
+          <p className="text-zinc-500">Opening</p>
+          <p className="mt-1 font-semibold text-zinc-100">
+            ${ladder.openingOffer.toLocaleString()}
+          </p>
+        </div>
+        <div className="rounded-lg bg-zinc-950/70 p-3">
+          <p className="text-zinc-500">Target</p>
+          <p className="mt-1 font-semibold text-cyan-200">
+            ${ladder.targetOffer.toLocaleString()}
+          </p>
+        </div>
+        <div className="rounded-lg bg-zinc-950/70 p-3">
+          <p className="text-zinc-500">Walk away</p>
+          <p className="mt-1 font-semibold text-amber-200">
+            ${ladder.maximumBuyPrice.toLocaleString()}
+          </p>
+        </div>
       </div>
     </section>
   );
@@ -327,7 +352,9 @@ export default function SnapshotVendorWorkspace() {
     useState("convention-buying");
   const [strategyId, setStrategyId] = useState(defaultStrategyId);
   const [artwork, setArtwork] = useState<Record<string, CardImageUrls>>({});
-  const [artworkUploadMessage, setArtworkUploadMessage] = useState<string | null>(null);
+  const [artworkUploadMessage, setArtworkUploadMessage] = useState<
+    string | null
+  >(null);
   const [tracking, setTracking] = useState<{
     created: boolean;
     entryId?: string;
@@ -497,7 +524,10 @@ export default function SnapshotVendorWorkspace() {
         })
       : null;
   const evaluation =
-    selectedMatch && price && askingPrice.trim() !== "" && Number.isFinite(numericAskingPrice)
+    selectedMatch &&
+    price &&
+    askingPrice.trim() !== "" &&
+    Number.isFinite(numericAskingPrice)
       ? createSnapshotPurchaseEvaluation({
           match: selectedMatch,
           condition,
@@ -609,13 +639,27 @@ export default function SnapshotVendorWorkspace() {
     form.set("sku", selectedMatch.sku);
     form.set("file", file);
     try {
-      const response = await fetch("/api/pricing/artwork/curated", { method: "POST", body: form });
-      const body = await response.json().catch(() => ({})) as { error?: string; url?: string };
-      if (!response.ok || !body.url) throw new Error(body.error ?? "Product image could not be stored.");
-      setArtwork((current) => ({ ...current, [selectedMatch.sku]: { normal: body.url } }));
+      const response = await fetch("/api/pricing/artwork/curated", {
+        method: "POST",
+        body: form,
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        url?: string;
+      };
+      if (!response.ok || !body.url)
+        throw new Error(body.error ?? "Product image could not be stored.");
+      setArtwork((current) => ({
+        ...current,
+        [selectedMatch.sku]: { normal: body.url },
+      }));
       setArtworkUploadMessage("Exact product image stored locally.");
     } catch (error) {
-      setArtworkUploadMessage(error instanceof Error ? error.message : "Product image could not be stored.");
+      setArtworkUploadMessage(
+        error instanceof Error
+          ? error.message
+          : "Product image could not be stored.",
+      );
     }
   }
 
@@ -995,8 +1039,15 @@ export default function SnapshotVendorWorkspace() {
                       className="mt-2 block min-h-11 w-full text-xs text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-zinc-200"
                     />
                   </label>
-                  <p className="mt-2 text-xs text-zinc-500">Stores one validated local image against this exact catalogue SKU. Administration permission is required.</p>
-                  {artworkUploadMessage ? <p role="status" className="mt-2 text-xs text-cyan-200">{artworkUploadMessage}</p> : null}
+                  <p className="mt-2 text-xs text-zinc-500">
+                    Stores one validated local image against this exact
+                    catalogue SKU. Administration permission is required.
+                  </p>
+                  {artworkUploadMessage ? (
+                    <p role="status" className="mt-2 text-xs text-cyan-200">
+                      {artworkUploadMessage}
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -1047,6 +1098,14 @@ export default function SnapshotVendorWorkspace() {
             <div className="mt-4">
               <OfferFirstSummary evaluation={offerEvaluation} />
             </div>
+            {selectedMatch ? (
+              <div className="mt-4">
+                <RegionalMarketPanel
+                  categoryId={selectedMatch.categoryId}
+                  sku={selectedMatch.sku}
+                />
+              </div>
+            ) : null}
             <label className="mt-4 block text-sm font-medium text-zinc-300">
               Seller asking price (USD) · optional comparison
               <input
@@ -1062,7 +1121,8 @@ export default function SnapshotVendorWorkspace() {
               />
             </label>
             <p className="mt-2 text-xs text-zinc-500">
-              The offer is available immediately. Add the seller&apos;s ask to calculate BUY, NEGOTIATE, or PASS.
+              The offer is available immediately. Add the seller&apos;s ask to
+              calculate BUY, NEGOTIATE, or PASS.
             </p>
           </div>
           {evaluation ? (
@@ -1086,7 +1146,11 @@ export default function SnapshotVendorWorkspace() {
         marketReferenceCents={reference.cents}
         match={selectedMatch}
         price={price}
-        recommendedOffer={offerEvaluation?.status === "READY" ? offerEvaluation.recommendedOffer : null}
+        recommendedOffer={
+          offerEvaluation?.status === "READY"
+            ? offerEvaluation.recommendedOffer
+            : null
+        }
       />
     </section>
   );

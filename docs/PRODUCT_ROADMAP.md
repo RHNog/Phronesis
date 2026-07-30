@@ -1,5 +1,12 @@
 # Product Roadmap
 
+## Current Delivery — Regional Vending And Arbitrage Intelligence
+
+- Exact LigaMagic/TCGplayer cross-market identity bridge: Product Review Ready.
+- Brazilian vending evidence inside Vendor Workspace: Product Review Ready.
+- Two-way US↔Brazil arbitrage verification: Product Review Ready; operational ranking awaits owner FX/cost configuration.
+- Daily LigaMagic scheduling remains separately gated.
+
 ## Immediate Product Direction — Cross-Game Buying And Intelligence
 
 The cross-game Vendor Workspace removes catalogue switching, groups finish variants under one artwork, and activates current Magic, Pokémon, One Piece, and Lorcana catalogue workflows. `PHR-UX-009` now adds the visible Phronesis Intelligence explanation by reusing the already-executing Card Intelligence, Market Intelligence, Asset Assessment, Strategy, Offer Ladder, and Decision Resolver outputs.

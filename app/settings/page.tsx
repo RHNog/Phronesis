@@ -3,6 +3,7 @@ import BusinessProfilesSettings from "@/features/settings/components/BusinessPro
 import AccessManagement from "@/components/auth/AccessManagement";
 import ProviderConnections from "@/components/settings/ProviderConnections";
 import { getAuthRuntimeStatus } from "@/lib/auth/config";
+import RegionalCostProfileSettings from "@/features/settings/components/RegionalCostProfileSettings";
 
 export default function SettingsPage() {
   const authStatus = getAuthRuntimeStatus();
@@ -19,8 +20,17 @@ export default function SettingsPage() {
         </header>
 
         <BusinessProfilesSettings />
-        <ProviderConnections secureRegistrationReady={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode} />
-        <AccessManagement active={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode} />
+        <RegionalCostProfileSettings />
+        <ProviderConnections
+          secureRegistrationReady={
+            authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode
+          }
+        />
+        <AccessManagement
+          active={
+            authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode
+          }
+        />
       </div>
     </AppShell>
   );
