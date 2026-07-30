@@ -4,7 +4,7 @@
 
 - Assignment: `PHR-POKEMON-LORCANA-20260730`
 - Document ID: `PHR-STRUCT-20260730-001`
-- Status: `CANONICAL ADOPTION PENDING`
+- Status: `CANONICAL ADOPTION COMPLETE`
 - Priority: Critical event readiness
 - Delivery lane: Standard, two ordered implementation slices
 - Objective: improve strict Pokémon artwork coverage and activate a current Lorcana catalogue with locally retained artwork
@@ -33,6 +33,15 @@ The assignment is accepted when Pokémon artwork improves without false-positive
 - Lorcast AVIF images now pass strict durable-cache validation; 17 unique Mickey Mouse result artworks were retained locally.
 - Focused 18/18, lint, build, diff, desktop, and mobile checks pass. The supported full suite remains at the exact 183-pass/17-failure baseline and standalone TypeScript retains only 29 known `TS5097` test-import errors.
 - Same-session Chief Architect conformance: `docs/reviews/PHR-TECH-008-pokemon-lorcana-event-readiness-conformance-review.md`.
+
+### Canonical Adoption And Private Activation
+
+- Candidate commit: `ee29bab79eaef3588ede08546ede4f6016e23195`.
+- Private GitHub PR: `#3`, merged normally into `main`.
+- Canonical merge commit: `a7891cf574aaf05fb4da8ddf7559448c9c1619de`.
+- The canonical checkout and `origin/main` match the merge commit.
+- The existing private review service was restarted and returned HTTP 200 through its loopback health check with the tailnet-only mapping intact.
+- Deployed runtime verification: Pokémon `pikachu` resolves 25 strict mappings; Lorcana `mickey mouse` resolves 30; Lorcana sync status is `CURRENT` at `2026-07-30T04:34:16.000Z`.
 
 ## Active Authorized Revision — PHR-TECH-007 + PHR-API-002
 

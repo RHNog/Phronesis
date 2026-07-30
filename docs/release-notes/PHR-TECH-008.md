@@ -5,3 +5,5 @@ Phronesis now recognizes explicit equivalent Pokémon set labels between TCGplay
 Lorcana is now a current searchable catalogue in the desktop-first Vendor Workspace: 30,531 price rows and 6,243 products were imported from a verified catalogue-only receipt. Lorcast thumbnails resolve against those products, and strict AVIF validation allows approved images to be retained and served from Phronesis's same-origin local cache.
 
 Riftbound remains deferred. No store, inventory, price, publication, credential, or Pricing Update Tool source state was changed.
+
+Privately activated through GitHub PR `#3` at canonical merge commit `a7891cf574aaf05fb4da8ddf7559448c9c1619de`.

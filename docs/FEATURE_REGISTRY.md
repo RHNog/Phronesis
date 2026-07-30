@@ -37,7 +37,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-API-002` | Cross-Game Catalogue Artwork Providers | Product Review Ready — Bandai Revision | API / Identity / Local Integration / Provider Governance | `docs/api/PHR-API-002-cross-game-catalogue-artwork-providers.md` |
 | `PHR-UX-008` | Unified Artwork-First Catalogue Search | Product Review Ready | Product / UX / UI / Search / Workflow | `docs/ux/PHR-UX-008-unified-artwork-first-catalogue-search.md` |
 | `PHR-TECH-007` | Durable Local Artwork Cache | Product Review Ready | Technical / Local Storage / Reliability / Security / Provider Governance | `docs/technical/PHR-TECH-007-durable-local-artwork-cache.md` |
-| `PHR-TECH-008` | Pokémon And Lorcana Event Readiness | Implementation Verified | Technical / API / Database / Local Integration / Reliability | `docs/technical/PHR-TECH-008-pokemon-lorcana-event-readiness.md` |
+| `PHR-TECH-008` | Pokémon And Lorcana Event Readiness | Completed | Technical / API / Database / Local Integration / Reliability | `docs/technical/PHR-TECH-008-pokemon-lorcana-event-readiness.md` |
 
 ## Registry Rule
 

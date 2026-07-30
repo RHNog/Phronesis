@@ -1,7 +1,7 @@
 # PHR-TECH-008 Validation Record
 
 Date: 2026-07-30
-Verdict: **CONFORMS — CANONICAL ADOPTION PENDING**
+Verdict: **COMPLETED AND PRIVATELY ACTIVE**
 
 ## Pokémon evidence
 
@@ -52,3 +52,10 @@ Verdict: **CONFORMS — CANONICAL ADOPTION PENDING**
 - No store visibility, inventory, price, pending-review, publication, schedule, account, or credential state was changed.
 - No image provider changed snapshot prices, source SKUs, condition evidence, evaluation inputs, or buying decisions.
 - No public deployment or external communication occurred.
+
+## Canonical continuity
+
+- Candidate commit: `ee29bab79eaef3588ede08546ede4f6016e23195`.
+- GitHub PR `#3` merged to `main` as `a7891cf574aaf05fb4da8ddf7559448c9c1619de`.
+- Canonical checkout equals `origin/main` at that merge receipt.
+- The restarted private service returned HTTP 200 and reproduced 25 Pokémon and 30 Lorcana strict mappings for the representative deployed queries.
