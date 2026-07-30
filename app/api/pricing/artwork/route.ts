@@ -7,6 +7,7 @@ import { TcgdexProvider } from "@/lib/providers/tcgdex/TcgdexProvider";
 import { LorcastProvider } from "@/lib/providers/lorcast/LorcastProvider";
 import { BandaiOnePieceProvider } from "@/lib/providers/bandai/BandaiOnePieceProvider";
 import { durableArtworkUrls } from "@/lib/artwork/DurableArtworkCache";
+import { authorizationErrorResponse, authorizeRequest } from "@/lib/auth/requestAuthorization";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,8 @@ const lorcast = new LorcastProvider();
 const onePiece = new BandaiOnePieceProvider();
 
 export async function GET(request: Request) {
+  const authorization = await authorizeRequest(request, "VENDOR_WORKSPACE");
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const url = new URL(request.url);
   const query = (url.searchParams.get("q") ?? "").trim();
   const categoryId = url.searchParams.get("category") ?? "magic-en";

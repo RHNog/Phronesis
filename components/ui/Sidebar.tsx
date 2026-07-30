@@ -5,9 +5,14 @@ import NavItem from "@/components/ui/NavItem";
 import {
   primaryNavigation,
   resolvePrimaryNavigation,
+  type PrimaryNavigationItem,
 } from "@/lib/navigation/ProductNavigation";
 
-export default function Sidebar() {
+export default function Sidebar({
+  navigationItems = primaryNavigation,
+}: {
+  navigationItems?: readonly PrimaryNavigationItem[];
+}) {
   const pathname = usePathname();
   const selectedItem = resolvePrimaryNavigation(pathname);
 
@@ -21,7 +26,7 @@ export default function Sidebar() {
       {/* Main vertical navigation. */}
       <nav aria-label="Primary navigation" className="flex-1 px-4 py-6">
         <ul className="space-y-2">
-          {primaryNavigation.map((item) => (
+          {navigationItems.map((item) => (
             <li key={item.id}>
               <NavItem
                 href={item.href}

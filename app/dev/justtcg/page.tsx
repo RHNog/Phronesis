@@ -46,7 +46,7 @@ export default async function JustTCGDeveloperPage({
   const inspection = await provider.inspectKnownCardForDevelopment(context);
 
   return (
-    <AppShell>
+    <AppShell requiredModule="ADMINISTRATION">
       <div className="w-full space-y-6">
         <header>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">

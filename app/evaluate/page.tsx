@@ -10,7 +10,7 @@ import PurchaseEvaluationForm from "@/features/evaluation/components/PurchaseEva
 
 export default function EvaluatePage() {
   return (
-    <AppShell>
+    <AppShell requiredModule="VENDOR_WORKSPACE">
       <div className="w-full space-y-6">
         <header>
           <h2 className="text-3xl font-semibold tracking-tight text-white">

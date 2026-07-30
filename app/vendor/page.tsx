@@ -3,7 +3,7 @@ import SnapshotVendorWorkspace from "@/features/vendor/components/SnapshotVendor
 
 export default function VendorPage() {
   return (
-    <AppShell commandPaletteContext="VendorWorkspace">
+    <AppShell commandPaletteContext="VendorWorkspace" requiredModule="VENDOR_WORKSPACE">
       <SnapshotVendorWorkspace />
     </AppShell>
   );

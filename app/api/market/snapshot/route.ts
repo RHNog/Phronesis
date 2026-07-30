@@ -7,6 +7,7 @@ import type { MarketIntelligenceRepositorySnapshot } from "@/lib/market/MarketSn
 import type { MarketPrice } from "@/types/marketPrice";
 import type { MarketSnapshot } from "@/types/marketSnapshot";
 import type { MarketSnapshotField } from "@/lib/market/MarketSnapshotMetadata";
+import { authorizationErrorResponse, authorizeRequest } from "@/lib/auth/requestAuthorization";
 
 function getSelectedValue(
   snapshot: MarketIntelligenceRepositorySnapshot,
@@ -165,6 +166,8 @@ function toApiMarketSnapshot(
 }
 
 export async function GET(request: Request) {
+  const authorization = await authorizeRequest(request, "VENDOR_WORKSPACE");
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const { searchParams } = new URL(request.url);
   const cardName = searchParams.get("cardName") ?? "";
   const condition = searchParams.get("condition") ?? "NM";

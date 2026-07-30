@@ -22,7 +22,7 @@ export default async function IdentityDeveloperPage({
   const response = await new IdentityOrchestrator().search(query);
 
   return (
-    <AppShell>
+    <AppShell requiredModule="ADMINISTRATION">
       <IdentityExplorer response={response} selectedCardId={params.cardId} />
     </AppShell>
   );

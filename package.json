@@ -16,12 +16,15 @@
     "pricing:catalog-import": "node --import ./tests/register-test-hooks.mjs scripts/import-tcgplayer-catalog.ts",
     "pricing:sync": "node --import ./tests/register-test-hooks.mjs scripts/watch-pricing-catalogues.ts --once",
     "pricing:watch": "node --import ./tests/register-test-hooks.mjs scripts/watch-pricing-catalogues.ts",
+    "auth:migrate": "node --import ./tests/register-test-hooks.mjs scripts/migrate-auth.ts",
+    "auth:bootstrap-owner": "node --import ./tests/register-test-hooks.mjs scripts/bootstrap-owner.ts",
     "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
     "review:phone:status": "node scripts/private-review-status.mjs"
   },
   "dependencies": {
+    "better-auth": "^1.6.25",
     "justtcg-js": "^0.2.1",
-    "next": "16.2.10",
+    "next": "^16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -31,7 +34,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "^16.2.12",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

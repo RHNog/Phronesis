@@ -1,5 +1,13 @@
 # Project Atlas
 
+## Internal Identity And Module Authorization
+
+- `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.
+- `AuthorizationRepository` owns the single workspace, memberships, explicit entitlements, local invitations, and append-only audit records in ignored SQLite storage.
+- Secure page, Route Handler, and mutation checks live in the server Data Access Layer. Next.js Proxy and filtered navigation are optimistic/user-experience controls only.
+- Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Required mode fails closed unless base URL, secret, GitHub credentials, migration, and owner invitation are ready.
+- Activation remains gated by credentials/owner identity, live callback verification, and disposition of remaining Next transitive advisories.
+
 ## Green Verification Baseline
 
 - `PHR-TECH-009` establishes `npm test` (204/204), standalone TypeScript, warning-free lint, production build, and diff validation as the clean product-development gate.

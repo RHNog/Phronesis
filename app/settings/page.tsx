@@ -1,9 +1,12 @@
 import AppShell from "@/components/ui/AppShell";
 import BusinessProfilesSettings from "@/features/settings/components/BusinessProfilesSettings";
+import AccessManagement from "@/components/auth/AccessManagement";
+import { getAuthRuntimeStatus } from "@/lib/auth/config";
 
 export default function SettingsPage() {
+  const authStatus = getAuthRuntimeStatus();
   return (
-    <AppShell>
+    <AppShell requiredModule="ADMINISTRATION">
       <div className="w-full space-y-6">
         <header>
           <h2 className="text-3xl font-semibold tracking-tight text-white">
@@ -15,6 +18,7 @@ export default function SettingsPage() {
         </header>
 
         <BusinessProfilesSettings />
+        <AccessManagement active={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode} />
       </div>
     </AppShell>
   );

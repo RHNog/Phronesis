@@ -18,7 +18,7 @@ export default async function Home() {
   const opportunities = opportunity ? [opportunity] : [];
 
   return (
-    <AppShell>
+    <AppShell requiredModule="INTELLIGENCE">
       <div className="w-full space-y-6">
         <OpportunityHeader />
         <HotOpportunitiesWorkspace

@@ -4,7 +4,7 @@
 
 - Assignment: `PHR-PRICE-MONITORING-20260730`
 - Document ID: `PHR-STRUCT-20260730-004`
-- Status: `IN PROGRESS — S1 ACCEPTED; S2 ACTIVE`
+- Status: `IN PROGRESS — S1 ACCEPTED; S2 IMPLEMENTED/ACTIVATION GATED; S3 ACTIVE`
 - Priority: Critical baseline stabilization followed by high-priority product delivery
 - Delivery lane: Standard, five ordered implementation slices
 - Workflow authority: shared master file at its currently declared revision `2.1.0`; project-pointer revision mismatch is recorded as non-blocking governance debt
@@ -25,7 +25,8 @@ Restore a fully green deterministic repository baseline, introduce invite-only a
 ### Accepted Slice Evidence
 
 - `S1 — PHR-TECH-009`: **ACCEPTED** on 2026-07-30. All 204 tests pass; standalone TypeScript, lint without warnings, production build, and diff checks pass. Validation, Engineer report, release notes, and same-session Chief Architect conformance are recorded under the feature ID.
-- `S2 — PHR-ARCH-011`: **ACTIVE**.
+- `S2 — PHR-ARCH-011`: **IMPLEMENTED; ACTIVATION GATED**. Better Auth 1.6.25, local identity schema, invite-only provisioning, roles, entitlements, audit, protected page/API boundaries, administration UI, migration/bootstrap scripts, and reversible rollout pass 210/210 tests, type, lint, build, diff, and responsive review. Required mode remains withheld pending Product Owner-authorized GitHub OAuth credentials/owner email, live callback verification, and supported resolution or explicit risk acceptance for three remaining Next transitive production advisories.
+- `S3 — PHR-WORKFLOW-005`: **ACTIVE**. Persistence must preserve existing local watch data through a deterministic legacy-owner migration boundary while authentication remains disabled.
 
 ### Authorization And Boundaries
 

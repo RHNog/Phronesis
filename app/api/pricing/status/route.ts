@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { pricingLookupConfig } from "@/config/pricingLookup";
 import { getPricingRepository } from "@/lib/pricing/server";
+import { authorizationErrorResponse, authorizeRequest } from "@/lib/auth/requestAuthorization";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authorization = await authorizeRequest(request, "VENDOR_WORKSPACE");
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   try {
     const repository = getPricingRepository();
     const syncByCategory = new Map(repository.getSyncStates().map((state) => [state.categoryId, state]));

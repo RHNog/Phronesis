@@ -1,3 +1,5 @@
+import type { PhronesisModule } from "@/lib/auth/domain";
+
 export type ProductArea = "Discover" | "Decide" | "Monitor" | "Administer";
 
 export type PrimaryNavigationItem = {
@@ -5,6 +7,7 @@ export type PrimaryNavigationItem = {
   label: string;
   href: string;
   area: ProductArea;
+  module: PhronesisModule;
   matches: readonly string[];
 };
 
@@ -14,6 +17,7 @@ export const primaryNavigation = [
     label: "Opportunities",
     href: "/",
     area: "Discover",
+    module: "INTELLIGENCE",
     matches: ["/", "/opportunities"],
   },
   {
@@ -21,13 +25,15 @@ export const primaryNavigation = [
     label: "Vendor Workspace",
     href: "/vendor",
     area: "Decide",
-  matches: ["/vendor", "/evaluate", "/price-lookup"],
+    module: "VENDOR_WORKSPACE",
+    matches: ["/vendor", "/evaluate", "/price-lookup"],
   },
   {
     id: "market-watch",
     label: "Market Watch",
     href: "/watchlists",
     area: "Monitor",
+    module: "MARKET_WATCH",
     matches: ["/watchlists"],
   },
   {
@@ -35,11 +41,19 @@ export const primaryNavigation = [
     label: "Settings",
     href: "/settings",
     area: "Administer",
+    module: "ADMINISTRATION",
     matches: ["/settings"],
   },
 ] as const satisfies readonly PrimaryNavigationItem[];
 
 export type PrimaryNavigationId = (typeof primaryNavigation)[number]["id"];
+
+export function navigationForModules(
+  modules: readonly PhronesisModule[],
+): readonly PrimaryNavigationItem[] {
+  const allowed = new Set(modules);
+  return primaryNavigation.filter((item) => allowed.has(item.module));
+}
 
 function matchesRoute(pathname: string, route: string): boolean {
   if (route === "/") {

@@ -1,5 +1,13 @@
 # Decisions
 
+## 2026-07-30 — Authentication identity does not own product authorization
+
+- Use self-hosted Better Auth database sessions and GitHub OAuth for authentication.
+- Keep workspace membership, role defaults, explicit module entitlements, invitations, and authorization audit in Phronesis-owned tables.
+- Re-authorize at every page/data/mutation boundary; Proxy and hidden navigation are not security controls.
+- Default to disabled compatibility mode and require complete configuration plus live verification before enforcing login.
+- Do not force dependency downgrades or activate required mode while supported fixes for known Next transitive production advisories are unavailable.
+
 ## 2026-07-30 — Green verification is a product-development prerequisite
 
 - Permit explicit TypeScript test imports only under the repository's existing no-emit contract.
