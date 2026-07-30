@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — LigaMagic Authenticated Export Dry Run
+
+- Assignment: `PHR-LIGAMAGIC-DRYRUN-20260730`
+- Document ID: `PHR-STRUCT-20260730-007`
+- Status: `COMPLETE — DRY RUN VERIFIED; 03:00 SCHEDULE NOT AUTHORIZED`
+- Feature: `PHR-API-005`
+- Priority: Critical pricing-intelligence foundation
+- Objective: create a dedicated authenticated LigaMagic export profile, perform one user-supervised collection export, capture safe request behavior, and produce a complete non-scheduled dry-run snapshot across every discovered collection.
+- Evidence semantics: `Compra` is the price a consumer pays a store; `Venda` is the price a store offers a consumer.
+- Authorized: repository documentation/code/tests, `playwright-core` dependency installation without browser download, ignored local profile/download/database evidence, one supervised export, sequential export of all owned collections, and bounded authenticated reads through LigaMagic's own export UI.
+- User boundary: the Product Owner must personally enter credentials and complete CAPTCHA/verification in the dedicated browser profile. The workflow resumes automatically after authentication.
+- Prohibited: password/token/cookie capture, CAPTCHA or rate-limit bypass, anonymous or marketplace-page scraping, daily schedule installation, LigaPokémon, arbitrage recommendation/UI, canonical pricing activation, transaction, public deployment, force push, and history rewriting.
+- Acceptance: exact schema/advertised-quantity/row-count/hash evidence for one pilot and every discovered collection; complete manifest and SQLite dry-run snapshot; duplicate/conflict report; full deterministic repository verification; no secret in repository or evidence.
+- Verified result: the pilot captured the supported authenticated `POST /?view=colecao/export&id=…` attachment response without headers, cookies, request bodies, or query values. The complete run reconciled 329,976 advertised cards across 329,903 rows and 37 collections, yielding 329,301 unique identities, 602 identical duplicates, and zero conflicting duplicates. The schedule remains absent.
+
 ## Active Remediation — Artwork And Provider Settings
 
 - Assignment: `PHR-ARTWORK-PROVIDER-SETTINGS-20260730`

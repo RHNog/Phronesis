@@ -1,5 +1,12 @@
 # Roadmap
 
+## Active: LigaMagic Brazilian Market Snapshot
+
+- Completed: `PHR-API-005` dedicated authenticated collection-export profile, one supervised pilot, safe request capture, and complete non-scheduled dry-run snapshot.
+- Verified snapshot: 37 collections; 329,976 advertised/exported cards; 329,903 source rows; 329,301 unique identities; 602 identical cross-collection duplicates; zero price conflicts.
+- Confirmed semantics: `Compra` is consumer acquisition price; `Venda` is store buy offer.
+- Gated next: exact LigaMagic/TCGplayer crosswalk, official USD/BRL conversion, landed-cost assumptions, and two-way arbitrage specification. Deferred: 03:00 scheduling and LigaPokémon until separately authorized.
+
 ## Accepted Remediation: Artwork And Provider Settings
 
 - Completed: exact-name Magic artwork discovery and unique Store Championship set-label reconciliation.

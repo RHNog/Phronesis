@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — LigaMagic Authenticated Export Snapshot
+
+The Product Owner defined LigaMagic pricing semantics (`Compra` is the consumer price paid to a store; `Venda` is the store's buy offer) and authorized one supervised export plus a complete non-scheduled dry run across the account's collections. The initial Playwright-launched persistent browser could not support the required login. Read-only inspection of the existing TCGPlayer Pricing Tool established its proven boundary: ordinary Chrome owns manual authentication, and Playwright attaches over CDP only after the saved session exists. Phronesis adopted that pattern without reading or copying Safari/default-browser cookies.
+
+The supervised Lote 1 pilot completed with 9,396 rows and a sanitized trace of the authenticated collection-export POST. It also proved that LigaMagic's shorter `Padrão LigaMagic CSV` is a price-free 13-column format; Phronesis now requires the explicit 19-column collection-model export. A fail-closed Lote 19 discrepancy revealed that collection labels count physical quantity rather than rows: two byte-identical exports contained 8,865 rows whose `Quantidade` summed exactly to 8,938 advertised cards. The contract now records and validates both measures.
+
+The final `PHR-API-005` dry run exported all 37 collections and reconciled 329,976 advertised cards across 329,903 rows. The merged snapshot contains 329,301 unique identities, 602 identical cross-collection duplicates, zero conflicting duplicates, and quantified `Compra`/`Venda` coverage. Raw source hashes, sanitized receipts, manifest, and SQLite evidence remain ignored and local. All 238 tests, standalone TypeScript, lint, diff hygiene, and production build pass. No credential, schedule, canonical pricing activation, scraping, marketplace mutation, push, or deployment occurred. The 03:00 schedule and arbitrage crosswalk remain separate authorization gates.
+
 ## 2026-07-30 — Authentication Configuration And Private Publication
 
 ### Source

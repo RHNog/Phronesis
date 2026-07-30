@@ -1,5 +1,13 @@
 # Project Atlas
 
+## LigaMagic Authenticated Snapshot
+
+- `PHR-API-005` launches a dedicated LigaMagic profile as ordinary Chrome for manual authentication, then relaunches and attaches Playwright over a local CDP port only after the saved session exists. It never automates login or copies Safari/default-profile cookies.
+- LigaMagic collection export uses `Padrão LigaMagic CSV [Modelo para Coleções]`; the similarly named 13-column format contains no prices and is rejected.
+- Collection labels count physical card quantity, while CSV rows are unique collection entries. Completeness reconciles the label against summed `Quantidade` and records row count separately.
+- `Compra` is the consumer acquisition price from a store. `Venda` is the store buy offer to a consumer. Both remain distinct integer-centavo evidence lanes.
+- The completed local dry run covers 37 collections and 329,976 cards with zero conflicting duplicate prices. Raw files, hashes, receipts, the manifest, and SQLite snapshot live under ignored `.data/ligamagic/`; no schedule or canonical pricing activation exists.
+
 ## Card-Show Operations
 
 - `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.

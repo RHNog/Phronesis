@@ -1,5 +1,11 @@
 # Prompt History
 
+## PHR-API-005 LigaMagic Authenticated Export Snapshots — 2026-07-30
+
+Build a dedicated local authenticated LigaMagic export profile, capture one supervised collection export without credential/session disclosure, and create a complete non-scheduled dry-run snapshot across every discovered collection.
+
+Canonical work order: `docs/prompts/PHR-API-005-ligamagic-authenticated-export-snapshots-prompt.md`.
+
 ## PHR-UX-012 Provider Connections Settings — 2026-07-30
 
 Centralize secret-free provider health and activation guidance in Settings while gating credential entry on authenticated owner-only encrypted storage.
