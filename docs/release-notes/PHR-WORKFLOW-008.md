@@ -14,6 +14,7 @@
 - Receipt void preserves and deactivates inventory lots transactionally.
 - Page and API access require the assigned Inventory module; all reads are workspace-scoped.
 
-## Deferred
+## Follow-Up
 
-- Storage locations, sales/dispositions, grading, listing readiness, repricing, aging, and inventory counts.
+- Locations and physical counts were completed by `PHR-WORKFLOW-009`.
+- Sales/dispositions, grading, listing readiness, repricing, aging, and cycle-count sessions remain deferred.

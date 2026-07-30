@@ -1,5 +1,11 @@
 # Prompt History
 
+## Inventory Location And Count Reconciliation — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-011` authorizes `PHR-WORKFLOW-009`: create workspace locations and append-only, reasoned MOVE/COUNT events while preserving immutable receipt quantity and acquisition cost basis.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-009-inventory-location-count-reconciliation-prompt.md`.
+
 ## Receipt-Backed Inventory Intake — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-010` authorizes `PHR-WORKFLOW-008`: atomically convert exact-card and truthful aggregate Bulk receipt lines into workspace inventory lots, reconcile historical receipts, propagate receipt voids, and expose module-authorized inventory visibility.

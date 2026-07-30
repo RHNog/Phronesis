@@ -1466,6 +1466,10 @@ Dependency graph metadata is included on each model so future Atlas visualizatio
 
 Inventory is now an operational Manage-area module. Finalized event receipts create immutable-provenance exact or aggregate Bulk lots inside the checkout transaction. Exact cost basis is unit acquisition cost multiplied by quantity; Bulk cost basis is aggregate and never implies individual card identity. Receipt voids retain and deactivate lots. Workspace/module authorization is enforced at the page and API boundaries. Future inventory work should extend through explicit location, count, disposition, valuation, or listing events rather than editing source receipts.
 
+## Inventory Location And Count Reconciliation (`PHR-WORKFLOW-009`)
+
+Workspace locations and physical counts extend lots through append-only observations. Current on-hand basis is RECEIPT, APPROXIMATE, COUNTED, or UNKNOWN. MOVE and COUNT events retain actor, reason, timestamp, and before/after evidence; a combined reconciliation is atomic. Count discrepancy never rewrites receipt quantity or acquisition cost and does not imply SALE, LOSS, DAMAGE, or TRANSFER. Those future disposition types require a separate ledger.
+
 ## Backlog
 
 1. Add live marketplace listings and recent sales.

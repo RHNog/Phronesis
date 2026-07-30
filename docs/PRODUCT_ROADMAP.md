@@ -3,8 +3,9 @@
 ## Current Delivery — Receipt-Backed Inventory Intake
 
 - Completed: event checkout automatically creates auditable exact-card and aggregate Bulk inventory lots (`PHR-WORKFLOW-008`).
-- Operational: workspace inventory cost basis, exact quantity, source receipt/event/operator provenance, historical reconciliation, and void propagation.
-- Next inventory maturity choices: storage locations and count reconciliation, sale/disposition ledger, or listing readiness.
+- Completed: workspace locations, physical-count reconciliation, quantity basis, and append-only movement/count history (`PHR-WORKFLOW-009`).
+- Operational: workspace inventory cost basis, on-hand quantity, location, source receipt/event/operator provenance, historical reconciliation, and void propagation.
+- Next inventory maturity choices: sale/disposition ledger or listing readiness.
 - Existing separate gates remain: required-login activation, owner arbitrage cost configuration, executable availability, and daily LigaMagic scheduling.
 
 ## Current Delivery — Regional Vending And Arbitrage Intelligence
@@ -61,7 +62,7 @@ Potential capabilities:
 - Dead-stock detection.
 - Restock and buylist recommendations.
 
-Receipt-backed inventory intake, condition/variant identity, and acquisition cost basis are operational through `PHR-WORKFLOW-008`. The remaining bullets describe later maturity increments.
+Receipt-backed intake, condition/variant identity, acquisition cost basis, locations, and physical-count reconciliation are operational through `PHR-WORKFLOW-008` and `PHR-WORKFLOW-009`. The remaining bullets describe later maturity increments.
 
 ### Portfolio Tracking
 

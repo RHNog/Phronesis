@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-009
+
+### Inventory reconciliation
+
+- Added normalized workspace locations and explicit Unassigned inventory state.
+- Added atomic move/physical-count reconciliation with append-only actor, reason, timestamp, and before/after events.
+- Added on-hand quantity basis without changing receipt quantity, Bulk intake evidence, or acquisition cost basis.
+- Added operator-authorized lot management and recent reconciliation activity on desktop and mobile.
+- Verified 252/252 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop/390px runtime, and console gates.
+
 ## Unreleased — PHR-WORKFLOW-008
 
 ### Receipt-backed inventory

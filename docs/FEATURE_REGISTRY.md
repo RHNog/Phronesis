@@ -57,6 +57,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-UX-013`       | Regional Vending Intelligence                     | Product Review Ready                                | Product / UX / UI / Decision Intelligence                                    | `docs/ux/PHR-UX-013-regional-vending-intelligence.md`                      |
 | `PHR-WORKFLOW-007` | Two-Way Arbitrage Verification                    | Product Review Ready                                | Workflow / Decision Intelligence / Audit                                     | `docs/workflows/PHR-WORKFLOW-007-arbitrage-verification.md`                |
 | `PHR-WORKFLOW-008` | Receipt-Backed Inventory Intake                   | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-008-receipt-backed-inventory-intake.md`       |
+| `PHR-WORKFLOW-009` | Inventory Location And Count Reconciliation       | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-009-inventory-location-count-reconciliation.md` |
 
 ## Registry Rule
 

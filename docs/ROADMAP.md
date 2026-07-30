@@ -1,5 +1,13 @@
 # Roadmap
 
+## Completed: Inventory Location And Count Reconciliation
+
+- Completed: normalized workspace locations with explicit Unassigned state (`PHR-WORKFLOW-009`).
+- Completed: atomic operator move/count reconciliation with reasoned append-only events.
+- Completed: receipt, approximate, counted, and unknown on-hand quantity basis without source receipt or cost-basis mutation.
+- Completed: operator-only management UI and recent activity with desktop-first/390px adaptation.
+- Next inventory slice: explicit sale/disposition ledger; listing readiness follows owned-quantity disposition truth.
+
 ## Completed: Receipt-Backed Inventory Intake
 
 - Completed: exact and Bulk event receipt lines create one workspace inventory lot each in the checkout transaction (`PHR-WORKFLOW-008`).

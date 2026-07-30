@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Inventory Location And Count Reconciliation
+
+The Product Owner directed Phronesis to continue immediately after receipt-backed Inventory acceptance. The autonomous workflow selected the next declared maturity step: organize lots physically and reconcile counts without changing source receipts. `PHR-WORKFLOW-009` adds normalized workspace locations, visible Unassigned state, derived on-hand quantity basis, and reasoned append-only MOVE and COUNT events.
+
+Operators with `INVENTORY:OPERATE` can atomically move a lot, record a non-negative physical count, or do both. A first count matching intake still establishes COUNTED evidence; an actual repeat no-op is rejected. Zero remains a visible discrepancy. Exact receipt quantity, approximate Bulk intake, acquisition cost, and receipt provenance remain invariant. Voided and foreign-workspace resources fail closed. View-only users receive the inventory view without mutation controls.
+
+The supported suite passes 252/252, standalone TypeScript, warning-free lint, production build, and diff hygiene are clean, and the private 1280px plus 390×844 review passed without horizontal overflow or console warnings. No sample data was added to the live inventory. Same-session Chief Architect conformance passes and CTO accepts the increment under `PHR-WORKFLOW-002`. Sales/disposition rules, required authentication, LigaMagic scheduling, external transactions, and public deployment remain gated.
+
 ## 2026-07-30 — Receipt-Backed Inventory Intake
 
 After official FX acceptance, the Product Owner directed Phronesis to continue the development roadmap. The autonomous canonical workflow selected the first Inventory Management capability because the already-approved event purchase ledger contained sufficient product intent and reliable source evidence. `PHR-WORKFLOW-008` now creates one workspace inventory lot per finalized receipt line without requiring duplicate operator entry.

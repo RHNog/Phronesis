@@ -115,7 +115,7 @@ Desktop is primary; the view collapses into readable lot cards on narrow mobile 
 
 ## Future Enhancements
 
-- Storage locations, sale/disposition ledger, grading, inventory counts, valuation, and repricing.
+- Sale/disposition ledger, grading, cycle-count sessions, valuation, and repricing. Basic locations and physical counts were completed by `PHR-WORKFLOW-009`.
 
 ## Technical Notes
 
@@ -133,7 +133,7 @@ Lead with total active cost basis and exact units. Clearly distinguish Exact, Se
 
 ## Open Questions
 
-- Storage locations and sale/disposition policy remain future product decisions.
+- Sale/disposition and cost-basis allocation policy remain future product decisions.
 
 ## Traceability
 

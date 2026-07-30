@@ -1,5 +1,34 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Inventory Location And Count Reconciliation
+
+- Assignment: `PHR-INVENTORY-RECONCILIATION-20260730`
+- Document ID: `PHR-STRUCT-20260730-011`
+- Status: `CTO ACCEPTED — PRIVATE DEPLOYMENT VERIFIED`
+- Feature: `PHR-WORKFLOW-009`
+- Objective: organize receipt-backed lots into workspace locations and record physical counts through audited events without changing source receipt evidence.
+
+### Product Rules
+
+- Unassigned is the default visible location.
+- Move and COUNT events are append-only and require a reason.
+- A physical count is an observation, not a sale, loss, or cost-basis rewrite.
+- Mutations require `INVENTORY:OPERATE` and resource ownership is verified server-side.
+
+### Authorization And Boundaries
+
+Documentation, additive local schema, repository/API/UI changes, deterministic tests/build, private responsive review, bounded remediation, ordinary feature-branch checkpointing, and private-service restart are authorized autonomously.
+
+Authentication activation, disposition/sales semantics, external transactions, public deployment, LigaMagic scheduling, destructive migration, new dependencies, force push, and history rewriting are prohibited.
+
+### Acceptance
+
+Location creation and lot reconciliation are atomic, authorized, workspace-scoped, audited, responsive, and preserve receipt/cost evidence; all repository and runtime gates pass.
+
+### Verified Result
+
+Workspace locations, explicit Unassigned state, on-hand quantity basis, and append-only MOVE/COUNT events are operational. Combined reconciliation is atomic, every mutation requires `INVENTORY:OPERATE`, and lot/location ownership is verified in the DAL. Receipt quantity and acquisition cost remain unchanged. The supported suite, standalone TypeScript, warning-free lint, production build, diff hygiene, desktop, 390px no-overflow, private runtime, and browser-console gates pass. Sales/disposition semantics remain deferred.
+
 ## Active Assignment — Receipt-Backed Inventory Intake
 
 - Assignment: `PHR-INVENTORY-INTAKE-20260730`

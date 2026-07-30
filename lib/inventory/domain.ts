@@ -1,6 +1,27 @@
 import type { PurchaseProductLine } from "@/lib/purchases/domain";
 
 export type InventoryLotKind = "EXACT" | "BULK";
+export type InventoryQuantityBasis = "RECEIPT" | "APPROXIMATE" | "COUNTED" | "UNKNOWN";
+
+export type InventoryLocation = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
+
+export type InventoryEvent = {
+  id: string;
+  lotId: string;
+  lotName: string;
+  type: "MOVE" | "COUNT";
+  previousLocationName: string | null;
+  nextLocationName: string | null;
+  previousQuantity: number | null;
+  nextQuantity: number | null;
+  reason: string;
+  actorUserId: string;
+  createdAt: string;
+};
 
 export type InventoryLot = {
   id: string;
@@ -26,6 +47,11 @@ export type InventoryLot = {
   notes: string | null;
   approximateQuantity: number | null;
   approximateWeight: string | null;
+  locationId: string | null;
+  locationName: string;
+  onHandQuantity: number | null;
+  quantityBasis: InventoryQuantityBasis;
+  lastCountedAt: string | null;
   acquiredAt: string;
   voidedAt: string | null;
   voidReason: string | null;
@@ -42,4 +68,6 @@ export type InventorySummary = {
 export type InventorySnapshot = {
   summary: InventorySummary;
   lots: InventoryLot[];
+  locations: InventoryLocation[];
+  recentEvents: InventoryEvent[];
 };
