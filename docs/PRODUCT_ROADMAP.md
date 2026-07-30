@@ -2,9 +2,9 @@
 
 ## Immediate Product Direction — Cross-Game Buying And Intelligence
 
-The current Product Review candidate removes catalogue switching, groups finish variants under one artwork, and activates Pokémon thumbnails. The next recommended buying-dashboard increment is a visible Phronesis Intelligence panel that reuses the already-executing Card Intelligence, Market Intelligence, Asset Assessment, Strategy, Offer Ladder, and Decision Resolver outputs. It should explain the decision at card-show speed, not introduce a parallel scoring system.
+The cross-game Vendor Workspace removes catalogue switching, groups finish variants under one artwork, and activates current Magic, Pokémon, One Piece, and Lorcana catalogue workflows. `PHR-UX-009` now adds the visible Phronesis Intelligence explanation by reusing the already-executing Card Intelligence, Market Intelligence, Asset Assessment, Strategy, Offer Ladder, and Decision Resolver outputs.
 
-The Product Owner's July 30 event-readiness continuation makes `PHR-TECH-008` the immediate prerequisite: improve strict Pokémon thumbnail coverage and activate Lorcana catalogue prices/artwork. Riftbound is deferred. After `PHR-TECH-008` passes, the visible Phronesis Intelligence panel is the next approved product increment.
+The Product Owner's July 30 continuation completed `PHR-TECH-008` and `PHR-UX-009`. Riftbound remains deferred. The next CTO product brief should prioritize the highest-value evidence or workflow maturity increment without reopening these completed surfaces.
 
 This document owns product-facing ideas and future customer capabilities. Engineering sequencing remains in `docs/ROADMAP.md`. Business strategy remains in `docs/BUSINESS_STRATEGY.md`.
 

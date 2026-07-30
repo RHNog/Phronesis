@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — PHR-UX-009
+
+### Buying intelligence explanation
+
+- Added a visible Asset Assessment, evidence coverage, confidence, business conclusion, opportunities, risks, and current decision explanation to ready Snapshot evaluations.
+- Reused the established Intelligence Console through accessible progressive disclosure.
+- Preserved the canonical evaluation, Strategy, Offer Ladder, and Decision Resolver without a parallel score or recommendation path.
+- Verified focused 6/6, lint, production build/type check, desktop/mobile runtime behavior, and diff hygiene. Full-suite baseline remains 186 passes / 17 known failures.
+
 ## Unreleased — PHR-TECH-007 + PHR-API-002 Bandai Revision
 
 ### One Piece artwork reliability
@@ -7,6 +16,8 @@
 - Activated strictly matched official Bandai English One Piece artwork under the Product Owner's authorization attestation.
 - Added an ignored, same-origin durable artwork cache with exact source allowlisting, raster validation, atomic writes, metadata, and repeat-request reuse.
 - Prewarmed 12 unique official artworks mapped by the active `luffy` event search.
+- Fixed Scryfall local-cache downloads by sending a provider-compatible Phronesis User-Agent.
+- Fixed partial Lorcana title lookup by deriving a punctuation-safe Lorcast query from the exact catalogue result while preserving strict printing matching.
 - Verified 23/23 focused tests, lint, production build/type check, desktop/mobile runtime behavior, and diff hygiene. Full-suite baseline remains 180 passes / 17 known failures.
 
 ## Unreleased — PHR-API-002 + PHR-UX-008

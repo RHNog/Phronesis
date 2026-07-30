@@ -1,5 +1,13 @@
 # Agent Handoff
 
+## Accepted For Canonical Adoption — PHR-UX-009
+
+- Ready Snapshot evaluations now expose the existing Phronesis Intelligence assessment, evidence, confidence, opportunities, risks, and current action.
+- Detailed models reuse the existing Intelligence Console through a collapsed-by-default 44px disclosure.
+- Focused 6/6, lint/build/diff, desktop 1280px, and mobile 390px checks pass. Full suite is 186/17 with the exact established 17 failures; standalone TypeScript retains 29 known `TS5097` errors.
+- Same-session Designer and Chief Architect conformance pass; CTO accepts the exact patch for guarded Git/GitHub adoption.
+- Riftbound, providers, buying formulas, persistent data, and the dirty Pricing Update Tool repository were not changed.
+
 ## Completed Deployment — PHR-TECH-008
 
 - Pokémon `pikachu` strict artwork coverage is 25/40, up from 12/40; remaining placeholders are deliberate evidence/provider gaps.
@@ -11,14 +19,14 @@
 - GitHub PR `#3` merged as `a7891cf574aaf05fb4da8ddf7559448c9c1619de`; the private service was restarted and passed its loopback/tailnet health check.
 - Next active product increment is the visible Phronesis Intelligence dashboard panel.
 
-## Current Product Review Gate — PHR-TECH-007 + PHR-API-002 Bandai Revision
+## Canonically Adopted And Runtime Remediated — PHR-TECH-007 + PHR-API-002 Bandai Revision
 
 - Product Owner authorization attestation activates the official Bandai English card list for One Piece artwork; Scrydex is fallback-only.
 - Strict base, parallel/reprint, and SP resolution is operational. Ambiguous qualifiers retain placeholders and never alter snapshot pricing.
 - Approved provider images are retained in ignored `.data/artwork/` storage and served through a fail-closed same-origin cache.
 - The 12 official artworks mapped by the active `luffy` event search are prewarmed locally.
 - Verification: 23/23 focused tests, lint, build, diff, desktop, and 390px phone checks pass. Full suite is 180/17 with the unchanged baseline failures; standalone TypeScript has only 29 known `TS5097` test-import errors.
-- Product Review acceptance, canonical adoption, commit, push, deployment, and publication remain pending. Riftbound still requires Riot approval/app key.
+- The original revision is canonically adopted. The 2026-07-30 runtime remediation restores Scryfall cache acquisition and exact-result Lorcana queries; 11/11 focused tests and representative desktop/mobile runtime checks pass. Canonical adoption of that bounded remediation is pending. Riftbound still requires Riot approval/app key.
 
 ## Current Product Review Gate — PHR-API-002 + PHR-UX-008
 

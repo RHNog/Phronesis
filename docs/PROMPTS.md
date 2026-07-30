@@ -1,5 +1,15 @@
 # Prompt History
 
+## PHR-UX-009 Visible Buying Intelligence Panel
+
+Date: 2026-07-30
+
+Purpose: expose the already-calculated Asset Assessment and Intelligence Models in the Snapshot Vendor Workspace at card-show speed, with a compact visible summary and progressively disclosed model evidence.
+
+Canonical work order: `docs/prompts/PHR-UX-009-visible-buying-intelligence-panel-prompt.md`.
+
+Boundaries: presentation-only consumption of the canonical evaluation; no new intelligence engine, provider, formula, persistence, dependency, or Riftbound work.
+
 ## PHR-TECH-008 — Pokémon And Lorcana Event Readiness
 
 Purpose: improve strict Pokémon set reconciliation, acquire and activate a current Lorcana catalogue, and verify durable local artwork while explicitly deferring Riftbound.
@@ -11,6 +21,8 @@ Source: `docs/prompts/PHR-TECH-008-pokemon-lorcana-event-readiness-prompt.md`.
 Purpose: retain authorized provider artwork locally, connect official Bandai One Piece images, and make card-show thumbnails resilient without creating an open proxy or bulk-downloading catalogues.
 
 Source: `docs/prompts/PHR-TECH-007-durable-local-artwork-cache-prompt.md`.
+
+2026-07-30 amendment: restore provider-compatible Scryfall cache acquisition and derive Lorcast-safe queries from exact Lorcana catalogue results without weakening strict printing attachment.
 
 ## PHR-API-002 — Cross-Game Catalogue Artwork Providers
 
