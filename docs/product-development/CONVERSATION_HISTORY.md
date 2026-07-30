@@ -2,7 +2,7 @@
 
 ## 2026-07-29 — Product Review Acceptance And Deployment Authorization
 
-The Product Owner accepted the current interdependent Product Review tree, including `PHR-WORKFLOW-004`, `PHR-TECH-005`, `PHR-TECH-006`, `PHR-UI-002`, `PHR-API-002`, `PHR-UX-008`, and `PHR-TECH-007`, and instructed Phronesis to deploy it and continue development. This authorizes canonical Git publication and verification of the existing private desktop/phone service. It does not authorize public hosting, Pricing Update Tool mutation, provider-wide bulk acquisition, unofficial Riftbound assets, or new external credentials.
+The Product Owner accepted the current interdependent Product Review tree, including `PHR-WORKFLOW-004`, `PHR-TECH-005`, `PHR-TECH-006`, `PHR-UI-002`, `PHR-API-002`, `PHR-UX-008`, and `PHR-TECH-007`, and instructed Phronesis to deploy it and continue development. GitHub PR `#1` merged the accepted implementation into `main` at commit `8ed1b98da2879f44976b008e6991588d78f4f49e`; the canonical checkout matched `origin/main`, and the existing private desktop/phone service returned HTTP 200 after merge. Public hosting, Pricing Update Tool mutation, provider-wide bulk acquisition, unofficial Riftbound assets, and new external credentials remain outside that authorization.
 
 ## 2026-07-29 — Official Bandai One Piece Artwork And Durable Local Cache
 

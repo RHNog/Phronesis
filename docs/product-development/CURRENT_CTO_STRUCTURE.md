@@ -4,7 +4,7 @@
 
 - Assignment: `PHR-LOCAL-ARTWORK-20260729`
 - Document ID: `PHR-STRUCT-20260729-006`
-- Status: `CANONICAL ADOPTION AUTHORIZED`
+- Status: `CANONICAL ADOPTION COMPLETE`
 - Priority: Critical event reliability
 - Objective: connect strictly matched official Bandai One Piece artwork and retain authorized provider images in an ignored durable local cache
 - Authorization provenance: Product Owner attested on 2026-07-29 that Bandai authorization is given; this is recorded as user-supplied authority, not independently verified
@@ -29,7 +29,7 @@
 
 ### Acceptance And Deployment Gate
 
-The Product Owner accepted the Product Review package on 2026-07-29 with the instruction to deploy and continue development. Canonical Git publication and private-service verification are authorized. Riftbound still requires Riot approval and an app-specific key.
+The Product Owner accepted the Product Review package on 2026-07-29 with the instruction to deploy and continue development. GitHub PR `#1` merged the accepted implementation into `main` at commit `8ed1b98da2879f44976b008e6991588d78f4f49e`. The canonical checkout equals `origin/main`, and the existing private desktop/phone service passed an HTTP 200 health check after merge. Riftbound still requires Riot approval and an app-specific key.
 
 ## Active Cross-Game Buying Revision — PHR-API-002 + PHR-UX-008
 
