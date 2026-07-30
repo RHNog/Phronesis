@@ -1,5 +1,18 @@
 # Prompt History
 
+## PHR Card-Show Operations Program — 2026-07-30
+
+Approved autonomous implementation program covering refresh integrity (`PHR-TECH-010`), intentional manual watch creation (`PHR-UX-010`), employee activation and module assignment (`PHR-ARCH-012`), offer-first buying decisions (`PHR-UX-011`), the event purchase ledger (`PHR-WORKFLOW-006`), and sealed/special-product artwork coverage (`PHR-API-004`).
+
+Canonical work orders:
+
+- `docs/prompts/PHR-TECH-010-refresh-integrity-provider-health-prompt.md`
+- `docs/prompts/PHR-UX-010-watch-entry-composer-prompt.md`
+- `docs/prompts/PHR-ARCH-012-employee-activation-module-access-prompt.md`
+- `docs/prompts/PHR-UX-011-offer-first-buying-decision-prompt.md`
+- `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md`
+- `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`
+
 ## PHR-WORKFLOW-005 Identity-Backed Price Monitoring
 
 Purpose: persist exact user-owned watches server-side, make tracking a one-action Vendor Workspace continuation, and refresh watches from verified catalogue checkpoints.

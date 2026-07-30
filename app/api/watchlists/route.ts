@@ -10,6 +10,11 @@ import {
   parseWatchlistEntries,
   parseWatchlistEntry,
 } from "@/lib/watchlist/validation";
+import { getPricingRepository } from "@/lib/pricing/server";
+import {
+  reconcileWatchIdentity,
+  resolveCatalogueWatch,
+} from "@/lib/watchlist/CatalogueWatchRefresh";
 
 export const runtime = "nodejs";
 
@@ -45,10 +50,21 @@ export async function POST(request: Request) {
       });
     }
     if (body.action === "track") {
+      const parsed = parseWatchlistEntry(body.entry);
+      const resolution = resolveCatalogueWatch(parsed, getPricingRepository());
+      if (!resolution.match) {
+        return Response.json(
+          { error: `${resolution.reason} Select an exact catalogue result in Vendor Workspace.` },
+          { status: 422 },
+        );
+      }
+      const entry = resolution.reconciled
+        ? reconcileWatchIdentity(parsed, resolution.match)
+        : parsed;
       return Response.json(
         getWatchlistRepository().track(
           principal,
-          parseWatchlistEntry(body.entry),
+          entry,
         ),
       );
     }

@@ -82,6 +82,13 @@ export default function AccessManagement({ active }: { active: boolean }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<MembershipRole>("OPERATOR");
+  const [inviteModules, setInviteModules] = useState<Record<PhronesisModule, ModuleAccessLevel | "NONE">>(() =>
+    Object.fromEntries(PHRONESIS_MODULES.map((module) => [
+      module,
+      module === "VENDOR_WORKSPACE" ? "OPERATE" : "NONE",
+    ])) as Record<PhronesisModule, ModuleAccessLevel | "NONE">,
+  );
+  const [activation, setActivation] = useState<{ code: string; url: string } | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -111,18 +118,36 @@ export default function AccessManagement({ active }: { active: boolean }) {
   async function invite(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setMessage("Creating invitation…");
+    setActivation(null);
+    const entitlements = PHRONESIS_MODULES.flatMap((module) =>
+      inviteModules[module] === "NONE"
+        ? []
+        : [{ module, access: inviteModules[module] as ModuleAccessLevel }],
+    );
+    if (!entitlements.length) {
+      setMessage("Assign at least one module before creating the employee invitation.");
+      return;
+    }
     const response = await fetch("/api/administration/invitations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ email, role, entitlements }),
     });
-    const body = await response.json().catch(() => ({})) as { error?: string; expiresAt?: string };
+    const body = await response.json().catch(() => ({})) as { activationCode?: string; error?: string; expiresAt?: string };
     if (!response.ok) {
       setMessage(body.error ?? "Invitation could not be created.");
       return;
     }
     setEmail("");
-    setMessage(`Invitation recorded locally through ${new Date(body.expiresAt as string).toLocaleString()}. Share the private sign-in URL separately.`);
+    if (!body.activationCode) {
+      setMessage("Invitation was created without an activation code. Revoke it and try again.");
+      return;
+    }
+    setActivation({
+      code: body.activationCode,
+      url: `${window.location.origin}/activate#code=${encodeURIComponent(body.activationCode)}`,
+    });
+    setMessage(`Invitation expires ${new Date(body.expiresAt as string).toLocaleString()}. The code below is shown only in this response.`);
   }
 
   return (
@@ -134,8 +159,9 @@ export default function AccessManagement({ active }: { active: boolean }) {
         </div>
       ) : (
         <>
-          <form onSubmit={invite} className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem_auto] sm:items-end">
-            <label className="text-sm text-zinc-300">GitHub email
+          <form onSubmit={invite} className="mt-4 space-y-4">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem]">
+            <label className="text-sm text-zinc-300">Employee GitHub email
               <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-zinc-100" />
             </label>
             <label className="text-sm text-zinc-300">Role
@@ -143,9 +169,30 @@ export default function AccessManagement({ active }: { active: boolean }) {
                 {MEMBERSHIP_ROLES.map((option) => <option key={option} value={option}>{label(option)}</option>)}
               </select>
             </label>
-            <button type="submit" className="min-h-11 rounded-lg bg-cyan-300 px-4 font-semibold text-zinc-950 hover:bg-cyan-200">Invite</button>
+            </div>
+            <fieldset>
+              <legend className="text-sm font-medium text-zinc-300">Assigned modules</legend>
+              <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {PHRONESIS_MODULES.map((module) => (
+                  <label key={module} className="text-xs text-zinc-400">{label(module)}
+                    <select value={inviteModules[module]} onChange={(event) => setInviteModules((current) => ({ ...current, [module]: event.target.value as ModuleAccessLevel | "NONE" }))} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-zinc-100">
+                      <option value="NONE">Not assigned</option>
+                      {MODULE_ACCESS_LEVELS.map((access) => <option key={access} value={access}>{label(access)}</option>)}
+                    </select>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <button type="submit" className="min-h-11 rounded-lg bg-cyan-300 px-4 font-semibold text-zinc-950 hover:bg-cyan-200">Create employee code</button>
           </form>
           {message ? <p role="status" className="mt-3 text-sm text-zinc-400">{message}</p> : null}
+          {activation ? (
+            <div className="mt-4 rounded-lg border border-cyan-800 bg-cyan-950/30 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-cyan-300">Single-use activation</p>
+              <p className="mt-2 break-all font-mono text-sm text-white">{activation.code}</p>
+              <button type="button" onClick={() => void navigator.clipboard.writeText(activation.url)} className="mt-3 min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200">Copy private activation link</button>
+            </div>
+          ) : null}
           <div className="mt-6 space-y-4">
             {members.map((member) => (
               <article key={member.id} className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-4">

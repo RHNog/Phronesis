@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Card-Show Operations Improvement Program
+
+The Product Owner approved autonomous implementation of the previously discussed improvement brief: repair Market Watch refresh, collect target/notes before manual tracking, lay module-scoped employee-login foundations, show recommended offer immediately, add an event purchase ledger with mixed Bulk, and recover missing sealed/First Partner artwork without false identity matches.
+
+The completed program is `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, and `PHR-API-004` under `PHR-STRUCT-20260730-005`. GitHub remains the installed identity proof and required authentication is deliberately activation-gated; passkey lifecycle work is deferred to a separate security decision. Vendor operators may finalize their own receipts, while administrative voids are audited. Vendor Workspace keeps one-action tracking; the composer applies to manual/global additions.
+
+Live verification repaired the reported Urza's Saga failure by reconciling its unique Scryfall “Store Championships” identity to the catalogue's “Game Day & Store Championship Promos” label and refreshing it to `$469.04`. A separate `server-only` import defect that terminated the four-daily observer was also corrected. All 232 tests, standalone TypeScript, lint, build, diff, and private runtime gates pass. JustTCG is configured but still explicitly disabled; eBay and CardTrader credentials are absent. The package is Product Review ready and remains uncommitted/unpushed.
+
 ## 2026-07-30 — Thumbnail Runtime Reliability Remediation
 
 The Product Owner reported blank thumbnails for Mox Opal, Mulan, and several Pokémon results through the private phone review surface. Runtime diagnosis separated honest identity gaps from implementation defects. Scryfall successfully returned Mox Opal search identities but rejected Phronesis's Node image download with HTTP 400 `generic_user_agent`, which the same-origin image route surfaced as HTTP 502. Lorcast contained both requested Winterspell Mulan printings but treated the TCGplayer hyphenated partial title as search syntax and returned no records.

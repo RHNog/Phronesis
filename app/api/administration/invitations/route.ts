@@ -43,6 +43,7 @@ export async function POST(request: Request) {
     const invitation = getAuthorizationRepository().createInvitation({
       ...body,
       actorUserId: authorization.userId,
+      requireActivation: true,
       workspaceId: authorization.workspaceId,
     });
     return Response.json({
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
       role: invitation.role,
       entitlements: invitation.entitlements,
       expiresAt: invitation.expiresAt,
+      activationCode: invitation.activationCode,
     }, { status: 201 });
   } catch (error) {
     return Response.json(

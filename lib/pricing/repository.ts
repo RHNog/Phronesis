@@ -701,6 +701,21 @@ export class PricingRepository {
       : null;
   }
 
+  findByName(categoryId: string, name: string): SearchMatch[] {
+    const candidates = this.database
+      .prepare(
+        `
+      SELECT * FROM pricing_products
+      WHERE category_id = ? AND name = ? COLLATE NOCASE
+      ORDER BY sku LIMIT 200
+    `,
+      )
+      .all(categoryId, name.trim()) as SqlRow[];
+    return candidates.map((candidate) =>
+      this.hydrateMatch(candidate, String(candidate.name)),
+    );
+  }
+
   private hydrateMatch(candidate: SqlRow, query: string): SearchMatch {
     const categoryId = String(candidate.category_id);
     const sku = String(candidate.sku);

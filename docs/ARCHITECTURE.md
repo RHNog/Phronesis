@@ -1,5 +1,13 @@
 # Architecture
 
+## 2026-07-30 Card-Show Operations Boundaries
+
+- Verified pricing catalogues remain the broad refresh source; external market adapters supply explicitly classified supplemental evidence only.
+- Watch refresh, purchase ledger, activation, and curated artwork mutations are server Route Handlers with module authorization.
+- Purchase receipts and authorization audits are append-only evidence. Browser state is never their source of truth.
+- Buying presentation consumes existing evaluation and offer engines; it does not own business formulas.
+- Exact product artwork is presentation data and cannot mutate catalogue or market identity.
+
 ## Cross-Game Snapshot Search Boundary
 
 Vendor Workspace issues one local search request. The pricing repository queries each active catalogue, globally ranks a bounded result set, and returns per-category freshness. The presentation layer groups single-card products by deterministic artwork identity, then maps Finish selection back to one exact SKU before condition evidence and `evaluatePurchase`. Sealed products remain SKU-discrete.

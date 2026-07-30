@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -24,6 +24,7 @@ export type InvitationRecord = {
   role: MembershipRole;
   entitlements: readonly ModuleEntitlement[];
   expiresAt: string;
+  activationCode?: string;
 };
 
 export type MembershipProfile = {
@@ -141,7 +142,22 @@ export class AuthorizationRepository {
       );
       CREATE INDEX IF NOT EXISTS phronesis_authorization_audit_time
         ON phronesis_authorization_audit(created_at DESC);
+      CREATE TABLE IF NOT EXISTS phronesis_activation_attempt (
+        bucket_hash TEXT PRIMARY KEY,
+        attempts INTEGER NOT NULL,
+        window_started_at TEXT NOT NULL
+      );
     `);
+    this.ensureColumn("phronesis_invitation", "activation_code_hash", "TEXT");
+    this.ensureColumn("phronesis_invitation", "activation_code_salt", "TEXT");
+    this.ensureColumn("phronesis_invitation", "activated_at", "TEXT");
+  }
+
+  private ensureColumn(table: string, column: string, type: string): void {
+    const columns = this.database.prepare(`PRAGMA table_info(${table})`).all() as SqlRow[];
+    if (!columns.some((entry) => String(entry.name) === column)) {
+      this.database.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+    }
   }
 
   ensureWorkspace(name = "Phronesis", slug = "phronesis"): string {
@@ -161,6 +177,7 @@ export class AuthorizationRepository {
     entitlements?: readonly ModuleEntitlement[];
     actorUserId?: string | null;
     expiresAt?: Date;
+    requireActivation?: boolean;
     workspaceId?: string;
   }): InvitationRecord {
     assertRole(input.role);
@@ -178,6 +195,15 @@ export class AuthorizationRepository {
     if (expiresAt.getTime() <= Date.now()) throw new Error("Invitation expiry must be in the future.");
     const id = randomUUID();
     const now = new Date().toISOString();
+    const activationCode = input.requireActivation
+      ? randomBytes(24).toString("base64url")
+      : undefined;
+    const activationSalt = activationCode
+      ? randomBytes(16).toString("hex")
+      : null;
+    const activationHash = activationCode && activationSalt
+      ? scryptSync(activationCode, activationSalt, 32).toString("hex")
+      : null;
     this.database.exec("BEGIN IMMEDIATE");
     try {
       this.database.prepare(
@@ -186,8 +212,9 @@ export class AuthorizationRepository {
       this.database.prepare(`
         INSERT INTO phronesis_invitation(
           id, workspace_id, email, role, entitlements_json, status,
-          invited_by_user_id, expires_at, created_at
-        ) VALUES(?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)
+          invited_by_user_id, expires_at, created_at,
+          activation_code_hash, activation_code_salt, activated_at
+        ) VALUES(?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, ?)
       `).run(
         id,
         workspaceId,
@@ -197,6 +224,9 @@ export class AuthorizationRepository {
         input.actorUserId ?? null,
         expiresAt.toISOString(),
         now,
+        activationHash,
+        activationSalt,
+        activationCode ? null : now,
       );
       this.insertAudit({
         workspaceId,
@@ -211,7 +241,7 @@ export class AuthorizationRepository {
       this.database.exec("ROLLBACK");
       throw error;
     }
-    return { id, workspaceId, email, role: input.role, entitlements, expiresAt: expiresAt.toISOString() };
+    return { id, workspaceId, email, role: input.role, entitlements, expiresAt: expiresAt.toISOString(), activationCode };
   }
 
   findPendingInvitation(email: string, at = new Date()): InvitationRecord | null {
@@ -223,6 +253,7 @@ export class AuthorizationRepository {
       SELECT id, workspace_id, email, role, entitlements_json, expires_at
       FROM phronesis_invitation
       WHERE email = ? AND status = 'PENDING' AND expires_at > ?
+        AND (activation_code_hash IS NULL OR activated_at IS NOT NULL)
       ORDER BY created_at DESC LIMIT 1
     `).get(normalized, at.toISOString()) as SqlRow | undefined;
     if (!row) return null;
@@ -230,6 +261,81 @@ export class AuthorizationRepository {
     assertRole(role);
     const entitlements = JSON.parse(String(row.entitlements_json)) as ModuleEntitlement[];
     assertEntitlements(entitlements);
+    return {
+      id: String(row.id),
+      workspaceId: String(row.workspace_id),
+      email: String(row.email),
+      role,
+      entitlements,
+      expiresAt: String(row.expires_at),
+    };
+  }
+
+  assertActivationRateLimit(bucketHash: string, at = new Date()): void {
+    const row = this.database.prepare(
+      "SELECT attempts, window_started_at FROM phronesis_activation_attempt WHERE bucket_hash = ?",
+    ).get(bucketHash) as SqlRow | undefined;
+    if (!row) return;
+    const started = new Date(String(row.window_started_at)).getTime();
+    if (Number.isNaN(started) || at.getTime() - started >= 15 * 60 * 1000) return;
+    if (Number(row.attempts) >= 10) throw new Error("Too many activation attempts. Try again later.");
+  }
+
+  recordActivationAttempt(bucketHash: string, success: boolean, at = new Date()): void {
+    if (success) {
+      this.database.prepare("DELETE FROM phronesis_activation_attempt WHERE bucket_hash = ?").run(bucketHash);
+      return;
+    }
+    const row = this.database.prepare(
+      "SELECT attempts, window_started_at FROM phronesis_activation_attempt WHERE bucket_hash = ?",
+    ).get(bucketHash) as SqlRow | undefined;
+    const started = row ? new Date(String(row.window_started_at)).getTime() : Number.NaN;
+    const withinWindow = Number.isFinite(started) && at.getTime() - started < 15 * 60 * 1000;
+    this.database.prepare(`
+      INSERT INTO phronesis_activation_attempt(bucket_hash, attempts, window_started_at)
+      VALUES(?, ?, ?)
+      ON CONFLICT(bucket_hash) DO UPDATE SET attempts=excluded.attempts, window_started_at=excluded.window_started_at
+    `).run(bucketHash, withinWindow ? Number(row?.attempts ?? 0) + 1 : 1, withinWindow ? String(row?.window_started_at) : at.toISOString());
+  }
+
+  redeemActivationCode(code: string, at = new Date()): InvitationRecord {
+    const candidate = code.trim();
+    if (!/^[A-Za-z0-9_-]{24,128}$/.test(candidate)) throw new Error("Activation code is invalid or expired.");
+    this.database.prepare(
+      "UPDATE phronesis_invitation SET status = 'EXPIRED' WHERE status = 'PENDING' AND expires_at <= ?",
+    ).run(at.toISOString());
+    const rows = this.database.prepare(`
+      SELECT id, workspace_id, email, role, entitlements_json, expires_at,
+             activation_code_hash, activation_code_salt
+      FROM phronesis_invitation
+      WHERE status = 'PENDING' AND expires_at > ?
+        AND activation_code_hash IS NOT NULL AND activated_at IS NULL
+    `).all(at.toISOString()) as SqlRow[];
+    const row = rows.find((item) => {
+      const salt = String(item.activation_code_salt ?? "");
+      const expectedHex = String(item.activation_code_hash ?? "");
+      if (!salt || !/^[a-f0-9]{64}$/i.test(expectedHex)) return false;
+      const actual = scryptSync(candidate, salt, 32);
+      const expected = Buffer.from(expectedHex, "hex");
+      return actual.length === expected.length && timingSafeEqual(actual, expected);
+    });
+    if (!row) throw new Error("Activation code is invalid or expired.");
+    const updated = this.database.prepare(
+      "UPDATE phronesis_invitation SET activated_at = ? WHERE id = ? AND activated_at IS NULL AND status = 'PENDING'",
+    ).run(at.toISOString(), String(row.id));
+    if (Number(updated.changes) !== 1) throw new Error("Activation code was already used.");
+    const role = String(row.role);
+    assertRole(role);
+    const entitlements = JSON.parse(String(row.entitlements_json)) as ModuleEntitlement[];
+    assertEntitlements(entitlements);
+    this.insertAudit({
+      workspaceId: String(row.workspace_id),
+      actorUserId: null,
+      action: "INVITATION_ACTIVATED",
+      resourceType: "INVITATION",
+      resourceId: String(row.id),
+      details: {},
+    });
     return {
       id: String(row.id),
       workspaceId: String(row.workspace_id),

@@ -1,20 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { WatchlistEntry } from "@/features/watchlist/WatchlistRefreshEngine";
 
 type WatchlistToolbarProps = {
   developerMode: boolean;
   entries: WatchlistEntry[];
   onDeveloperModeChange: (enabled: boolean) => void;
-  providerRequestsUsed: number;
 };
 
 export default function WatchlistToolbar({
   developerMode,
   entries,
   onDeveloperModeChange,
-  providerRequestsUsed,
 }: WatchlistToolbarProps) {
+  const [providerSummary, setProviderSummary] = useState("Checking…");
   const apiSaved = entries.filter(
     (entry) => entry.developerDiagnostics.apiSaved,
   ).length;
@@ -24,7 +24,17 @@ export default function WatchlistToolbar({
   const aboveTarget = entries.filter(
     (entry) => entry.marketStatus === "Above Target",
   ).length;
-  const requestBudget = 100;
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/market/provider-health", { cache: "no-store" })
+      .then(async (response) => response.ok ? response.json() as Promise<{ providers: Array<{ status: string }> }> : null)
+      .then((body) => {
+        if (!cancelled && body) setProviderSummary(`${body.providers.filter((provider) => provider.status === "READY").length}/${body.providers.length} ready`);
+      })
+      .catch(() => { if (!cancelled) setProviderSummary("Unavailable"); });
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <section className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-4 py-4">
@@ -43,15 +53,15 @@ export default function WatchlistToolbar({
           <Metric label="Approaching" value={approaching.toString()} />
           <Metric label="Above Target" value={aboveTarget.toString()} />
           <Metric
-            label="Requests Left"
-            value={(requestBudget - providerRequestsUsed).toString()}
+            label="Providers"
+            value={providerSummary}
           />
         </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-3 border-t border-zinc-800 pt-4 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          API saved on {apiSaved} entries. Manual refresh is single-entry only.
+          Catalogue-first refresh · API saved on {apiSaved} entries. Provider health never implies upstream quota.
         </p>
         <label className="inline-flex items-center gap-2 text-zinc-300">
           <input

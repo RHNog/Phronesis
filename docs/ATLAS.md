@@ -1,5 +1,13 @@
 # Project Atlas
 
+## Card-Show Operations
+
+- `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.
+- `PurchaseLedgerRepository` owns workspace/operator events, carts, idempotent immutable receipts, and append-only void audit in the ignored application database.
+- Employee activation codes are salted scrypt hashes and only unlock an invited identity ceremony; server module entitlements remain authoritative.
+- `CuratedArtworkStore` binds validated local raster content to one category/SKU and serves it through the protected artwork boundary.
+- `/vendor` presents the existing Offer Ladder before optional seller-price comparison and contains the event checkout surface.
+
 ## Identity-Backed Price Monitoring And Market Evidence
 
 - `WatchlistRepository` owns user/workspace-scoped default lists, exact variant memberships, soft deletion, history, and deterministic legacy ownership in the shared ignored SQLite boundary.

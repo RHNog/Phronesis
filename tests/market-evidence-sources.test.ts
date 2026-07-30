@@ -42,6 +42,37 @@ test("eBay Browse normalizes only current fixed-price listing evidence", async (
   assert.equal(listings[0].shippingCents, 500);
 });
 
+test("eBay Browse exchanges application credentials for a short-lived token", async () => {
+  const calls: string[] = [];
+  const request = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = new URL(String(input));
+    calls.push(url.pathname);
+    if (url.pathname === "/identity/v1/oauth2/token") {
+      assert.equal(init?.method, "POST");
+      assert.equal(
+        (init?.headers as Record<string, string>).authorization,
+        `Basic ${Buffer.from("client-id:client-secret").toString("base64")}`,
+      );
+      return Response.json({ access_token: "generated-token", expires_in: 7200 });
+    }
+    assert.equal(
+      (init?.headers as Record<string, string>).authorization,
+      "Bearer generated-token",
+    );
+    return Response.json({ itemSummaries: [] });
+  }) as typeof fetch;
+  const provider = new EbayBrowseListingProvider({
+    clientId: "client-id",
+    clientSecret: "client-secret",
+  }, request);
+  assert.equal(provider.getStatus().configured, true);
+  await provider.fetchActiveListings({ query: "Mox Opal" });
+  assert.deepEqual(calls, [
+    "/identity/v1/oauth2/token",
+    "/buy/browse/v1/item_summary/search",
+  ]);
+});
+
 test("CardTrader requires exact blueprint identity and normalizes official marketplace products", async () => {
   const request = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = new URL(String(input));

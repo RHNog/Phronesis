@@ -9,7 +9,7 @@ import { enrichWatchedCategoryWithJustTCG } from "../lib/watchlist/JustTCGWatchE
 import {
   getMarketEvidenceRepository,
   getWatchlistRepository,
-} from "../lib/watchlist/server";
+} from "../lib/watchlist/repositories";
 
 const once = process.argv.includes("--once");
 const databasePath =

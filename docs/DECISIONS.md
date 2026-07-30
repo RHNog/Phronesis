@@ -484,6 +484,16 @@ Consequences:
 
 81. Official marketplace adapters remain disabled without credentials and run only on explicit user action; no scraper is an acceptable substitute.
 
+82. Manual/global watch creation requires a positive target or an explicit no-target decision before persistence; Vendor Workspace keeps its event-speed one-action shortcut.
+
+83. A legacy watch may cross provider set-label drift only when category, exact name, collector number, finish, language, and product type identify one physical catalogue product. Ambiguity always fails closed.
+
+84. Activation codes are single-use onboarding artifacts, not login passwords. Module access is selected before issuance and server authorization remains authoritative.
+
+85. Vendor operators may finalize their own event receipts. Receipts are immutable; administrative voids append audit evidence.
+
+86. Missing sealed or special-product artwork may be owner-curated locally only when bound to an exact catalogue SKU and validated as approved raster content.
+
 ## Documentation Rule
 
 Every sprint must update:

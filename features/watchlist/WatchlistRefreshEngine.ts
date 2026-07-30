@@ -131,7 +131,8 @@ export function calculateWatchlistMetrics(
   );
   const current =
     marketCapability.status === "Operational" ? entry.currentValuation : null;
-  const difference = current === null ? null : current - entry.targetPrice;
+  const hasTarget = Number.isFinite(entry.targetPrice) && entry.targetPrice > 0;
+  const difference = current === null || !hasTarget ? null : current - entry.targetPrice;
   const percentToTarget =
     current === null || entry.targetPrice === 0
       ? null
@@ -232,6 +233,10 @@ export function getMarketStatus(
     "lastRefresh" | "observationSource" | "percentToTarget" | "refreshStatus"
   >,
 ): WatchlistMarketStatus {
+  if (entry.refreshStatus === "Refresh Failed") {
+    return "Refresh Recommended";
+  }
+
   if (entry.percentToTarget !== null && entry.percentToTarget >= 100) {
     return "Above Target";
   }
@@ -250,10 +255,6 @@ export function getMarketStatus(
 
   if (recentlyRefreshed) {
     return "Recently Refreshed";
-  }
-
-  if (entry.refreshStatus === "Refresh Failed") {
-    return "Refresh Recommended";
   }
 
   if (entry.observationSource === "Unavailable") {
@@ -414,7 +415,17 @@ export async function refreshWatchlistEntry(input: {
     const response = await fetch(`/api/market/snapshot?${params.toString()}`, {
       method: "GET",
     });
-    const snapshot = (await response.json()) as MarketSnapshot;
+    const responseText = await response.text();
+    let snapshot: MarketSnapshot;
+    try {
+      snapshot = JSON.parse(responseText) as MarketSnapshot;
+    } catch {
+      throw new Error(
+        response.ok
+          ? "Market refresh returned an invalid response."
+          : `Market refresh failed with ${response.status}.`,
+      );
+    }
 
     if (!response.ok) {
       throw new Error(
@@ -499,7 +510,6 @@ export async function refreshWatchlistEntry(input: {
         replay: false,
         repositoryHit: false,
       },
-      lastRefresh: new Date().toISOString(),
       refreshStatus: "Refresh Failed",
     });
   }

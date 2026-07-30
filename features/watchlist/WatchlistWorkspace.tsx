@@ -8,6 +8,7 @@ import {
 import WatchlistCard from "@/features/watchlist/WatchlistCard";
 import {
   loadServerWatchlistEntries,
+  refreshServerWatchlistEntry,
   removeServerWatchlistEntry,
   restoreServerWatchlistEntry,
   trackWatchlistEntry,
@@ -23,6 +24,7 @@ import {
   type RemovedWatchlistEntry,
 } from "@/features/watchlist/WatchlistStorage";
 import {
+  CreateWatchlistEntryDialog,
   EditWatchlistEntryDialog,
   RemoveWatchlistEntryDialog,
 } from "@/features/watchlist/WatchlistEntryDialogs";
@@ -30,7 +32,6 @@ import WatchlistTable from "@/features/watchlist/WatchlistTable";
 import WatchlistToolbar from "@/features/watchlist/WatchlistToolbar";
 import {
   calculateWatchlistMetrics,
-  refreshWatchlistEntry,
   type WatchlistEntry,
 } from "@/features/watchlist/WatchlistRefreshEngine";
 import { resolveCanonicalTreatment } from "@/lib/engines/identity/IdentityTreatmentResolver";
@@ -41,9 +42,9 @@ export default function WatchlistWorkspace() {
   const [refreshingEntryId, setRefreshingEntryId] = useState<string | null>(
     null,
   );
-  const [providerRequestsUsed, setProviderRequestsUsed] = useState(0);
   const [pendingRemoval, setPendingRemoval] = useState<WatchlistEntry>();
   const [editingEntry, setEditingEntry] = useState<WatchlistEntry>();
+  const [pendingCreation, setPendingCreation] = useState<WatchlistEntry>();
   const [undoRemoval, setUndoRemoval] = useState<RemovedWatchlistEntry>();
   const [synchronizing, setSynchronizing] = useState(true);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -137,24 +138,7 @@ export default function WatchlistWorkspace() {
           resolveCanonicalTreatment(selection.printing),
         watchlistId: defaultWatchlistId,
       });
-      void trackWatchlistEntry(entry)
-        .then((result) => {
-          setEntries((current) => {
-            if (current.some((candidate) => candidate.id === result.entry.id))
-              return current;
-            const next = [...current, result.entry];
-            saveWatchlistEntries(next);
-            return next;
-          });
-          setSyncError(null);
-        })
-        .catch((error) =>
-          setSyncError(
-            error instanceof Error
-              ? error.message
-              : "The card could not be tracked.",
-          ),
-        );
+      setPendingCreation(entry);
     }
 
     window.addEventListener(
@@ -167,6 +151,25 @@ export default function WatchlistWorkspace() {
         handlePaletteSelection,
       );
   }, []);
+
+  async function handleCreateEntry(entry: WatchlistEntry) {
+    try {
+      const result = await trackWatchlistEntry(entry).then((result) => {
+          setEntries((current) => {
+            if (current.some((candidate) => candidate.id === result.entry.id))
+              return current;
+            const next = [...current, result.entry];
+            saveWatchlistEntries(next);
+            return next;
+          });
+          setSyncError(null);
+          return result;
+        });
+      if (result.entry) setPendingCreation(undefined);
+    } catch (error) {
+      setSyncError(error instanceof Error ? error.message : "The card could not be tracked.");
+    }
+  }
 
   useEffect(() => {
     if (!undoRemoval) return;
@@ -196,20 +199,8 @@ export default function WatchlistWorkspace() {
   async function handleRefresh(entry: WatchlistEntry) {
     setRefreshingEntryId(entry.id);
 
-    const refreshed = await refreshWatchlistEntry({
-      budget: {
-        providerRequestsAvailable: 100,
-        providerRequestsUsed,
-      },
-      entry,
-      manual: true,
-    });
-    if (refreshed.developerDiagnostics.providerHit) {
-      setProviderRequestsUsed((current) => current + 1);
-    }
-
     try {
-      const persisted = await updateServerWatchlistEntry(refreshed);
+      const persisted = await refreshServerWatchlistEntry(entry.id);
       setEntries((current) => {
         const membershipStillExists = current.some(
           (candidate) =>
@@ -309,7 +300,6 @@ export default function WatchlistWorkspace() {
         developerMode={developerMode}
         entries={entries}
         onDeveloperModeChange={setDeveloperMode}
-        providerRequestsUsed={providerRequestsUsed}
       />
 
       {synchronizing ? (
@@ -367,6 +357,11 @@ export default function WatchlistWorkspace() {
         entry={pendingRemoval}
         onCancel={() => setPendingRemoval(undefined)}
         onConfirm={handleConfirmRemove}
+      />
+      <CreateWatchlistEntryDialog
+        entry={pendingCreation}
+        onCancel={() => setPendingCreation(undefined)}
+        onCreate={handleCreateEntry}
       />
       <EditWatchlistEntryDialog
         entry={editingEntry}

@@ -58,6 +58,16 @@ export async function updateServerWatchlistEntry(
   return (await responseJson<EntryResponse>(response)).entry;
 }
 
+export async function refreshServerWatchlistEntry(
+  entryId: string,
+): Promise<WatchlistEntry> {
+  const response = await fetch(
+    `/api/watchlists/${encodeURIComponent(entryId)}/refresh`,
+    { method: "POST" },
+  );
+  return (await responseJson<EntryResponse>(response)).entry;
+}
+
 export async function removeServerWatchlistEntry(
   entryId: string,
 ): Promise<WatchlistEntry> {

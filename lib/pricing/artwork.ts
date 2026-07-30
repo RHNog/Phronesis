@@ -84,6 +84,20 @@ export function providerArtworkQuery(
     : identityName;
 }
 
+export function providerArtworkQueries(
+  categoryId: string,
+  query: string,
+  matches: SearchMatch[],
+  limit = 8,
+): string[] {
+  if (!new Set(["pokemon-en", "lorcana-en"]).has(categoryId)) return [providerArtworkQuery(categoryId, query, matches)];
+  return [...new Set(matches
+    .filter((match) => match.productType === "SINGLE")
+    .map((match) => providerArtworkQuery(categoryId, query, [match]))
+    .filter((value) => value.length >= 2))]
+    .slice(0, limit);
+}
+
 export function resolveSnapshotArtwork(
   matches: SearchMatch[],
   cards: Card[],

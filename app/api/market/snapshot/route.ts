@@ -204,20 +204,39 @@ export async function GET(request: Request) {
     });
   }
 
-  const result = await marketRefreshScheduler.getSnapshot({
-    cardIdentity: cardName || printingId,
-    condition,
-    finish,
-    game,
-    printingId,
-    variantId,
-  });
+  try {
+    const result = await marketRefreshScheduler.getSnapshot({
+      cardIdentity: cardName || printingId,
+      condition,
+      finish,
+      game,
+      printingId,
+      variantId,
+    });
 
-  return NextResponse.json(
-    toApiMarketSnapshot(
-      result.repositorySnapshot,
-      result.source,
-      result.diagnostics,
-    ),
-  );
+    return NextResponse.json(
+      toApiMarketSnapshot(
+        result.repositorySnapshot,
+        result.source,
+        result.diagnostics,
+      ),
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        errorMessage:
+          error instanceof Error
+            ? error.message
+            : "Market refresh could not produce valid evidence.",
+        priceMissing: true,
+        printingId,
+        prices: [],
+        providerId: "market-refresh",
+        sourceLabel: "Market refresh unavailable",
+        updatedAt: new Date().toISOString(),
+        variantId,
+      },
+      { status: 422 },
+    );
+  }
 }

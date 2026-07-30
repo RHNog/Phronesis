@@ -1,5 +1,52 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Card-Show Operations
+
+- Assignment: `PHR-CARD-SHOW-OPERATIONS-20260730`
+- Document ID: `PHR-STRUCT-20260730-005`
+- Status: `PRODUCT REVIEW READY — IMPLEMENTED; AUTH ACTIVATION GATED`
+- Priority: Critical event readiness
+- Delivery lane: Standard, six integrated slices
+- Approved features: `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, `PHR-API-004`
+
+### Approved Product Outcome
+
+Make Phronesis operational for card-show buying: truthful catalogue-aware refresh, intentional manual tracking, immediate recommended offers, module-scoped employee activation, persistent vendor checkout including mixed Bulk purchases, and honest sealed/special-product artwork recovery.
+
+### Authorized Slices
+
+1. `S1 — PHR-TECH-010`: refresh integrity, catalogue reconciliation, structured errors, and provider health.
+2. `S2 — PHR-UX-010 + PHR-UX-011`: manual watch composer and offer-first decision presentation.
+3. `S3 — PHR-ARCH-012`: module-at-invite employee activation codes with GitHub identity proof retained and mandatory activation gated.
+4. `S4 — PHR-WORKFLOW-006`: persistent event cart, exact-product and Bulk lines, immutable receipts, and authorization.
+5. `S5 — PHR-API-004`: per-visible-result artwork resolution plus exact-SKU curated sealed/special-product images.
+6. `S6 — Integration`: full verification, responsive private review, conformance, and memory reconciliation.
+
+### Product Decisions Resolved Autonomously
+
+- Vendor Workspace remains one-action tracking; the pre-add composer applies to manual/global additions.
+- Employees with `VENDOR_WORKSPACE:OPERATE` may finalize their own event purchases for show speed; administrator correction and void remain audited.
+- Activation codes are single-use onboarding artifacts, never permanent passwords. GitHub remains the installed identity proof in this slice; passkey installation is deferred behind a separate security-tested credential-lifecycle gate.
+- Riftbound remains deferred.
+
+### Authorization And Boundaries
+
+Repository documentation/code/database migrations, deterministic local tests/builds, ignored local review data, private desktop/mobile review, service restart after verification, bounded remediation, and ordinary checkpoint commits are authorized autonomously.
+
+Authentication remains `DISABLED` or `OPTIONAL` until owner bootstrap, credentials, live callback, activation-code verification, and security gates pass. External account creation, credential disclosure, public deployment, paid-provider commitment, scraping, marketplace transactions, destructive data migration, force push, history rewriting, and Riftbound are prohibited.
+
+### Acceptance
+
+Every slice must pass its specification, focused tests, the supported full suite, standalone TypeScript, warning-free lint, production build, diff checks, and same-session Chief Architect conformance. No failed refresh may overwrite last-good evidence or claim recent success; no authorization may rely on navigation hiding alone; no purchase receipt may be silently mutable; and no artwork may attach without exact evidence.
+
+### Verified Result
+
+- All six slices are implemented. The supported suite passes 232/232, standalone TypeScript has zero diagnostics, lint has zero warnings, and the Next.js 16.2.12 production build passes.
+- The private service is running on loopback 3100 and tailnet-only HTTPS 9443. Its five loaded catalogue checkpoints report `CURRENT`.
+- The previously failing Urza's Saga watch reconciled uniquely across provider set-label drift and refreshed from the verified catalogue to `$469.04` with HTTP 200 while preserving its watch membership.
+- The four-daily observer no longer exits through the `server-only` import boundary.
+- GitHub/passkey authentication remains activation-gated. JustTCG is configured but enrichment remains deliberately disabled; eBay and CardTrader remain unconfigured. No secret is recorded in repository evidence.
+
 ## Active Assignment — Identity-Backed Price Monitoring
 
 - Assignment: `PHR-PRICE-MONITORING-20260730`

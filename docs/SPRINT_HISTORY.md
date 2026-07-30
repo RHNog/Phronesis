@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-07-30 — Card-Show Operations Program
+
+Delivered six integrated event-readiness slices: truthful catalogue-first price tracking, intentional manual watch setup, immediate recommended offers, module-scoped employee activation foundations, persistent exact/Bulk purchase receipts, and exact local recovery for missing product artwork. Repaired the private catalogue observer and live Urza's Saga refresh. Verification passes 232/232 tests, standalone TypeScript, lint, build, diff, and private runtime gates; required authentication and unconfigured external providers remain gated.
+
 ## 2026-07-30 — PHR-UX-009 Visible Buying Intelligence
 
 Exposed the canonical Asset Assessment and current Decision Resolver action inside the Snapshot Vendor Workspace, with evidence coverage, confidence, business conclusion, bounded opportunities/risks, and progressively disclosed Intelligence Console models. Focused, full-baseline, lint/build/diff, desktop, and 390px mobile checks passed without changing intelligence or buying formulas.
