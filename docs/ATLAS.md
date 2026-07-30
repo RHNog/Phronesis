@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Green Verification Baseline
+
+- `PHR-TECH-009` establishes `npm test` (204/204), standalone TypeScript, warning-free lint, production build, and diff validation as the clean product-development gate.
+- `HistoryRepository` owns recursive immutability for stored and returned evaluation snapshots.
+- `MarketRefreshScheduler` resolves only the evidence domains required by requested fields when choosing capable providers.
+- Card finish signals distinguish `Nonfoil` from `Foil`; deterministic provider cases normalize certified local fixtures through the production adapter.
+
 ## Visible Buying Intelligence
 
 - `PHR-UX-009` exposes the intelligence explanation already created by the canonical Snapshot purchase evaluation.

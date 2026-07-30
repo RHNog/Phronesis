@@ -1,5 +1,13 @@
 # Decisions
 
+## 2026-07-30 — Green verification is a product-development prerequisite
+
+- Permit explicit TypeScript test imports only under the repository's existing no-emit contract.
+- Freeze evaluation-history snapshots recursively at the repository boundary.
+- Select refresh providers from the evidence domains required by requested fields; unrelated missing evidence cannot make an otherwise capable provider ineligible.
+- Treat `Nonfoil` as semantically distinct from `Foil` in finish signals.
+- Keep the supported full suite offline and deterministic through certified local provider fixtures.
+
 ## 2026-07-29 — Official Bandai source and durable provider-image cache
 
 - Accept the Product Owner's Bandai authorization attestation as the product approval gate while explicitly avoiding a claim of independent legal verification.

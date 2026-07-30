@@ -16,6 +16,7 @@ import { marketSnapshotFields } from "@/lib/market/MarketRefreshPolicy";
 import {
   createEvidenceCoverageMap,
   createEvidenceRefreshDiagnostics,
+  getEvidenceDomainsForFields,
   getFieldsForEvidenceDomains,
   getPreferredProvidersForEvidenceDomains,
   type EvidenceRefreshDiagnostics,
@@ -222,12 +223,7 @@ export class MarketRefreshScheduler {
     const fieldsToRefresh = getProviderBackedFields(fields);
     const startedAt = Date.now();
     const existingSnapshot = this.repository.getSnapshot(context);
-    const domainsToRefresh = coverageMap.refreshableDomains.length
-      ? coverageMap.refreshableDomains
-      : createEvidenceCoverageMap({
-          context,
-          snapshot: existingSnapshot,
-        }).refreshableDomains;
+    const domainsToRefresh = getEvidenceDomainsForFields(fieldsToRefresh);
     const providerFetch = await this.fetchProviderSnapshots(
       context,
       domainsToRefresh,

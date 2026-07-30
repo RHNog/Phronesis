@@ -1,5 +1,42 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Identity-Backed Price Monitoring
+
+- Assignment: `PHR-PRICE-MONITORING-20260730`
+- Document ID: `PHR-STRUCT-20260730-004`
+- Status: `IN PROGRESS — S1 ACCEPTED; S2 ACTIVE`
+- Priority: Critical baseline stabilization followed by high-priority product delivery
+- Delivery lane: Standard, five ordered implementation slices
+- Workflow authority: shared master file at its currently declared revision `2.1.0`; project-pointer revision mismatch is recorded as non-blocking governance debt
+- Approved features: `PHR-TECH-009`, `PHR-ARCH-011`, `PHR-WORKFLOW-005`, `PHR-API-003`
+
+### Approved Product Outcome
+
+Restore a fully green deterministic repository baseline, introduce invite-only application identity and module assignments, and deliver persistent low-friction card-price monitoring refreshed by verified catalogue snapshots with legitimate estimate, listing, and observed-sale evidence kept distinct.
+
+### Implementation Slice Plan
+
+1. `S1 — PHR-TECH-009`: resolve 29 standalone TypeScript diagnostics and all 17 established behavioral failures; establish the green gate.
+2. `S2 — PHR-ARCH-011`: add invite-only identity, sessions, workspace membership, roles, module entitlements, auditability, and server enforcement.
+3. `S3 — PHR-WORKFLOW-005`: move watchlists to user-owned server persistence and add one-action tracking with defaults, idempotency, and undo.
+4. `S4 — PHR-WORKFLOW-005`: refresh tracked variants from verified four-daily Pricing Update Tool checkpoints and add in-app freshness/alert state.
+5. `S5 — PHR-API-003`: add bounded JustTCG enrichment, disabled-by-default official listing adapters, and first-party observed-sale evidence without scraping.
+
+### Accepted Slice Evidence
+
+- `S1 — PHR-TECH-009`: **ACCEPTED** on 2026-07-30. All 204 tests pass; standalone TypeScript, lint without warnings, production build, and diff checks pass. Validation, Engineer report, release notes, and same-session Chief Architect conformance are recorded under the feature ID.
+- `S2 — PHR-ARCH-011`: **ACTIVE**.
+
+### Authorization And Boundaries
+
+Repository documentation/code changes, database migrations with rollback, dependency installation required by the approved identity design, deterministic tests, builds, private desktop/mobile review, ordinary isolated checkpointing, same-session role handoffs, bounded remediation, and GitHub continuity after explicit Product Review are authorized autonomously.
+
+External account creation, credential generation or disclosure, paid-plan activation, public deployment, marketplace transactions, destructive data migration, force push, history rewriting, scraping, TCGplayer/Cardmarket unauthorized acquisition, and Riftbound work are prohibited without a Critical Escalation decision.
+
+### Product Review Gate
+
+The assignment reaches Product Review only after all completed slices have focused evidence, final integration checks pass, the exact review commit is identified, and the visible package distinguishes implemented capabilities from provider features still disabled by missing credentials. Canonical adoption and GitHub continuity follow explicit Product Owner approval under the master workflow.
+
 ## Active Remediation — PHR-TECH-007-R1
 
 - Assignment: `PHR-ARTWORK-RELIABILITY-20260730`

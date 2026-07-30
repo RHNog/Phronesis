@@ -57,9 +57,15 @@ const scryfallIdentityProvider = {
   id: "scryfall",
   name: "Scryfall",
   async searchCardsWithDiagnostics(query: string) {
-    const normalized = query.toLowerCase();
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .replace(/['’]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+    const normalized = normalize(query);
     const cards = identityCards.filter(
-      (card) => card.name.toLowerCase() === normalized,
+      (card) => normalize(card.name) === normalized,
     );
 
     return {

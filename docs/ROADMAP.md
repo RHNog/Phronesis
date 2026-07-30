@@ -1,5 +1,13 @@
 # Roadmap
 
+## Active: Identity-Backed Price Monitoring
+
+- Completed: `PHR-TECH-009` restored a 204/204 behavioral baseline with clean standalone TypeScript, lint, and production build gates.
+- Active: `PHR-ARCH-011` invite-only identity, sessions, workspace membership, roles, module entitlements, auditability, and server enforcement.
+- Next: `PHR-WORKFLOW-005` persistent one-action tracking and four-daily refresh state.
+- Planned: `PHR-API-003` bounded low-cost estimate, active-listing, and first-party observed-sale evidence without scraping.
+- Gate: explicit Product Review before canonical adoption and GitHub continuity.
+
 ## Product Review Candidate: Cross-Game Artwork-First Buying
 
 - Implemented: unified search across all registered catalogue categories with visible game ownership and per-category freshness.

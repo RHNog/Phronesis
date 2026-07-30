@@ -19,10 +19,10 @@ test("Lorcana identity is operational while market is pending", () => {
   assert.equal(canUseCapability("lorcana", "marketData"), false);
 });
 
-test("unknown finish is explained as provider-unavailable", () => {
+test("unknown physical finish uses the collector-facing Printing vocabulary", () => {
   assert.equal(
     resolveFinishDisplay("Lorcana", ["Unknown"]),
-    "Provider Does Not Supply Finish",
+    "Provider Does Not Supply Printing",
   );
   assert.equal(resolveFinishDisplay("Magic", ["Foil", "Nonfoil"]), "Foil, Nonfoil");
 });

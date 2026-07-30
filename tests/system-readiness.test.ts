@@ -48,7 +48,9 @@ const marketPrice: MarketPrice = {
   confidence: 80,
 };
 
-const businessProfile = defaultBusinessProfiles[0];
+const businessProfile = defaultBusinessProfiles.find(
+  (profile) => profile.id === "online-marketplace",
+) as BusinessProfile;
 const strategyProfile = seedStrategyProfiles.find(
   (profile) => profile.id === "custom-profile",
 ) as StrategyProfile;
@@ -178,4 +180,3 @@ test("negative negotiation margin does not surface internal implementation error
     ),
   );
 });
-
