@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
+import { InventoryRepository } from "@/lib/inventory/InventoryRepository";
 import type { SearchMatch } from "@/lib/pricing/types";
 import type {
   PurchaseEvent,
@@ -16,8 +17,11 @@ function parseLine(value: string): PurchaseLine {
 }
 
 export class PurchaseLedgerRepository {
+  private readonly inventory: InventoryRepository;
+
   constructor(private readonly database: DatabaseSync) {
     this.migrate();
+    this.inventory = new InventoryRepository(database);
   }
 
   migrate() {
@@ -136,6 +140,13 @@ export class PurchaseLedgerRepository {
       `).run(id, principal.workspaceId, principal.operatorUserId, eventId, idempotencyKey, totalCents, now);
       const insertLine = this.database.prepare("INSERT INTO phronesis_purchase_receipt_line(receipt_id, position, payload_json) VALUES(?, ?, ?)");
       lines.forEach((line, index) => insertLine.run(id, index, JSON.stringify(line)));
+      this.inventory.recordReceipt({
+        workspaceId: principal.workspaceId,
+        receiptId: id,
+        eventId,
+        operatorUserId: principal.operatorUserId,
+        createdAt: now,
+      }, lines);
       this.database.prepare("DELETE FROM phronesis_purchase_cart_line WHERE workspace_id=? AND operator_user_id=? AND event_id=?")
         .run(principal.workspaceId, principal.operatorUserId, eventId);
       this.insertAudit(principal, "RECEIPT_FINALIZED", id, { totalCents, lineCount: lines.length });
@@ -158,10 +169,18 @@ export class PurchaseLedgerRepository {
     const note = reason.trim();
     if (!note) throw new Error("A void reason is required.");
     const now = new Date().toISOString();
-    const result = this.database.prepare("UPDATE phronesis_purchase_receipt SET voided_at=? WHERE id=? AND workspace_id=? AND voided_at IS NULL")
-      .run(now, receiptId, principal.workspaceId);
-    if (Number(result.changes) !== 1) throw new Error("Receipt was not found or was already voided.");
-    this.insertAudit(principal, "RECEIPT_VOIDED", receiptId, { reason: note });
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const result = this.database.prepare("UPDATE phronesis_purchase_receipt SET voided_at=? WHERE id=? AND workspace_id=? AND voided_at IS NULL")
+        .run(now, receiptId, principal.workspaceId);
+      if (Number(result.changes) !== 1) throw new Error("Receipt was not found or was already voided.");
+      this.inventory.voidReceipt(principal.workspaceId, receiptId, now, note);
+      this.insertAudit(principal, "RECEIPT_VOIDED", receiptId, { reason: note });
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
     const row = this.database.prepare("SELECT * FROM phronesis_purchase_receipt WHERE id=?").get(receiptId) as SqlRow;
     return this.receiptFromRow(row);
   }

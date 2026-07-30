@@ -49,10 +49,10 @@ const futureCapabilities = [
     resolution: "Coming Soon",
     source: "Product Roadmap",
   }),
-  capability("inventory", "Pending", {
-    reason: "Inventory is not implemented in the current platform release.",
-    resolution: "Coming Soon",
-    source: "Product Roadmap",
+  capability("inventory", "Operational", {
+    reason: "Finalized purchase receipts create workspace inventory cost-basis lots.",
+    resolution: "Receipt-backed inventory intake operational.",
+    source: "Event Purchase Ledger",
   }),
 ];
 

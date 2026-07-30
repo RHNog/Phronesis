@@ -12,6 +12,7 @@ test("primary navigation contains only operational product destinations", () => 
       { label: "Opportunities", href: "/" },
       { label: "Vendor Workspace", href: "/vendor" },
       { label: "Market Watch", href: "/watchlists" },
+      { label: "Inventory", href: "/inventory" },
       { label: "Settings", href: "/settings" },
     ],
   );
@@ -19,7 +20,7 @@ test("primary navigation contains only operational product destinations", () => 
     primaryNavigation.map(({ href }) => String(href)).includes("#"),
     false,
   );
-  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 4);
+  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 5);
 });
 
 test("contextual routes resolve to their owning product area", () => {
@@ -31,6 +32,7 @@ test("contextual routes resolve to their owning product area", () => {
   assert.equal(resolvePrimaryNavigation("/vendor")?.area, "Decide");
   assert.equal(resolvePrimaryNavigation("/evaluate")?.area, "Decide");
   assert.equal(resolvePrimaryNavigation("/watchlists")?.area, "Monitor");
+  assert.equal(resolvePrimaryNavigation("/inventory")?.area, "Manage");
   assert.equal(resolvePrimaryNavigation("/settings")?.area, "Administer");
 });
 

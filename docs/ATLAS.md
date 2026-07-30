@@ -1462,6 +1462,10 @@ Current and future registered models:
 
 Dependency graph metadata is included on each model so future Atlas visualizations can show provider and model dependencies.
 
+## Receipt-Backed Inventory Intake (`PHR-WORKFLOW-008`)
+
+Inventory is now an operational Manage-area module. Finalized event receipts create immutable-provenance exact or aggregate Bulk lots inside the checkout transaction. Exact cost basis is unit acquisition cost multiplied by quantity; Bulk cost basis is aggregate and never implies individual card identity. Receipt voids retain and deactivate lots. Workspace/module authorization is enforced at the page and API boundaries. Future inventory work should extend through explicit location, count, disposition, valuation, or listing events rather than editing source receipts.
+
 ## Backlog
 
 1. Add live marketplace listings and recent sales.

@@ -1,5 +1,13 @@
 # Roadmap
 
+## Completed: Receipt-Backed Inventory Intake
+
+- Completed: exact and Bulk event receipt lines create one workspace inventory lot each in the checkout transaction (`PHR-WORKFLOW-008`).
+- Completed: exact printing, condition, quantity, unit/total cost, receipt/event/operator provenance, and truthful approximate Bulk evidence.
+- Completed: idempotent historical reconciliation and audited receipt-void propagation without deletion.
+- Completed: module-authorized `/inventory` workspace with desktop-first and mobile-adaptive summaries and filters.
+- Next inventory slice requires CTO prioritization among locations/counts, disposition/sales, and listing readiness.
+
 ## Active: LigaMagic Brazilian Market Snapshot
 
 - Completed: `PHR-API-005` dedicated authenticated collection-export profile, one supervised pilot, safe request capture, and complete non-scheduled dry-run snapshot.
@@ -60,10 +68,10 @@
 ## Recently Completed: PHR-UX-006 Application Structure
 
 - Completed: organized production navigation around Discover, Decide, Monitor, and Administer.
-- Completed: retained Manage as a future product area without exposing unavailable destinations.
-- Completed: made Opportunities, Vendor Workspace, Market Watch, and Settings the only primary operational destinations.
+- Superseded by `PHR-WORKFLOW-008`: Manage is now operational through the module-authorized Inventory destination.
+- Historical baseline: Opportunities, Vendor Workspace, Market Watch, and Settings were the original primary operational destinations before inventory intake.
 - Completed: preserved Purchase Evaluation and opportunity details as contextual routes.
-- Constraint: this structural phase does not authorize Inventory, Portfolio, Alerts, Cards, Analytics, or mobile implementation.
+- Constraint retained for unimplemented Portfolio, Alerts, Cards, and Analytics; `PHR-WORKFLOW-008` separately authorized Inventory and responsive mobile adaptation.
 
 ## PHR-UX-005 Collector Presentation Rules
 

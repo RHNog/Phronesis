@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-008
+
+### Receipt-backed inventory
+
+- Added atomic inventory intake for exact-card and truthful aggregate Bulk event-receipt lines.
+- Added exact condition/variant/quantity and acquisition cost basis with receipt, event, operator, and timestamp provenance.
+- Added idempotent historical receipt reconciliation and non-destructive receipt-void propagation.
+- Added module-authorized Inventory navigation, summaries, filters, and responsive lot presentation.
+- Verified the supported behavioral suite, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop, 390px mobile, and console gates.
+
 ## Unreleased — PHR-UX-009
 
 ### Buying intelligence explanation

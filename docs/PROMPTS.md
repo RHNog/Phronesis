@@ -1,5 +1,11 @@
 # Prompt History
 
+## Receipt-Backed Inventory Intake — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-010` authorizes `PHR-WORKFLOW-008`: atomically convert exact-card and truthful aggregate Bulk receipt lines into workspace inventory lots, reconcile historical receipts, propagate receipt voids, and expose module-authorized inventory visibility.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-008-receipt-backed-inventory-intake-prompt.md`.
+
 # Official BCB PTAX Exchange Rate — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-009` authorizes `PHR-API-007`: automatically retrieve and retain official BCB PTAX closing buy/sell rates, apply the direction-correct side to regional economics, preserve last-good data, and replace manual FX controls with provenance-rich evidence.

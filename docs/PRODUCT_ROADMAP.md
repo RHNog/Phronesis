@@ -1,5 +1,12 @@
 # Product Roadmap
 
+## Current Delivery — Receipt-Backed Inventory Intake
+
+- Completed: event checkout automatically creates auditable exact-card and aggregate Bulk inventory lots (`PHR-WORKFLOW-008`).
+- Operational: workspace inventory cost basis, exact quantity, source receipt/event/operator provenance, historical reconciliation, and void propagation.
+- Next inventory maturity choices: storage locations and count reconciliation, sale/disposition ledger, or listing readiness.
+- Existing separate gates remain: required-login activation, owner arbitrage cost configuration, executable availability, and daily LigaMagic scheduling.
+
 ## Current Delivery — Regional Vending And Arbitrage Intelligence
 
 - Exact LigaMagic/TCGplayer cross-market identity bridge: Product Review Ready.
@@ -53,6 +60,8 @@ Potential capabilities:
 - Repricing suggestions.
 - Dead-stock detection.
 - Restock and buylist recommendations.
+
+Receipt-backed inventory intake, condition/variant identity, and acquisition cost basis are operational through `PHR-WORKFLOW-008`. The remaining bullets describe later maturity increments.
 
 ### Portfolio Tracking
 

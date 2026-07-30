@@ -1,9 +1,9 @@
 import type { PhronesisModule } from "@/lib/auth/domain";
 
-export type ProductArea = "Discover" | "Decide" | "Monitor" | "Administer";
+export type ProductArea = "Discover" | "Decide" | "Monitor" | "Manage" | "Administer";
 
 export type PrimaryNavigationItem = {
-  id: "opportunities" | "vendor-workspace" | "market-watch" | "settings";
+  id: "opportunities" | "vendor-workspace" | "market-watch" | "inventory" | "settings";
   label: string;
   href: string;
   area: ProductArea;
@@ -35,6 +35,14 @@ export const primaryNavigation = [
     area: "Monitor",
     module: "MARKET_WATCH",
     matches: ["/watchlists"],
+  },
+  {
+    id: "inventory",
+    label: "Inventory",
+    href: "/inventory",
+    area: "Manage",
+    module: "INVENTORY",
+    matches: ["/inventory"],
   },
   {
     id: "settings",

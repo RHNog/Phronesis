@@ -1,5 +1,34 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Receipt-Backed Inventory Intake
+
+- Assignment: `PHR-INVENTORY-INTAKE-20260730`
+- Document ID: `PHR-STRUCT-20260730-010`
+- Status: `CTO ACCEPTED — PRIVATE DEPLOYMENT VERIFIED`
+- Feature: `PHR-WORKFLOW-008`
+- Objective: make finalized event-purchase receipts create auditable workspace inventory cost-basis lots without duplicate entry.
+
+### Product Rules
+
+- Exact lines retain exact catalogue identity, condition, quantity, unit cost, total cost, and receipt provenance.
+- Bulk lines remain aggregate Bulk lots with selected product lines and approximate evidence; no individual identities are fabricated.
+- Checkout and receipt reversal update inventory atomically and idempotently.
+- Inventory reads require module authorization and remain workspace-scoped.
+
+### Authorization And Boundaries
+
+Documentation, additive local database schema, repository/API/UI changes, deterministic tests/build, private responsive review, bounded remediation, ordinary feature-branch checkpointing, and private-service restart after verification are authorized autonomously.
+
+Authentication activation, LigaMagic schedule activation, external transactions, public deployment, destructive migration, new dependencies, force push, and history rewriting are prohibited.
+
+### Acceptance
+
+Receipt finalization creates one correct lot per line with no second operator action; historical receipts reconcile without duplicates; receipt void preserves and deactivates linked lots; permissions, tests, TypeScript, lint, build, diff, and responsive review pass.
+
+### Verified Result
+
+Exact and aggregate Bulk lots now derive transactionally from receipt lines, historical receipts reconcile idempotently, and receipt voids preserve but deactivate linked lots. The Inventory module is workspace-scoped at page and API boundaries and renders desktop-first with a 390px no-overflow adaptation. The full behavioral suite, standalone TypeScript, warning-free lint, production build, diff hygiene, private loopback runtime, and browser-console gates pass. No external or gated capability was activated.
+
 ## Active Assignment — Official BCB PTAX Exchange Rate
 
 - Assignment: `PHR-OFFICIAL-FX-20260730`

@@ -56,6 +56,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-API-007`      | Official BCB PTAX Exchange Rate                   | Completed — CTO Accepted                            | API / Market Evidence / Reliability / Business Rule / UX                     | `docs/api/PHR-API-007-official-bcb-ptax-fx.md`                             |
 | `PHR-UX-013`       | Regional Vending Intelligence                     | Product Review Ready                                | Product / UX / UI / Decision Intelligence                                    | `docs/ux/PHR-UX-013-regional-vending-intelligence.md`                      |
 | `PHR-WORKFLOW-007` | Two-Way Arbitrage Verification                    | Product Review Ready                                | Workflow / Decision Intelligence / Audit                                     | `docs/workflows/PHR-WORKFLOW-007-arbitrage-verification.md`                |
+| `PHR-WORKFLOW-008` | Receipt-Backed Inventory Intake                   | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-008-receipt-backed-inventory-intake.md`       |
 
 ## Registry Rule
 

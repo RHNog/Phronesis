@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Receipt-Backed Inventory Intake
+
+After official FX acceptance, the Product Owner directed Phronesis to continue the development roadmap. The autonomous canonical workflow selected the first Inventory Management capability because the already-approved event purchase ledger contained sufficient product intent and reliable source evidence. `PHR-WORKFLOW-008` now creates one workspace inventory lot per finalized receipt line without requiring duplicate operator entry.
+
+Exact lots preserve catalogue SKU, printing, condition, quantity, unit and total acquisition cost, notes, operator, event, receipt, and timestamp. Bulk remains one aggregate lot with selected product lines and only explicitly approximate count/weight; Phronesis does not manufacture item identities. Checkout and intake are atomic, existing receipt lines reconcile idempotently, and administrative receipt voids preserve but deactivate linked lots with their reason. `/inventory` and `/api/inventory` require the assigned Inventory module and are workspace-scoped.
+
+The supported suite passes, standalone TypeScript, lint, production build, and diff hygiene are clean, and private desktop plus 390×844 review passed with no console warnings or horizontal overflow. The persistent private service was restarted after build verification. Same-session Chief Architect conformance passes and CTO accepts the increment under `PHR-WORKFLOW-002`. Required authentication, daily LigaMagic scheduling, external transactions, and public deployment remain gated.
+
 ## 2026-07-30 — Automatic Official BCB PTAX FX
 
 The Product Owner directed Phronesis to make regional FX automatic using official information. `PHR-API-007` now retrieves the latest Banco Central do Brasil PTAX closing USD quotation on authorized regional use, at most hourly, and preserves separate buy and sell evidence. US→Brazil costing uses the official sell quote; Brazil→US costing uses the official buy quote. The provider searches an eight-day period for weekend/holiday resilience, validates the response, coalesces concurrent work, and preserves last-good evidence with a sanitized error on failure.
