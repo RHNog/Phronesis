@@ -1,5 +1,11 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Pokémon Improvement, Lorcana Activation, And Riftbound Deferral
+
+The Product Owner explicitly deferred Riftbound and directed autonomous continuation through Pokémon improvement, Lorcana acquisition/ingestion, and then the already-approved roadmap. `PHR-TECH-008` added an explicit fail-closed Pokémon set-alias registry, improving representative Pikachu mappings from 12/40 to 25/40. A catalogue-only TCGplayer read produced a 30,531-row Lorcana receipt with SHA-256 `35cc2651ad5b88d6db9d32732652f6fe9dd03b1cf4220af728e4a1aec9cc2814`; 6,243 Lorcana products are now searchable in the private review database.
+
+Runtime verification exposed and remediated a pre-existing local-cache gap: Lorcast returns AVIF, which the cache requested but rejected. Strict AVIF container-brand validation is now implemented; bounded Pokémon and Lorcana results were prewarmed locally. Focused 18/18, lint/build/diff, and desktop/mobile checks pass; the full suite retains exactly 17 established failures and standalone TypeScript retains only the 29 known `TS5097` test-import errors. Same-session conformance passes. Riftbound remains deferred, the dirty Pricing Update Tool repository was not changed, and the next approved product increment is the visible Phronesis Intelligence panel after canonical adoption.
+
 ## 2026-07-29 — Product Review Acceptance And Deployment Authorization
 
 The Product Owner accepted the current interdependent Product Review tree, including `PHR-WORKFLOW-004`, `PHR-TECH-005`, `PHR-TECH-006`, `PHR-UI-002`, `PHR-API-002`, `PHR-UX-008`, and `PHR-TECH-007`, and instructed Phronesis to deploy it and continue development. GitHub PR `#1` merged the accepted implementation into `main` at commit `8ed1b98da2879f44976b008e6991588d78f4f49e`; the canonical checkout matched `origin/main`, and the existing private desktop/phone service returned HTTP 200 after merge. Public hosting, Pricing Update Tool mutation, provider-wide bulk acquisition, unofficial Riftbound assets, and new external credentials remain outside that authorization.

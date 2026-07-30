@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## Current Adoption Gate — PHR-TECH-008
+
+- Pokémon `pikachu` strict artwork coverage is 25/40, up from 12/40; remaining placeholders are deliberate evidence/provider gaps.
+- Lorcana is loaded in `.data/mobile-review.sqlite`: 30,531 rows, 6,243 products, checkpoint `2026-07-30T04:34:16.000Z`.
+- Catalogue receipt SHA-256: `35cc2651ad5b88d6db9d32732652f6fe9dd03b1cf4220af728e4a1aec9cc2814`.
+- Lorcast AVIF local caching is repaired and 17 bounded Mickey Mouse artworks are retained.
+- Focused tests 18/18, lint/build/diff and desktop/mobile pass. Full suite is 183/17 with the same 17 baseline failures; standalone TypeScript retains 29 known `TS5097` errors.
+- Riftbound is deferred. Do not edit the separate dirty Pricing Update Tool repository.
+- Next gate is exact Git/GitHub adoption and private service restart, followed by the visible Phronesis Intelligence dashboard roadmap item.
+
 ## Current Product Review Gate — PHR-TECH-007 + PHR-API-002 Bandai Revision
 
 - Product Owner authorization attestation activates the official Bandai English card list for One Piece artwork; Scrydex is fallback-only.

@@ -23,7 +23,7 @@ PHRONESIS_PRICING_TOOL_ROOT=/absolute/path/to/Price Updating
 
 ```text
 npm run pricing:sync
-npm run pricing:catalog-import -- <catalog.csv> <magic-en|pokemon-en|onepiece-en> <checkpoint-iso-time>
+npm run pricing:catalog-import -- <catalog.csv> <magic-en|pokemon-en|onepiece-en|lorcana-en|riftbound-en> <checkpoint-iso-time>
 npm run pricing:watch
 ```
 

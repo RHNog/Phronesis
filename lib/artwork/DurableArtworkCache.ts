@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import type { CardImageUrls } from "@/types/card";
 
 const defaultMaximumBytes = 8 * 1024 * 1024;
-const allowedContentTypes = new Set(["image/gif", "image/jpeg", "image/png", "image/webp"]);
+const allowedContentTypes = new Set(["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"]);
 
 type ArtworkAuthorization = "PROVIDER_API" | "PRODUCT_OWNER_ATTESTED_BANDAI" | "VERIFIED_CATALOGUE";
 
@@ -63,6 +63,15 @@ function sourcePolicy(value: string): { policy: SourcePolicy; url: URL } | null 
 }
 
 function hasValidSignature(bytes: Uint8Array, contentType: string): boolean {
+  if (contentType === "image/avif") {
+    if (bytes.length < 16 || new TextDecoder().decode(bytes.slice(4, 8)) !== "ftyp") return false;
+    const brandBytes = bytes.slice(8, Math.min(bytes.length, 64));
+    for (let index = 0; index + 4 <= brandBytes.length; index += 4) {
+      const brand = new TextDecoder().decode(brandBytes.slice(index, index + 4));
+      if (brand === "avif" || brand === "avis") return true;
+    }
+    return false;
+  }
   if (contentType === "image/png") {
     return bytes.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((value, index) => bytes[index] === value);
   }

@@ -18,6 +18,35 @@ function normalizedSet(value: string): string {
   );
 }
 
+/**
+ * TCGplayer and TCGdex occasionally publish different labels for the same
+ * Pokémon set. Keep those equivalences explicit: a broad prefix removal or
+ * fuzzy set match can silently attach artwork from a different printing.
+ */
+export const POKEMON_SET_ALIASES: Readonly<Record<string, string>> = {
+  "diamond and pearl promos": "dp black star promos",
+  "diamond pearl promos": "dp black star promos",
+  "ex emerald": "emerald",
+  "ex firered leafgreen": "firered leafgreen",
+  "ex team magma vs team aqua": "team magma vs team aqua",
+  "legendary treasures radiant collection": "legendary treasures",
+  "sm cosmic eclipse": "cosmic eclipse",
+  "sm promos": "sm black star promos",
+  "sm unbroken bonds": "unbroken bonds",
+  "scarlet violet 151": "151",
+  "scarlet violet promo cards": "svp black star promos",
+  "sun moon base set": "sun moon",
+  "sv scarlet violet base set": "scarlet violet",
+  "sword shield base set": "sword shield",
+  "xy base set": "xy",
+  "xy promos": "xy black star promos",
+};
+
+function comparableSet(value: string, categoryId: string): string {
+  const set = normalizedSet(value);
+  return categoryId === "pokemon-en" ? POKEMON_SET_ALIASES[set] ?? set : set;
+}
+
 function normalizedOnePieceSet(value: string): string {
   return normalized(
     value
@@ -48,10 +77,12 @@ export function resolveSnapshotArtwork(
   const artwork: Record<string, CardImageUrls> = {};
   for (const match of matches) {
     if (match.productType !== "SINGLE") continue;
-    const set = normalizedSet(match.setName);
+    const set = comparableSet(match.setName, match.categoryId);
     const number = normalizedCollectorNumber(match.collectorNumber);
     const name = normalized(match.name);
-    const setCandidates = cards.filter((card) => normalizedSet(card.set) === set);
+    const setCandidates = cards.filter(
+      (card) => comparableSet(card.set, match.categoryId) === set,
+    );
     const printingCandidates = number
       ? setCandidates.filter((card) => normalizedCollectorNumber(card.number) === number)
       : setCandidates.filter((card) => normalized(card.name) === name);

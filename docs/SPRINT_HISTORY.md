@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-07-30 — Pokémon And Lorcana Event Readiness
+
+Added explicit fail-closed Pokémon set aliases, raising representative Pikachu artwork coverage from 12/40 to 25/40. Acquired and imported 30,531 Lorcana rows and 6,243 products through a catalogue-only receipt, repaired strict Lorcast AVIF local caching, and prewarmed bounded event-search artwork. Desktop and 390px review pass; Riftbound remains deferred.
+
 ## 2026-07-29 — Official One Piece Artwork And Local Cache
 
 Activated the official Bandai English card list under Product Owner authorization, added strict base/parallel/SP catalogue matching, and routed approved provider images through a durable ignored same-origin cache. Prewarmed 12 event-search images and verified desktop/phone rendering. Same-session implementation, Designer, and Chief Architect gates are complete; Product Review acceptance and canonical adoption remain pending.
