@@ -6,11 +6,15 @@ The Product Owner reported blank thumbnails for Mox Opal, Mulan, and several Pok
 
 Under bounded `PHR-TECH-007-R1` remediation, provider image downloads now send a stable Phronesis User-Agent and Lorcana provider discovery derives a punctuation-safe query from the first exact catalogue result. Strict set/collector attachment, cache security, pricing, and buying logic are unchanged. The exact Mox request now returns locally retained HTTP 200 JPEG data; `Mulan - res` renders both strict Winterspell artworks. Twelve representative small/normal assets were prewarmed. The remaining Mox special variants and Pokémon foreign-language, code-card, sealed, or ambiguous records retain honest placeholders. Same-session Engineer and Chief Architect evidence passed; CTO accepted the patch for canonical adoption.
 
+GitHub authentication was restored, and PR `#4` merged the remediation with the already accepted `PHR-UX-009` panel normally into `main` at `cd7363f7c0f7fc14c10558cc9569e976f2cc8663`.
+
 ## 2026-07-30 — Visible Phronesis Intelligence Panel
 
 After completing Pokémon/Lorcana event readiness, the autonomous roadmap continuation assigned `PHR-UX-009`. Ready Snapshot evaluations now expose the existing Asset Assessment, evidence coverage, confidence, business conclusion, primary signals, opportunities, risks, and current Decision Resolver action. Detailed model evidence remains progressively disclosed through the established Intelligence Console; no intelligence score, formula, provider request, Strategy, Offer Ladder, or decision path was duplicated.
 
 Focused checks pass 6/6, lint/build/diff and application TypeScript pass, the full suite retains exactly 17 established failures with three new passes, and standalone TypeScript retains only the 29 known `TS5097` errors. Desktop 1280px and mobile 390px browser reviews passed with a 44px disclosure target and no horizontal overflow. Same-session Designer and Chief Architect conformance pass. CTO accepted the exact patch for canonical adoption. Riftbound remains deferred.
+
+GitHub PR `#4` merged the accepted panel normally into `main` at `cd7363f7c0f7fc14c10558cc9569e976f2cc8663` together with the bounded thumbnail reliability remediation.
 
 ## 2026-07-30 — Pokémon Improvement, Lorcana Activation, And Riftbound Deferral
 

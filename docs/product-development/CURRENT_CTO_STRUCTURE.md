@@ -4,7 +4,7 @@
 
 - Assignment: `PHR-ARTWORK-RELIABILITY-20260730`
 - Document ID: `PHR-STRUCT-20260730-003`
-- Status: `CTO ACCEPTED — CANONICAL ADOPTION PENDING`
+- Status: `CANONICAL ADOPTION COMPLETE`
 - Priority: Critical event readiness
 - Objective: restore resolved Magic thumbnails through the durable local cache and make Lorcana provider searches compatible with TCGplayer title punctuation without weakening strict printing matching
 - Specification: `docs/technical/PHR-TECH-007-durable-local-artwork-cache.md`
@@ -29,11 +29,16 @@ This is a bounded remediation of the already-approved thumbnail objective. Repos
 - Focused 11/11, lint, application build/type check, diff, desktop, and 390px mobile checks pass. The supported full suite is 187 passes / 17 unchanged baseline failures; standalone TypeScript retains only 29 known `TS5097` test-import errors.
 - Same-session Chief Architect conformance is recorded in `docs/reviews/PHR-TECH-007-durable-local-artwork-cache-conformance-review.md`. CTO accepts the bounded patch for canonical adoption.
 
+### Canonical Adoption
+
+- GitHub PR `#4` merged normally into `main` at `cd7363f7c0f7fc14c10558cc9569e976f2cc8663`.
+- The canonical checkout and `origin/main` match the merge commit before this adoption-record update.
+
 ## Active Assignment — PHR-UX-009
 
 - Assignment: `PHR-INTELLIGENCE-PANEL-20260730`
 - Document ID: `PHR-STRUCT-20260730-002`
-- Status: `CTO ACCEPTED — CANONICAL ADOPTION PENDING`
+- Status: `CANONICAL ADOPTION COMPLETE`
 - Priority: High, approved roadmap continuation
 - Delivery lane: Standard, two ordered implementation slices
 - Plan fingerprint: `PHR-UX-009-standard-v1`
@@ -63,6 +68,7 @@ The assignment reaches Product Review when a ready Snapshot evaluation visibly e
 - Focused 6/6, lint, application build/type check, diff, desktop, and 390px mobile checks pass.
 - The full suite is 186 passes / 17 unchanged baseline failures; standalone TypeScript retains only 29 known `TS5097` test-import errors.
 - Same-session Designer and Chief Architect verdicts conform. CTO accepts the exact patch for guarded canonical adoption.
+- GitHub PR `#4` merged the accepted implementation normally into `main` at `cd7363f7c0f7fc14c10558cc9569e976f2cc8663`.
 
 ## Active Assignment — PHR-TECH-008
 
