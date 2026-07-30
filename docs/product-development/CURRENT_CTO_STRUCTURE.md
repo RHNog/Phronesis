@@ -1,5 +1,69 @@
 # Current Phronesis CTO Structure
 
+## Active Remediation — PHR-TECH-007-R1
+
+- Assignment: `PHR-ARTWORK-RELIABILITY-20260730`
+- Document ID: `PHR-STRUCT-20260730-003`
+- Status: `CTO ACCEPTED — CANONICAL ADOPTION PENDING`
+- Priority: Critical event readiness
+- Objective: restore resolved Magic thumbnails through the durable local cache and make Lorcana provider searches compatible with TCGplayer title punctuation without weakening strict printing matching
+- Specification: `docs/technical/PHR-TECH-007-durable-local-artwork-cache.md`
+- Engineer work order: `docs/prompts/PHR-TECH-007-durable-local-artwork-cache-prompt.md`
+
+### Authorization And Boundaries
+
+This is a bounded remediation of the already-approved thumbnail objective. Repository code/documentation edits, focused and proportional verification, local/private browser review, provider read-only diagnostics, cache prewarm for specifically verified results, ordinary checkpointing, and private-service restart are authorized autonomously. Pricing data, buying logic, inventory, credentials, external accounts, provider-wide bulk downloads, Riftbound, public deployment, force push, history rewriting, and destructive cache cleanup are prohibited.
+
+### Acceptance
+
+- Scryfall image requests identify Phronesis and a resolved Mox Opal image returns through `/api/pricing/image` with HTTP 200 and local metadata.
+- Lorcana partial title input resolves the exact first catalogue name into a Lorcast-compatible query while strict set/collector matching remains authoritative.
+- Unmatched foreign-language, sealed, ambiguous, or unsupported catalogue records remain honest placeholders.
+- Focused tests, lint, build/type check, diff checks, and representative desktop/mobile runtime verification pass without a pricing or decision regression.
+
+### Verified And Accepted Result
+
+- The exact Mox Opal cache request changed from HTTP 502 to HTTP 200 with a valid locally retained JPEG after Phronesis began sending a provider-compatible User-Agent.
+- `Mulan - res` now resolves three catalogue SKUs across two Winterspell artworks through a Lorcast-compatible query; attachment remains strict by set and collector number.
+- Twelve representative small/normal Mox Opal and Mulan assets were prewarmed and returned HTTP 200.
+- Focused 11/11, lint, application build/type check, diff, desktop, and 390px mobile checks pass. The supported full suite is 187 passes / 17 unchanged baseline failures; standalone TypeScript retains only 29 known `TS5097` test-import errors.
+- Same-session Chief Architect conformance is recorded in `docs/reviews/PHR-TECH-007-durable-local-artwork-cache-conformance-review.md`. CTO accepts the bounded patch for canonical adoption.
+
+## Active Assignment — PHR-UX-009
+
+- Assignment: `PHR-INTELLIGENCE-PANEL-20260730`
+- Document ID: `PHR-STRUCT-20260730-002`
+- Status: `CTO ACCEPTED — CANONICAL ADOPTION PENDING`
+- Priority: High, approved roadmap continuation
+- Delivery lane: Standard, two ordered implementation slices
+- Plan fingerprint: `PHR-UX-009-standard-v1`
+- Objective: expose the established Phronesis Intelligence explanation inside the Snapshot Vendor Workspace without creating a parallel engine
+- Specification: `docs/ux/PHR-UX-009-visible-buying-intelligence-panel.md`
+- Designer direction: `docs/design/PHR-UX-009-visible-buying-intelligence-panel.md`
+- Engineer work order: `docs/prompts/PHR-UX-009-visible-buying-intelligence-panel-prompt.md`
+
+### Authorized Slices
+
+1. `PHR-UX-009-S1`: visible assessment summary derived from the canonical ready evaluation, with focused unit and integration coverage.
+2. `PHR-UX-009-S2`: progressive reuse of the existing Intelligence Console plus desktop/mobile Designer and integration conformance.
+
+### Authorization And Boundaries
+
+Repository code/documentation edits, focused and proportional verification, local/private browser review, bounded remediation, ordinary isolated-branch checkpointing, GitHub continuity after Product Review, and restart of the existing private Phronesis review service after canonical adoption are authorized autonomously.
+
+Riftbound, provider/account work, new credentials, new dependencies, pricing or inventory mutation, new intelligence formulas, Business Profile/Strategy/Offer Ladder/Decision Resolver changes, public deployment, destructive Git operations, force push, and history rewriting are prohibited.
+
+### Acceptance And Continuation
+
+The assignment reaches Product Review when a ready Snapshot evaluation visibly explains the current action using the existing Asset Assessment and Intelligence Models, progressive disclosure is accessible, unchanged inputs preserve unchanged decisions, and desktop/mobile evidence passes without new regressions. After canonical adoption, continue through the next already-approved roadmap item that has sufficient product intent; otherwise return a concise priority recommendation.
+
+### Verified And Accepted Result
+
+- The existing Asset Assessment and Decision Resolver action are visible in a compact explanation panel; detailed models reuse `IntelligenceConsole` through progressive disclosure.
+- Focused 6/6, lint, application build/type check, diff, desktop, and 390px mobile checks pass.
+- The full suite is 186 passes / 17 unchanged baseline failures; standalone TypeScript retains only 29 known `TS5097` test-import errors.
+- Same-session Designer and Chief Architect verdicts conform. CTO accepts the exact patch for guarded canonical adoption.
+
 ## Active Assignment — PHR-TECH-008
 
 - Assignment: `PHR-POKEMON-LORCANA-20260730`

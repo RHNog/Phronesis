@@ -10,13 +10,12 @@
 - External gate: Riot application approval/key for Riftbound. Scrydex is fallback-only after official Bandai activation.
 - Gate: Product Review acceptance before canonical adoption, commit, push, deployment, or publication.
 
-## Proposed Next Product Slice: Vendor Buying Intelligence Panel
+## Completed Product Slice: PHR-UX-009 Vendor Buying Intelligence Panel
 
-- Existing foundation: `evaluatePurchase` already executes Card Intelligence, Market Intelligence, Asset Assessment, Business Profile/Strategy, Offer Ladder, and Decision Resolver.
-- Current gap: Snapshot Vendor Workspace presents the final recommendation, confidence, ladder, and primary drivers but not the layered Intelligence Console already represented in `evaluation.cardProfile.intelligenceModels` and `assetAssessment`.
-- Recommended scope: add a compact buying-intelligence panel to the selected-card/decision area, with progressive disclosure for demand, liquidity, volatility, playability, collectability, risks, opportunities, evidence sufficiency, and model provenance.
-- Architecture rule: reuse the existing evaluation object and Intelligence tiles/presentation contracts; do not create another intelligence engine or let presentation recompute strategy/decision values.
-- Sequencing: stabilize/accept the current cross-game candidate first, then assign a permanent Feature ID and product acceptance criteria for the visible panel.
+- Completed: the selected-card decision area shows Asset Assessment, evidence coverage, confidence, business conclusion, primary signals, opportunities, risks, and current Decision Resolver action.
+- Completed: detailed models reuse the established Intelligence Console through progressive disclosure.
+- Preserved: no presentation-owned intelligence score, strategy, ladder, decision, provider request, or persistence path.
+- Verified: focused 6/6, lint/build/diff, desktop, and 390px mobile checks pass; established baseline failures remain unchanged.
 
 ## Product Review Candidate: PHR-WORKFLOW-004 Snapshot-Powered Vendor Workspace
 
@@ -66,7 +65,7 @@ This is the engineering roadmap. Product-facing ideas now live in `docs/PRODUCT_
 - Implementation verified: explicit Pokémon set aliases improve strict artwork coverage from 12/40 to 25/40 for the representative Pikachu search.
 - Implementation verified: Lorcana catalogue receipt imported 30,531 rows and 6,243 products; Lorcast artwork and AVIF local retention are operational.
 - Deferred: Riftbound.
-- Next approved engineering increment after canonical adoption: expose the existing layered Phronesis Intelligence outputs inside the Snapshot Vendor Workspace without creating a new engine.
+- Completed next increment: `PHR-UX-009` exposes the existing layered Phronesis Intelligence outputs inside the Snapshot Vendor Workspace without creating a new engine.
 
 Project Phronesis (Engineering Initiative) is the engineering identity for this roadmap. It does not rename the repository, package, app, or future commercial product.
 

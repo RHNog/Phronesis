@@ -1,5 +1,13 @@
 # Project Atlas
 
+## Visible Buying Intelligence
+
+- `PHR-UX-009` exposes the intelligence explanation already created by the canonical Snapshot purchase evaluation.
+- `BuyingIntelligencePanel` derives presentation-only assessment, evidence, confidence, driver, opportunity, risk, and current-action data from `ReadyPurchaseEvaluation`.
+- `IntelligenceConsole` remains the detailed model surface; the Vendor panel progressively discloses it rather than defining model-specific UI or another score.
+- Asset Assessment, Business Profile, Strategy, Offer Ladder, and Decision Resolver remain engine owners. The panel cannot recalculate or persist their output.
+- Desktop keeps intelligence inside the buying-decision column; mobile preserves one-column order without horizontal overflow.
+
 ## Cross-Game Snapshot Search And Artwork
 
 - `PHR-TECH-008` activates Lorcana snapshot pricing, raises strict Pokémon set reconciliation through an explicit alias registry, and adds validated Lorcast AVIF retention. Magic, Pokémon, One Piece, and Lorcana are now loaded catalogue games; Riftbound is deferred.
@@ -9,7 +17,7 @@
 - `/api/pricing/artwork` dispatches Magic to Scryfall, Pokémon to TCGdex, Lorcana to Lorcast, and One Piece to the official Bandai English card list. Riftbound returns an explicit authorization state.
 - `/api/pricing/image` is the fail-closed same-origin boundary for approved provider rasters. It validates exact hosts/paths and content, then reuses ignored `.data/artwork/` image/metadata pairs.
 - Identity-provider artwork is presentation evidence only. Catalogue snapshots remain price evidence and provider results never mutate local catalogue records.
-- The next recommended dashboard slice should read `evaluation.cardProfile.intelligenceModels` and `assetAssessment`; those already feed the existing strategy/offer/decision pipeline.
+- `PHR-UX-009` now reads `evaluation.cardProfile.intelligenceModels` and `assetAssessment` through the visible buying-intelligence panel.
 
 ## Application Structure
 
@@ -40,6 +48,8 @@ Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Dev
 `PHR-WORKFLOW-004` makes `/vendor` the desktop-first card-show buying station. A read-only observer follows verified Pricing Update Tool catalogue completions for Magic, Pokémon, and One Piece, a strict adapter imports them into the local SQLite pricing repository, and both `/vendor` and `/price-lookup` consume that shared data. Vendor Workspace converts an exact product/finish/condition selection into the existing Business Profile, evaluation, offer-ladder, and decision pipeline; it does not implement a second recommendation engine. Failed imports preserve last-good data, and unchanged later downloads advance freshness without duplicating history.
 
 Event-readiness revision `PHR-TECH-006` activated the July 29 18:20 catalogues and added pre-import archival for future transient receipts. `PHR-UI-002` added fixed thumbnail slots and strict, non-blocking Scryfall enrichment for Magic. `PHR-API-002` subsequently added Pokémon/TCGdex, Lorcana/Lorcast, and authorized official Bandai One Piece artwork; `PHR-TECH-007` retains approved images locally. Riftbound remains authorization gated.
+
+The 2026-07-30 `PHR-TECH-007` remediation identifies Phronesis on provider image downloads so Scryfall-backed Magic images can enter the durable cache, and derives Lorcast queries from exact catalogue names while retaining strict set/collector attachment.
 
 Atlas is the permanent project knowledge base for Phronesis and Project Phronesis (Engineering Initiative).
 

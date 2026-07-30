@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import type { CardImageUrls } from "@/types/card";
 
 const defaultMaximumBytes = 8 * 1024 * 1024;
+const artworkUserAgent = "Phronesis/0.1 (durable artwork cache)";
 const allowedContentTypes = new Set(["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"]);
 
 type ArtworkAuthorization = "PROVIDER_API" | "PRODUCT_OWNER_ATTESTED_BANDAI" | "VERIFIED_CATALOGUE";
@@ -145,7 +146,10 @@ export class DurableArtworkCache {
     }
 
     const response = await this.fetcher(url, {
-      headers: { Accept: "image/avif,image/webp,image/png,image/jpeg,image/gif" },
+      headers: {
+        Accept: "image/avif,image/webp,image/png,image/jpeg,image/gif",
+        "User-Agent": artworkUserAgent,
+      },
       redirect: "manual",
       signal: AbortSignal.timeout(15_000),
     });

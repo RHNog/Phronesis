@@ -1,4 +1,5 @@
 import DecisionBadge from "@/features/vendor/components/DecisionBadge";
+import BuyingIntelligencePanel from "@/features/vendor/components/BuyingIntelligencePanel";
 import type {
   EvaluationTrace,
   PurchaseEvaluation,
@@ -133,6 +134,8 @@ function ReadyEvaluationSummary({
           />
         </MetricGroup>
       </div>
+
+      <BuyingIntelligencePanel evaluation={evaluation} />
 
       <div className="mt-4 border-t border-zinc-800 pt-4">
         <p className="text-sm font-medium text-zinc-200">Decision Drivers</p>

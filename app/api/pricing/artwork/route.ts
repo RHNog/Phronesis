@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { pricingLookupConfig } from "@/config/pricingLookup";
-import { resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "@/lib/pricing/artwork";
+import { providerArtworkQuery, resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "@/lib/pricing/artwork";
 import { getPricingRepository } from "@/lib/pricing/server";
 import { ScryfallProvider } from "@/lib/providers/identity/ScryfallProvider";
 import { TcgdexProvider } from "@/lib/providers/tcgdex/TcgdexProvider";
 import { LorcastProvider } from "@/lib/providers/lorcast/LorcastProvider";
-import { artworkIdentityName } from "@/lib/pricing/domain";
 import { BandaiOnePieceProvider } from "@/lib/providers/bandai/BandaiOnePieceProvider";
 import { durableArtworkUrls } from "@/lib/artwork/DurableArtworkCache";
 
@@ -32,9 +31,7 @@ export async function GET(request: Request) {
   try {
     const pricing = getPricingRepository().search(categoryId, query);
     const matches = [...pricing.singles, ...pricing.sealed];
-    const providerQuery = categoryId === "pokemon-en"
-      ? artworkIdentityName(pricing.singles[0]?.name ?? query)
-      : query;
+    const providerQuery = providerArtworkQuery(categoryId, query, matches);
     const provider = categoryId === "magic-en"
       ? await scryfall.searchCardsWithDiagnostics(providerQuery)
       : categoryId === "pokemon-en"

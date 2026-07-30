@@ -41,3 +41,24 @@ One Piece thumbnails are operational from the official Bandai English card list.
 ## Negative-effect declaration
 
 No snapshot price, source SKU, condition, finish selection, evaluation engine, upstream schedule, Pricing Update Tool state, inventory, credential, external account, Riot asset, commit, push, deployment, or publication was changed. The local artwork cache is ignored and recoverable by refetching authorized assets.
+
+## 2026-07-30 Remediation Report
+
+- Added a stable Phronesis User-Agent to allowlisted provider image downloads, resolving Scryfall's `generic_user_agent` rejection without weakening cache security.
+- Added provider-query derivation for Pokémon and Lorcana from the first exact single-card catalogue result. Lorcana name/version separators are converted to whitespace for Lorcast search only.
+- Preserved strict set and collector-number attachment; no fuzzy image assignment was introduced.
+- Added regression coverage for outbound request identity and the exact `Mulan - res` query transformation.
+- Verified and prewarmed twelve representative Mox Opal and Mulan small/normal assets.
+
+### Remediation files
+
+- `app/api/pricing/artwork/route.ts`
+- `lib/artwork/DurableArtworkCache.ts`
+- `lib/pricing/artwork.ts`
+- `tests/durable-artwork-cache.test.ts`
+- `tests/snapshot-artwork.test.ts`
+- PHR-TECH-007 specification, prompt, validation, review, release, Structure, registry, Atlas, changelog, handoff, and product-memory records
+
+### Remediation negative-effect declaration
+
+No price, condition, SKU, buying formula, inventory, upstream schedule, provider credential/account, public deployment, Riftbound boundary, or destructive cache operation changed. Unmatched catalogue identities continue to show placeholders.

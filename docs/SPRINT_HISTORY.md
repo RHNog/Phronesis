@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-07-30 — PHR-UX-009 Visible Buying Intelligence
+
+Exposed the canonical Asset Assessment and current Decision Resolver action inside the Snapshot Vendor Workspace, with evidence coverage, confidence, business conclusion, bounded opportunities/risks, and progressively disclosed Intelligence Console models. Focused, full-baseline, lint/build/diff, desktop, and 390px mobile checks passed without changing intelligence or buying formulas.
+
 ## 2026-07-30 — Pokémon And Lorcana Event Readiness
 
 Added explicit fail-closed Pokémon set aliases, raising representative Pikachu artwork coverage from 12/40 to 25/40. Acquired and imported 30,531 Lorcana rows and 6,243 products through a catalogue-only receipt, repaired strict Lorcast AVIF local caching, and prewarmed bounded event-search artwork. Desktop and 390px review pass; Riftbound remains deferred.
