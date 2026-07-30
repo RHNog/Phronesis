@@ -6,15 +6,15 @@ import { IdentityProviderRegistry } from "../lib/engines/identity/IdentityProvid
 import { selectIdentityProvider } from "../lib/engines/identity/IdentityProviderSelection.ts";
 import type { IdentityProvider } from "../lib/engines/identity/IdentityProvider.ts";
 
-test("registers Magic and Lorcana operationally with three pending games", () => {
+test("registers four operational games with Flesh and Blood pending", () => {
   const matrix = createIdentityProviderRegistry().getCapabilityMatrix();
   assert.deepEqual(
     matrix.map((item) => [item.games[0], item.lifecycle]),
     [
       ["Magic", "OPERATIONAL"],
       ["Lorcana", "OPERATIONAL"],
-      ["Pokemon", "PENDING_CONNECTION"],
-      ["One Piece", "PENDING_CONNECTION"],
+      ["Pokemon", "OPERATIONAL"],
+      ["One Piece", "OPERATIONAL"],
       ["Flesh and Blood", "PENDING_CONNECTION"],
     ],
   );
@@ -27,17 +27,22 @@ test("recognizes Mulan as Lorcana and selects Lorcast", () => {
   assert.equal(selection.provider?.capability.lifecycle, "OPERATIONAL");
 });
 
-test("reports the other known pending games distinctly", async () => {
+test("reports the remaining known pending game distinctly", async () => {
   const orchestrator = new IdentityOrchestrator(createIdentityProviderRegistry());
   for (const [query, provider] of [
-    ["Pokemon Charizard", "Pokémon"],
-    ["One Piece Luffy", "One Piece"],
     ["Flesh and Blood Command and Conquer", "Flesh and Blood"],
   ]) {
     const result = await orchestrator.search(query);
     assert.equal(result.status, "PROVIDER_PENDING");
     assert.equal(result.orchestrationDiagnostics.providerSelected, provider);
   }
+});
+
+test("selects the official Bandai provider for One Piece", () => {
+  const selection = selectIdentityProvider(createIdentityProviderRegistry(), { query: "One Piece Luffy" });
+  assert.equal(selection.game, "One Piece");
+  assert.equal(selection.provider?.name, "Bandai One Piece Card List");
+  assert.equal(selection.provider?.capability.lifecycle, "OPERATIONAL");
 });
 
 test("normalizes operational provider output into canonical identity", async () => {

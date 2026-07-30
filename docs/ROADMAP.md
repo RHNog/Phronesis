@@ -1,5 +1,32 @@
 # Roadmap
 
+## Product Review Candidate: Cross-Game Artwork-First Buying
+
+- Implemented: unified search across all registered catalogue categories with visible game ownership and per-category freshness.
+- Implemented: artwork-first grouping, exact Finish-before-Condition selection, and exact-SKU evidence/evaluation continuity.
+- Operational: Magic/Scryfall, Pokémon/TCGdex, Lorcana/Lorcast, and official One Piece/Bandai identity artwork paths.
+- Operational reliability: approved provider images are retained through the ignored `PHR-TECH-007` same-origin cache; 12 current `luffy` results are prewarmed.
+- Prepared: Lorcana and Riftbound verified receipt ingestion from the existing four-daily Pricing Update Tool schedule.
+- External gate: Riot application approval/key for Riftbound. Scrydex is fallback-only after official Bandai activation.
+- Gate: Product Review acceptance before canonical adoption, commit, push, deployment, or publication.
+
+## Proposed Next Product Slice: Vendor Buying Intelligence Panel
+
+- Existing foundation: `evaluatePurchase` already executes Card Intelligence, Market Intelligence, Asset Assessment, Business Profile/Strategy, Offer Ladder, and Decision Resolver.
+- Current gap: Snapshot Vendor Workspace presents the final recommendation, confidence, ladder, and primary drivers but not the layered Intelligence Console already represented in `evaluation.cardProfile.intelligenceModels` and `assetAssessment`.
+- Recommended scope: add a compact buying-intelligence panel to the selected-card/decision area, with progressive disclosure for demand, liquidity, volatility, playability, collectability, risks, opportunities, evidence sufficiency, and model provenance.
+- Architecture rule: reuse the existing evaluation object and Intelligence tiles/presentation contracts; do not create another intelligence engine or let presentation recompute strategy/decision values.
+- Sequencing: stabilize/accept the current cross-game candidate first, then assign a permanent Feature ID and product acceptance criteria for the visible panel.
+
+## Product Review Candidate: PHR-WORKFLOW-004 Snapshot-Powered Vendor Workspace
+
+- Implemented: verified Pricing Update Tool completion observer, strict Magic/Pokémon/One Piece catalogue adapter, transactional local imports, four-per-day freshness/history, and last-good recovery.
+- Implemented: desktop-first `/vendor` search/evidence/decision console with mobile adaptation and shared `/price-lookup` infrastructure.
+- Activated: July 29 catalogues for all three supported games, persistent four-daily observation, and durable pre-import archives through `PHR-TECH-006`.
+- Implemented initially through `PHR-UI-002`: fixed catalogue thumbnail slots and strict non-blocking Magic artwork. `PHR-API-002` now adds Pokémon/TCGdex, Lorcana/Lorcast, and official One Piece/Bandai artwork; `PHR-TECH-007` adds durable local retention. Riftbound retains its external authorization gate.
+- Verified: full 792,927-row Magic import in under 15 seconds; focused tests, lint, build, diff, desktop, keyboard, and mobile checks pass.
+- Gate: Product Owner acceptance before canonical adoption, publication, or deployment. Isolated review-data activation is already operational under explicit event-readiness authorization.
+
 ## Recently Completed: PHR-UX-006 Application Structure
 
 - Completed: organized production navigation around Discover, Decide, Monitor, and Administer.
@@ -52,7 +79,7 @@ Project Phronesis (Engineering Initiative) is the engineering identity for this 
 ### PHR-ARCH-004 Identity Platform
 
 - Provider-agnostic orchestration, registry, selection, canonical normalization, diagnostics, and lifecycle-aware errors are complete.
-- Magic/Scryfall and Lorcana/Lorcast are operational. Pokémon, One Piece, and Flesh and Blood remain pending.
+- Magic/Scryfall, Lorcana/Lorcast, Pokémon/TCGdex, and One Piece/Bandai official are operational. Flesh and Blood remains pending.
 
 ### PHR-API-001 Lorcast Identity Provider
 

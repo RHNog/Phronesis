@@ -30,6 +30,13 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-WORKFLOW-003` | Shared Master Workflow Adoption | Completed | Workflow / Architecture / Developer Workflow | `docs/workflows/PHR-WORKFLOW-003-shared-master-workflow-adoption.md` |
 | `PHR-TECH-004` | Canonical Repository Reconciliation | Completed | Technical / Documentation / Developer Workflow | `docs/technical/PHR-TECH-004-canonical-repository-reconciliation.md` |
 | `PHR-UX-007` | Mobile Pricing Lookup | Completed | Product / UX / UI / Database / Import Workflow | `docs/ux/PHR-UX-007-mobile-pricing-lookup.md` |
+| `PHR-WORKFLOW-004` | Snapshot-Powered Vendor Workspace | Product Review Ready | Product / Workflow / UX / Database / Local Integration | `docs/workflows/PHR-WORKFLOW-004-snapshot-powered-vendor-workspace.md` |
+| `PHR-TECH-005` | Private Mobile Review Access | Product Review Ready | Technical / Developer Workflow / Security / Review | `docs/technical/PHR-TECH-005-private-mobile-review-access.md` |
+| `PHR-TECH-006` | Event Snapshot Activation And Resilient Ingestion | Product Review Ready | Technical / Database / Local Integration / Reliability | `docs/technical/PHR-TECH-006-event-snapshot-activation.md` |
+| `PHR-UI-002` | Snapshot Catalogue Thumbnails | Product Review Ready | UI / UX / Identity / Local Integration | `docs/ui/PHR-UI-002-snapshot-catalogue-thumbnails.md` |
+| `PHR-API-002` | Cross-Game Catalogue Artwork Providers | Product Review Ready — Bandai Revision | API / Identity / Local Integration / Provider Governance | `docs/api/PHR-API-002-cross-game-catalogue-artwork-providers.md` |
+| `PHR-UX-008` | Unified Artwork-First Catalogue Search | Product Review Ready | Product / UX / UI / Search / Workflow | `docs/ux/PHR-UX-008-unified-artwork-first-catalogue-search.md` |
+| `PHR-TECH-007` | Durable Local Artwork Cache | Product Review Ready | Technical / Local Storage / Reliability / Security / Provider Governance | `docs/technical/PHR-TECH-007-durable-local-artwork-cache.md` |
 
 ## Registry Rule
 

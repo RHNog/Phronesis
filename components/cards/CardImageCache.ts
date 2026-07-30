@@ -32,6 +32,19 @@ const sourcePriority: CardImageCandidate["source"][] = [
   "Provider",
 ];
 
+const directImageHosts = new Set(["cards.scryfall.io", "static.tcgplayer.com"]);
+
+export function shouldBypassCardImageOptimization(url: string | undefined): boolean {
+  if (!url) return false;
+  if (url.startsWith("/api/pricing/image?source=")) return true;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && directImageHosts.has(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function selectUrl(urls: CardImageUrls | undefined, size: CardImageSize) {
   if (!urls) return undefined;
   if (size === "thumbnail") return urls.small ?? urls.normal ?? urls.large;

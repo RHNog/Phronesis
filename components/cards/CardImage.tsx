@@ -5,6 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import CardImagePlaceholder from "@/components/cards/CardImagePlaceholder";
 import {
   resolveCardImage,
+  shouldBypassCardImageOptimization,
   type CardImageCandidate,
   type CardImageSize,
   type CardImageSource,
@@ -66,6 +67,7 @@ export default function CardImage({
           onError={() => setFailedUrl(resolution.url)}
           sizes={size === "thumbnail" ? "80px" : size === "card" ? "240px" : "480px"}
           src={resolution.url!}
+          unoptimized={shouldBypassCardImageOptimization(resolution.url)}
           width={dimensions[size].width}
         />
       )}

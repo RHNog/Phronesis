@@ -101,7 +101,7 @@ No additional synchronous UI work is introduced.
 - Magic selects operational Scryfall.
 - “Mox Opal” defaults to Magic and executes Scryfall.
 - “Mulan” selects operational Lorcast and returns canonical Lorcana identities.
-- Explicit Pokémon, One Piece, and Flesh and Blood queries report their pending providers.
+- Explicit Pokémon and One Piece queries select operational TCGdex and Bandai providers; Flesh and Blood reports its pending provider.
 - API routes, Command Palette, Vendor Workspace page, and Identity Explorer do not construct Scryfall.
 - No market API or market provider is referenced by the identity platform.
 

@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-evidence/
 /out/
 
 # production
@@ -48,3 +49,6 @@ next-env.d.ts
 
 # Local market repository persistence
 .market-intelligence-repository.json
+
+# Local snapshot pricing databases
+/.data/

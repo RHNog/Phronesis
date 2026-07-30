@@ -1,5 +1,37 @@
 # Decisions
 
+## 2026-07-29 — Official Bandai source and durable provider-image cache
+
+- Accept the Product Owner's Bandai authorization attestation as the product approval gate while explicitly avoiding a claim of independent legal verification.
+- Use the official Bandai English card list as the primary One Piece artwork source; retain Scrydex only as a possible structured fallback.
+- Match base, parallel/reprint, and SP assets only from strict product/set, card-number, normalized-name, and explicit qualifier evidence. Ambiguity fails to a placeholder.
+- Retain authorized provider raster bytes locally through a same-origin exact-allowlist cache. Store ignored content and provenance metadata; reject redirects, invalid MIME/signatures, oversize responses, credentials, and unapproved paths.
+- Permit bounded prewarming of images already mapped by an active event search, but not provider-wide bulk acquisition.
+
+## 2026-07-29 — Unified search, deterministic artwork grouping, and official provider boundaries
+
+- Search all loaded catalogues on every valid query and label the resulting game; do not classify the catalogue from typed characters and do not require a manual switch.
+- Treat category, normalized product name, set, collector number, and language as artwork-group boundaries. Strip only finish-only presentation suffixes; preserve alternate-art/treatment descriptors.
+- Ask for exact Finish after artwork selection and before Condition so the final record remains an exact TCGplayer SKU.
+- Use TCGdex for Pokémon and Lorcast for Lorcana. The later authorized decision above supersedes the Scrydex gate with official Bandai One Piece artwork; use only Riot's approved API for Riftbound artwork.
+- Keep the existing Intelligence engines authoritative; a future visible buying-intelligence panel is presentation work, not a new evaluation engine.
+
+## PHR-TECH-006 / PHR-UI-002: Preserve Receipts Before Import And Never Guess Artwork
+
+Decision: archive every hash-verified transient catalogue before local activation, keep the Pricing Update Tool as schedule owner, and use read-only local database export only as a bounded recovery path when a completed transient file was missed. Filter only explicitly configured sibling product lines from the observed composite Magic export; reject unknown product lines. Enrich artwork after local results render, through an operational identity provider and strict printing evidence only.
+
+Rationale: the upcoming event requires the freshest possible offline price evidence, while raw upstream files disappear after each run and almost all catalogue photo URLs are empty. Durable local receipts improve recovery without coupling Phronesis to upstream credentials or mutation. A placeholder is safer than showing artwork for the wrong printing.
+
+Rejected: triggering an extra marketplace run, changing the upstream schedule, treating upstream Postgres as the normal synchronization boundary, guessing TCGplayer CDN URLs from SKU identifiers, and blocking price lookup on an image provider.
+
+## PHR-WORKFLOW-004: Vendor Workspace Consumes Completed Catalogue Snapshots
+
+Decision: make Vendor Workspace the primary desktop buying surface and treat `PHR-UX-007` snapshot pricing as shared infrastructure. Phronesis observes the Pricing Update Tool's verified per-catalogue completion checkpoints rather than copying its four schedules or changing the live tool. Mobile is an adaptation of the same workflow and data.
+
+Rationale: card-show buying is primarily performed on computers, and the existing split between a decision workspace and a phone-only price reference prevents one-screen negotiation. The upstream checkpoint is the earliest evidence-backed boundary where a catalogue is complete, while a Phronesis-owned schedule could drift or consume a partial file.
+
+Rejected: direct mutation of the Pricing Update Tool, live database coupling requiring its credentials, polling catalogues without a completion checkpoint, and separate desktop/mobile calculation paths.
+
 ## PHR-UX-007: Pricing Exports Are A Strict File Contract
 
 Decision: consume singles and sealed products through one normalized import path, using a versioned externally supplied schema contract, SKU plus condition identity, transactional idempotency, change-only SQLite history, configurable categories, and explicit missing-data states. Production column names must not be inferred without the authoritative sanitized Pricing Tool export and schema/version.

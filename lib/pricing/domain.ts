@@ -2,6 +2,7 @@ import { pricingLookupConfig } from "@/config/pricingLookup";
 import {
   conditionLadder,
   type NormalizedPricingRow,
+  type ArtworkSearchGroup,
   type PriceState,
   type PricingCondition,
   type ProductType,
@@ -66,6 +67,64 @@ export function normalizeSearchText(value: string): string {
     .trim();
 }
 
+const finishOnlyParenthetical = /\((?:\d{2,4}|[a-z]{1,4}\d{1,4}|(?:etched|foil|holofoil|reverse holofoil|rainbow foil|surge foil|galaxy foil|confetti foil|pool party foil|textured foil|cold foil))\)\s*$/i;
+
+export function artworkIdentityName(value: string): string {
+  let name = value.trim();
+  while (finishOnlyParenthetical.test(name)) name = name.replace(finishOnlyParenthetical, "").trim();
+  return name;
+}
+
+export function artworkIdentityKey(match: Pick<SearchMatch, "categoryId" | "productType" | "name" | "setName" | "collectorNumber" | "language" | "sku">): string {
+  if (match.productType === "SEALED") return `${match.categoryId}|sealed|${match.sku}`;
+  return [
+    match.categoryId,
+    "single",
+    normalizeSearchText(artworkIdentityName(match.name)),
+    normalizeSearchText(match.setName),
+    normalizeSearchText(match.collectorNumber ?? ""),
+    normalizeSearchText(match.language),
+  ].join("|");
+}
+
+function variantPreference(match: SearchMatch): number {
+  const variant = normalizeSearchText(match.variant);
+  if (variant === "normal" || variant === "nonfoil" || variant === "unlimited") return 0;
+  return 1;
+}
+
+export function groupSearchMatchesByArtwork(matches: SearchMatch[]): ArtworkSearchGroup[] {
+  const groups = new Map<string, ArtworkSearchGroup>();
+  for (const match of matches) {
+    const id = artworkIdentityKey(match);
+    const existing = groups.get(id);
+    if (existing) {
+      existing.variants.push(match);
+      existing.score = Math.max(existing.score, match.score);
+      existing.imageUrl ??= match.imageUrl;
+      continue;
+    }
+    groups.set(id, {
+      id,
+      categoryId: match.categoryId,
+      productType: match.productType,
+      name: artworkIdentityName(match.name),
+      setName: match.setName,
+      collectorNumber: match.collectorNumber,
+      language: match.language,
+      imageUrl: match.imageUrl,
+      score: match.score,
+      variants: [match],
+    });
+  }
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      variants: [...group.variants].sort((a, b) => variantPreference(a) - variantPreference(b) || a.variant.localeCompare(b.variant) || a.sku.localeCompare(b.sku)),
+    }))
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+}
+
 const singleSignals = /\b(?:nm|lp|mp|hp|dmg|holo|reverse|promo|stamped|illustration|rare|\d{1,4}\s*\/\s*\d{1,4})\b/i;
 const collectorNumberOnly = /^(?:[a-z]{0,4}\s*)?\d{1,4}(?:\s*\/\s*\d{1,4})?[a-z]?$/i;
 
@@ -120,21 +179,23 @@ export function nearestPricedCondition(
     .sort((a, b) => a.distance - b.distance || a.index - b.index)[0] ?? null;
 }
 
-export function movementFor(match: SearchMatch, currentMarketPriceCents: number | null) {
+export function movementFor(match: SearchMatch, currentMarketPriceCents: number | null, price?: PriceState | null) {
+  const previousMarketPriceCents = price?.previousMarketPriceCents ?? match.previousMarketPriceCents;
+  const previousSnapshotDate = price?.previousSnapshotDate ?? match.previousSnapshotDate;
   if (
     currentMarketPriceCents === null ||
-    match.previousMarketPriceCents === null ||
-    match.previousMarketPriceCents === 0 ||
-    match.previousSnapshotDate === null
+    previousMarketPriceCents === null ||
+    previousMarketPriceCents === 0 ||
+    previousSnapshotDate === null
   ) {
     return null;
   }
   return {
     percentage:
-      ((currentMarketPriceCents - match.previousMarketPriceCents) /
-        match.previousMarketPriceCents) *
+      ((currentMarketPriceCents - previousMarketPriceCents) /
+        previousMarketPriceCents) *
       100,
-    comparisonDate: match.previousSnapshotDate,
+    comparisonDate: previousSnapshotDate,
   };
 }
 
@@ -148,6 +209,7 @@ export function askingPriceSpread(askingCents: number, referenceCents: number) {
 
 export function isStale(snapshotDate: string | null, now = new Date()): boolean {
   if (!snapshotDate) return false;
-  const age = now.getTime() - new Date(`${snapshotDate}T00:00:00Z`).getTime();
+  const parsed = new Date(snapshotDate.includes("T") ? snapshotDate : `${snapshotDate}T00:00:00Z`);
+  const age = now.getTime() - parsed.getTime();
   return age > pricingLookupConfig.staleAfterDays * 86_400_000;
 }

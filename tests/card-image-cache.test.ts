@@ -4,6 +4,7 @@ import {
   clearCardImageCache,
   invalidateCardImage,
   resolveCardImage,
+  shouldBypassCardImageOptimization,
 } from "../components/cards/CardImageCache.ts";
 
 test.beforeEach(() => clearCardImageCache());
@@ -24,6 +25,14 @@ test("prefers repository artwork and reports reuse as cached", () => {
     sourceDetail: "Repository",
     url: "repository-small",
   });
+});
+
+test("bypasses optimization only for verified public card-image hosts", () => {
+  assert.equal(shouldBypassCardImageOptimization("https://cards.scryfall.io/small/front/a/b/card.jpg"), true);
+  assert.equal(shouldBypassCardImageOptimization("https://static.tcgplayer.com/photo-id"), true);
+  assert.equal(shouldBypassCardImageOptimization("/api/pricing/image?source=approved"), true);
+  assert.equal(shouldBypassCardImageOptimization("https://example.com/card.jpg"), false);
+  assert.equal(shouldBypassCardImageOptimization("not-a-url"), false);
 });
 
 test("falls back between sizes without another provider abstraction", () => {

@@ -18,11 +18,11 @@ import {
 } from "@/lib/engines/identity/IdentityProviderSelection";
 import { FleshAndBloodIdentityProviderAdapter } from "@/lib/providers/identity/FleshAndBloodIdentityProviderAdapter";
 import { LorcastProvider } from "@/lib/providers/lorcast/LorcastProvider";
-import { OnePieceIdentityProviderAdapter } from "@/lib/providers/identity/OnePieceIdentityProviderAdapter";
-import { PokemonIdentityProviderAdapter } from "@/lib/providers/identity/PokemonIdentityProviderAdapter";
+import { TcgdexProvider } from "@/lib/providers/tcgdex/TcgdexProvider";
 import { ScryfallIdentityProviderAdapter } from "@/lib/providers/identity/ScryfallIdentityProviderAdapter";
 import type { SearchResult } from "@/types/searchResult";
 import { identityMappingRepository } from "@/lib/engines/identity/IdentityMappingRepository";
+import { BandaiOnePieceProvider } from "@/lib/providers/bandai/BandaiOnePieceProvider";
 
 export type IdentityOrchestrationResponse = Omit<IdentitySearchResponse, "results"> & {
   message?: string;
@@ -35,8 +35,8 @@ export function createIdentityProviderRegistry() {
   return new IdentityProviderRegistry()
     .register(new ScryfallIdentityProviderAdapter())
     .register(new LorcastProvider())
-    .register(new PokemonIdentityProviderAdapter())
-    .register(new OnePieceIdentityProviderAdapter())
+    .register(new TcgdexProvider())
+    .register(new BandaiOnePieceProvider())
     .register(new FleshAndBloodIdentityProviderAdapter());
 }
 

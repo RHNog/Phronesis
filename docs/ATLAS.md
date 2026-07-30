@@ -1,5 +1,15 @@
 # Project Atlas
 
+## Cross-Game Snapshot Search And Artwork
+
+- `PricingRepository.searchAll` owns unified local catalogue search; the API remains backward compatible with category-specific requests.
+- `groupSearchMatchesByArtwork` creates deterministic category/name/set/collector/language artwork groups while preserving alternate-art descriptors and sealed products.
+- Vendor Workspace selects a group, then an exact Finish SKU, then Condition; only that exact snapshot record reaches `evaluatePurchase`.
+- `/api/pricing/artwork` dispatches Magic to Scryfall, Pokémon to TCGdex, Lorcana to Lorcast, and One Piece to the official Bandai English card list. Riftbound returns an explicit authorization state.
+- `/api/pricing/image` is the fail-closed same-origin boundary for approved provider rasters. It validates exact hosts/paths and content, then reuses ignored `.data/artwork/` image/metadata pairs.
+- Identity-provider artwork is presentation evidence only. Catalogue snapshots remain price evidence and provider results never mutate local catalogue records.
+- The next recommended dashboard slice should read `evaluation.cardProfile.intelligenceModels` and `assetAssessment`; those already feed the existing strategy/offer/decision pipeline.
+
 ## Application Structure
 
 `PHR-UX-006` defines the lifecycle map used by the production shell:
@@ -23,6 +33,12 @@ Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Dev
 - Role contracts: `.agents/roles/`.
 - Documentation review: `docs/reviews/2026-07-22-documentation-practices-review.md`.
 - Continuation decision: evolve the current tested architecture; do not restart without a separate evidence-backed CTO decision.
+
+## Snapshot-Powered Vendor Workspace
+
+`PHR-WORKFLOW-004` makes `/vendor` the desktop-first card-show buying station. A read-only observer follows verified Pricing Update Tool catalogue completions for Magic, Pokémon, and One Piece, a strict adapter imports them into the local SQLite pricing repository, and both `/vendor` and `/price-lookup` consume that shared data. Vendor Workspace converts an exact product/finish/condition selection into the existing Business Profile, evaluation, offer-ladder, and decision pipeline; it does not implement a second recommendation engine. Failed imports preserve last-good data, and unchanged later downloads advance freshness without duplicating history.
+
+Event-readiness revision `PHR-TECH-006` activated the July 29 18:20 catalogues and added pre-import archival for future transient receipts. `PHR-UI-002` added fixed thumbnail slots and strict, non-blocking Scryfall enrichment for Magic. `PHR-API-002` subsequently added Pokémon/TCGdex, Lorcana/Lorcast, and authorized official Bandai One Piece artwork; `PHR-TECH-007` retains approved images locally. Riftbound remains authorization gated.
 
 Atlas is the permanent project knowledge base for Phronesis and Project Phronesis (Engineering Initiative).
 
@@ -161,8 +177,8 @@ Rule: unknown evidence and unavailable capability are distinct states and must n
 - Selection: explicit game → parsed/search context → user preference → Magic fallback.
 - Canonical model: PHR-ARCH-007 ontology contracts in `types/identityOntology.ts`, composed by `CanonicalIdentityModel` in `IdentityProviderAdapter.ts`.
 - Mapping repository: typed provider aliases in `IdentityMappingRepository.ts`.
-- Operational: Magic → Scryfall; Lorcana → Lorcast.
-- Pending: Pokémon, One Piece, Flesh and Blood.
+- Operational: Magic → Scryfall; Lorcana → Lorcast; Pokémon → TCGdex; One Piece → Bandai official English card list.
+- Pending: Flesh and Blood.
 - Outcomes: Operational, No Match, Provider Pending, Provider Not Configured, Provider Offline.
 - Boundary: identity never requests prices, valuations, observations, or market evidence.
 

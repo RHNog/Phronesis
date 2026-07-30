@@ -6,9 +6,10 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const query = url.searchParams.get("q") ?? "";
-  const categoryId = url.searchParams.get("category") ?? "pokemon-en";
+  const categoryId = url.searchParams.get("category");
   try {
-    return NextResponse.json(getPricingRepository().search(categoryId, query));
+    const repository = getPricingRepository();
+    return NextResponse.json(categoryId ? repository.search(categoryId, query) : repository.searchAll(query));
   } catch {
     return NextResponse.json(
       { error: "Pricing lookup is temporarily unavailable. Your search was preserved; try again." },

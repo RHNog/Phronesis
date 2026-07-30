@@ -3,16 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/start-phronesis.mjs dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/start-phronesis.mjs start",
     "evidence:web": "JARVIS_RUNTIME_EVIDENCE=1 next dev --webpack --hostname 127.0.0.1",
     "evidence:preflight": "python3 tests/jarvis_runtime_evidence.py --preflight",
     "evidence:validate": "python3 tests/jarvis_runtime_evidence.py --validate-evidence",
     "evidence:validator-test": "python3 -m unittest discover -s tests -t tests -p jarvis_runtime_evidence_test.py -v",
     "lint": "eslint",
     "test": "node --import ./tests/register-test-hooks.mjs --test tests/*.test.ts",
-    "pricing:import": "node --import ./tests/register-test-hooks.mjs scripts/import-pricing-export.ts"
+    "pricing:import": "node --import ./tests/register-test-hooks.mjs scripts/import-pricing-export.ts",
+    "pricing:catalog-import": "node --import ./tests/register-test-hooks.mjs scripts/import-tcgplayer-catalog.ts",
+    "pricing:sync": "node --import ./tests/register-test-hooks.mjs scripts/watch-pricing-catalogues.ts --once",
+    "pricing:watch": "node --import ./tests/register-test-hooks.mjs scripts/watch-pricing-catalogues.ts",
+    "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
+    "review:phone:status": "node scripts/private-review-status.mjs"
   },
   "dependencies": {
     "justtcg-js": "^0.2.1",
