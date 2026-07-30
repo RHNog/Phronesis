@@ -6,6 +6,14 @@ import test from "node:test";
 import { DurableArtworkCache, durableArtworkUrl, isApprovedArtworkSource } from "../lib/artwork/DurableArtworkCache.ts";
 
 const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0]);
+const avif = new Uint8Array([
+  0, 0, 0, 24,
+  102, 116, 121, 112,
+  97, 118, 105, 102,
+  0, 0, 0, 0,
+  97, 118, 105, 102,
+  109, 105, 102, 49,
+]);
 
 test("durable artwork cache writes an approved raster once and serves local bytes thereafter", async () => {
   const root = await mkdtemp(join(tmpdir(), "phronesis-artwork-"));
@@ -43,6 +51,39 @@ test("durable artwork cache rejects unapproved sources and invalid content", asy
       fetcher: async () => new Response("<html>not an image</html>", { headers: { "Content-Type": "text/html" } }),
     });
     await assert.rejects(() => cache.get("https://en.onepiece-cardgame.com/images/cardlist/card/OP01-003.png"));
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("durable artwork cache validates and retains Lorcast AVIF images", async () => {
+  const root = await mkdtemp(join(tmpdir(), "phronesis-artwork-"));
+  try {
+    const cache = new DurableArtworkCache({
+      root,
+      fetcher: async () => new Response(avif, {
+        status: 200,
+        headers: { "Content-Type": "image/avif" },
+      }),
+    });
+    const result = await cache.get(
+      "https://cards.lorcast.io/card/digital/small/crd_46402c967ba24a1ca2ea62cb69f3b243.avif?1761752035",
+    );
+    assert.equal(result.metadata.authorization, "PROVIDER_API");
+    assert.equal(result.metadata.contentType, "image/avif");
+    assert.equal(result.metadata.sourceHost, "cards.lorcast.io");
+    assert.deepEqual([...result.bytes], [...avif]);
+
+    const invalid = new DurableArtworkCache({
+      root: join(root, "invalid"),
+      fetcher: async () => new Response(new Uint8Array(24), {
+        status: 200,
+        headers: { "Content-Type": "image/avif" },
+      }),
+    });
+    await assert.rejects(() => invalid.get(
+      "https://cards.lorcast.io/card/digital/small/invalid.avif",
+    ));
   } finally {
     await rm(root, { force: true, recursive: true });
   }

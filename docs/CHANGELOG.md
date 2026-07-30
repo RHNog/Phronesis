@@ -4,6 +4,7 @@
 
 ### Added
 
+- Pokémon explicit set-alias reconciliation and current Lorcana catalogue/artwork activation (`PHR-TECH-008`).
 - Lifecycle-based application structure and typed primary navigation (`PHR-UX-006`).
 - Phronesis product identity migration (`PHR-ARCH-010`).
 - Three-role Canonical Product Development Workflow for CTO, Chief Architect, and Engineer (`PHR-WORKFLOW-002`).

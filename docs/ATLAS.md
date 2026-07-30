@@ -2,6 +2,7 @@
 
 ## Cross-Game Snapshot Search And Artwork
 
+- `PHR-TECH-008` activates Lorcana snapshot pricing, raises strict Pokémon set reconciliation through an explicit alias registry, and adds validated Lorcast AVIF retention. Magic, Pokémon, One Piece, and Lorcana are now loaded catalogue games; Riftbound is deferred.
 - `PricingRepository.searchAll` owns unified local catalogue search; the API remains backward compatible with category-specific requests.
 - `groupSearchMatchesByArtwork` creates deterministic category/name/set/collector/language artwork groups while preserving alternate-art descriptors and sealed products.
 - Vendor Workspace selects a group, then an exact Finish SKU, then Condition; only that exact snapshot record reaches `evaluatePurchase`.

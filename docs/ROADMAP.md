@@ -61,6 +61,13 @@
 
 This is the engineering roadmap. Product-facing ideas now live in `docs/PRODUCT_ROADMAP.md`. Business strategy lives in `docs/BUSINESS_STRATEGY.md`. Monetization options live in `docs/MONETIZATION.md`. Unscoped ideas live in `docs/IDEA_LEDGER.md`.
 
+## Current Event Readiness: PHR-TECH-008
+
+- Implementation verified: explicit Pokémon set aliases improve strict artwork coverage from 12/40 to 25/40 for the representative Pikachu search.
+- Implementation verified: Lorcana catalogue receipt imported 30,531 rows and 6,243 products; Lorcast artwork and AVIF local retention are operational.
+- Deferred: Riftbound.
+- Next approved engineering increment after canonical adoption: expose the existing layered Phronesis Intelligence outputs inside the Snapshot Vendor Workspace without creating a new engine.
+
 Project Phronesis (Engineering Initiative) is the engineering identity for this roadmap. It does not rename the repository, package, app, or future commercial product.
 
 ## Current Sprint: Sprint 36

@@ -1,5 +1,11 @@
 # Prompt History
 
+## PHR-TECH-008 — Pokémon And Lorcana Event Readiness
+
+Purpose: improve strict Pokémon set reconciliation, acquire and activate a current Lorcana catalogue, and verify durable local artwork while explicitly deferring Riftbound.
+
+Source: `docs/prompts/PHR-TECH-008-pokemon-lorcana-event-readiness-prompt.md`.
+
 ## PHR-TECH-007 — Durable Local Artwork Cache
 
 Purpose: retain authorized provider artwork locally, connect official Bandai One Piece images, and make card-show thumbnails resilient without creating an open proxy or bulk-downloading catalogues.

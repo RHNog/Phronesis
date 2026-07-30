@@ -1,5 +1,39 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — PHR-TECH-008
+
+- Assignment: `PHR-POKEMON-LORCANA-20260730`
+- Document ID: `PHR-STRUCT-20260730-001`
+- Status: `CANONICAL ADOPTION PENDING`
+- Priority: Critical event readiness
+- Delivery lane: Standard, two ordered implementation slices
+- Objective: improve strict Pokémon artwork coverage and activate a current Lorcana catalogue with locally retained artwork
+- Specification: `docs/technical/PHR-TECH-008-pokemon-lorcana-event-readiness.md`
+- Engineer work order: `docs/prompts/PHR-TECH-008-pokemon-lorcana-event-readiness-prompt.md`
+
+### Authorized Slices
+
+1. `PHR-TECH-008-S1`: explicit Pokémon set-alias reconciliation, tests, and before/after runtime evidence.
+2. `PHR-TECH-008-S2`: catalogue-only Lorcana acquisition through the existing authorized local session, archive/hash verification, transactional local import, Lorcast resolution, cache prewarm, and desktop/mobile verification.
+
+### Authorization And Boundaries
+
+Repository code/documentation edits, focused and full verification, build, private review, a read-only Lorcana catalogue export, ignored local archive/database/cache writes, ordinary Git checkpointing, GitHub continuity, and restart of the existing private Phronesis review service are authorized autonomously.
+
+Riftbound, Pricing Update Tool code/repository edits, store visibility changes, inventory or price mutation, pricing/review/publication phases, schedule changes, new credentials, account changes, destructive cleanup, public deployment, force push, and history rewriting are prohibited.
+
+### Acceptance And Continuation
+
+The assignment is accepted when Pokémon artwork improves without false-positive matching and Lorcana has searchable snapshot prices plus at least one strict locally retained thumbnail. After conformance and canonical continuity, continue to the approved visible Phronesis Intelligence dashboard roadmap item under a new documentation-first Structure.
+
+### Verified Result
+
+- Pokémon `pikachu` strict artwork coverage improved from 12/40 to 25/40; 24 unique mapped images were prewarmed locally.
+- Lorcana catalogue-only receipt `35cc2651ad5b88d6db9d32732652f6fe9dd03b1cf4220af728e4a1aec9cc2814` imported 30,531 rows and 6,243 products at checkpoint `2026-07-30T04:34:16.000Z`.
+- Lorcast AVIF images now pass strict durable-cache validation; 17 unique Mickey Mouse result artworks were retained locally.
+- Focused 18/18, lint, build, diff, desktop, and mobile checks pass. The supported full suite remains at the exact 183-pass/17-failure baseline and standalone TypeScript retains only 29 known `TS5097` test-import errors.
+- Same-session Chief Architect conformance: `docs/reviews/PHR-TECH-008-pokemon-lorcana-event-readiness-conformance-review.md`.
+
 ## Active Authorized Revision — PHR-TECH-007 + PHR-API-002
 
 - Assignment: `PHR-LOCAL-ARTWORK-20260729`

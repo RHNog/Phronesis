@@ -60,6 +60,67 @@ test("snapshot artwork normalizes catalogue set prefixes and printed collector t
   assert.ok(artwork["snapshot:bolt"]);
 });
 
+test("Pokémon artwork uses explicit TCGplayer to TCGdex set aliases", () => {
+  const cases = [
+    ["SWSH01: Sword & Shield Base Set", "Sword & Shield"],
+    ["XY Base Set", "XY"],
+    ["XY Promos", "XY Black Star Promos"],
+    ["EX Emerald", "Emerald"],
+    ["EX FireRed & LeafGreen", "FireRed & LeafGreen"],
+    ["EX Team Magma vs Team Aqua", "Team Magma vs Team Aqua"],
+    ["SM - Cosmic Eclipse", "Cosmic Eclipse"],
+    ["SM - Unbroken Bonds", "Unbroken Bonds"],
+    ["Legendary Treasures: Radiant Collection", "Legendary Treasures"],
+    ["SV: Scarlet & Violet 151", "151"],
+    ["SV: Scarlet & Violet Promo Cards", "SVP Black Star Promos"],
+    ["Diamond and Pearl Promos", "DP Black Star Promos"],
+  ] as const;
+
+  for (const [catalogueSet, providerSet] of cases) {
+    const artwork = resolveSnapshotArtwork(
+      [match({
+        categoryId: "pokemon-en",
+        name: "Pikachu",
+        setName: catalogueSet,
+        collectorNumber: "025/100",
+      })],
+      [card({
+        game: "Pokemon",
+        name: "Pikachu",
+        set: providerSet,
+        number: "25",
+        imageUrls: { small: `https://assets.tcgdex.net/en/test/${encodeURIComponent(providerSet)}/high.webp` },
+      })],
+    );
+    assert.ok(artwork["snapshot:bolt"], `${catalogueSet} should match ${providerSet}`);
+  }
+});
+
+test("Pokémon set aliases do not weaken collector-number or ambiguity checks", () => {
+  const pokemonMatch = match({
+    categoryId: "pokemon-en",
+    name: "Pikachu",
+    setName: "XY Base Set",
+    collectorNumber: "42/146",
+  });
+  assert.deepEqual(
+    resolveSnapshotArtwork([pokemonMatch], [card({
+      game: "Pokemon",
+      name: "Pikachu",
+      set: "XY",
+      number: "43",
+    })]),
+    {},
+  );
+  assert.deepEqual(
+    resolveSnapshotArtwork([pokemonMatch], [
+      card({ game: "Pokemon", name: "Pikachu", set: "XY", number: "42", id: "first" }),
+      card({ game: "Pokemon", name: "Pikachu", set: "XY", number: "42", id: "second" }),
+    ]),
+    {},
+  );
+});
+
 test("snapshot artwork does not guess across ambiguous or mismatched printings", () => {
   assert.deepEqual(resolveSnapshotArtwork([match()], [card({ number: "147" })]), {});
   assert.deepEqual(
