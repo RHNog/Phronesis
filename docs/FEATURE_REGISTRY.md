@@ -43,12 +43,12 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-ARCH-011` | Internal Identity And Module Authorization | Implemented — Activation Pending | Architecture / Security / Authentication / Authorization | `docs/architecture/PHR-ARCH-011-internal-identity-module-authorization.md` |
 | `PHR-WORKFLOW-005` | Identity-Backed Price Monitoring | Implemented — Product Review Ready | Product / Workflow / UX / Database | `docs/workflows/PHR-WORKFLOW-005-identity-backed-price-monitoring.md` |
 | `PHR-API-003` | Low-Cost Market Evidence Sources | Implemented — External Providers Gated | API / Market Evidence / Provider Governance | `docs/api/PHR-API-003-low-cost-market-evidence-sources.md` |
-| `PHR-TECH-010` | Refresh Integrity And Provider Health | Implemented — Product Review Ready | Technical / Reliability / Market Watch / API | `docs/technical/PHR-TECH-010-refresh-integrity-provider-health.md` |
-| `PHR-UX-010` | Watch Entry Composer | Implemented — Product Review Ready | UX / Workflow / Market Watch | `docs/ux/PHR-UX-010-watch-entry-composer.md` |
-| `PHR-ARCH-012` | Employee Activation And Module Access | Implemented — Activation Gated | Architecture / Security / Authentication / Authorization | `docs/architecture/PHR-ARCH-012-employee-activation-module-access.md` |
-| `PHR-UX-011` | Offer-First Buying Decision | Implemented — Product Review Ready | UX / Decision Intelligence / Vendor Workflow | `docs/ux/PHR-UX-011-offer-first-buying-decision.md` |
-| `PHR-WORKFLOW-006` | Event Purchase Ledger | Implemented — Product Review Ready | Workflow / Database / Vendor Operations / Audit | `docs/workflows/PHR-WORKFLOW-006-event-purchase-ledger.md` |
-| `PHR-API-004` | Product Artwork Coverage | Implemented — Product Review Ready | API / Artwork / Identity / Local Storage | `docs/api/PHR-API-004-product-artwork-coverage.md` |
+| `PHR-TECH-010` | Refresh Integrity And Provider Health | Completed — CTO Accepted | Technical / Reliability / Market Watch / API | `docs/technical/PHR-TECH-010-refresh-integrity-provider-health.md` |
+| `PHR-UX-010` | Watch Entry Composer | Completed — CTO Accepted | UX / Workflow / Market Watch | `docs/ux/PHR-UX-010-watch-entry-composer.md` |
+| `PHR-ARCH-012` | Employee Activation And Module Access | Completed — CTO Accepted; Activation Gated | Architecture / Security / Authentication / Authorization | `docs/architecture/PHR-ARCH-012-employee-activation-module-access.md` |
+| `PHR-UX-011` | Offer-First Buying Decision | Completed — CTO Accepted | UX / Decision Intelligence / Vendor Workflow | `docs/ux/PHR-UX-011-offer-first-buying-decision.md` |
+| `PHR-WORKFLOW-006` | Event Purchase Ledger | Completed — CTO Accepted | Workflow / Database / Vendor Operations / Audit | `docs/workflows/PHR-WORKFLOW-006-event-purchase-ledger.md` |
+| `PHR-API-004` | Product Artwork Coverage | Completed — CTO Accepted | API / Artwork / Identity / Local Storage | `docs/api/PHR-API-004-product-artwork-coverage.md` |
 
 ## Registry Rule
 

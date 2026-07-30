@@ -6,7 +6,7 @@
 
 ## Status
 
-Implemented — Activation Gated
+Completed — CTO Accepted; Activation Gated
 
 ## Priority
 
