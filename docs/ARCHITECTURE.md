@@ -1,5 +1,32 @@
 # Architecture
 
+## Cross-Game Snapshot Search Boundary
+
+Vendor Workspace issues one local search request. The pricing repository queries each active catalogue, globally ranks a bounded result set, and returns per-category freshness. The presentation layer groups single-card products by deterministic artwork identity, then maps Finish selection back to one exact SKU before condition evidence and `evaluatePurchase`. Sealed products remain SKU-discrete.
+
+Artwork enrichment is a parallel, non-blocking server boundary: Scryfall for Magic, TCGdex for Pokémon, Lorcast for Lorcana, and the official Bandai English card list for One Piece. Strict set/card-number/name/variant resolution may attach an image but cannot alter local prices or decision inputs. Riftbound remains a fail-closed authorization state until its Riot prerequisites exist.
+
+`PHR-TECH-007` routes approved provider rasters through one same-origin cache. Exact HTTPS host/path allowlisting, redirect rejection, MIME and magic-byte checks, size/time limits, URL/content hashes, atomic writes, and ignored `.data/artwork/` metadata prevent the route from becoming an open proxy. A cached image remains usable when its provider is unavailable.
+
+## Snapshot-Powered Vendor Workspace (PHR-WORKFLOW-004)
+
+The Pricing Update Tool owns catalogue acquisition and its 00:00, 06:00, 12:00, and 18:00 schedules. Phronesis owns only a read-only completion observer, strict TCGplayer catalogue normalization, local SQLite persistence, search, evidence presentation, and downstream buying decisions.
+
+```text
+Verified upstream completion
+  -> read-only observer
+  -> strict streaming adapter
+  -> transactional staging import
+  -> products + latest prices + change-only history + receipt/status
+  -> shared pricing search
+  -> /vendor and /price-lookup
+  -> existing evaluation / offer ladder / decision engines
+```
+
+Completion receipts are keyed by category, source hash, contract version, and checkpoint. This lets an unchanged later download advance freshness while preventing the same checkpoint from being reprocessed. The client status boundary omits local paths and hashes. Upstream files, credentials, databases, and schedules are never mutation targets.
+
+`PHR-TECH-006` archives each verified transient catalogue under ignored Phronesis data before transactional import. The July 29 missed receipt was recovered through read-only local Postgres exports. Known sibling product lines in the observed composite Magic export are filtered by configuration; any unknown product line fails closed. `PHR-UI-002` enriches already-rendered Magic results through the existing identity-provider boundary and strict set/collector matching. Artwork is never price evidence, never blocks the local search path, and is not guessed when identity is ambiguous.
+
 ## Application Information Architecture (PHR-UX-006)
 
 The production shell is organized around Discover, Decide, Monitor, and Administer. Opportunities, Vendor Workspace, Market Watch, and Settings are the primary operational destinations. Purchase Evaluation and opportunity detail are contextual routes owned by Decide and Discover. Developer routes remain outside production navigation, and future Manage capabilities are not exposed until implemented.
@@ -24,7 +51,7 @@ Watchlist entries are user-owned membership records scoped by `watchlistId`. Edi
 
 Identity application flows use `IdentityOrchestrator`, never concrete providers. The orchestrator parses game/search context, selects from `IdentityProviderRegistry`, checks lifecycle capability, executes an operational provider, delegates existing canonical/intent resolution, and adapts results into the canonical identity model.
 
-Current capability matrix has Magic/Scryfall and Lorcana/Lorcast operational, with Pokémon, One Piece, and Flesh and Blood registered as pending connections. Identity artwork is provider identity data; market providers do not own it. Lorcast prices are explicitly excluded.
+Current capability matrix has Magic/Scryfall, Lorcana/Lorcast, Pokémon/TCGdex, and One Piece/Bandai official operational, with Flesh and Blood registered as a pending connection. Identity artwork is provider identity data; market providers do not own it. Lorcast prices are explicitly excluded.
 
 ## Cross-Game Identity Ontology (PHR-ARCH-007)
 

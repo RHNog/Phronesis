@@ -11,6 +11,7 @@ type ScryfallSearchResponse = {
 
 const SCRYFALL_BASE_URL = "https://api.scryfall.com";
 const SCRYFALL_HEADERS = {
+  Accept: "application/json;q=0.9,*/*;q=0.8",
   "User-Agent": "Phronesis/0.1 (development identity diagnostics)",
 };
 

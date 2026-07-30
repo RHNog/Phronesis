@@ -1,5 +1,47 @@
 # Prompt History
 
+## PHR-TECH-007 — Durable Local Artwork Cache
+
+Purpose: retain authorized provider artwork locally, connect official Bandai One Piece images, and make card-show thumbnails resilient without creating an open proxy or bulk-downloading catalogues.
+
+Source: `docs/prompts/PHR-TECH-007-durable-local-artwork-cache-prompt.md`.
+
+## PHR-API-002 — Cross-Game Catalogue Artwork Providers
+
+Purpose: connect authorized cross-game thumbnail providers, register incoming Lorcana/Riftbound catalogue receipts, and preserve explicit credential/licensing boundaries for One Piece and Riftbound.
+
+Source: `docs/prompts/PHR-API-002-cross-game-catalogue-artwork-providers-prompt.md`.
+
+## PHR-UX-008 — Unified Artwork-First Catalogue Search
+
+Purpose: search every loaded catalogue without manual switching, collapse finish-only duplicate rows into artwork identities, and select exact finish then condition after card choice.
+
+Source: `docs/prompts/PHR-UX-008-unified-artwork-first-catalogue-search-prompt.md`.
+
+## PHR-TECH-006 — Event Snapshot Activation And Resilient Ingestion
+
+Purpose: recover the freshest locally available July 29 catalogues, activate them in the isolated review repository, and archive each future verified four-daily receipt before import without modifying the Pricing Update Tool.
+
+Source: `docs/prompts/PHR-TECH-006-event-snapshot-activation-prompt.md`.
+
+## PHR-UI-002 — Snapshot Catalogue Thumbnails
+
+Purpose: add non-blocking catalogue thumbnails to Vendor Workspace results and selected evidence, preferring repository URLs and using strict Scryfall printing matches for Magic only.
+
+Source: `docs/prompts/PHR-UI-002-snapshot-catalogue-thumbnails-prompt.md`.
+
+## PHR-TECH-005 — Private Mobile Review Access
+
+Purpose: expose the current review build to the Product Owner's phone through a persistent, loopback-only server and the existing private Tailscale tailnet, without public deployment or Funnel.
+
+Source: `docs/prompts/PHR-TECH-005-private-mobile-review-access-prompt.md`.
+
+## PHR-WORKFLOW-004 Snapshot-Powered Vendor Workspace
+
+Purpose: merge snapshot pricing into the desktop-first Vendor Workspace, automatically follow verified Pricing Update Tool catalogue completions, and reuse the existing Business Profile, offer ladder, and decision engines with mobile adaptation.
+
+Canonical implementation prompt: `docs/prompts/PHR-WORKFLOW-004-implementation-prompt.md`.
+
 ## PHR-TECH-003 Verified Repository Relocation
 
 Purpose: relocate the complete Phronesis checkout to JarvisSSD through staged copy, verification, atomic cutover, and retained-source rollback.

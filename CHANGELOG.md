@@ -1,5 +1,49 @@
 # Changelog
 
+## Unreleased — PHR-TECH-007 + PHR-API-002 Bandai Revision
+
+### One Piece artwork reliability
+
+- Activated strictly matched official Bandai English One Piece artwork under the Product Owner's authorization attestation.
+- Added an ignored, same-origin durable artwork cache with exact source allowlisting, raster validation, atomic writes, metadata, and repeat-request reuse.
+- Prewarmed 12 unique official artworks mapped by the active `luffy` event search.
+- Verified 23/23 focused tests, lint, production build/type check, desktop/mobile runtime behavior, and diff hygiene. Full-suite baseline remains 180 passes / 17 known failures.
+
+## Unreleased — PHR-API-002 + PHR-UX-008
+
+### Cross-game buying
+
+- Replaced manual catalogue switching with one globally ranked search across Magic, Pokémon, One Piece, Lorcana, and Riftbound catalogue registrations.
+- Collapsed finish-only duplicates into artwork-first results and added exact Finish selection before Condition.
+- Connected Pokémon artwork through TCGdex and retained strict Scryfall/Lorcast paths for Magic/Lorcana.
+- Registered Lorcana and Riftbound for automatic verified-receipt ingestion; the later authorized revision activates One Piece/Bandai while Riftbound/Riot remains authorization gated.
+- Verified 18/18 focused tests, 7/7 identity tests, lint, production build/type check, desktop/mobile runtime behavior, and diff hygiene. Full-suite baseline remains 173 passes / 17 known failures.
+
+## Unreleased — PHR-WORKFLOW-004
+
+### Event readiness
+
+- Activated July 29 Magic, Pokémon, and One Piece catalogues in the isolated review repository under `PHR-TECH-006`.
+- Added hash-verified, atomic local archival before observer import and strict filtering of the known composite Magic export.
+- Added non-blocking Magic thumbnails to Vendor Workspace search and selected evidence under `PHR-UI-002`; unsupported games retain stable placeholders.
+
+### Review access
+
+- Added tailnet-only phone review through `PHR-TECH-005`, with loopback binding, HTTPS, persistent recovery, mobile verification, and no public deployment.
+
+### Added
+
+- Desktop-first Snapshot-Powered Vendor Workspace for Magic, Pokémon, and One Piece.
+- Read-only observer of verified Pricing Update Tool catalogue completions.
+- Strict, transactional, idempotent full-catalogue imports with freshness, movement, history, and last-good recovery.
+- Shared snapshot data across `/vendor` and `/price-lookup`, with mobile adaptation.
+
+### Verification
+
+- Focused tests 34/34, lint, production build, and diff checks pass.
+- Representative 792,927-row Magic catalogue imports in under 15 seconds.
+- Product Review acceptance, canonical adoption, deployment, and publication remain pending; isolated live snapshot activation is operational.
+
 All notable changes to this project will be documented in this file.
 
 The format is inspired by "Keep a Changelog".

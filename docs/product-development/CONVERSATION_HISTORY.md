@@ -1,5 +1,66 @@
 # CTO Product Development Conversation History
 
+## 2026-07-29 — Product Review Acceptance And Deployment Authorization
+
+The Product Owner accepted the current interdependent Product Review tree, including `PHR-WORKFLOW-004`, `PHR-TECH-005`, `PHR-TECH-006`, `PHR-UI-002`, `PHR-API-002`, `PHR-UX-008`, and `PHR-TECH-007`, and instructed Phronesis to deploy it and continue development. This authorizes canonical Git publication and verification of the existing private desktop/phone service. It does not authorize public hosting, Pricing Update Tool mutation, provider-wide bulk acquisition, unofficial Riftbound assets, or new external credentials.
+
+## 2026-07-29 — Official Bandai One Piece Artwork And Durable Local Cache
+
+The Product Owner instructed Phronesis to consider Bandai authorization given and requested local image retention. Under `PHR-STRUCT-20260729-006`, the official Bandai English card list became the operational One Piece identity/artwork source and Scrydex became fallback-only. `PHR-TECH-007` adds a same-origin, exact-allowlist durable raster cache under ignored `.data/artwork/` storage; authorization provenance, source identity, retrieval time, length, MIME, and hashes are retained without credentials.
+
+Strict set, card-number, normalized-name, and explicit base/parallel/reprint/SP evidence control matching. Ambiguous variants continue to show placeholders, and artwork cannot change snapshot prices or buying decisions. The 12 unique official artworks mapped by the active `luffy` event search were prewarmed. Focused checks pass 23/23, lint/build/diff checks pass, desktop and 390px phone review pass, and the full suite remains at the unchanged 17-failure baseline with seven additional passing tests. Status is **PRODUCT REVIEW READY**; no upstream mutation, bulk provider catalogue acquisition, commit, push, deployment, or publication occurred. Riftbound remains gated on Riot approval and an app-specific key.
+
+## 2026-07-29 — Cross-Game Thumbnails, Unified Search, And Artwork-First Variants
+
+### User intent
+
+- Find trustworthy thumbnail providers for Pokémon, Lorcana, One Piece, and Riftbound.
+- Remove manual catalogue switching; search should automatically cover the relevant catalogues.
+- When thumbnails do not visually distinguish finishes, show one result per unique artwork and select foil/holofoil/other finish after choosing the card.
+- Determine whether Phronesis Intelligence already has a roadmap for the buying decision dashboard.
+
+### Decisions and implementation
+
+- Assigned `PHR-API-002` and `PHR-UX-008`.
+- Connected Pokémon through TCGdex; retained Lorcast for Lorcana and Scryfall for Magic.
+- Approved Scrydex as the One Piece candidate subject to Product Owner-owned credentials/terms; required Riot's official API for Riftbound subject to app approval/key.
+- Implemented one five-category search, visible game badges, deterministic artwork grouping, and exact Finish-before-Condition selection.
+- Registered Lorcana and Riftbound for future verified upstream receipts without changing or triggering the Pricing Update Tool.
+- Confirmed that Phronesis Intelligence already executes inside `evaluatePurchase`; documented a separate recommended visible panel that reuses current engine outputs.
+
+### Acceptance state
+
+Implementation, focused verification, desktop/mobile Designer review, and same-session Chief Architect conformance are complete. The package is Product Review ready. Product Owner acceptance, canonical adoption, commit, push, deployment, publication, One Piece credential activation, and Riftbound Riot approval remain pending.
+
+## 2026-07-29 — Event Snapshot Activation And Thumbnails
+
+The Product Owner directed immediate acquisition of the freshest possible snapshot data for the August 1 event and requested thumbnails. Under `PHR-STRUCT-20260729-004`, Engineering recovered the completed July 29 18:20 cycle through read-only local Postgres exports because the observer began after the transient CSVs had been deleted. Magic, Pokémon, and One Piece are now active in the isolated review repository, source evidence is archived, and the persistent observer is following future four-daily completions. The upstream schedule, code, database rows, inventory, prices, and publication behavior were not changed and no extra run was triggered.
+
+`PHR-UI-002` adds fixed thumbnail slots and non-blocking strict Scryfall matching for Magic. The source catalogues supplied virtually no image URLs, so Pokémon and One Piece retain honest placeholders pending an approved identity artwork provider. Focused tests pass 14/14, lint/build/diff checks pass, the full suite retains its established 17 failures, standalone TypeScript retains only the established 27 `TS5097` errors, and desktop/390px review passed without horizontal overflow. Same-session conformance is complete and status is **PRODUCT REVIEW READY**; no commit, push, deployment, public release, or price/inventory mutation occurred.
+
+## 2026-07-29 — PHR-TECH-005 Private Mobile Review Access
+
+The Product Owner requested a quick way to follow and review Phronesis from a phone while away from the Mac. Tailscale was already installed, online, and serving two unrelated private endpoints. Engineering added a third, isolated private handler on HTTPS 9443 that proxies only a loopback Phronesis review server on 3100. A per-user LaunchAgent keeps the review server alive and recovered successfully after a forced child-process termination. The exact private URL passed TLS, 390x844 rendering, stale-data disclosure, catalogue search, lint, focused tests, build, and diff checks. Funnel, public deployment, anonymous access, credentials, existing handlers, commit, push, and live-data activation were untouched. The Mac must remain awake and online, and the phone must join the same tailnet.
+
+## 2026-07-29 — PHR-WORKFLOW-004 Snapshot-Powered Vendor Workspace
+
+### Product intent
+
+The Product Owner directed Phronesis to merge the former Vendor Workspace concept with the new snapshot approach, follow Pricing Update Tool catalogue downloads at their existing four-daily cadence, and pivot the primary device from phone to desktop while retaining mobile as a backup. The autonomous canonical workflow was authorized through implementation, bounded remediation, Designer review, and Chief Architect conformance, with Product Owner interaction reserved for the visible Product Review gate or critical risk.
+
+### Result and decisions
+
+- Assigned `PHR-WORKFLOW-004` under Structure `PHR-STRUCT-20260729-002`.
+- Pricing Update Tool remains the schedule/acquisition owner; Phronesis follows verified completion checkpoints read-only.
+- Magic, Pokémon, and One Piece catalogues share one strict adapter/repository/search boundary.
+- `/vendor` is the desktop-first buying station; `/price-lookup` remains a shared-data compatibility surface.
+- Exact snapshot evidence feeds the existing Business Profile, evaluation, offer-ladder, and decision engines.
+- Imports are transactional, fail-closed, last-good preserving, and idempotent per completion; later identical catalogues still advance freshness.
+
+### Acceptance state
+
+Implementation, deterministic verification, real-catalog performance, desktop/mobile runtime review, Designer conformance, and Chief Architect conformance are complete. Focused tests pass 34/34, lint/build/diff checks pass, and a 792,927-row Magic catalogue imports in under 15 seconds. The supported full suite reproduces the established 17 behavioral failures, and standalone TypeScript reproduces the established 27 `TS5097` errors. Status is **PRODUCT REVIEW READY**. No commit, push, deployment, public release, or live production data activation has occurred; Product Owner acceptance remains required.
+
 ## 2026-07-28 — PHR-UX-007 Bridge-v34 VoiceOver Isolation Recovery
 
 The Product Owner directed canonical Debugger recovery for the preserved assignment `019fa79e-34a1-75e9-9516-99399a01cbcf`. The latest compact-native matrix was rejected as product-defect evidence because its first run was interrupted while system VoiceOver was enabled and its fourth run inherited that device-wide state, preventing ordinary scrolling semantics. Jarvis bridge v34 now verifies VoiceOver OFF before and after every serialized native scenario and enforces finite 120/180-second allowances. Debugger preserved every product change, the authority artifacts, and the assignment identity; no fresh reproducible Phronesis defect justified another source edit. Acceptance remains pending one fresh bridge-v34 matrix, followed by Designer and Chief Architect conformance if it passes.

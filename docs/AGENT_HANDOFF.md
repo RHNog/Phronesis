@@ -1,5 +1,42 @@
 # Agent Handoff
 
+## Current Product Review Gate — PHR-TECH-007 + PHR-API-002 Bandai Revision
+
+- Product Owner authorization attestation activates the official Bandai English card list for One Piece artwork; Scrydex is fallback-only.
+- Strict base, parallel/reprint, and SP resolution is operational. Ambiguous qualifiers retain placeholders and never alter snapshot pricing.
+- Approved provider images are retained in ignored `.data/artwork/` storage and served through a fail-closed same-origin cache.
+- The 12 official artworks mapped by the active `luffy` event search are prewarmed locally.
+- Verification: 23/23 focused tests, lint, build, diff, desktop, and 390px phone checks pass. Full suite is 180/17 with the unchanged baseline failures; standalone TypeScript has only 29 known `TS5097` test-import errors.
+- Product Review acceptance, canonical adoption, commit, push, deployment, and publication remain pending. Riftbound still requires Riot approval/app key.
+
+## Current Product Review Gate — PHR-API-002 + PHR-UX-008
+
+- Unified five-category search, artwork-first grouping, Finish-before-Condition selection, and Pokémon/TCGdex artwork are implemented and locally operational.
+- Private review URL remains `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac is awake/online and the phone is on the same Tailscale tailnet.
+- Current data: Magic, Pokémon, and One Piece July 29 receipts. Lorcana/Riftbound are registered and await an upstream completed receipt.
+- Verification at that gate: 18/18 focused, 7/7 identity, lint/build/diff pass; the newer Bandai/cache gate above supersedes those counts.
+- External gate remaining after the authorized revision: Riftbound thumbnails need Riot approval/app key.
+- No commit, push, deployment, public publication, upstream mutation, account creation, paid plan, or credential write occurred.
+
+## 2026-07-29 Event Readiness
+
+`PHR-TECH-006` activated July 29 18:20 Magic, Pokémon, and One Piece catalogues in `.data/mobile-review.sqlite`; source evidence is preserved under `.data/pricing-catalogues/20260729_182153/`. The persistent observer watches every ten seconds and archives future verified receipts before import. At that gate, `PHR-UI-002` provided only Magic thumbnails; the current `PHR-API-002` gate above supersedes that provider limitation. Review at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Do not trigger an extra upstream run, mutate Pricing Update Tool, or delete archives before the event.
+
+## 2026-07-29 Private Phone Review
+
+`PHR-TECH-005` provides a persistent tailnet-only Product Review URL at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Check it with `npm run review:phone:status`. The user LaunchAgent is `com.phronesis.private-review`; Tailscale Serve port 9443 is dedicated to it. Never use Funnel or replace handlers 443/8443. The Mac must remain awake and online.
+
+## 2026-07-29 PHR-WORKFLOW-004 Handoff
+
+The Snapshot-Powered Vendor Workspace is implemented and has passed same-session Designer and Chief Architect conformance. It is awaiting Product Review acceptance. Do not commit, push, deploy, or represent live catalogue activation until that gate is complete.
+
+- Specification: `docs/workflows/PHR-WORKFLOW-004-snapshot-powered-vendor-workspace.md`
+- Validation: `docs/testing/PHR-WORKFLOW-004-snapshot-powered-vendor-workspace-validation.md`
+- Conformance: `docs/reviews/PHR-WORKFLOW-004-conformance-review.md`
+- Runbook: `docs/technical/PHR-WORKFLOW-004-pricing-observer-runbook.md`
+
+Normal `npm run dev` / `npm start` now launch the read-only catalogue observer with the app. It follows the sibling Pricing Update Tool's verified completion checkpoints and writes only Phronesis's local `.data/pricing-lookup.sqlite`. The rollback checkout remains untouched.
+
 ## 2026-07-22 Resumption Handoff
 
 Phronesis uses the shared Master Canonical Product Development Workflow referenced by `.agents/WORKFLOW.md`; `PHR-WORKFLOW-002` is preserved as historical project evidence.

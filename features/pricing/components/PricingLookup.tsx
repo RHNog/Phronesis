@@ -62,7 +62,8 @@ function money(cents: number): string {
 }
 
 function dateLabel(value: string): string {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+  const parsed = new Date(value.includes("T") ? value : `${value}T00:00:00Z`);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: value.includes("T") ? "numeric" : undefined, minute: value.includes("T") ? "2-digit" : undefined, timeZone: "UTC" }).format(parsed);
 }
 
 function operateDisclosureWithSpace(event: KeyboardEvent<HTMLElement>) {
@@ -101,7 +102,7 @@ function PriceBlock({ price, sealed = false }: { price: PriceState | null | unde
 }
 
 function History({ match, price }: { match: SearchMatch; price: PriceState | null | undefined }) {
-  const movement = movementFor(match, price?.marketPriceCents ?? null);
+  const movement = movementFor(match, price?.marketPriceCents ?? null, price);
   if (!movement) return <p className="mt-2 text-sm text-zinc-400">No history yet</p>;
   const direction = movement.percentage > 0 ? "Up" : movement.percentage < 0 ? "Down" : "Unchanged";
   return <p className="mt-2 text-sm text-zinc-300">{direction} {Math.abs(movement.percentage).toFixed(1)}% market price since {dateLabel(movement.comparisonDate)}</p>;
@@ -123,7 +124,7 @@ function resultAccessibilityLabel(match: SearchMatch, price: PriceState | null |
       : `${money(price.shippingCents)}${price.shippingSource === "ASSUMED" ? " assumed shipping" : " shipping"}`;
     priceSummary = `${money(price.deliveredPriceCents)} delivered. ${listing} plus ${shipping}`;
   }
-  const movement = movementFor(match, price?.marketPriceCents ?? null);
+  const movement = movementFor(match, price?.marketPriceCents ?? null, price);
   const history = movement
     ? `${movement.percentage > 0 ? "Up" : movement.percentage < 0 ? "Down" : "Unchanged"} ${Math.abs(movement.percentage).toFixed(1)} percent market price since ${dateLabel(movement.comparisonDate)}`
     : "No history yet";
@@ -218,6 +219,7 @@ export default function PricingLookup({
   evidenceZoomReflow = false,
 }: PricingLookupProps = {}) {
   const inputId = useId();
+  const [categoryId, setCategoryId] = useState("pokemon-en");
   const [query, setQuery] = useState(initialQuery);
   const [response, setResponse] = useState<PricingSearchResponse | null>(initialResponse);
   const [loading, setLoading] = useState(initialLoading);
@@ -302,7 +304,7 @@ export default function PricingLookup({
     const timer = window.setTimeout(async () => {
       setLoading(true); setError(null);
       try {
-        const result = await fetch(`/api/pricing/search?category=pokemon-en&q=${encodeURIComponent(trimmed)}`, { signal: controller.signal });
+        const result = await fetch(`/api/pricing/search?category=${encodeURIComponent(categoryId)}&q=${encodeURIComponent(trimmed)}`, { signal: controller.signal });
         const body = await result.json();
         if (!result.ok) throw new Error(body.error ?? "Pricing lookup failed.");
         if (current === requestNumber.current) setResponse(body);
@@ -312,7 +314,7 @@ export default function PricingLookup({
       } finally { if (current === requestNumber.current) setLoading(false); }
     }, 220);
     return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [evidenceMode, query, retryToken]);
+  }, [categoryId, evidenceMode, query, retryToken]);
 
   function updateQuery(value: string) {
     setQuery(value);
@@ -342,6 +344,24 @@ export default function PricingLookup({
         <h1 id="pricing-lookup-heading" className="mt-1 text-3xl font-semibold tracking-tight text-white">Price lookup</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">Delivered-price evidence for English Pokémon singles and sealed product. This panel reports data; it does not recommend a purchase.</p>
       </header>
+      {!evidenceMode ? (
+        <label className="mt-5 block max-w-xs text-sm font-medium text-zinc-300">
+          Game catalogue
+          <select
+            value={categoryId}
+            onChange={(event) => {
+              setCategoryId(event.target.value);
+              setResponse(null);
+              setShowAllSealed(false);
+            }}
+            className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none focus:border-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-300"
+          >
+            {pricingLookupConfig.categories.filter((category) => category.active).map((category) => (
+              <option key={category.id} value={category.id}>{category.label}</option>
+            ))}
+          </select>
+        </label>
+      ) : null}
       <div
         data-pricing-search-panel
         data-pricing-search-reflow={zoomReflow ? "true" : "false"}

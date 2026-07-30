@@ -1,5 +1,9 @@
 # Product Roadmap
 
+## Immediate Product Direction — Cross-Game Buying And Intelligence
+
+The current Product Review candidate removes catalogue switching, groups finish variants under one artwork, and activates Pokémon thumbnails. The next recommended buying-dashboard increment is a visible Phronesis Intelligence panel that reuses the already-executing Card Intelligence, Market Intelligence, Asset Assessment, Strategy, Offer Ladder, and Decision Resolver outputs. It should explain the decision at card-show speed, not introduce a parallel scoring system.
+
 This document owns product-facing ideas and future customer capabilities. Engineering sequencing remains in `docs/ROADMAP.md`. Business strategy remains in `docs/BUSINESS_STRATEGY.md`.
 
 ## Product Roadmap Philosophy
@@ -7,6 +11,8 @@ This document owns product-facing ideas and future customer capabilities. Engine
 Product roadmap items describe customer-facing capabilities, not implementation commitments. Each idea may require future engineering planning, provider integrations, design work, pricing validation, and customer discovery before implementation.
 
 The current product center is the Vendor Workspace: a professional buying workflow that turns asset identity, market evidence, assessment, strategy, and negotiation into a decision.
+
+`PHR-WORKFLOW-004` is the current Product Review candidate: it merges the former Vendor Workspace with four-daily catalogue snapshots into a desktop-first card-show station. The July 29 event-readiness revision activated fresh Magic, Pokémon, and One Piece data; later revisions add Pokémon/TCGdex, Lorcana/Lorcast, official One Piece/Bandai thumbnails, durable local artwork retention, unified catalogue search, and artwork-first finish selection. Mobile is the responsive backup rather than the primary device. Canonical adoption remains pending Product Owner acceptance.
 
 ## Product Pillars
 
@@ -106,11 +112,11 @@ Product capabilities:
 
 ### Mobile
 
-Goal: support in-person buying where purchases happen.
+Goal: provide a responsive backup to the desktop-first card-show workflow.
 
 Potential capabilities:
 
-- Mobile Vendor Workspace.
+- Mobile adaptation of Vendor Workspace.
 - Camera search.
 - Offline or low-connectivity mode.
 - Quick offer calculator.

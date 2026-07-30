@@ -1,5 +1,21 @@
 # Sprint History
 
+## 2026-07-29 — Official One Piece Artwork And Local Cache
+
+Activated the official Bandai English card list under Product Owner authorization, added strict base/parallel/SP catalogue matching, and routed approved provider images through a durable ignored same-origin cache. Prewarmed 12 event-search images and verified desktop/phone rendering. Same-session implementation, Designer, and Chief Architect gates are complete; Product Review acceptance and canonical adoption remain pending.
+
+## 2026-07-29 — Cross-Game Artwork-First Buying
+
+Removed manual catalogue switching, added globally ranked five-category search, collapsed finish-only duplicates by deterministic artwork identity, and made Finish an explicit choice before Condition. Connected Pokémon thumbnails through TCGdex, retained Scryfall/Lorcast, registered Lorcana/Riftbound receipt ingestion, and documented the external authorization gates for One Piece and Riftbound. Same-session implementation, Designer, and Chief Architect gates are complete; Product Review acceptance and canonical adoption remain pending.
+
+## 2026-07-29 — Event Snapshot Activation And Thumbnails
+
+Activated July 29 Magic, Pokémon, and One Piece catalogues for the August 1 event, preserved raw and normalized recovery evidence, and left a persistent observer following the four-daily upstream cycle. Hardened imports with atomic hash-verified archival and composite-export filtering. Added strict, non-blocking Magic artwork enrichment with fixed desktop/mobile thumbnail slots; unsupported games remain honest placeholders. Implementation and same-session conformance are complete; Product Review and canonical adoption remain pending.
+
+## 2026-07-29 — PHR-WORKFLOW-004 Product Review Candidate
+
+Merged the former Vendor Workspace concept with snapshot pricing into a desktop-first card-show station. Added verified completion observation for four-daily Pricing Update Tool catalogues, strict multi-game normalization, optimized transactional persistence, shared lookup APIs, exact condition evidence, and direct reuse of the existing Phronesis evaluation and negotiation pipeline. Mobile remains a responsive backup. Implementation and conformance are complete; Product Review acceptance and canonical adoption remain pending.
+
 ## PHR-UX-004 — Lightweight Watch History
 
 - Added stable watch creation, initial observation, last-successful refresh, refresh source, reason, and bounded observation metadata.
