@@ -1,3 +1,4 @@
+<!-- handoff: {"document":"CHANGELOG","owner":"human-and-agent","schema_version":"1"} -->
 # Documentation Changelog
 
 ## [Unreleased]

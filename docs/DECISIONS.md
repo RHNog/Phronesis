@@ -1,3 +1,4 @@
+<!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
 ## 2026-07-30 — Authentication identity does not own product authorization

@@ -1,3 +1,4 @@
+<!-- handoff: {"document":"ARCHITECTURE","owner":"human-and-agent","schema_version":"1"} -->
 # Architecture
 
 ## 2026-07-30 Card-Show Operations Boundaries

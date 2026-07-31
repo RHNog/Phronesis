@@ -55,3 +55,17 @@ Before product-development work:
 
 Canonical workflow revision adopted: `2.8.0`.
 <!-- END:master-canonical-workflow -->
+
+<!-- handoff:contract:start -->
+## Canonical Handoff continuity
+
+The repository is authoritative; conversation history is disposable.
+
+- **Acquire Handoff**: read `handoff.toml`, the configured canonical documents,
+  and generated operational context; run `./handoff validate-continuity`; then
+  execute the exact next action.
+- **Handoff**: update canonical truth and `ACTIVE_TASK`, commit verified project
+  state, then run bare `./handoff`. Do not claim transfer readiness on failure.
+- Architectural decisions must never remain only in a conversation.
+- Repository evidence supersedes conversational state whenever they conflict.
+<!-- handoff:contract:end -->
