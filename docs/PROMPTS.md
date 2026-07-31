@@ -1,5 +1,11 @@
 # Prompt History
 
+## Inventory Disposition Ledger — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-012` authorizes `PHR-WORKFLOW-010`: append explicit lot-specific sale/disposition evidence, atomically update operational on-hand quantity, and preserve acquisition and physical-count history.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-010-inventory-disposition-ledger-prompt.md`.
+
 ## Inventory Location And Count Reconciliation — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-011` authorizes `PHR-WORKFLOW-009`: create workspace locations and append-only, reasoned MOVE/COUNT events while preserving immutable receipt quantity and acquisition cost basis.

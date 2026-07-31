@@ -1,12 +1,20 @@
 # Roadmap
 
+## Completed: Inventory Disposition Ledger
+
+- Completed: explicit Sale, Loss, Damage, Transfer Out, and Correction records (`PHR-WORKFLOW-010`).
+- Completed: atomic on-hand decrement, retry-safe creation, and non-destructive reasoned reversal.
+- Completed: gross recorded sale evidence without profit, settlement, or accounting claims.
+- Completed: count-revision protection, workspace ownership, operator authorization, responsive UI, and recent ledger.
+- Next inventory slice: listing readiness. Payment settlement, margin allocation, and accounting export remain separate future work.
+
 ## Completed: Inventory Location And Count Reconciliation
 
 - Completed: normalized workspace locations with explicit Unassigned state (`PHR-WORKFLOW-009`).
 - Completed: atomic operator move/count reconciliation with reasoned append-only events.
 - Completed: receipt, approximate, counted, and unknown on-hand quantity basis without source receipt or cost-basis mutation.
 - Completed: operator-only management UI and recent activity with desktop-first/390px adaptation.
-- Next inventory slice: explicit sale/disposition ledger; listing readiness follows owned-quantity disposition truth.
+- Completed next slice: explicit sale/disposition ledger; listing readiness now follows owned-quantity disposition truth.
 
 ## Completed: Receipt-Backed Inventory Intake
 
@@ -14,7 +22,7 @@
 - Completed: exact printing, condition, quantity, unit/total cost, receipt/event/operator provenance, and truthful approximate Bulk evidence.
 - Completed: idempotent historical reconciliation and audited receipt-void propagation without deletion.
 - Completed: module-authorized `/inventory` workspace with desktop-first and mobile-adaptive summaries and filters.
-- Next inventory slice requires CTO prioritization among locations/counts, disposition/sales, and listing readiness.
+- Subsequent delivery completed locations/counts and disposition/sales; listing readiness is next.
 
 ## Active: LigaMagic Brazilian Market Snapshot
 

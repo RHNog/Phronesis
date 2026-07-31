@@ -17,4 +17,4 @@
 ## Follow-Up
 
 - Locations and physical counts were completed by `PHR-WORKFLOW-009`.
-- Sales/dispositions, grading, listing readiness, repricing, aging, and cycle-count sessions remain deferred.
+- Locations/counts and sales/dispositions were completed by `PHR-WORKFLOW-009` and `PHR-WORKFLOW-010`; grading, listing readiness, repricing, aging, and cycle-count sessions remain deferred.

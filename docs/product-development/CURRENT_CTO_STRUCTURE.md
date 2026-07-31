@@ -1,5 +1,34 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Inventory Disposition Ledger
+
+- Assignment: `PHR-INVENTORY-DISPOSITION-20260730`
+- Document ID: `PHR-STRUCT-20260730-012`
+- Status: `CTO ACCEPTED — PRIVATE DEPLOYMENT VERIFIED`
+- Feature: `PHR-WORKFLOW-010`
+- Objective: explain and atomically apply inventory leaving a lot through explicit sale, loss, damage, transfer-out, or correction evidence.
+
+### Product Rules
+
+- Receipt, acquisition cost, prior counts, and provenance remain immutable.
+- Dispositions are lot-specific, append-only, reasoned, and reversible without deletion.
+- Known on-hand quantity may reach zero but never become negative.
+- Sales record gross proceeds only; no profit, settlement, or accounting claim is inferred.
+
+### Authorization And Boundaries
+
+Documentation, additive local schema, repository/API/UI changes, deterministic tests/build, private responsive review, bounded remediation, ordinary feature-branch checkpointing, and private-service restart are authorized autonomously.
+
+External transactions, payment capture, marketplace mutation, public deployment, authentication activation, accounting recognition, destructive migration, new dependencies, force push, and history rewriting are prohibited.
+
+### Acceptance
+
+Disposition creation and reversal are atomic, authorized, workspace-scoped, idempotent where applicable, audited, responsive, and preserve intake/count evidence; all repository and runtime gates pass.
+
+### Verified Result
+
+Sale, loss, damage, transfer-out, and correction records now atomically decrement known operational quantity. Retry-safe creation, reasoned non-destructive reversal, count-revision protection, gross-sale evidence, workspace ownership, and operator authorization pass. Receipt/acquisition/count evidence remains unchanged. The 259-test suite, TypeScript, warning-free lint, production build, diff hygiene, private desktop/390px runtime, console, overflow, and HTTP gates pass. External transactions and financial settlement remain deferred.
+
 ## Active Assignment — Inventory Location And Count Reconciliation
 
 - Assignment: `PHR-INVENTORY-RECONCILIATION-20260730`

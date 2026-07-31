@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-010
+
+### Inventory disposition
+
+- Added classified Sale, Loss, Damage, Transfer Out, and Correction records against known lot quantities.
+- Added atomic operational-quantity decrement, retry-safe creation, and non-destructive reasoned reversal.
+- Added gross recorded sales, disposed/sold summaries, and operator-only responsive workflows.
+- Preserved receipt, acquisition-cost, count, and provenance evidence; ambiguous reversal after a later count fails closed.
+- Verified 259/259 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop/390px runtime, console, overflow, and HTTP gates.
+
 ## Unreleased — PHR-WORKFLOW-009
 
 ### Inventory reconciliation

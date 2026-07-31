@@ -142,7 +142,7 @@ test("inventory mutations require OPERATE authorization and the client exposes a
   const route = readFileSync(new URL("../app/api/inventory/route.ts", import.meta.url), "utf8");
   const workspace = readFileSync(new URL("../features/inventory/InventoryWorkspace.tsx", import.meta.url), "utf8");
   assert.match(route, /authorizeRequest\(request, "INVENTORY", "OPERATE"\)/);
-  assert.match(workspace, /Manage lot/);
+  assert.match(workspace, /Reconcile lot/);
   assert.match(workspace, /Physical count/);
   assert.match(workspace, /Reason/);
 });

@@ -58,6 +58,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-WORKFLOW-007` | Two-Way Arbitrage Verification                    | Product Review Ready                                | Workflow / Decision Intelligence / Audit                                     | `docs/workflows/PHR-WORKFLOW-007-arbitrage-verification.md`                |
 | `PHR-WORKFLOW-008` | Receipt-Backed Inventory Intake                   | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-008-receipt-backed-inventory-intake.md`       |
 | `PHR-WORKFLOW-009` | Inventory Location And Count Reconciliation       | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-009-inventory-location-count-reconciliation.md` |
+| `PHR-WORKFLOW-010` | Inventory Disposition Ledger                      | Completed — CTO Accepted                            | Workflow / Database / Inventory / Audit / UX                                 | `docs/workflows/PHR-WORKFLOW-010-inventory-disposition-ledger.md`            |
 
 ## Registry Rule
 

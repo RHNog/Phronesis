@@ -1,6 +1,7 @@
 import { authorizationErrorResponse, authorizeRequest } from "@/lib/auth/requestAuthorization";
 import { getInventoryRepository } from "@/lib/inventory/server";
 import { watchlistPrincipalFromAuthorization } from "@/lib/watchlist/server";
+import type { InventoryDispositionType } from "@/lib/inventory/domain";
 
 export const runtime = "nodejs";
 
@@ -53,6 +54,44 @@ export async function POST(request: Request) {
         principal.workspaceId,
         principal.ownerUserId,
         input,
+      ) });
+    }
+    if (body.action === "record-disposition") {
+      if (
+        typeof body.lotId !== "string" ||
+        typeof body.type !== "string" ||
+        typeof body.reason !== "string" ||
+        typeof body.idempotencyKey !== "string"
+      ) {
+        throw new Error("Lot, disposition type, reason, and operation key are required.");
+      }
+      return Response.json({ snapshot: inventory.disposeLot(
+        principal.workspaceId,
+        principal.ownerUserId,
+        {
+          lotId: body.lotId,
+          type: body.type as InventoryDispositionType,
+          quantity: Number(body.quantity),
+          grossProceedsCents: body.grossProceedsCents === null || body.grossProceedsCents === undefined
+            ? null
+            : Number(body.grossProceedsCents),
+          channel: typeof body.channel === "string" ? body.channel : null,
+          counterparty: typeof body.counterparty === "string" ? body.counterparty : null,
+          destination: typeof body.destination === "string" ? body.destination : null,
+          reason: body.reason,
+          idempotencyKey: body.idempotencyKey,
+        },
+      ) }, { status: 201 });
+    }
+    if (body.action === "reverse-disposition") {
+      if (typeof body.dispositionId !== "string" || typeof body.reason !== "string") {
+        throw new Error("Disposition and reversal reason are required.");
+      }
+      return Response.json({ snapshot: inventory.reverseDisposition(
+        principal.workspaceId,
+        principal.ownerUserId,
+        body.dispositionId,
+        body.reason,
       ) });
     }
     return Response.json({ error: "Unsupported inventory action." }, { status: 400 });

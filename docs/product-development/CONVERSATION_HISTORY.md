@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — Inventory Disposition Ledger
+
+The Product Owner directed Phronesis to move on after Inventory reconciliation acceptance. The autonomous workflow selected the roadmap's next declared dependency: explain inventory leaving a lot before listing readiness. `PHR-WORKFLOW-010` adds explicit Sale, Loss, Damage, Transfer Out, and Correction records with known-quantity enforcement and mandatory reasons.
+
+Disposition creation is workspace-idempotent and atomically decrements materialized operational quantity. Sales record gross proceeds plus optional channel/counterparty; transfers require a destination. Reasoned reversal restores quantity without deleting the original record, while a count revision blocks reversal after newer physical evidence. Receipt quantity, approximate intake, acquisition cost, provenance, and prior counts remain invariant. View-only users see the ledger without controls; mutations require `INVENTORY:OPERATE` and server-side ownership checks.
+
+The supported suite passes 259/259, standalone TypeScript, warning-free lint, production build, and diff hygiene are clean. Private 1280×720 and 390×844 review passed with no horizontal overflow or console warnings; the tailnet Inventory route returns HTTP 200. No sample disposition or external transaction was created. Same-session Chief Architect conformance passes and CTO accepts the increment under `PHR-WORKFLOW-002`. Listing readiness is the next inventory maturity step; settlement, accounting, authentication activation, LigaMagic scheduling, and public deployment remain gated.
+
 ## 2026-07-30 — Inventory Location And Count Reconciliation
 
 The Product Owner directed Phronesis to continue immediately after receipt-backed Inventory acceptance. The autonomous workflow selected the next declared maturity step: organize lots physically and reconcile counts without changing source receipts. `PHR-WORKFLOW-009` adds normalized workspace locations, visible Unassigned state, derived on-hand quantity basis, and reasoned append-only MOVE and COUNT events.

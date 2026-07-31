@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import type { InventoryLot, InventorySnapshot } from "@/lib/inventory/domain";
+import type {
+  InventoryDisposition,
+  InventoryDispositionType,
+  InventoryLot,
+  InventorySnapshot,
+} from "@/lib/inventory/domain";
 
 type Filter = "ACTIVE" | "EXACT" | "BULK" | "VOIDED" | "ALL";
 
@@ -47,6 +52,17 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [disposingLot, setDisposingLot] = useState<InventoryLot | null>(null);
+  const [dispositionType, setDispositionType] = useState<InventoryDispositionType>("SALE");
+  const [dispositionQuantity, setDispositionQuantity] = useState("1");
+  const [grossProceeds, setGrossProceeds] = useState("");
+  const [channel, setChannel] = useState("");
+  const [counterparty, setCounterparty] = useState("");
+  const [destination, setDestination] = useState("");
+  const [dispositionReason, setDispositionReason] = useState("");
+  const [reversingDisposition, setReversingDisposition] = useState<InventoryDisposition | null>(null);
+  const [reversalReason, setReversalReason] = useState("");
+  const [dispositionOperationKey, setDispositionOperationKey] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -128,6 +144,59 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
     }
   }
 
+  function openDisposition(lot: InventoryLot) {
+    setDisposingLot(lot);
+    setDispositionType("SALE");
+    setDispositionQuantity("1");
+    setGrossProceeds("");
+    setChannel("");
+    setCounterparty("");
+    setDestination("");
+    setDispositionReason("");
+    setDispositionOperationKey(crypto.randomUUID());
+    setNotice(null);
+  }
+
+  async function recordDisposition(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!disposingLot) return;
+    try {
+      await inventoryAction({
+        action: "record-disposition",
+        lotId: disposingLot.id,
+        type: dispositionType,
+        quantity: Number(dispositionQuantity),
+        grossProceedsCents: dispositionType === "SALE" ? Math.round(Number(grossProceeds) * 100) : null,
+        channel: dispositionType === "SALE" ? channel : null,
+        counterparty: dispositionType === "SALE" || dispositionType === "TRANSFER_OUT" ? counterparty : null,
+        destination: dispositionType === "TRANSFER_OUT" ? destination : null,
+        reason: dispositionReason,
+        idempotencyKey: dispositionOperationKey,
+      });
+      setDisposingLot(null);
+      setNotice("Inventory disposition recorded.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Disposition could not be recorded.");
+    }
+  }
+
+  async function reverseDisposition(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!reversingDisposition) return;
+    try {
+      await inventoryAction({
+        action: "reverse-disposition",
+        dispositionId: reversingDisposition.id,
+        reason: reversalReason,
+      });
+      setReversingDisposition(null);
+      setReversalReason("");
+      setNotice("Disposition reversed; inventory quantity was restored.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Disposition could not be reversed.");
+    }
+  }
+
   return (
     <section className="w-full max-w-[1500px] space-y-6" aria-labelledby="inventory-heading">
       <header>
@@ -155,12 +224,15 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
         </form>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Inventory summary">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Inventory summary">
         {[
-          ["Active cost basis", snapshot ? cost(snapshot.summary.totalCostBasisCents) : "—"],
+          ["Recorded acquisition cost", snapshot ? cost(snapshot.summary.totalCostBasisCents) : "—"],
           ["Active lots", snapshot?.summary.activeLotCount ?? "—"],
           ["Exact units", snapshot?.summary.exactUnitCount ?? "—"],
           ["Bulk lots", snapshot?.summary.bulkLotCount ?? "—"],
+          ["Units disposed", snapshot?.summary.netDisposedUnitCount ?? "—"],
+          ["Units sold", snapshot?.summary.soldUnitCount ?? "—"],
+          ["Gross recorded sales", snapshot ? cost(snapshot.summary.grossSalesCents) : "—"],
           ["Voided lots", snapshot?.summary.voidedLotCount ?? "—"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
@@ -198,7 +270,8 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
               <div>
                 <p className="text-xs uppercase tracking-wide text-zinc-600">On hand</p>
                 <p className="mt-1 text-sm text-zinc-200">{lot.onHandQuantity === null ? "Unspecified" : lot.onHandQuantity.toLocaleString()}</p>
-                <p className="mt-1 text-xs text-zinc-500">{lot.quantityBasis === "COUNTED" ? "Physical count" : lot.quantityBasis === "APPROXIMATE" ? "Approximate intake" : lot.quantityBasis === "RECEIPT" ? "Receipt quantity" : "Unknown basis"}</p>
+                <p className="mt-1 text-xs text-zinc-500">{lot.quantityBasis === "LEDGER" ? "Count/intake minus ledger" : lot.quantityBasis === "COUNTED" ? "Physical count" : lot.quantityBasis === "APPROXIMATE" ? "Approximate intake" : lot.quantityBasis === "RECEIPT" ? "Receipt quantity" : "Unknown basis"}</p>
+                {lot.netDisposedQuantity ? <p className="mt-1 text-xs text-amber-300">{lot.netDisposedQuantity.toLocaleString()} disposed</p> : null}
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wide text-zinc-600">Location</p>
@@ -215,17 +288,58 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
                 <p className="mt-1 text-sm text-zinc-300">{acquired(lot.acquiredAt)}</p>
                 <p className="mt-1 font-mono text-xs text-zinc-600" title={lot.sourceReceiptId}>Receipt {lot.sourceReceiptId.slice(0, 8)}</p>
               </div>
-              <div>
+              <div className="flex flex-col gap-2">
                 {canOperate && !lot.voidedAt ? (
-                  <button type="button" onClick={() => openManager(lot)} className="min-h-10 rounded-lg border border-zinc-700 px-3 text-sm font-medium text-zinc-200 hover:border-cyan-500 hover:text-cyan-200">
-                    Manage lot
-                  </button>
+                  <>
+                    <button type="button" onClick={() => openDisposition(lot)} disabled={lot.onHandQuantity === null || lot.onHandQuantity <= 0}
+                      title={lot.onHandQuantity === null ? "Record a physical count first" : lot.onHandQuantity <= 0 ? "No units are on hand" : undefined}
+                      className="min-h-10 rounded-lg bg-cyan-400 px-3 text-sm font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40">
+                      Record disposition
+                    </button>
+                    <button type="button" onClick={() => openManager(lot)} className="min-h-10 rounded-lg border border-zinc-700 px-3 text-sm font-medium text-zinc-200 hover:border-cyan-500 hover:text-cyan-200">
+                      Reconcile lot
+                    </button>
+                  </>
                 ) : null}
               </div>
             </article>
           ))}
         </div>
       </div>
+
+      {snapshot?.recentDispositions.length ? (
+        <section className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-5" aria-labelledby="inventory-disposition-heading">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 id="inventory-disposition-heading" className="text-lg font-semibold text-white">Disposition ledger</h2>
+              <p className="mt-1 text-sm text-zinc-500">Gross sale evidence is not settled revenue or profit.</p>
+            </div>
+            <span className="text-xs text-zinc-500">{snapshot.summary.activeDispositionCount} active records</span>
+          </div>
+          <div className="mt-4 divide-y divide-zinc-800">
+            {snapshot.recentDispositions.slice(0, 15).map((disposition) => (
+              <article key={disposition.id} className={`grid gap-2 py-4 text-sm md:grid-cols-[8rem_minmax(0,1fr)_12rem_auto] md:items-center ${disposition.reversedAt ? "opacity-55" : ""}`}>
+                <span className="font-semibold text-cyan-300">{disposition.type.replace("_", " ")}</span>
+                <div className="text-zinc-300">
+                  <p>{disposition.quantity} × {disposition.lotName}{disposition.grossProceedsCents !== null ? ` · ${cost(disposition.grossProceedsCents)} gross` : ""}</p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    {[disposition.channel, disposition.counterparty, disposition.destination, disposition.reason].filter(Boolean).join(" · ")}
+                  </p>
+                  {disposition.reversedAt ? <p className="mt-1 text-xs text-amber-300">Reversed: {disposition.reversalReason}</p> : null}
+                </div>
+                <span className="text-zinc-500 md:text-right">{acquired(disposition.createdAt)}</span>
+                <div>
+                  {canOperate && !disposition.reversedAt ? (
+                    <button type="button" onClick={() => { setReversingDisposition(disposition); setReversalReason(""); }} className="min-h-10 rounded-lg border border-zinc-700 px-3 text-xs font-medium text-zinc-300 hover:border-amber-500 hover:text-amber-200">
+                      Reverse
+                    </button>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {snapshot?.recentEvents.length ? (
         <section className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-5" aria-labelledby="inventory-activity-heading">
@@ -250,7 +364,7 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
       {managingLot ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 sm:items-center" role="presentation">
           <form onSubmit={reconcileLot} role="dialog" aria-modal="true" aria-labelledby="manage-lot-heading" className="w-full max-w-lg rounded-2xl border border-zinc-700 bg-zinc-950 p-5 shadow-2xl">
-            <h2 id="manage-lot-heading" className="text-xl font-semibold text-white">Manage {managingLot.name}</h2>
+            <h2 id="manage-lot-heading" className="text-xl font-semibold text-white">Reconcile {managingLot.name}</h2>
             <p className="mt-1 text-sm text-zinc-500">Receipt evidence stays unchanged. Record only what you physically verified.</p>
             <div className="mt-5 space-y-4">
               <label className="block text-sm text-zinc-300">
@@ -277,6 +391,91 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
                 className="min-h-11 rounded-lg bg-cyan-400 px-4 font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50">
                 Record reconciliation
               </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {disposingLot ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 sm:items-center" role="presentation">
+          <form onSubmit={recordDisposition} role="dialog" aria-modal="true" aria-labelledby="disposition-heading" className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-700 bg-zinc-950 p-5 shadow-2xl">
+            <h2 id="disposition-heading" className="text-xl font-semibold text-white">Record disposition · {disposingLot.name}</h2>
+            <p className="mt-1 text-sm text-zinc-500">{disposingLot.onHandQuantity} currently on hand. This creates an append-only inventory record.</p>
+            <div className="mt-5 space-y-4">
+              <label className="block text-sm text-zinc-300">
+                Disposition type
+                <select value={dispositionType} onChange={(event) => setDispositionType(event.target.value as InventoryDispositionType)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white">
+                  <option value="SALE">Sale</option>
+                  <option value="LOSS">Loss</option>
+                  <option value="DAMAGE">Damage</option>
+                  <option value="TRANSFER_OUT">Transfer out</option>
+                  <option value="CORRECTION">Correction</option>
+                </select>
+              </label>
+              <label className="block text-sm text-zinc-300">
+                Quantity
+                <input type="number" min={1} max={disposingLot.onHandQuantity ?? undefined} step={1} required value={dispositionQuantity} onChange={(event) => setDispositionQuantity(event.target.value)}
+                  className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+              </label>
+              {dispositionType === "SALE" ? (
+                <>
+                  <label className="block text-sm text-zinc-300">
+                    Gross sale proceeds (USD)
+                    <input type="number" min={0} step="0.01" required value={grossProceeds} onChange={(event) => setGrossProceeds(event.target.value)} placeholder="0.00"
+                      className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+                    <span className="mt-1 block text-xs text-zinc-500">Recorded gross proceeds only—not profit or settlement.</span>
+                  </label>
+                  <label className="block text-sm text-zinc-300">
+                    Sales channel (optional)
+                    <input value={channel} onChange={(event) => setChannel(event.target.value)} maxLength={80} placeholder="Card show, direct, store…"
+                      className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+                  </label>
+                </>
+              ) : null}
+              {dispositionType === "TRANSFER_OUT" ? (
+                <label className="block text-sm text-zinc-300">
+                  Destination
+                  <input value={destination} onChange={(event) => setDestination(event.target.value)} required maxLength={120} placeholder="Other workspace, consignment partner…"
+                    className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+                </label>
+              ) : null}
+              {(dispositionType === "SALE" || dispositionType === "TRANSFER_OUT") ? (
+                <label className="block text-sm text-zinc-300">
+                  Counterparty (optional)
+                  <input value={counterparty} onChange={(event) => setCounterparty(event.target.value)} maxLength={120} placeholder="Customer or receiving party reference"
+                    className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+                </label>
+              ) : null}
+              <label className="block text-sm text-zinc-300">
+                Reason
+                <textarea value={dispositionReason} onChange={(event) => setDispositionReason(event.target.value)} required maxLength={240} rows={3} placeholder="Sold at Saturday event; damaged during transport…"
+                  className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-white" />
+              </label>
+            </div>
+            <div className="mt-5 flex justify-end gap-3">
+              <button type="button" onClick={() => setDisposingLot(null)} className="min-h-11 rounded-lg border border-zinc-700 px-4 text-zinc-200">Cancel</button>
+              <button disabled={saving || !dispositionReason.trim() || !dispositionQuantity || (dispositionType === "SALE" && grossProceeds === "") || (dispositionType === "TRANSFER_OUT" && !destination.trim())}
+                className="min-h-11 rounded-lg bg-cyan-400 px-4 font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50">
+                Record disposition
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {reversingDisposition ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 sm:items-center" role="presentation">
+          <form onSubmit={reverseDisposition} role="dialog" aria-modal="true" aria-labelledby="reverse-disposition-heading" className="w-full max-w-lg rounded-2xl border border-zinc-700 bg-zinc-950 p-5 shadow-2xl">
+            <h2 id="reverse-disposition-heading" className="text-xl font-semibold text-white">Reverse disposition</h2>
+            <p className="mt-2 text-sm text-zinc-400">Restore {reversingDisposition.quantity} × {reversingDisposition.lotName}. The original record remains visible.</p>
+            <label className="mt-5 block text-sm text-zinc-300">
+              Reversal reason
+              <textarea value={reversalReason} onChange={(event) => setReversalReason(event.target.value)} required maxLength={240} rows={3} placeholder="Sale cancelled; entry recorded against wrong lot…"
+                className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-white" />
+            </label>
+            <div className="mt-5 flex justify-end gap-3">
+              <button type="button" onClick={() => setReversingDisposition(null)} className="min-h-11 rounded-lg border border-zinc-700 px-4 text-zinc-200">Cancel</button>
+              <button disabled={saving || !reversalReason.trim()} className="min-h-11 rounded-lg bg-amber-400 px-4 font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50">Reverse and restore</button>
             </div>
           </form>
         </div>

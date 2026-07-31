@@ -1,7 +1,8 @@
 import type { PurchaseProductLine } from "@/lib/purchases/domain";
 
 export type InventoryLotKind = "EXACT" | "BULK";
-export type InventoryQuantityBasis = "RECEIPT" | "APPROXIMATE" | "COUNTED" | "UNKNOWN";
+export type InventoryQuantityBasis = "RECEIPT" | "APPROXIMATE" | "COUNTED" | "LEDGER" | "UNKNOWN";
+export type InventoryDispositionType = "SALE" | "LOSS" | "DAMAGE" | "TRANSFER_OUT" | "CORRECTION";
 
 export type InventoryLocation = {
   id: string;
@@ -21,6 +22,24 @@ export type InventoryEvent = {
   reason: string;
   actorUserId: string;
   createdAt: string;
+};
+
+export type InventoryDisposition = {
+  id: string;
+  lotId: string;
+  lotName: string;
+  type: InventoryDispositionType;
+  quantity: number;
+  grossProceedsCents: number | null;
+  channel: string | null;
+  counterparty: string | null;
+  destination: string | null;
+  reason: string;
+  actorUserId: string;
+  createdAt: string;
+  reversedAt: string | null;
+  reversedByUserId: string | null;
+  reversalReason: string | null;
 };
 
 export type InventoryLot = {
@@ -51,6 +70,7 @@ export type InventoryLot = {
   locationName: string;
   onHandQuantity: number | null;
   quantityBasis: InventoryQuantityBasis;
+  netDisposedQuantity: number;
   lastCountedAt: string | null;
   acquiredAt: string;
   voidedAt: string | null;
@@ -63,6 +83,10 @@ export type InventorySummary = {
   bulkLotCount: number;
   totalCostBasisCents: number;
   voidedLotCount: number;
+  netDisposedUnitCount: number;
+  activeDispositionCount: number;
+  soldUnitCount: number;
+  grossSalesCents: number;
 };
 
 export type InventorySnapshot = {
@@ -70,4 +94,5 @@ export type InventorySnapshot = {
   lots: InventoryLot[];
   locations: InventoryLocation[];
   recentEvents: InventoryEvent[];
+  recentDispositions: InventoryDisposition[];
 };

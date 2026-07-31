@@ -115,7 +115,7 @@ Desktop is primary; the view collapses into readable lot cards on narrow mobile 
 
 ## Future Enhancements
 
-- Sale/disposition ledger, grading, cycle-count sessions, valuation, and repricing. Basic locations and physical counts were completed by `PHR-WORKFLOW-009`.
+- Grading, cycle-count sessions, valuation, and repricing. Basic locations/counts and the sale/disposition ledger were completed by `PHR-WORKFLOW-009` and `PHR-WORKFLOW-010`.
 
 ## Technical Notes
 
@@ -133,7 +133,7 @@ Lead with total active cost basis and exact units. Clearly distinguish Exact, Se
 
 ## Open Questions
 
-- Sale/disposition and cost-basis allocation policy remain future product decisions.
+- Sale/disposition semantics were completed by `PHR-WORKFLOW-010`; cost-basis allocation remains a future financial product decision.
 
 ## Traceability
 

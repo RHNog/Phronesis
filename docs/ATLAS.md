@@ -1,5 +1,14 @@
 # Project Atlas
 
+## Inventory Operations
+
+- `InventoryRepository` converts finalized receipt lines into immutable-provenance lots, then separately owns operational locations, physical counts, and disposition evidence.
+- Receipt quantity, approximate Bulk intake, acquisition cost, event/receipt/operator provenance, and prior counts are immutable source evidence.
+- `current_quantity` is a materialized operational projection: counts establish it, active dispositions decrement it, and eligible reversals restore it atomically.
+- `PHR-WORKFLOW-010` classifies inventory leaving as Sale, Loss, Damage, Transfer Out, or Correction. Gross sale proceeds remain evidence only—not profit or settlement.
+- Disposition creation is workspace-idempotent. Reversal never deletes the original and is blocked after a later count revision would make restoration ambiguous.
+- `/inventory` and `/api/inventory` require assigned module access; mutations independently require `INVENTORY:OPERATE` and DAL ownership checks.
+
 ## LigaMagic Authenticated Snapshot
 
 - `PHR-API-005` launches a dedicated LigaMagic profile as ordinary Chrome for manual authentication, then relaunches and attaches Playwright over a local CDP port only after the saved session exists. It never automates login or copies Safari/default-profile cookies.

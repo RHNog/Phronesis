@@ -1,11 +1,12 @@
 # Product Roadmap
 
-## Current Delivery — Receipt-Backed Inventory Intake
+## Current Delivery — Inventory Operations
 
 - Completed: event checkout automatically creates auditable exact-card and aggregate Bulk inventory lots (`PHR-WORKFLOW-008`).
 - Completed: workspace locations, physical-count reconciliation, quantity basis, and append-only movement/count history (`PHR-WORKFLOW-009`).
-- Operational: workspace inventory cost basis, on-hand quantity, location, source receipt/event/operator provenance, historical reconciliation, and void propagation.
-- Next inventory maturity choices: sale/disposition ledger or listing readiness.
+- Completed: classified sale/disposition ledger, gross recorded sales, retry-safe creation, and non-destructive reversal (`PHR-WORKFLOW-010`).
+- Operational: acquisition evidence, on-hand quantity, location, source provenance, reconciliation, disposition history, and void propagation.
+- Next inventory maturity: listing readiness; payment, settlement, and margin accounting remain a later financial workflow.
 - Existing separate gates remain: required-login activation, owner arbitrage cost configuration, executable availability, and daily LigaMagic scheduling.
 
 ## Current Delivery — Regional Vending And Arbitrage Intelligence

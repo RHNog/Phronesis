@@ -119,7 +119,7 @@ Desktop remains primary; lot management and activity remain usable at 390px with
 
 ## Future Enhancements
 
-- Cycle-count sessions, barcode-assisted moves, discrepancy dashboards, and explicit disposition/sales ledger.
+- Cycle-count sessions, barcode-assisted moves, and discrepancy dashboards. The explicit disposition/sales ledger is completed by `PHR-WORKFLOW-010`.
 
 ## Technical Notes
 
@@ -137,7 +137,7 @@ Keep browsing passive. “Manage lot” opens an inline modal/form with Location
 
 ## Open Questions
 
-- Disposition reasons and cost-basis allocation remain reserved for the next ledger specification.
+- Disposition reasons are completed by `PHR-WORKFLOW-010`; cost-basis allocation remains reserved for a later financial specification.
 
 ## Traceability
 

@@ -14,6 +14,7 @@
 - Zero counts are visible discrepancies, not implicit deletions or dispositions.
 - All mutations require `INVENTORY:OPERATE` and verify lot/location workspace ownership.
 
-## Deferred
+## Subsequent Delivery
 
-- Sales/dispositions, damage/loss semantics, transfers, cycle-count sessions, location archiving, and barcode workflows.
+- Sales/dispositions, damage/loss semantics, and transfer-out are completed by `PHR-WORKFLOW-010`.
+- Cycle-count sessions, location archiving, and barcode workflows remain deferred.
