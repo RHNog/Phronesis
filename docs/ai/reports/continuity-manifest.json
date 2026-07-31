@@ -1,0 +1,19 @@
+{
+  "artifacts": {
+    "docs/ai/BOOTSTRAP.md": "d278caa6c092c6f8186042a3878e71945106db2cbe883b0a70a675f586796b5c",
+    "docs/ai/CURRENT_CONTEXT.md": "b21e14b0ed295c23841ebd4002763fe53a1172b8546479a277ee767f8395c0ea",
+    "docs/ai/HANDOFF.md": "607d4e7a75326bb43cb74f636f6ac8c5c9a0da49213263652fb4a02b019f3348",
+    "docs/ai/SESSION_SUMMARY.md": "ada96904f9a65f69d1ba523835b7915f012b989487a42a01d53fd204140f0ac5",
+    "docs/ai/WORK_QUEUE.md": "8d22ec63ca70223c0f29182c406a274ddb16b56de4999b235e483a5fdc92682a",
+    "docs/ai/reports/bootstrap-latest.json": "57cb99c19e72bb92326521644a861f1d20296e8dfd90e6dafe299348b69d4bfa",
+    "docs/ai/reports/validation-latest.json": "2ac79c31ea2f5baafaa87172b4020d77209506f1622247c9dc2f79e75bbefc59",
+    "docs/ai/reports/validation-latest.md": "e58383f9a25deff3409b65d3e2e22d4ab55d37f70ff7534d4ab21c3309712eff"
+  },
+  "branch": "codex/phr-price-monitoring-20260730",
+  "config_digest": "24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af",
+  "generated_at": "2026-07-31T01:32:52Z",
+  "generation_id": "cb808ad1679d3a2b2140",
+  "head": "33bac5b617fab21c714f0071517e193f90aedc14",
+  "schema_version": "1",
+  "worktree_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

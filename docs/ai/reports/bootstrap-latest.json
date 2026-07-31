@@ -1,0 +1,36 @@
+{
+  "authoritative_files": [
+    "AGENTS.md",
+    "docs/PROJECT_STATE.md",
+    "docs/ARCHITECTURE.md",
+    "docs/DECISIONS.md",
+    "docs/CHANGELOG.md",
+    "docs/BACKLOG.md",
+    "docs/ai/ACTIVE_TASK.md",
+    "docs/ai/HANDOFF.md",
+    "docs/ai/SESSION_SUMMARY.md",
+    "docs/ai/CURRENT_CONTEXT.md",
+    "docs/ai/WORK_QUEUE.md",
+    "docs/ai/BOOTSTRAP.md"
+  ],
+  "blockers": "- Product Owner cost policy is not present in repository evidence and must not be invented.\n- No executable-availability record currently exists.",
+  "branch": "codex/phr-price-monitoring-20260730",
+  "commit": "33bac5b617fab21c714f0071517e193f90aedc14",
+  "completed_work": "- Reconciled the canonical branch and commits from Git rather than conversation state.\n- Replaced seed Handoff documents with current project state, prioritized backlog, durable continuity decision, and this exact task boundary.\n- Preserved the verified arbitrage implementation at commit `66e0500d295d079e96e54e6e821b95e6ca46b70d` and the Handoff adoption baseline at `885b645c7266e52963509774c35e181c06bec9be`.",
+  "exact_next_action": "Collect the four direction-specific cost values from the Product Owner, enter them through Settings, then verify one real opportunity from the regional arbitrage queue.",
+  "generated_at": "2026-07-31T01:32:52Z",
+  "generation_id": "cb808ad1679d3a2b2140",
+  "important_decisions": "docs/DECISIONS.md",
+  "objective": "Advance the verified LigaMagic/TCGplayer bridge from identity-verified gross comparison to truthfully costed and availability-verified arbitrage decisions.",
+  "remaining_work": "- Obtain the four owner-controlled cost inputs: US-to-Brazil fixed BRL, US-to-Brazil percentage, Brazil-to-US fixed USD, and Brazil-to-US percentage.\n- After costs are stored, verify one current listing or dealer offer and confirm that only positive, fresh, fully evidenced economics become `ACTIONABLE`.",
+  "repository": "Phronesis",
+  "resume_instruction": "Acquire Handoff",
+  "schema_version": "1",
+  "validation": {
+    "completed_at": "2026-07-31T01:32:52Z",
+    "report": "docs/ai/reports/validation-latest.json",
+    "status": "passed"
+  },
+  "worktree_clean": true,
+  "worktree_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
