@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-07-30 — Repository-native Handoff owns session continuity
+
+- **Status:** Accepted.
+- **Context:** The canonical repository contains durable product and engineering truth, while conversations, IDE state, and the retained rollback checkout may be stale or unavailable.
+- **Decision:** Human-owned canonical documents and `ACTIVE_TASK` are committed before bare `./handoff` generates and seals operational continuity artifacts. The generated package records the exact branch, commit, worktree fingerprint, validation evidence, remaining work, blockers, and next action.
+- **Consequences:** Generated files are never hand-edited; transfer readiness may be claimed only after Handoff validation succeeds. Git evidence and the canonical JarvisSSD checkout supersede historical point-in-time claims.
+
 ## 2026-07-30 — Authentication identity does not own product authorization
 
 - Use self-hosted Better Auth database sessions and GitHub OAuth for authentication.

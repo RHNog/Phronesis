@@ -1,6 +1,10 @@
 <!-- handoff: {"document":"ARCHITECTURE","owner":"human-and-agent","schema_version":"1"} -->
 # Architecture
 
+## Repository-Native Continuity Boundary
+
+`handoff.toml` maps canonical human-owned project truth to `PROJECT_STATE`, `ARCHITECTURE`, `DECISIONS`, `CHANGELOG`, `BACKLOG`, and `ACTIVE_TASK`. Generated continuity documents under `docs/ai/` are derived only after verified human-owned state is committed. Bare `./handoff` runs the configured test, lint, build, and diff checks, creates the generated operational package, validates it, and seals it in a separate commit. Conversation state and the rollback checkout are never continuity authority.
+
 ## 2026-07-30 Card-Show Operations Boundaries
 
 - Verified pricing catalogues remain the broad refresh source; external market adapters supply explicitly classified supplemental evidence only.

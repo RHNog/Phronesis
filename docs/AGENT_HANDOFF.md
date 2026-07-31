@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## Current Canonical Git And Arbitrage Handoff — 2026-07-30
+
+- Canonical repository: `/Volumes/JarvisSSD/Projects/Phronesis`; the Developer checkout is rollback-only.
+- Reconciled branch: `codex/phr-price-monitoring-20260730`.
+- Verified implementation commit: `66e0500d295d079e96e54e6e821b95e6ca46b70d`.
+- Handoff adoption baseline: `885b645c7266e52963509774c35e181c06bec9be`; at reconciliation it exactly matched `origin/codex/phr-price-monitoring-20260730` and was 15 commits ahead of `origin/main`, zero behind.
+- Validated data: 86,392 LigaMagic/TCGplayer identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and all 109,763 Textless rows quarantined.
+- Arbitrage remains truthfully blocked at `IDENTITY_VERIFIED` until owner costs and real executable availability exist.
+- The generated `docs/ai/HANDOFF.md` is the authoritative exact post-seal branch/commit package. Historical sections below are point-in-time evidence and do not override it.
+
 ## CTO Accepted — Artwork And Provider Settings
 
 - The Store Championship Foil Urza's Saga thumbnail now renders; the separate Winner product remains an honest placeholder because it has no uniquely verified provider artwork.

@@ -5,6 +5,8 @@
 
 ### Added
 
+- Repository-native Handoff continuity with populated canonical project state, backlog, active task, generated operational context, and Git-bound validation evidence.
+
 - Marketplace-neutral listing readiness captured as deferred backlog feature `PHR-WORKFLOW-011`.
 
 - Automatic official Banco Central do Brasil PTAX closing buy/sell rates with direction-correct arbitrage costing, last-good retention, and read-only Settings provenance (`PHR-API-007`).
