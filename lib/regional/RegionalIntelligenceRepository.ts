@@ -4,12 +4,15 @@ import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
   calculateArbitrage,
+  crossMarketAnchorKey,
   crossMarketIdentityKey,
+  editionAliasCompatible,
   normalizeRegionalVariant,
   type ArbitrageDirection,
   type RegionalCostProfile,
   type RegionalMarketEvidence,
 } from "@/lib/regional/domain";
+import { normalizeSearchText } from "@/lib/pricing/domain";
 
 type Sql = Record<string, string | number | null>;
 
@@ -18,10 +21,31 @@ export type CrosswalkReport = {
   sourceHash: string;
   pricingFingerprint: string;
   total: number;
+  supportedTotal: number;
   matched: number;
+  exactMatched: number;
+  aliasMatched: number;
   unmatched: number;
   ambiguous: number;
   unsupportedVariant: number;
+  derivedEditionAliasCount: number;
+  matchedCoveragePercent: number;
+  matchedWithLigaConsumerPrice: number;
+  matchedWithTcgNearMintPrice: number;
+  comparableBoth: number;
+  comparableCoveragePercent: number;
+  unmatchedWithLigaConsumerPrice: number;
+  crosswalkFingerprint: string;
+  editionAliases: Array<{
+    ligaEdition: string;
+    tcgplayerEdition: string;
+    anchorCount: number;
+  }>;
+  topUnmatchedEditions: Array<{
+    edition: string;
+    count: number;
+    withConsumerPrice: number;
+  }>;
 };
 
 export type ArbitrageCandidate = {
@@ -238,28 +262,104 @@ export class RegionalIntelligenceRepository {
     const pricingFingerprint = this.pricingFingerprint();
     const productIndex = new Map<
       string,
-      Array<{ categoryId: string; sku: string }>
+      Array<{
+        categoryId: string;
+        sku: string;
+        edition: string;
+        normalizedEdition: string;
+      }>
     >();
-    for (const row of this.database
+    const anchorIndex = new Map<
+      string,
+      Array<{
+        categoryId: string;
+        sku: string;
+        edition: string;
+        normalizedEdition: string;
+      }>
+    >();
+    const productRows = this.database
       .prepare(
         `SELECT category_id, sku, name, set_name, collector_number, variant FROM pricing_products WHERE category_id='magic-en' AND product_type='SINGLE'`,
       )
-      .all() as Sql[]) {
+      .all() as Sql[];
+    for (const row of productRows) {
       const key = crossMarketIdentityKey({
         name: String(row.name),
         edition: String(row.set_name),
         collectorNumber: String(row.collector_number ?? ""),
         variant: String(row.variant),
       });
-      if (!key) continue;
+      const anchorKey = crossMarketAnchorKey({
+        name: String(row.name),
+        collectorNumber: String(row.collector_number ?? ""),
+        variant: String(row.variant),
+      });
+      if (!key || !anchorKey) continue;
       const candidate = {
         categoryId: String(row.category_id),
         sku: String(row.sku),
+        edition: String(row.set_name),
+        normalizedEdition: normalizeSearchText(String(row.set_name)),
       };
       productIndex.set(key, [...(productIndex.get(key) ?? []), candidate]);
+      anchorIndex.set(anchorKey, [...(anchorIndex.get(anchorKey) ?? []), candidate]);
     }
     const liga = new DatabaseSync(ligaDatabasePath);
     liga.exec("PRAGMA query_only = ON");
+    const ligaRows = liga
+      .prepare("SELECT * FROM ligamagic_price ORDER BY identity_key")
+      .all() as Sql[];
+    const aliasCandidates = new Map<
+      string,
+      {
+        sourceEdition: string;
+        targets: Map<string, { edition: string; anchors: Set<string> }>;
+      }
+    >();
+    for (const row of ligaRows) {
+      const variant = normalizeRegionalVariant(String(row.extras));
+      if (!variant) continue;
+      const anchorKey = crossMarketAnchorKey({
+        name: String(row.card_en),
+        collectorNumber: String(row.collector_number),
+        variant,
+      });
+      if (!anchorKey) continue;
+      const candidates = anchorIndex.get(anchorKey) ?? [];
+      if (candidates.length !== 1) continue;
+      const sourceEdition = String(row.edition_en);
+      const normalizedSource = normalizeSearchText(sourceEdition);
+      const candidate = candidates[0];
+      if (normalizedSource === candidate.normalizedEdition) continue;
+      const evidence = aliasCandidates.get(normalizedSource) ?? {
+        sourceEdition,
+        targets: new Map(),
+      };
+      const target = evidence.targets.get(candidate.normalizedEdition) ?? {
+        edition: candidate.edition,
+        anchors: new Set<string>(),
+      };
+      target.anchors.add(anchorKey);
+      evidence.targets.set(candidate.normalizedEdition, target);
+      aliasCandidates.set(normalizedSource, evidence);
+    }
+    const editionAliases = new Map<
+      string,
+      { edition: string; normalizedEdition: string; anchorCount: number; sourceEdition: string }
+    >();
+    for (const [source, evidence] of aliasCandidates) {
+      if (evidence.targets.size !== 1) continue;
+      const [normalizedEdition, target] = [...evidence.targets.entries()][0];
+      if (target.anchors.size < 2) continue;
+      if (!editionAliasCompatible(evidence.sourceEdition, target.edition)) continue;
+      editionAliases.set(source, {
+        edition: target.edition,
+        normalizedEdition,
+        anchorCount: target.anchors.size,
+        sourceEdition: evidence.sourceEdition,
+      });
+    }
     const insertCrosswalk = this.database.prepare(
       `INSERT INTO regional_crosswalk(liga_identity_key,category_id,sku,status,method,reason,source_run_id,source_hash,pricing_fingerprint,reconciled_at) VALUES(?,?,?,?,?,?,?,?,?,?)`,
     );
@@ -269,6 +369,8 @@ export class RegionalIntelligenceRepository {
     const counts = {
       total: 0,
       matched: 0,
+      exactMatched: 0,
+      aliasMatched: 0,
       unmatched: 0,
       ambiguous: 0,
       unsupportedVariant: 0,
@@ -278,12 +380,10 @@ export class RegionalIntelligenceRepository {
       this.database.exec(
         "DELETE FROM regional_evidence; DELETE FROM regional_crosswalk;",
       );
-      for (const row of liga
-        .prepare("SELECT * FROM ligamagic_price ORDER BY identity_key")
-        .all() as Sql[]) {
+      for (const row of ligaRows) {
         counts.total += 1;
         const variant = normalizeRegionalVariant(String(row.extras));
-        const key = variant
+        const exactKey = variant
           ? crossMarketIdentityKey({
               name: String(row.card_en),
               edition: String(row.edition_en),
@@ -291,7 +391,23 @@ export class RegionalIntelligenceRepository {
               variant,
             })
           : null;
-        const candidates = key ? (productIndex.get(key) ?? []) : [];
+        const exactCandidates = exactKey ? (productIndex.get(exactKey) ?? []) : [];
+        const alias = variant
+          ? editionAliases.get(normalizeSearchText(String(row.edition_en)))
+          : null;
+        const aliasKey = alias && variant
+          ? crossMarketIdentityKey({
+              name: String(row.card_en),
+              edition: alias.edition,
+              collectorNumber: String(row.collector_number),
+              variant,
+            })
+          : null;
+        const aliasCandidatesForRow = exactCandidates.length === 0 && aliasKey
+          ? (productIndex.get(aliasKey) ?? [])
+          : [];
+        const candidates = exactCandidates.length ? exactCandidates : aliasCandidatesForRow;
+        const aliasUsed = exactCandidates.length === 0 && aliasCandidatesForRow.length > 0;
         const status = !variant
           ? "UNSUPPORTED_VARIANT"
           : candidates.length === 1
@@ -299,7 +415,11 @@ export class RegionalIntelligenceRepository {
             : candidates.length > 1
               ? "AMBIGUOUS"
               : "UNMATCHED";
-        if (status === "MATCHED") counts.matched += 1;
+        if (status === "MATCHED") {
+          counts.matched += 1;
+          if (aliasUsed) counts.aliasMatched += 1;
+          else counts.exactMatched += 1;
+        }
         else if (status === "AMBIGUOUS") counts.ambiguous += 1;
         else if (status === "UNSUPPORTED_VARIANT")
           counts.unsupportedVariant += 1;
@@ -310,9 +430,13 @@ export class RegionalIntelligenceRepository {
           candidate?.categoryId ?? null,
           candidate?.sku ?? null,
           status,
-          "EXACT_NAME_EDITION_COLLECTOR_VARIANT_V1",
+          aliasUsed
+            ? "EVIDENCE_DERIVED_EDITION_ALIAS_V2"
+            : "EXACT_NAME_EDITION_COLLECTOR_VARIANT_V1",
           status === "MATCHED"
-            ? "Unique exact normalized identity."
+            ? aliasUsed
+              ? `Unique full identity after conflict-free edition alias (${alias?.anchorCount ?? 0} anchors).`
+              : "Unique exact normalized identity."
             : !variant
               ? "LigaMagic variant is quarantined."
               : candidates.length > 1
@@ -346,12 +470,97 @@ export class RegionalIntelligenceRepository {
     } finally {
       liga.close();
     }
+    const coverage = this.crosswalkCoverage();
     return {
       sourceRunId: manifest.runId,
       sourceHash,
       pricingFingerprint,
       ...counts,
+      supportedTotal: counts.total - counts.unsupportedVariant,
+      derivedEditionAliasCount: editionAliases.size,
+      matchedCoveragePercent: percent(counts.matched, counts.total - counts.unsupportedVariant),
+      ...coverage,
+      crosswalkFingerprint: this.crosswalkFingerprint(),
+      editionAliases: [...editionAliases.values()]
+        .map((alias) => ({
+          ligaEdition: alias.sourceEdition,
+          tcgplayerEdition: alias.edition,
+          anchorCount: alias.anchorCount,
+        }))
+        .sort((left, right) => left.ligaEdition.localeCompare(right.ligaEdition)),
+      topUnmatchedEditions: this.topUnmatchedEditions(),
     };
+  }
+
+  private crosswalkCoverage(): Pick<
+    CrosswalkReport,
+    | "matchedWithLigaConsumerPrice"
+    | "matchedWithTcgNearMintPrice"
+    | "comparableBoth"
+    | "comparableCoveragePercent"
+    | "unmatchedWithLigaConsumerPrice"
+  > {
+    const row = this.database.prepare(`
+      SELECT
+        SUM(CASE WHEN c.status='MATCHED' AND e.consumer_low_centavos>0 THEN 1 ELSE 0 END) matched_liga,
+        SUM(CASE WHEN c.status='MATCHED' AND EXISTS(
+          SELECT 1 FROM pricing_latest latest
+          WHERE latest.category_id=c.category_id AND latest.sku=c.sku
+            AND latest.condition_key='NEAR_MINT'
+            AND COALESCE(NULLIF(latest.delivered_price_cents,0), NULLIF(latest.listing_price_cents,0), NULLIF(latest.market_price_cents,0))>0
+        ) THEN 1 ELSE 0 END) matched_tcg,
+        SUM(CASE WHEN c.status='MATCHED' AND e.consumer_low_centavos>0 AND EXISTS(
+          SELECT 1 FROM pricing_latest latest
+          WHERE latest.category_id=c.category_id AND latest.sku=c.sku
+            AND latest.condition_key='NEAR_MINT'
+            AND COALESCE(NULLIF(latest.delivered_price_cents,0), NULLIF(latest.listing_price_cents,0), NULLIF(latest.market_price_cents,0))>0
+        ) THEN 1 ELSE 0 END) comparable,
+        SUM(CASE WHEN c.status='UNMATCHED' AND e.consumer_low_centavos>0 THEN 1 ELSE 0 END) unmatched_liga
+      FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key)
+    `).get() as Sql;
+    const matched = Number(this.database.prepare(
+      "SELECT COUNT(*) count FROM regional_crosswalk WHERE status='MATCHED'",
+    ).get()?.count ?? 0);
+    const comparableBoth = Number(row.comparable ?? 0);
+    return {
+      matchedWithLigaConsumerPrice: Number(row.matched_liga ?? 0),
+      matchedWithTcgNearMintPrice: Number(row.matched_tcg ?? 0),
+      comparableBoth,
+      comparableCoveragePercent: percent(comparableBoth, matched),
+      unmatchedWithLigaConsumerPrice: Number(row.unmatched_liga ?? 0),
+    };
+  }
+
+  private crosswalkFingerprint(): string {
+    const hash = createHash("sha256");
+    const rows = this.database.prepare(`
+      SELECT liga_identity_key,status,category_id,sku,method
+      FROM regional_crosswalk ORDER BY liga_identity_key
+    `).all() as Sql[];
+    for (const row of rows) {
+      hash.update([
+        row.liga_identity_key,
+        row.status,
+        row.category_id ?? "",
+        row.sku ?? "",
+        row.method,
+      ].join("|")).update("\n");
+    }
+    return hash.digest("hex");
+  }
+
+  private topUnmatchedEditions(): CrosswalkReport["topUnmatchedEditions"] {
+    return (this.database.prepare(`
+      SELECT e.edition_name, COUNT(*) count,
+        SUM(CASE WHEN e.consumer_low_centavos>0 THEN 1 ELSE 0 END) priced
+      FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key)
+      WHERE c.status='UNMATCHED'
+      GROUP BY e.edition_name ORDER BY count DESC, e.edition_name LIMIT 25
+    `).all() as Sql[]).map((row) => ({
+      edition: String(row.edition_name),
+      count: Number(row.count),
+      withConsumerPrice: Number(row.priced),
+    }));
   }
 
   listCandidates(limit = 100): ArbitrageCandidate[] {
@@ -360,12 +569,15 @@ export class RegionalIntelligenceRepository {
       .prepare(
         `
       SELECT c.category_id,c.sku,p.name,p.set_name,p.collector_number,p.variant,e.*,
-        COALESCE(l.delivered_price_cents,l.market_price_cents) us_price_cents,
+        COALESCE(NULLIF(l.delivered_price_cents,0),NULLIF(l.listing_price_cents,0),NULLIF(l.market_price_cents,0)) us_acquisition_price_cents,
+        COALESCE(NULLIF(l.market_price_cents,0),NULLIF(l.listing_price_cents,0),NULLIF(l.delivered_price_cents,0)) us_resale_price_cents,
         l.snapshot_date us_observed_at
       FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key)
       JOIN pricing_products p ON p.category_id=c.category_id AND p.sku=c.sku
       JOIN pricing_latest l ON l.category_id=c.category_id AND l.sku=c.sku
-      WHERE c.status='MATCHED' AND l.condition_key='NEAR_MINT' AND COALESCE(l.delivered_price_cents,l.market_price_cents)>0
+      WHERE c.status='MATCHED' AND l.condition_key='NEAR_MINT'
+        AND COALESCE(NULLIF(l.delivered_price_cents,0),NULLIF(l.listing_price_cents,0),NULLIF(l.market_price_cents,0))>0
+        AND COALESCE(NULLIF(l.market_price_cents,0),NULLIF(l.listing_price_cents,0),NULLIF(l.delivered_price_cents,0))>0
         AND e.consumer_low_centavos>0
       ORDER BY e.consumer_low_centavos DESC LIMIT 2000`,
       )
@@ -389,7 +601,11 @@ export class RegionalIntelligenceRepository {
         const verified = Boolean(
           verifiedAt && Date.now() - Date.parse(verifiedAt) <= 24 * 3_600_000,
         );
-        const observedUsPrice = Number(row.us_price_cents) / 100;
+        const observedUsPrice = Number(
+          direction === "US_TO_BRAZIL"
+            ? row.us_acquisition_price_cents
+            : row.us_resale_price_cents,
+        ) / 100;
         const observedBrazilPrice = Number(row.consumer_low_centavos) / 100;
         const usPriceUsd =
           direction === "US_TO_BRAZIL" && verified
@@ -583,4 +799,8 @@ function validateProfile(profile: RegionalCostProfile): void {
   for (const value of [profile.fxFetchedAt, profile.fxLastAttemptAt])
     if (value && Number.isNaN(Date.parse(value)))
       throw new Error("FX retrieval time must be valid.");
+}
+
+function percent(numerator: number, denominator: number): number {
+  return denominator > 0 ? Math.round((numerator / denominator) * 10_000) / 100 : 0;
 }

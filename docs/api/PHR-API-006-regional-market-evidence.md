@@ -2,7 +2,7 @@
 
 ## Status
 
-Product Review Ready
+Completed — Owner Cost Configuration Gated
 
 ## Priority
 
@@ -28,6 +28,7 @@ Persist regional evidence with source semantics and freshness, plus official BCB
 
 - Preserve low, average, and high LigaMagic `Compra` and `Venda` observations in BRL.
 - Preserve TCGplayer market/listing/delivered observations in USD.
+- Use delivered/listing evidence as the US acquisition benchmark for US-to-Brazil analysis and market/listing evidence as the US resale benchmark for Brazil-to-US analysis; never reuse one side silently for both directions.
 - Store automatically refreshed official BCB PTAX closing buy/sell observations with provenance and last-good retention under `PHR-API-007`.
 - Store direction-specific costs for US-to-Brazil and Brazil-to-US analysis.
 - Never convert an unknown cost to zero implicitly.

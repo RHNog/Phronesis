@@ -1,5 +1,5 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, renameSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { PricingRepository } from "../lib/pricing/repository.ts";
 import {
   discoverLatestLigaSnapshot,
@@ -20,7 +20,21 @@ try {
     source.databasePath,
     source.manifestPath,
   );
-  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  const reportPath = resolve(
+    process.env.PHRONESIS_REGIONAL_REPORT_PATH ??
+      ".data/regional/crosswalk-validation.json",
+  );
+  mkdirSync(dirname(reportPath), { recursive: true });
+  const temporaryPath = `${reportPath}.tmp`;
+  writeFileSync(temporaryPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  renameSync(temporaryPath, reportPath);
+  const { editionAliases, topUnmatchedEditions, ...summary } = report;
+  process.stdout.write(`${JSON.stringify({
+    ...summary,
+    reportPath,
+    editionAliasPreview: editionAliases.slice(0, 20),
+    topUnmatchedEditions,
+  }, null, 2)}\n`);
 } finally {
   pricing.close();
 }

@@ -6,7 +6,9 @@ import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 import {
   calculateArbitrage,
+  crossMarketAnchorKey,
   crossMarketIdentityKey,
+  editionAliasCompatible,
   normalizeCollectorNumber,
   normalizeRegionalVariant,
   type RegionalCostProfile,
@@ -43,6 +45,85 @@ test("cross-market identity normalization preserves exact printing dimensions", 
     }),
     "mox opal|double masters|275|normal",
   );
+  assert.equal(
+    crossMarketAnchorKey({
+      name: "Mox Opal",
+      collectorNumber: "0275/332",
+      variant: "Nonfoil",
+    }),
+    "mox opal|275|normal",
+  );
+  assert.equal(editionAliasCompatible("Magic 2014", "Magic 2014 (M14)"), true);
+  assert.equal(editionAliasCompatible("Fallout", "Universes Beyond: Fallout"), true);
+  assert.equal(editionAliasCompatible("Bloomburrow", "Adventures in the Forgotten Realms"), false);
+  assert.equal(editionAliasCompatible("Mirage", "Magic 2012 (M12)"), false);
+  assert.equal(editionAliasCompatible("War of the Spark (Japanese)", "War of the Spark"), false);
+  assert.equal(editionAliasCompatible("War of the Spark (Japanese)", "War of the Spark Japanese"), true);
+  assert.equal(editionAliasCompatible("History Promos (Retro Frame)", "History Promos"), false);
+  assert.equal(editionAliasCompatible("Showcase: Bloomburrow", "Showcase Bloomburrow"), true);
+});
+
+test("repository derives only a conflict-free edition alias with two independent anchors", () => {
+  const directory = mkdtempSync(join(tmpdir(), "phronesis-regional-alias-"));
+  const pricing = new DatabaseSync(join(directory, "pricing.sqlite"));
+  pricing.exec(`
+    CREATE TABLE pricing_products(category_id TEXT,sku TEXT,product_type TEXT,name TEXT,set_name TEXT,collector_number TEXT,variant TEXT,language TEXT,PRIMARY KEY(category_id,sku));
+    CREATE TABLE pricing_category_state(category_id TEXT PRIMARY KEY,snapshot_date TEXT,source_hash TEXT);
+    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,market_price_cents INTEGER,listing_price_cents INTEGER,delivered_price_cents INTEGER,snapshot_date TEXT,PRIMARY KEY(category_id,sku,condition_key));
+    INSERT INTO pricing_products VALUES('magic-en','m14-a','SINGLE','Kalonian Tusker','Magic 2014 (M14)','182','Normal','English');
+    INSERT INTO pricing_products VALUES('magic-en','m14-b','SINGLE','Elvish Mystic','Magic 2014 (M14)','169','Normal','English');
+    INSERT INTO pricing_category_state VALUES('magic-en','2026-07-30','source');
+    INSERT INTO pricing_latest VALUES('magic-en','m14-a','NEAR_MINT',100,100,100,'2026-07-30T12:00:00.000Z');
+    INSERT INTO pricing_latest VALUES('magic-en','m14-b','NEAR_MINT',200,200,200,'2026-07-30T12:00:00.000Z');
+  `);
+  const ligaPath = join(directory, "liga.sqlite");
+  const liga = new DatabaseSync(ligaPath);
+  liga.exec(`CREATE TABLE ligamagic_price(identity_key TEXT PRIMARY KEY,edition_en TEXT,edition_code TEXT,card_en TEXT,collector_number TEXT,extras TEXT,consumer_low_centavos INTEGER,consumer_average_centavos INTEGER,consumer_high_centavos INTEGER,store_buy_low_centavos INTEGER,store_buy_average_centavos INTEGER,store_buy_high_centavos INTEGER);
+    INSERT INTO ligamagic_price VALUES('a','Magic 2014','M14','Kalonian Tusker','182','',1000,1100,1200,500,600,700);
+    INSERT INTO ligamagic_price VALUES('b','Magic 2014','M14','Elvish Mystic','169','',2000,2100,2200,1000,1100,1200);`);
+  liga.close();
+  const manifestPath = join(directory, "manifest.json");
+  writeFileSync(manifestPath, JSON.stringify({ runId: "alias", completedAt: "2026-07-30T12:00:00.000Z", databaseFile: "liga.sqlite" }));
+  const repository = new RegionalIntelligenceRepository(pricing);
+  const first = repository.buildCrosswalk(ligaPath, manifestPath);
+  assert.equal(first.exactMatched, 0);
+  assert.equal(first.aliasMatched, 2);
+  assert.equal(first.derivedEditionAliasCount, 1);
+  assert.equal(first.comparableBoth, 2);
+  assert.equal(first.editionAliases[0]?.anchorCount, 2);
+  assert.equal(first.editionAliases[0]?.tcgplayerEdition, "Magic 2014 (M14)");
+  const method = pricing.prepare("SELECT DISTINCT method FROM regional_crosswalk").get() as { method: string };
+  assert.equal(method.method, "EVIDENCE_DERIVED_EDITION_ALIAS_V2");
+  const second = repository.buildCrosswalk(ligaPath, manifestPath);
+  assert.equal(second.crosswalkFingerprint, first.crosswalkFingerprint);
+  pricing.close();
+});
+
+test("edition aliases fail closed with insufficient or conflicting anchors", () => {
+  const directory = mkdtempSync(join(tmpdir(), "phronesis-regional-conflict-"));
+  const pricing = new DatabaseSync(join(directory, "pricing.sqlite"));
+  pricing.exec(`
+    CREATE TABLE pricing_products(category_id TEXT,sku TEXT,product_type TEXT,name TEXT,set_name TEXT,collector_number TEXT,variant TEXT,language TEXT,PRIMARY KEY(category_id,sku));
+    CREATE TABLE pricing_category_state(category_id TEXT PRIMARY KEY,snapshot_date TEXT,source_hash TEXT);
+    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,market_price_cents INTEGER,listing_price_cents INTEGER,delivered_price_cents INTEGER,snapshot_date TEXT,PRIMARY KEY(category_id,sku,condition_key));
+    INSERT INTO pricing_products VALUES('magic-en','a','SINGLE','Anchor A','Target One','1','Normal','English');
+    INSERT INTO pricing_products VALUES('magic-en','b','SINGLE','Anchor B','Target Two','2','Normal','English');
+    INSERT INTO pricing_category_state VALUES('magic-en','2026-07-30','source');
+  `);
+  const ligaPath = join(directory, "liga.sqlite");
+  const liga = new DatabaseSync(ligaPath);
+  liga.exec(`CREATE TABLE ligamagic_price(identity_key TEXT PRIMARY KEY,edition_en TEXT,edition_code TEXT,card_en TEXT,collector_number TEXT,extras TEXT,consumer_low_centavos INTEGER,consumer_average_centavos INTEGER,consumer_high_centavos INTEGER,store_buy_low_centavos INTEGER,store_buy_average_centavos INTEGER,store_buy_high_centavos INTEGER);
+    INSERT INTO ligamagic_price VALUES('a','Conflicted Source','X','Anchor A','1','',100,NULL,NULL,NULL,NULL,NULL);
+    INSERT INTO ligamagic_price VALUES('b','Conflicted Source','X','Anchor B','2','',100,NULL,NULL,NULL,NULL,NULL);`);
+  liga.close();
+  const manifestPath = join(directory, "manifest.json");
+  writeFileSync(manifestPath, JSON.stringify({ runId: "conflict", completedAt: "2026-07-30T12:00:00.000Z", databaseFile: "liga.sqlite" }));
+  const repository = new RegionalIntelligenceRepository(pricing);
+  const report = repository.buildCrosswalk(ligaPath, manifestPath);
+  assert.equal(report.derivedEditionAliasCount, 0);
+  assert.equal(report.matched, 0);
+  assert.equal(report.unmatched, 2);
+  pricing.close();
 });
 
 test("arbitrage remains gated until explicit costs and availability exist", () => {
@@ -134,10 +215,10 @@ test("repository adopts one exact identity and quarantines Textless", () => {
   pricing.exec(`
     CREATE TABLE pricing_products(category_id TEXT,sku TEXT,product_type TEXT,name TEXT,set_name TEXT,collector_number TEXT,variant TEXT,language TEXT,PRIMARY KEY(category_id,sku));
     CREATE TABLE pricing_category_state(category_id TEXT PRIMARY KEY,snapshot_date TEXT,source_hash TEXT);
-    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,market_price_cents INTEGER,delivered_price_cents INTEGER,snapshot_date TEXT,PRIMARY KEY(category_id,sku,condition_key));
+    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,market_price_cents INTEGER,listing_price_cents INTEGER,delivered_price_cents INTEGER,snapshot_date TEXT,PRIMARY KEY(category_id,sku,condition_key));
     INSERT INTO pricing_products VALUES('magic-en','mox-normal','SINGLE','Mox Opal','Double Masters','275','Normal','English');
     INSERT INTO pricing_category_state VALUES('magic-en','2026-07-30','source');
-    INSERT INTO pricing_latest VALUES('magic-en','mox-normal','NEAR_MINT',2000,2000,'${new Date().toISOString()}');
+    INSERT INTO pricing_latest VALUES('magic-en','mox-normal','NEAR_MINT',2000,2100,2500,'${new Date().toISOString()}');
   `);
   const ligaPath = join(directory, "liga.sqlite");
   const liga = new DatabaseSync(ligaPath);
@@ -167,7 +248,13 @@ test("repository adopts one exact identity and quarantines Textless", () => {
     .listCandidates()
     .find((candidate) => candidate.direction === "US_TO_BRAZIL");
   assert.equal(before?.state, "COSTED");
-  assert.equal(before?.netProfit, -20);
+  assert.equal(before?.usPriceUsd, 25);
+  assert.equal(before?.netProfit, -47.5);
+  const outbound = repository
+    .listCandidates()
+    .find((candidate) => candidate.direction === "BRAZIL_TO_US");
+  assert.equal(outbound?.usPriceUsd, 20);
+  assert.equal(outbound?.netProfit, -3);
   repository.verifyAvailability({
     categoryId: "magic-en",
     sku: "mox-normal",

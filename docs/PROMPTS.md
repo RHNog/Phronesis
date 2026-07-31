@@ -1,5 +1,11 @@
 # Prompt History
 
+## LigaMagic/TCGplayer Crosswalk Validation — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-013` reactivates `PHR-ARCH-013`, `PHR-API-006`, and `PHR-WORKFLOW-007` to validate the acquired source pair, derive only conflict-free edition aliases, and produce reproducible cross-market coverage evidence.
+
+Implementation prompt: `docs/prompts/PHR-ARCH-013-crosswalk-validation-remediation-prompt.md`.
+
 ## Inventory Disposition Ledger — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-012` authorizes `PHR-WORKFLOW-010`: append explicit lot-specific sale/disposition evidence, atomically update operational on-hand quantity, and preserve acquisition and physical-count history.

@@ -2,7 +2,7 @@
 
 ## Status
 
-Product Review Ready
+Completed — CTO Accepted
 
 ## Priority
 
@@ -18,7 +18,7 @@ Create a deterministic, auditable bridge between LigaMagic collection-export ide
 
 ## Background
 
-`PHR-API-005` produced a verified local LigaMagic snapshot containing 329,301 unique English/Near Mint identities. Phronesis already holds the TCGplayer-centred catalogue used by Vendor Workspace. Actionable regional pricing requires the two sources to refer to the exact same printing and finish.
+`PHR-API-005` produced a verified local LigaMagic snapshot containing 329,301 unique English/Near Mint identities. Phronesis already holds the TCGplayer-centred catalogue used by Vendor Workspace. Actionable regional pricing requires the two sources to refer to the exact same printing, language, treatment, and finish.
 
 ## Problem Statement
 
@@ -28,14 +28,18 @@ Names alone are insufficient. Editions, collector numbers, punctuation, promos, 
 
 Build a versioned crosswalk from normalized card name, normalized edition, collector number, language, and finish. A match is accepted only when it resolves to one canonical product. Every row records source hashes, method, confidence, and rejection reason. `Textless` rows are quarantined until explicit treatment evidence exists.
 
+The acquired-data validation revision adds evidence-derived edition aliases. A LigaMagic edition may alias one TCGplayer edition only when at least two independent exact name + collector + finish anchors resolve uniquely, every anchor agrees on the same target edition, no competing target exists, deterministic structural edition tokens remain compatible, and source language or material-treatment qualifiers remain explicit in the target. The final product join still requires the complete exact identity after alias substitution.
+
 ## Functional Requirements
 
 - Discover the latest completed LigaMagic snapshot without enabling a schedule.
 - Map blank `Extras` to Normal and `Foil` to Foil; quarantine `Textless` by default.
 - Use exact normalized equality and explicit edition aliases only; do not use fuzzy similarity for canonical adoption.
+- Evidence-derived edition aliases require at least two conflict-free unique anchors, deterministic structural edition-name compatibility, and qualifier preservation; they are versioned in the validation report.
 - Resolve a LigaMagic identity to exactly one Phronesis product or preserve an explicit unmatched/ambiguous state.
 - Persist crosswalk lineage, source hashes, timestamps, and reason codes.
 - Provide a reproducible build command and coverage report.
+- Report exact versus alias matches, comparable price coverage, unmatched concentration, alias evidence, and deterministic crosswalk fingerprint.
 - Rebuilding the same source pair must be idempotent.
 
 ## Non-Functional Requirements
@@ -104,5 +108,6 @@ Coverage belongs in Settings/Provider Operations. Operators should see matched, 
 
 - Originating approval: Product Owner request on 2026-07-30 to turn LigaMagic data into vending and arbitrage intelligence.
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
+- Validation remediation prompt: `docs/prompts/PHR-ARCH-013-crosswalk-validation-remediation-prompt.md`.
 - Last modified: 2026-07-30.
 - Modification reason: approved program structure.

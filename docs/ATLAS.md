@@ -17,6 +17,13 @@
 - `Compra` is the consumer acquisition price from a store. `Venda` is the store buy offer to a consumer. Both remain distinct integer-centavo evidence lanes.
 - The completed local dry run covers 37 collections and 329,976 cards with zero conflicting duplicate prices. Raw files, hashes, receipts, the manifest, and SQLite snapshot live under ignored `.data/ligamagic/`; no schedule or canonical pricing activation exists.
 
+## Regional Cross-Market Intelligence
+
+- `RegionalIntelligenceRepository` joins LigaMagic and TCGplayer only through exact name, collector number, finish, and edition identity. Evidence-derived edition aliases additionally require two unique anchors, a single conflict-free target, structural compatibility, and language/treatment qualifier preservation.
+- The accepted source pair maps 86,392 identities and provides 86,032 two-sided price pairs; 133,146 supported identities remain unmatched, zero ambiguous identities are adopted, and 109,763 Textless rows remain quarantined.
+- US-to-Brazil analysis treats TCGplayer delivered/listing evidence as acquisition cost. Brazil-to-US analysis treats TCGplayer market/listing evidence as resale value. LigaMagic Compra remains Brazilian consumer retail evidence; Venda remains a dealer-buy benchmark.
+- Official BCB PTAX is operational, but owner direction costs and real executable availability remain mandatory before an opportunity can become `ACTIONABLE`.
+
 ## Card-Show Operations
 
 - `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.
@@ -1481,36 +1488,37 @@ Workspace locations and physical counts extend lots through append-only observat
 
 ## Backlog
 
-1. Add live marketplace listings and recent sales.
-2. Add EDHREC provider for Commander deck penetration.
-3. Add MTGGoldfish provider for format popularity and trend.
-4. Add Melee, MTGO, and Top8 providers for competitive metagame results.
-5. Add Deck Penetration implementation with percentage, sample size, confidence, and status.
-6. Add Meta Stability and Trend provider implementations.
-7. Add Intelligence Console keyboard and visual regression coverage.
-8. Persist Business Profiles.
-9. Add Business Profile import and export.
-10. Validate Offer Policy before Business Profiles are saved.
-11. Persist Readiness Reports with Evaluation Snapshots.
-12. Persist Pipeline Reports for failed evaluations.
-13. Add readiness browser diagnostics for historical failed evaluations.
-14. Add Pipeline Trace replay UI.
-15. Add a Printing Descriptor Engine for provider-neutral printing labels.
-16. Add development-only Vendor Workflow transition inspector.
-17. Add Evaluation Trace replay UI.
-18. Add workflow context inspector.
-19. Add historical backtesting.
-20. Add simulation engine.
-21. Add strategy replay and Market Context replay.
-22. Add Asset Intelligence model diagnostics UI.
-23. Add Liquidity Engine as an Asset Intelligence model.
-24. Add Historical Analytics Engine as an Asset Intelligence model.
-25. Add Market Context Engine.
-26. Add camera, OCR, and barcode entry.
-27. Add ARIA active-descendant support for richer keyboard highlighting.
-28. Add persisted buyer preferences for finish defaults.
-29. Add saved Vendor Workspace chip presets.
-30. Add visual regression coverage for 13-inch and 14-inch laptop viewports.
+1. Add marketplace-neutral listing readiness (`PHR-WORKFLOW-011`) without publication, payment, shipping, or automatic repricing.
+2. Add live marketplace listings and recent sales.
+3. Add EDHREC provider for Commander deck penetration.
+4. Add MTGGoldfish provider for format popularity and trend.
+5. Add Melee, MTGO, and Top8 providers for competitive metagame results.
+6. Add Deck Penetration implementation with percentage, sample size, confidence, and status.
+7. Add Meta Stability and Trend provider implementations.
+8. Add Intelligence Console keyboard and visual regression coverage.
+9. Persist Business Profiles.
+10. Add Business Profile import and export.
+11. Validate Offer Policy before Business Profiles are saved.
+12. Persist Readiness Reports with Evaluation Snapshots.
+13. Persist Pipeline Reports for failed evaluations.
+14. Add readiness browser diagnostics for historical failed evaluations.
+15. Add Pipeline Trace replay UI.
+16. Add a Printing Descriptor Engine for provider-neutral printing labels.
+17. Add development-only Vendor Workflow transition inspector.
+18. Add Evaluation Trace replay UI.
+19. Add workflow context inspector.
+20. Add historical backtesting.
+21. Add simulation engine.
+22. Add strategy replay and Market Context replay.
+23. Add Asset Intelligence model diagnostics UI.
+24. Add Liquidity Engine as an Asset Intelligence model.
+25. Add Historical Analytics Engine as an Asset Intelligence model.
+26. Add Market Context Engine.
+27. Add camera, OCR, and barcode entry.
+28. Add ARIA active-descendant support for richer keyboard highlighting.
+29. Add persisted buyer preferences for finish defaults.
+30. Add saved Vendor Workspace chip presets.
+31. Add visual regression coverage for 13-inch and 14-inch laptop viewports.
 
 ## Technical Debt
 

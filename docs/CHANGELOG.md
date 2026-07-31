@@ -4,6 +4,8 @@
 
 ### Added
 
+- Marketplace-neutral listing readiness captured as deferred backlog feature `PHR-WORKFLOW-011`.
+
 - Automatic official Banco Central do Brasil PTAX closing buy/sell rates with direction-correct arbitrage costing, last-good retention, and read-only Settings provenance (`PHR-API-007`).
 
 - Exact LigaMagic/TCGplayer reconciliation, regional Compra/Venda evidence, explicit FX/cost profiles, Brazilian vending guidance, and verified two-way arbitrage (`PHR-ARCH-013`, `PHR-API-006`, `PHR-UX-013`, `PHR-WORKFLOW-007`).
@@ -125,6 +127,7 @@
 
 ### Changed
 
+- LigaMagic/TCGplayer validation now deterministically reconciles 86,392 cross-market identities through exact and qualifier-preserving edition-alias matches and exposes 86,032 two-sided price pairs; arbitrage uses direction-correct TCGplayer acquisition/resale fields (`PHR-ARCH-013`, `PHR-API-006`, `PHR-WORKFLOW-007`).
 - Market refresh now requires both freshness and evidence-domain coverage before skipping provider requests.
 - Provider Replay fixtures now document market-identity paths instead of card-level fixture paths.
 - Fresh but incomplete snapshots now fetch only missing refreshable evidence domains.

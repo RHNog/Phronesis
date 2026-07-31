@@ -96,6 +96,78 @@ export function crossMarketIdentityKey(input: {
   ].join("|");
 }
 
+export function crossMarketAnchorKey(input: {
+  name: string;
+  collectorNumber: string;
+  variant: string;
+}): string | null {
+  const collector = normalizeCollectorNumber(input.collectorNumber);
+  const variant = normalizeRegionalVariant(input.variant);
+  if (!collector || !variant) return null;
+  return [
+    normalizeSearchText(input.name),
+    collector,
+    variant.toLowerCase(),
+  ].join("|");
+}
+
+export function editionAliasCompatible(source: string, target: string): boolean {
+  const targetText = normalizeSearchText(target);
+  for (const qualifier of materialEditionQualifiers(source)) {
+    if (!targetText.includes(qualifier)) return false;
+  }
+  const sourceTokens = editionTokens(source);
+  const targetTokens = editionTokens(target);
+  if (!sourceTokens.size || !targetTokens.size) return false;
+  let shared = 0;
+  for (const token of sourceTokens) if (targetTokens.has(token)) shared += 1;
+  return shared / Math.min(sourceTokens.size, targetTokens.size) >= 0.75;
+}
+
+function materialEditionQualifiers(value: string): Set<string> {
+  const normalized = normalizeSearchText(value);
+  const qualifiers = new Set<string>();
+  const languages = [
+    "japanese", "portuguese", "spanish", "german", "french", "italian",
+    "korean", "chinese", "russian",
+  ];
+  for (const language of languages) {
+    if (normalized.includes(language)) qualifiers.add(language);
+  }
+  const treatments = [
+    "retro frame", "borderless", "extended art", "showcase", "etched",
+    "textured", "surge foil", "galaxy foil", "anime",
+  ];
+  const parenthetical = [...value.matchAll(/\(([^)]+)\)/g)]
+    .map((match) => normalizeSearchText(match[1]))
+    .join(" ");
+  for (const treatment of treatments) {
+    if (parenthetical.includes(treatment)) qualifiers.add(treatment);
+  }
+  return qualifiers;
+}
+
+function editionTokens(value: string): Set<string> {
+  const ignored = new Set([
+    "a", "an", "and", "the", "of", "set", "edition", "series", "card", "cards",
+    "promo", "promos", "pack", "art", "commander", "collection", "starter", "beginner",
+    "box", "variant", "variants", "normal", "foil", "etched", "retro", "frame", "borderless",
+    "showcase", "surge", "galaxy", "japanese", "anime", "token", "tokens", "plane", "planes",
+    "planechase", "acorn", "silver", "scroll", "oil", "slick", "raised", "viewport", "land", "lands",
+    "universes", "universe", "beyond",
+  ]);
+  const ordinals: Record<string, string> = {
+    "7th": "seventh",
+    "8th": "eighth",
+    "9th": "ninth",
+    "10th": "tenth",
+  };
+  const tokens = normalizeSearchText(value).split(" ").map((token) => ordinals[token] ?? token);
+  return new Set(tokens
+    .filter((token) => token && !ignored.has(token))
+    .map((token) => token.length > 4 && token.endsWith("s") ? token.slice(0, -1) : token));
+}
+
 export function calculateArbitrage(input: {
   direction: ArbitrageDirection;
   profile: RegionalCostProfile;

@@ -1,5 +1,12 @@
 # Roadmap
 
+## Completed: LigaMagic/TCGplayer Arbitrage Data Validation
+
+- Accepted crosswalk: 71,954 exact plus 14,438 qualifier-preserving alias matches; 86,392 total, 133,146 unmatched supported identities, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
+- Accepted evidence: 86,032 two-sided LigaMagic Compra/TCGplayer NM price pairs and deterministic fingerprint `ada5cb0288f45d16636bc3e34aab144709d0ff0b12c9eda629aa5ce6fcff20d2` across repeated builds.
+- Next operational gate: owner direction-specific costs, followed by real executable availability verification. No candidate is actionable before both.
+- Listing readiness is the deferred `PHR-WORKFLOW-011` backlog item.
+
 ## Completed: Inventory Disposition Ledger
 
 - Completed: explicit Sale, Loss, Damage, Transfer Out, and Correction records (`PHR-WORKFLOW-010`).

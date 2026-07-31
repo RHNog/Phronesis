@@ -1,5 +1,35 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — LigaMagic/TCGplayer Crosswalk Validation
+
+- Assignment: `PHR-ARBITRAGE-DATA-VALIDATION-20260730`
+- Document ID: `PHR-STRUCT-20260730-013`
+- Status: `CTO ACCEPTED — ACQUIRED DATA VALIDATED; OPERATIONAL COST GATE REMAINS`
+- Features: `PHR-ARCH-013`, `PHR-API-006`, `PHR-WORKFLOW-007`
+- Objective: validate the acquired LigaMagic snapshot against the active TCGplayer-centred Magic catalogue and safely remediate systematic identity-label drift.
+
+### Baseline
+
+- Source identities: 329,301.
+- Exact matched: 71,954.
+- Unmatched supported Normal/Foil: 147,584.
+- Quarantined Textless: 109,763.
+- Ambiguous adopted: zero.
+
+### Authorization And Boundaries
+
+Documentation, offline ignored-database crosswalk mutation, deterministic alias derivation, sanitized local reports, repository code/tests, bounded remediation, full validation/build, ordinary feature-branch checkpointing, and private-service restart are authorized autonomously.
+
+Fuzzy matching, Textless adoption, provider requests, scraping, LigaMagic scheduling, owner cost assumptions, executable-availability fabrication, external transactions, public deployment, destructive migration, new dependencies, force push, and history rewriting are prohibited.
+
+### Acceptance
+
+The same source pair rebuilds to the same fingerprint; every alias is backed by at least two conflict-free unique anchors; exact/alias/comparable coverage and remaining gaps are reported; ambiguous and unsupported identities remain non-actionable.
+
+### Verified Result
+
+The source pair deterministically resolves 71,954 exact identities and 14,438 qualifier-preserving alias identities: 86,392 total matches, 39.35% supported coverage, 86,032 two-sided price pairs, zero ambiguities, and 109,763 quarantined Textless rows. Two rebuilds produced fingerprint `ada5cb0288f45d16636bc3e34aab144709d0ff0b12c9eda629aa5ce6fcff20d2`. US acquisition and resale now consume direction-correct TCGplayer fields. All 261 tests, standalone TypeScript, warning-free lint, production build, private restart, and live API checks pass. Candidates remain `IDENTITY_VERIFIED` until owner costs and executable availability are supplied. Listing readiness is deferred as `PHR-WORKFLOW-011`.
+
 ## Active Assignment — Inventory Disposition Ledger
 
 - Assignment: `PHR-INVENTORY-DISPOSITION-20260730`

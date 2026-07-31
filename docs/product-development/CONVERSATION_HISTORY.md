@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-07-30 — LigaMagic/TCGplayer Acquired-Data Validation
+
+The Product Owner deferred listing readiness to the backlog and made LigaMagic/TCGplayer arbitrage validation the immediate priority. Listing readiness is now bounded as `PHR-WORKFLOW-011`: readiness gates, internal reservations, price/margin evidence, draft review, and cancellation, explicitly excluding publication, payment, shipping, repricing, and settlement.
+
+The acquired LigaMagic run `dry-run-20260730T203243818Z` was reconciled against pricing fingerprint `529fe0c52e646b1755700508acaa7580f18547668aae55324f224fd4a9262a9c`. An initial relaxed alias experiment was rejected after it produced unrelated-edition matches. Structural compatibility removed those mappings; price-distribution review then caught Japanese and Retro Frame qualifiers being lost. The accepted algorithm requires two or more unique anchors, one conflict-free target, structural label compatibility, and preservation of language/material-treatment qualifiers.
+
+The accepted result is 71,954 exact plus 14,438 alias mappings: 86,392 matches (39.35% of supported Normal/Foil identities), 86,032 two-sided price pairs, 133,146 supported unmatched rows, zero ambiguities, and 109,763 quarantined Textless rows. Two consecutive builds produced fingerprint `ada5cb0288f45d16636bc3e34aab144709d0ff0b12c9eda629aa5ce6fcff20d2`. Arbitrage now uses delivered/listing TCGplayer evidence for US acquisition and market/listing evidence for US resale. The 261-test suite, TypeScript, warning-free lint, build, private restart, and live API pass. CTO accepts the data-validation checkpoint; candidates correctly remain `IDENTITY_VERIFIED` until owner costs and real executable availability are supplied.
+
 ## 2026-07-30 — Inventory Disposition Ledger
 
 The Product Owner directed Phronesis to move on after Inventory reconciliation acceptance. The autonomous workflow selected the roadmap's next declared dependency: explain inventory leaving a lot before listing readiness. `PHR-WORKFLOW-010` adds explicit Sale, Loss, Damage, Transfer Out, and Correction records with known-quantity enforcement and mandatory reasons.

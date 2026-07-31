@@ -6,15 +6,16 @@
 - Completed: workspace locations, physical-count reconciliation, quantity basis, and append-only movement/count history (`PHR-WORKFLOW-009`).
 - Completed: classified sale/disposition ledger, gross recorded sales, retry-safe creation, and non-destructive reversal (`PHR-WORKFLOW-010`).
 - Operational: acquisition evidence, on-hand quantity, location, source provenance, reconciliation, disposition history, and void propagation.
-- Next inventory maturity: listing readiness; payment, settlement, and margin accounting remain a later financial workflow.
+- Backlog: marketplace-neutral listing readiness (`PHR-WORKFLOW-011`) with readiness gates, reserved quantities, price/margin evidence, listing drafts, review, and cancellation. Publication, payments, shipping, and automatic repricing remain outside that backlog item.
+- Inventory priority is paused while regional arbitrage validation is active.
 - Existing separate gates remain: required-login activation, owner arbitrage cost configuration, executable availability, and daily LigaMagic scheduling.
 
 ## Current Delivery — Regional Vending And Arbitrage Intelligence
 
-- Exact LigaMagic/TCGplayer cross-market identity bridge: Product Review Ready.
+- Exact LigaMagic/TCGplayer cross-market identity bridge: Completed and validated across 86,392 identities.
 - Brazilian vending evidence inside Vendor Workspace: Product Review Ready.
 - Official BCB PTAX closing buy/sell automation: Completed and operational (`PHR-API-007`).
-- Two-way US↔Brazil arbitrage verification: Product Review Ready; operational ranking now awaits only owner cost configuration and executable availability.
+- Two-way US↔Brazil arbitrage verification: Completed and truth-gated; operational ranking awaits owner cost configuration and executable availability.
 - Daily LigaMagic scheduling remains separately gated.
 
 ## Immediate Product Direction — Cross-Game Buying And Intelligence
