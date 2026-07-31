@@ -110,6 +110,8 @@ The model must accommodate nested destinations, badges, permissions, lifecycle s
 
 Desktop retains a persistent sidebar. The same configuration must support a future compact/mobile navigation treatment; this feature does not authorize a full mobile redesign.
 
+Delivery note (2026-07-31): the separately scoped `PHR-UX-014` now consumes this configuration through an entitlement-filtered phone drawer. This note does not retroactively expand the original `PHR-UX-006` scope.
+
 ## User Stories
 
 - As a buyer, I can understand the application's workflow from the navigation without learning its internal engine names.
@@ -150,7 +152,7 @@ Desktop retains a persistent sidebar. The same configuration must support a futu
 - Manage area with Inventory and Portfolio after separate product approval.
 - Monitor alerts and automation after separate product approval.
 - Role-aware and organization-aware navigation.
-- Responsive mobile navigation.
+- Responsive mobile navigation is delivered by `PHR-UX-014`.
 - Breadcrumbs and cross-workflow recents.
 
 ## Technical Notes

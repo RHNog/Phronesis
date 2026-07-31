@@ -9,10 +9,13 @@ import {
 import {
   deliveredPriceFor,
   isStale,
-  normalizeSearchText,
   queryClearlyTargetsSingle,
   searchScore,
 } from "@/lib/pricing/domain";
+import {
+  createPricingSearchPlan,
+  type PricingSearchPlan,
+} from "@/lib/pricing/searchPlan";
 import type { PricingExportContract } from "@/lib/pricing/contract";
 import {
   parsePricingExport,
@@ -568,10 +571,12 @@ export class PricingRepository {
     query: string,
     now = new Date(),
   ): PricingSearchResponse {
+    const plan = createPricingSearchPlan(query);
     const category = getActivePricingCategory(categoryId);
     if (!category) {
       return {
         query,
+        interpretations: plan.interpretations,
         category: {
           categoryId,
           label: categoryId,
@@ -609,23 +614,21 @@ export class PricingRepository {
     if (!state || trimmed.length < pricingLookupConfig.minimumQueryLength)
       return {
         query,
+        interpretations: plan.interpretations,
         category: freshness,
         sealed: [],
         singles: [],
         sealedSuppressed: queryClearlyTargetsSingle(query),
       };
-    const terms = normalizeSearchText(trimmed).split(" ").filter(Boolean);
-    if (!terms.length)
+    if (!plan.tokens.length)
       return {
         query,
+        interpretations: plan.interpretations,
         category: freshness,
         sealed: [],
         singles: [],
         sealedSuppressed: queryClearlyTargetsSingle(query),
       };
-    const ftsQuery = terms
-      .map((term) => `"${term.replaceAll('"', '""')}"*`)
-      .join(" AND ");
     const candidates = this.database
       .prepare(
         `
@@ -634,9 +637,9 @@ export class PricingRepository {
       WHERE pricing_search MATCH ? AND s.category_id=? LIMIT 160
     `,
       )
-      .all(ftsQuery, categoryId) as SqlRow[];
+      .all(plan.ftsQuery, categoryId) as SqlRow[];
     const matches = candidates
-      .map((candidate) => this.hydrateMatch(candidate, query))
+      .map((candidate) => this.hydrateMatch(candidate, query, plan))
       .filter((match) => match.score > 0)
       .sort(
         (a, b) =>
@@ -647,6 +650,7 @@ export class PricingRepository {
     const sealedSuppressed = queryClearlyTargetsSingle(query);
     return {
       query,
+      interpretations: plan.interpretations,
       category: freshness,
       sealedSuppressed,
       sealed: sealedSuppressed
@@ -675,6 +679,7 @@ export class PricingRepository {
       a.sku.localeCompare(b.sku);
     return {
       query,
+      interpretations: responses[0]?.interpretations ?? [],
       categories: responses.map((response) => response.category),
       sealedSuppressed: queryClearlyTargetsSingle(query),
       singles: responses
@@ -716,7 +721,11 @@ export class PricingRepository {
     );
   }
 
-  private hydrateMatch(candidate: SqlRow, query: string): SearchMatch {
+  private hydrateMatch(
+    candidate: SqlRow,
+    query: string,
+    plan?: PricingSearchPlan,
+  ): SearchMatch {
     const categoryId = String(candidate.category_id);
     const sku = String(candidate.sku);
     const latest = this.database
@@ -772,7 +781,7 @@ export class PricingRepository {
       ...identity,
       language: String(candidate.language),
       imageUrl: candidate.image_url as string | null,
-      score: searchScore(identity, query),
+      score: searchScore(identity, query, plan),
       prices,
       sealedPrice,
       previousMarketPriceCents:

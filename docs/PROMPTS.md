@@ -1,5 +1,32 @@
 # Prompt History
 
+## Event Stock Control And Intent-Aware Search — 2026-07-31
+
+`PHR-STRUCT-20260731-005` authorizes `PHR-WORKFLOW-012` to ingest a canonical Google-Sheet CSV snapshot into event-scoped local stock, link both Sale surfaces to append-only quantity movements and reconciliation reports, and authorizes `PHR-UX-016` to interpret bounded catalogue shorthand such as `SH03 → SWSH03` without automatic identity adoption.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-WORKFLOW-012-event-stock-control-prompt.md`.
+- `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+
+## Vendor Workspace Quick Sale — 2026-07-31
+
+`PHR-STRUCT-20260731-004` authorizes `PHR-UX-015` to add a Lite Quick Sale mode inside Vendor Workspace while keeping `/api/event-ledger` and `PurchaseLedgerRepository` as the single event-cash control.
+
+Implementation prompt: `docs/prompts/PHR-UX-015-vendor-workspace-quick-sale-prompt.md`.
+
+## Responsive Application Navigation — 2026-07-31
+
+`PHR-STRUCT-20260731-003` authorizes `PHR-UX-014` to repair the shared phone shell by passing the same server-filtered primary destinations to an accessible mobile drawer while preserving the persistent desktop sidebar.
+
+Implementation prompt: `docs/prompts/PHR-UX-014-responsive-application-navigation-prompt.md`.
+
+## Event Cash Ledger Revision — 2026-07-31
+
+Structure `PHR-STRUCT-20260731-002` reopens `PHR-WORKFLOW-006` additively: declare opening cash, record payment-aware manual Sales and Purchases, attach one to 25 manually described sold items to one Sale, preserve receipt/Inventory atomicity, append reasoned reversal, and freeze close variance.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md`.
+
 ## LigaMagic/TCGplayer Crosswalk Validation — 2026-07-30
 
 Structure `PHR-STRUCT-20260730-013` reactivates `PHR-ARCH-013`, `PHR-API-006`, and `PHR-WORKFLOW-007` to validate the acquired source pair, derive only conflict-free edition aliases, and produce reproducible cross-market coverage evidence.

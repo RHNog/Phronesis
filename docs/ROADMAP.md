@@ -1,5 +1,35 @@
 # Roadmap
 
+## Product Review Candidate: Event Stock Control And Intent-Aware Search
+
+- Implemented: an owner-scoped native Google Sheet template and strict five-column CSV contract feed an immutable event-scoped SQLite stock snapshot (`PHR-WORKFLOW-012`).
+- Implemented: full Event Ledger and Vendor Workspace Quick Sale share exact option search, atomic decrement/reversal, manual fallback, physical count evidence, and sold/leftover reports.
+- Implemented: bounded structured search interprets `SH03` as `SWSH03`, discloses that interpretation, and preserves explicit card selection (`PHR-UX-016`).
+- Verified: complete disposable stock workflow, 10,000-option median search of 29.93 ms, intended Darkness Ablaze Charizard first, 284/284 tests, TypeScript, lint, build, diff hygiene, private health, and 390px no-overflow/clean-console review.
+- Deferred: authenticated live Google synchronization, global Inventory allocation, barcode/SKU contract v2, and broader typo/OCR interpretation.
+
+## Product Review Candidate: Vendor Workspace Quick Sale
+
+- Implemented: Vendor Workspace now presents one Event station with default Purchase intake and one-tap Lite Quick Sale (`PHR-UX-015`).
+- Preserved: `/event-ledger` remains the seller's full event-control panel; both surfaces share the same active event, API, repository, validation, idempotency, cash summary, and audit trail.
+- Verified: an isolated two-item $25.50 Cash Sale entered at 390px appeared in the full Event Ledger with the same $125.50 expected cash. Full 279/279 tests, TypeScript, lint, build, private health, responsive overflow/touch targets, and console checks pass.
+
+## Product Review Candidate: Responsive Application Navigation
+
+- Implemented: the shared phone header opens every authorized primary Phronesis destination through one accessible drawer (`PHR-UX-014`).
+- Preserved: desktop sidebar, canonical navigation metadata, server entitlement filtering, and independent page/API authorization.
+- Verified: all six live routes, current state, focus containment/restoration, Escape/backdrop dismissal, breakpoint recovery, 44px targets, 390px overflow, console, 278 tests, TypeScript, lint, build, and private-service health pass.
+
+## Product Review Candidate: Event Cash Ledger Revision
+
+- Implemented: one active single-currency event begins with explicit opening cash (`PHR-WORKFLOW-006`).
+- Implemented: frictionless manual Sales and Purchases, payment-aware cash effects, and audited Cash Adjustments.
+- Implemented: one manual Sale records one overall amount plus one to 25 required sold-item descriptions and quantities without Inventory dependency.
+- Implemented: Vendor Workspace purchase receipts and Inventory intake create one linked ledger Purchase atomically.
+- Implemented: immutable closing count, expected cash, over/short variance, reasoned reversal, and responsive dedicated Event Ledger surface.
+- Verified: 278 tests, TypeScript, lint, production build, private service health, desktop review, complete phone-shell navigation, and 390px no-overflow/minimum-44px-control review pass.
+- Excluded: payment processing, settlement, accounting, profit claims, and automatic manual-sale Inventory reconciliation.
+
 ## Completed: LigaMagic/TCGplayer Arbitrage Data Validation
 
 - Accepted crosswalk: 71,954 exact plus 14,438 qualifier-preserving alias matches; 86,392 total, 133,146 unmatched supported identities, zero ambiguous adoptions, and 109,763 quarantined Textless rows.

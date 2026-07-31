@@ -335,7 +335,11 @@ function OfferFirstSummary({
   );
 }
 
-export default function SnapshotVendorWorkspace() {
+export default function SnapshotVendorWorkspace({
+  canOperate,
+}: {
+  canOperate: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<UnifiedPricingSearchResponse | null>(
     null,
@@ -752,6 +756,11 @@ export default function SnapshotVendorWorkspace() {
           Phronesis searches every loaded game and identifies the catalogue on
           each result.
         </p>
+        {response?.interpretations?.length ? (
+          <p role="status" className="mt-2 text-xs font-medium text-cyan-300">
+            {response.interpretations.map((item) => item.message).join(" · ")}
+          </p>
+        ) : null}
       </div>
 
       {error ? (
@@ -1142,6 +1151,7 @@ export default function SnapshotVendorWorkspace() {
         </section>
       </div>
       <VendorCheckout
+        canOperate={canOperate}
         condition={condition}
         marketReferenceCents={reference.cents}
         match={selectedMatch}

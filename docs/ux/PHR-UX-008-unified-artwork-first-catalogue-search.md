@@ -33,6 +33,8 @@ Vendor Workspace currently searches only the manually selected game. It renders 
 5. Condition selection follows finish selection and continues to resolve exact snapshot evidence for that SKU.
 6. Sealed products remain discrete products and are not collapsed across SKUs.
 
+`PHR-UX-016` additively interprets bounded, documented structured set-code shorthand before the same global search. The interpretation affects retrieval and ranking only; it does not alter grouping, catalogue identity, or the requirement that the operator select an exact result.
+
 ## Functional Requirements
 
 - No catalogue dropdown is required for ordinary search.
@@ -83,6 +85,7 @@ Desktop remains a three-column buying station. Mobile preserves one-column order
 - `PHR-WORKFLOW-004` Snapshot-Powered Vendor Workspace.
 - `PHR-API-002` Cross-Game Catalogue Artwork Providers.
 - Existing Variant Resolution Policy and condition pricing contract.
+- `PHR-UX-016` Intent-Aware Catalogue Search for bounded structured shorthand.
 
 ## Non-Goals
 
@@ -97,4 +100,4 @@ Desktop remains a three-column buying station. Mobile preserves one-column order
 - Related tests: `tests/snapshot-vendor-workspace.test.ts`, `tests/pricing-catalog-sync.test.ts`.
 - Validation: `docs/testing/PHR-UX-008-unified-artwork-first-catalogue-search-validation.md`.
 - Release note: `docs/release-notes/PHR-UX-008.md`.
-- Last modified: 2026-07-29.
+- Last modified: 2026-07-31.

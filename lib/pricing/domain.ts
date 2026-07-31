@@ -8,6 +8,14 @@ import {
   type ProductType,
   type SearchMatch,
 } from "@/lib/pricing/types";
+import { normalizeSearchText } from "@/lib/pricing/searchText";
+import {
+  createPricingSearchPlan,
+  tokenPlanMatchesText,
+  type PricingSearchPlan,
+} from "@/lib/pricing/searchPlan";
+
+export { normalizeSearchText } from "@/lib/pricing/searchText";
 
 const conditionLabels: Record<PricingCondition, string> = {
   NEAR_MINT: "Near Mint",
@@ -56,15 +64,6 @@ export function deliveredPriceFor(
     shippingCents: pricingLookupConfig.assumedSingleShippingCents,
     shippingSource: "ASSUMED",
   };
-}
-
-export function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
 }
 
 const finishOnlyParenthetical = /\((?:\d{2,4}|[a-z]{1,4}\d{1,4}|(?:etched|foil|holofoil|reverse holofoil|rainbow foil|surge foil|galaxy foil|confetti foil|pool party foil|textured foil|cold foil))\)\s*$/i;
@@ -133,14 +132,22 @@ export function queryClearlyTargetsSingle(query: string): boolean {
   return singleSignals.test(query) || collectorNumberOnly.test(normalized);
 }
 
-export function searchScore(row: Pick<NormalizedPricingRow, "name" | "setName" | "collectorNumber" | "variant" | "productType">, query: string): number {
-  const q = normalizeSearchText(query);
+export function searchScore(
+  row: Pick<
+    NormalizedPricingRow,
+    "name" | "setName" | "collectorNumber" | "variant" | "productType"
+  >,
+  query: string,
+  suppliedPlan?: PricingSearchPlan,
+): number {
+  const plan = suppliedPlan ?? createPricingSearchPlan(query);
+  const q = plan.normalized;
   if (!q) return 0;
   const name = normalizeSearchText(row.name);
   const set = normalizeSearchText(row.setName);
   const number = normalizeSearchText(row.collectorNumber ?? "");
   const variant = normalizeSearchText(row.variant);
-  const tokens = q.split(" ");
+  const searchable = `${name} ${set} ${number} ${variant}`;
   let score = 0;
   if (name === q) score += 100;
   else if (name.startsWith(q)) score += 70;
@@ -149,9 +156,16 @@ export function searchScore(row: Pick<NormalizedPricingRow, "name" | "setName" |
   else if (set.includes(q)) score += 28;
   if (number === q) score += 65;
   if (variant.includes(q)) score += 24;
-  score += tokens.filter((token) =>
-    `${name} ${set} ${number} ${variant}`.includes(token),
-  ).length * 6;
+  const matchedTokens = plan.tokens.filter((token) =>
+    tokenPlanMatchesText(token, searchable),
+  );
+  if (matchedTokens.length !== plan.tokens.length) return 0;
+  score += matchedTokens.length * 6;
+  for (const interpretation of plan.interpretations) {
+    if (set.split(" ").includes(interpretation.canonical.toLowerCase())) {
+      score += 45;
+    }
+  }
   if (row.productType === "SEALED" && (name === q || set === q)) score += 10;
   return score;
 }

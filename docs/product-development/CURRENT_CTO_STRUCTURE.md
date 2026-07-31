@@ -1,5 +1,62 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Event Stock Control And Intent-Aware Search
+
+- Assignment: `PHR-EVENT-STOCK-SEARCH-20260731`
+- Document ID: `PHR-STRUCT-20260731-005`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Features: `PHR-WORKFLOW-012`, `PHR-UX-016`
+- Priority: Critical
+- Objective: ingest a human-maintained five-column Google Sheet snapshot into local event stock; let both Event Ledger Sale surfaces search and decrement the exact option; produce sold, expected-leftover, physical-count, and variance evidence; and make catalogue search understand bounded shorthand such as `SH03 → SWSH03`.
+- Product rule: Google Sheets is the authoring surface, but the live event runs only from a hash-recorded local CSV snapshot. A consumed manifest is immutable. Sale/reversal and stock movements are atomic and append-only.
+- Reporting rule: whole-Sale actual amount remains transaction evidence and is never arbitrarily allocated across item rows. Imported unit price remains list-price evidence. Count variance never becomes an inferred Sale, Loss, or correction.
+- Search rule: bounded identifier aliases improve retrieval/ranking and are disclosed to the operator; they never mutate catalogue identity or auto-select a product.
+- Constraints: additive SQLite only; preserve legacy/manual Sales, Quick Sale, cash math, global Inventory, authorization, and existing dirty worktree. No live Google credential, public Sheet, payment processing, external transaction, dependency, public deployment, commit, or push.
+- Acceptance: strict CSV validation/hash provenance, local stock search, atomic multi-item Sale/reversal, retry/oversell safety, untracked flags, physical counts, truthful reports, SH03 first-result proof, full deterministic gates, and isolated desktop/390px runtime verification.
+- Verified result: an owner-scoped native Google Sheet and downloadable CSV template feed strict hash-recorded local event stock; both Sale surfaces share exact option selection, atomic movements, reversal, untracked fallback, physical counts, and sold/leftover reports. `Charizard v sh03` returns `SWSH03: Darkness Ablaze` Charizard V `019/189` first with visible interpretation. The disposable end-to-end workflow, 29.93 ms median search across 10,000 options, 284/284 tests, TypeScript, lint, production build, diff hygiene, private health, and 390px overflow/console checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
+## Active Assignment — Vendor Workspace Quick Sale
+
+- Assignment: `PHR-VENDOR-QUICK-SALE-20260731`
+- Document ID: `PHR-STRUCT-20260731-004`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Feature: `PHR-UX-015`
+- Priority: High
+- Objective: let a buyer record an incidental event Sale inside Vendor Workspace without leaving the buying workflow.
+- Product boundary: Vendor Workspace provides only Purchase intake and Lite Quick Sale. `/event-ledger` remains the seller’s full panel for event start, expected-cash audit, activity, adjustment, reversal, close, and reconciliation.
+- Data rule: both surfaces post to the same authorized `/api/event-ledger`, active event ID, validation, `PurchaseLedgerRepository`, summary, and audit trail. No second ledger or cash calculation is permitted.
+- Acceptance: one-to-25-item Sale, payment-aware expected cash, immediate returned summary, retry safety, draft preservation, view-only/no-event states, unchanged purchase intake, full deterministic gates, and responsive live cross-surface proof.
+- Verified result: a disposable two-item $25.50 Cash Sale entered at 390px in Vendor Workspace updated its Lite summary to $25.50 gross sales and $125.50 expected cash, then appeared with both sold-item descriptions and the same totals in `/event-ledger`. Purchase intake remained present, desktop and phone layouts had no horizontal overflow, required controls met the 44px target, and the console was clean. Full 279/279 tests, TypeScript, lint, production build, diff hygiene, and private-service health pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
+## Active Assignment — Responsive Application Navigation
+
+- Assignment: `PHR-RESPONSIVE-APPLICATION-NAVIGATION-20260731`
+- Document ID: `PHR-STRUCT-20260731-003`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Feature: `PHR-UX-014`
+- Priority: High
+- Objective: restore the complete Phronesis application path at phone widths after Product Review exposed that the desktop-only sidebar disappeared without a mobile replacement.
+- Product rule: the server entitlement-filtered typed destination list is the only input to both desktop and phone navigation. Mobile presentation cannot own a second route list or permission decision.
+- Accessibility rule: named trigger/dialog/navigation, current-page state, 44px controls, focus entry and containment, Escape/backdrop/explicit dismissal, trigger-focus restoration, body-scroll restoration, and breakpoint-aware closure are mandatory.
+- Verified result: all six authorized destinations render and navigate at 390px, Event Ledger is current, every route closes the drawer, phone controls measure 44–52px, horizontal overflow is zero, widening restores the desktop sidebar and body scrolling, and the console is clean. Focused 5/5, full 278/278, TypeScript, lint, production build, diff hygiene, and private health checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
+## Active Assignment — Event Cash Ledger Revision
+
+- Assignment: `PHR-EVENT-CASH-LEDGER-20260731`
+- Document ID: `PHR-STRUCT-20260731-002`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Feature: `PHR-WORKFLOW-006`
+- Priority: Critical
+- Objective: evolve the purchase-only event checkout into a single-currency Event Cash Ledger with declared opening cash, frictionless manual Sales and Purchases, multi-item sold descriptions, payment-aware cash effects, audited reversal, and closing variance.
+- Product rules: a Sale has one positive total and one to 25 required human-entered sold-item lines; it never requires or mutates Inventory. Vendor Workspace purchases retain immutable receipts and Inventory intake while adding one ledger Purchase atomically. Expected cash includes only Cash movements and adjustments. Net event cash movement is never labelled profit.
+- Constraints: additive migration only; preserve receipt, Inventory, authorization, and audit evidence. No payment processing, tax, settlement, accounting export, customer CRM, public deployment, or automatic manual-sale Inventory reconciliation.
+- Acceptance: exact cash calculations, retry safety, receipt linkage, reversal, close locking, workspace authorization, full automated gates, desktop review, and 390px no-overflow review pass.
+- Verified result: the dedicated Event Ledger starts with explicit currency/opening cash, records payment-aware manual Sales and Purchases, persists one to 25 sold-item rows per Sale, supports reasoned Cash Adjustments and reversals, atomically links evaluated purchase receipts, and freezes expected/actual/variance evidence at close. Product Review then exposed the missing shared phone-navigation path; `PHR-UX-014` now restores all six entitlement-filtered destinations. The 278-test suite, TypeScript, lint, production build, private service health, complete six-route phone navigation, desktop breakpoint recovery, no-overflow/touch-target, and zero-console-error checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
 ## Active Assignment — Catalogue Completion And Arbitrage Targets
 
 - Assignment: `PHR-CATALOGUE-ARBITRAGE-PRECISION-20260731`

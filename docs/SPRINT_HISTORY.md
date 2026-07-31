@@ -1,5 +1,21 @@
 # Sprint History
 
+## 2026-07-31 — Event Stock Control And Intent-Aware Search
+
+Added a native Google Sheet template and strict local CSV ingestion, event-scoped SQLite manifests/options/movements/counts, one stock picker shared by full and Lite Event Ledger Sales, atomic decrement/reversal, explicit untracked fallback, physical variance, and truthful sold/leftover reports. Physical verification stays collapsed during live selling. Added bounded structured catalogue intent so `Charizard v sh03` returns the SWSH03 Darkness Ablaze Charizard first while showing the interpretation and preserving explicit selection. A disposable import/Sale/count/report/reversal workflow, 29.93 ms median search across 10,000 options, 284/284 tests, TypeScript, lint, build, diff hygiene, private health, and 390px overflow/console gates pass. Product Review remains pending.
+
+## 2026-07-31 — Vendor Workspace Quick Sale
+
+Added a Lite Event Ledger inside Vendor Workspace without creating a second ledger. The Event station defaults to existing Purchase intake and adds manual multi-item Quick Sale using the canonical active event, authorized API, repository, payment-aware drawer math, idempotency, and activity. An isolated phone-width workflow proved the Sale and totals across both UI surfaces; 279/279 tests, TypeScript, lint, build, private health, desktop/phone overflow and control-size checks, and clean console pass. Product Review remains pending.
+
+## 2026-07-31 — Responsive Application Navigation
+
+Closed the phone-shell dead end exposed during Event Ledger Product Review. `AppShell` now gives the same server-filtered typed destinations to the desktop sidebar and an accessible phone drawer, with active state, focus containment/restoration, Escape/backdrop dismissal, body-scroll restoration, and automatic desktop-breakpoint recovery. All six live destinations, 278/278 tests, TypeScript, lint, production build, private health, 390px overflow/touch targets, desktop recovery, and console gates pass. Product Review remains pending.
+
+## 2026-07-31 — Event Cash Ledger Revision
+
+Evolved event purchasing into one payment-aware cash ledger with explicit opening cash, frictionless manual Sales and Purchases, one to 25 manually described items per Sale, Cash Adjustments, append-only reversal, receipt-linked evaluated purchases, and immutable closing variance. The dedicated `/event-ledger` surface passes the 278-test suite after the separately documented phone-shell correction, TypeScript, lint, production build, private runtime, desktop, and 390px review gates. Product Review remains pending.
+
 ## 2026-07-30 — Artwork And Provider Settings Remediation
 
 Repaired the exact Store Championship Urza's Saga thumbnail by separating user search terms from provider identity queries and allowing only unique Magic name/collector reconciliation across provider set labels. Added secret-free provider status and Employee login activation guidance to Settings. All 234 tests and remaining gates pass; secure credential registration remains gated on owner login.

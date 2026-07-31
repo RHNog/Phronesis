@@ -1,6 +1,41 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-07-31 — Event stock uses a local immutable snapshot and separate reconciliation evidence
+
+- **Status:** Accepted for Product Review.
+- **Context:** Event sellers need fast option-level Sale entry and expected leftovers from a human-maintained Google Sheet, but live selling cannot depend on network access or mutable spreadsheet state.
+- **Decision:** A strict five-column CSV export becomes one hash-recorded, event-scoped SQLite manifest. Both Event Ledger surfaces may link Sale rows to exact manifest options. Ledger rows and append-only stock movements commit atomically; reversal appends compensation. Physical counts remain observations rather than quantity rewrites.
+- **Consequences:** The Sheet is an authoring/template surface, not the live database. A consumed manifest cannot be replaced. Global receipt-backed Inventory remains independent. Actual whole-Sale amount, imported list price, expected leftover, counted quantity, variance, and untracked lines remain explicitly distinct.
+
+## 2026-07-31 — Search may expand bounded structured intent but never adopt identity
+
+- **Status:** Accepted for Product Review.
+- **Context:** Literal prefix FTS could not retrieve `SWSH03` for the common shorthand `SH03`, even when the rest of the query exactly described Charizard V.
+- **Decision:** Candidate retrieval and scoring share one deterministic, escaped query plan with bounded documented structured aliases and visible interpretation feedback. Every logical input token remains required.
+- **Consequences:** `SH03` reaches `SWSH03` quickly, but expansion cannot rewrite a catalogue record, reconcile a crosswalk, or automatically select a product. Broader typo or natural-language behavior requires separately measured rules.
+
+## 2026-07-31 — One Event Ledger serves full and Lite operating surfaces
+
+- **Status:** Accepted for Product Review.
+- **Context:** A buyer working in Vendor Workspace may make an incidental Sale, but changing routes to the seller-focused Event Ledger interrupts the live buying workflow.
+- **Decision:** Vendor Workspace provides a Lite Quick Sale mode beside its default Purchase intake. It reuses the active event ID, authorized `/api/event-ledger`, domain validation, `PurchaseLedgerRepository`, idempotency, returned summary, and activity trail. `/event-ledger` remains the only full event-control surface.
+- **Consequences:** Buyer- and seller-entered Sales affect the same expected drawer and audit history immediately. Vendor Workspace cannot own a second ledger or expose event start, cash adjustment, reversal, correction, close, or reconciliation. Manual Quick Sales remain independent of Inventory.
+
+## 2026-07-31 — Responsive renderers share one filtered navigation input
+
+- **Status:** Accepted for Product Review.
+- **Context:** The desktop sidebar was intentionally hidden at phone widths, but the shared top bar had no replacement, making every directly entered phone workflow a navigation dead end.
+- **Decision:** `AppShell` resolves visible modules on the server and passes one typed, entitlement-filtered destination list to both the desktop sidebar and phone drawer. The phone renderer may own route state and accessible interaction behavior but cannot own product metadata or permission logic.
+- **Consequences:** New authorized primary destinations appear in both responsive treatments automatically. Hidden navigation remains presentation only; page, API, and repository authorization stay authoritative. Phone navigation must retain focus, scroll, touch-target, overflow, and breakpoint-recovery evidence.
+
+## 2026-07-31 — Event cash evidence is separate from Inventory and profit
+
+- **Status:** Accepted.
+- **Context:** Live event sales may involve items that were never registered in Phronesis, while evaluated purchases already create immutable receipts and Inventory intake. The operator still needs exact drawer control.
+- **Decision:** One event owns one currency and declared opening cash. A manual Sale owns one positive overall payment plus one to 25 required description/quantity rows and never requires or mutates catalogue/Inventory identity. Payment method determines signed drawer effect. Evaluated purchases add a linked ledger Purchase in their existing receipt/Inventory transaction. Reversal is append-only, and close freezes expected, counted, and variance evidence.
+- **Consequences:** Manual event sales cannot claim Inventory disposition or allocated cost basis. Sales less Purchases is labelled Net Cash Movement, never profit. Later reconciliation to Inventory, settlement, tax, accounting export, and multi-currency drawers require separate decisions.
+
 ## 2026-07-30 — Repository-native Handoff owns session continuity
 
 - **Status:** Accepted.

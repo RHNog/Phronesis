@@ -1,5 +1,37 @@
 # Agent Handoff
 
+## Product Review Candidate — Event Stock Control And Intent-Aware Search — 2026-07-31
+
+- `PHR-WORKFLOW-012` and `PHR-UX-016` are implemented under `PHR-STRUCT-20260731-005`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- Native Google Sheet template: `https://docs.google.com/spreadsheets/d/1yqGJMvyL_zzMuDQPOdnLi0UUuyIF1-B3-9iwpkEUv50/edit` (owner-scoped). The app also provides a local CSV template.
+- Both Event Ledger Sale surfaces now search and atomically decrement one local event manifest, preserve untracked fallback, restore stock on reversal, and produce sold/leftover/count/variance evidence.
+- `Charizard v sh03` now discloses `SH03 → SWSH03` and returns Darkness Ablaze Charizard V `019/189` first.
+- Verification is green at 284/284 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, complete disposable API workflow, 29.93 ms median search over 10,000 options, and 390px no-overflow/clean-console review.
+- No live event mutation, public Sheet, credential, external transaction, dependency, commit, or push occurred. Same-session conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Vendor Workspace Quick Sale — 2026-07-31
+
+- `PHR-UX-015` is implemented under `PHR-STRUCT-20260731-004`; the worktree remains uncommitted pending Product Owner direction.
+- Vendor Workspace now provides one Event station with default Purchase intake and Lite Quick Sale. Both modes feed the same active Event Ledger; `/event-ledger` retains full event control.
+- An isolated 390px two-item $25.50 Cash Sale updated the Lite summary to $125.50 expected cash and appeared with identical items/totals in the full Event Ledger. No persistent user event data was changed.
+- Verification is green at 279/279 tests plus standalone TypeScript, warning-free lint, production build, diff hygiene, private-service health, desktop/390px overflow and touch-target checks, and a clean browser console.
+- Same-session Chief Architect conformance passes. CTO Product Review, commit, and push remain pending.
+
+## Product Review Candidate — Responsive Application Navigation — 2026-07-31
+
+- `PHR-UX-014` fixes the shared shell defect found during Event Ledger phone review; the worktree remains uncommitted pending Product Owner direction.
+- Every authorized destination now appears in an accessible phone drawer fed by the same server-filtered list as the desktop sidebar.
+- Live 390px review reached Opportunities, Vendor Workspace, Event Ledger, Market Watch, Inventory, and Settings; active state, focus wrap/return, dismissal, body-scroll restoration, breakpoint recovery, 44px controls, overflow, and console checks pass.
+- Verification is green at 278/278 tests plus standalone TypeScript, warning-free lint, production build, diff hygiene, and private-service health.
+
+## Product Review Candidate — Event Cash Ledger — 2026-07-31
+
+- `PHR-WORKFLOW-006` is implemented under `PHR-STRUCT-20260731-002`; changes remain uncommitted until the Product Owner requests Git continuity.
+- `/event-ledger` starts one USD/BRL event with explicit opening cash, records manual payment-aware Sales/Purchases, stores one to 25 sold-item rows per Sale, supports Cash Adjustments/reversals, and freezes close variance.
+- Vendor receipt checkout atomically creates Inventory and one linked ledger Purchase; receipt void appends the ledger reversal.
+- Verification is green at 278/278 tests plus standalone TypeScript, lint, production build, diff hygiene, private service health, desktop, complete phone navigation, 390px no-overflow/minimum-44px-control, and zero-console-error gates.
+- Same-session Chief Architect conformance passes. CTO Product Review, commit, and push remain pending.
+
 ## Current Canonical Git And Arbitrage Handoff — 2026-07-30
 
 - Canonical repository: `/Volumes/JarvisSSD/Projects/Phronesis`; the Developer checkout is rollback-only.

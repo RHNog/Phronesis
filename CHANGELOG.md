@@ -1,5 +1,51 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-012 Event Stock Control / PHR-UX-016 Intent-Aware Search
+
+### Local event inventory
+
+- Added an owner-scoped native Google Sheet template and strict five-column CSV ingestion with SHA-256 provenance.
+- Added event-scoped SQLite manifests, options, movements, and physical counts; both Event Ledger Sale surfaces reuse one exact-option picker and canonical write path.
+- Added atomic stock decrement/reversal, retry and oversell protection, explicit untracked fallback, compact summaries, and sold/leftover CSV reports.
+- Kept physical verification collapsed until requested so a large manifest does not obstruct live Sale entry.
+
+### Structured catalogue intent
+
+- Added bounded, escaped, all-token query expansion for numbered Pokémon set shorthand and leading-zero variants.
+- Added visible interpretation feedback without changing catalogue identity or automatically selecting a product.
+- Verified `Charizard v sh03` returns the SWSH03 Darkness Ablaze Charizard V first.
+- Verified 284/284 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private health, a 29.93 ms median 10,000-option stock search, and 390px no-overflow/clean-console behavior.
+
+## Unreleased — PHR-UX-015 Vendor Workspace Quick Sale
+
+### Shared event station
+
+- Added Purchase intake and Quick Sale modes to Vendor Workspace, preserving Purchase intake as the default.
+- Added manual multi-item Sale entry, payment selection, optional notes, immediate expected-cash/gross-sales feedback, and a direct path to full Event Ledger control.
+- Reused the canonical active event, `/api/event-ledger`, repository, validation, idempotency, summary, and immutable activity; no second ledger or Inventory mutation was introduced.
+- Verified an isolated two-item $25.50 Cash Sale across both surfaces, 279/279 tests, standalone TypeScript, warning-free lint, production build, private service health, desktop/390px responsiveness, 44px targets, and zero-console-error gates.
+
+## Unreleased — PHR-UX-014 Responsive Application Navigation
+
+### Complete phone shell
+
+- Added an accessible phone drawer containing every server-authorized primary Phronesis destination.
+- Reused the exact navigation list already supplied to the desktop sidebar, preserving lifecycle labels, routes, ordering, and current-page state.
+- Added focus containment/restoration, Escape/backdrop dismissal, body-scroll restoration, and automatic closure when the desktop breakpoint activates.
+- Kept Menu, Search, and User controls at 44px or larger with no 390px horizontal overflow.
+- Verified all six live routes, 278/278 tests, standalone TypeScript, warning-free lint, production build, private service health, desktop recovery, and zero-console-error gates.
+
+## Unreleased — PHR-WORKFLOW-006 Event Cash Ledger Revision
+
+### Event cash control
+
+- Added explicit event currency, opening cash, expected drawer cash, physical close count, and preserved close variance.
+- Added payment-aware manual Sale, Purchase, and Cash Adjustment entries with retry-safe append-only persistence and reasoned reversal.
+- Added one to 25 required description/quantity rows to each manual Sale without catalogue or Inventory dependency.
+- Linked evaluated exact/Bulk purchase receipts to ledger Purchases inside the receipt/Inventory transaction and linked receipt void to one cash reversal.
+- Added the dedicated responsive Event Ledger destination and moved Vendor Checkout event setup to that canonical path.
+- Verified 278/278 tests after the `PHR-UX-014` phone-shell correction, plus standalone TypeScript, warning-free lint, production build, private desktop/390px runtime, console, overflow, touch-target, and complete-navigation gates.
+
 ## Unreleased — PHR-WORKFLOW-010
 
 ### Inventory disposition

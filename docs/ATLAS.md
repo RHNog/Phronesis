@@ -27,10 +27,18 @@
 ## Card-Show Operations
 
 - `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.
-- `PurchaseLedgerRepository` owns workspace/operator events, carts, idempotent immutable receipts, and append-only void audit in the ignored application database.
+- `PurchaseLedgerRepository` owns workspace/operator events, payment-aware ledger entries, sold-item rows, carts, idempotent immutable receipts, close snapshots, and append-only reversal/void audit in the ignored application database. `PHR-WORKFLOW-006` extends those records additively without rewriting receipt evidence.
+- An Event begins with declared single-currency opening cash. Manual Sales carry one overall amount plus one or more required description/quantity sold-item rows and never require or mutate Inventory.
+- Expected cash is opening cash plus active Cash Sales, minus active Cash Purchases, plus reasoned Cash Adjustments. Card, Transfer, and Other entries remain event totals without drawer effect. Closing records actual cash and variance; net cash movement is not profit.
+- Evaluated Vendor Workspace purchases retain atomic receipt/Inventory intake and add one linked ledger Purchase in the same transaction. Manual-entry reversal is append-only; linked purchase correction stays receipt-owned.
+- `PHR-UX-015` gives Vendor Workspace a Lite Quick Sale mode that posts to the same active Event Ledger API, repository, validation, idempotency, summary, and activity as `/event-ledger`; no parallel cash state exists.
+- `PHR-WORKFLOW-012` adds event-scoped stock allocation from a strict five-column, SHA-256-recorded Google Sheet CSV snapshot. Both Sale surfaces use one exact-option picker; Sale/reversal movements and ledger rows commit atomically, while manual lines remain explicitly untracked.
+- Event stock does not replace global Inventory. Opening quantities and imported option facts remain immutable after the first tracked Sale; expected leftover is derived from append-only movements, and physical counts remain separate variance evidence.
+- Sold reports preserve the actual whole-Sale amount separately from imported unit list price. Leftover reports preserve opening, sold, expected, counted, and variance without inferring loss or another Sale.
+- Vendor Workspace defaults to Purchase intake and exposes only incidental Sale capture plus current expected cash/gross sales. Event start, full activity, adjustment, reversal, correction, close, and reconciliation remain owned by `/event-ledger`.
 - Employee activation codes are salted scrypt hashes and only unlock an invited identity ceremony; server module entitlements remain authoritative.
 - `CuratedArtworkStore` binds validated local raster content to one category/SKU and serves it through the protected artwork boundary.
-- `/vendor` presents the existing Offer Ladder before optional seller-price comparison and contains the event checkout surface.
+- `/event-ledger` is the primary event-control surface. `/vendor` presents the Offer Ladder and feeds both evaluated purchases and manual Quick Sales into that same active Event Ledger.
 
 ## Identity-Backed Price Monitoring And Market Evidence
 
@@ -77,17 +85,18 @@
 
 ## Application Structure
 
-`PHR-UX-006` defines the lifecycle map used by the production shell:
+`PHR-UX-006` defines the lifecycle map used by the production shell, and `PHR-UX-014` makes that map reachable at phone widths:
 
 ```text
 Discover   -> Opportunities       -> / and /opportunities/[id]
 Decide     -> Vendor Workspace    -> /vendor and /evaluate
 Monitor    -> Market Watch        -> /watchlists
 Administer -> Settings            -> /settings
-Manage     -> Future capability   -> no production destination
+Manage     -> Event Ledger        -> /event-ledger
+Manage     -> Inventory           -> /inventory
 ```
 
-Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Developer routes are intentionally outside this map.
+Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. `AppShell` passes one server entitlement-filtered list to the persistent desktop sidebar and the accessible phone drawer; responsive renderers never own permission logic. Developer routes are intentionally outside this map.
 
 ## Product Development Governance
 

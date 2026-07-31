@@ -61,6 +61,12 @@ export type SearchMatch = {
   previousSnapshotDate: string | null;
 };
 
+export type PricingSearchInterpretation = {
+  input: string;
+  canonical: string;
+  message: string;
+};
+
 export type CategoryFreshness = {
   categoryId: string;
   label: string;
@@ -97,6 +103,7 @@ export type PricingSyncState = {
 
 export type PricingSearchResponse = {
   query: string;
+  interpretations?: PricingSearchInterpretation[];
   category: CategoryFreshness;
   sealed: SearchMatch[];
   singles: SearchMatch[];
@@ -105,6 +112,7 @@ export type PricingSearchResponse = {
 
 export type UnifiedPricingSearchResponse = {
   query: string;
+  interpretations?: PricingSearchInterpretation[];
   categories: CategoryFreshness[];
   sealed: SearchMatch[];
   singles: SearchMatch[];

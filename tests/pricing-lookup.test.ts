@@ -5,6 +5,7 @@ import type { PricingExportContract } from "../lib/pricing/contract";
 import { parsePricingExport, PricingContractError } from "../lib/pricing/contract";
 import { askingPriceSpread, deliveredPriceFor, nearestPricedCondition, queryClearlyTargetsSingle } from "../lib/pricing/domain";
 import { PricingRepository } from "../lib/pricing/repository";
+import { createPricingSearchPlan } from "../lib/pricing/searchPlan";
 import { pricingEvidenceResponse } from "../lib/pricing/evidenceFixtures";
 
 const headers = ["sku_col", "kind_col", "name_col", "set_col", "number_col", "variant_col", "language_col", "condition_col", "market_col", "listing_col", "shipping_col", "date_col", "image_col"];
@@ -106,6 +107,30 @@ test("shipping, query intent, and asking spread follow bounded rules", () => {
   assert.equal(queryClearlyTargetsSingle("Scarlet Violet 151"), false);
   assert.equal(askingPriceSpread(1_500, 1_800).mode, "ABSOLUTE");
   assert.equal(askingPriceSpread(9_000, 10_000).mode, "PERCENTAGE");
+});
+
+test("catalogue query planning understands bounded Pokémon set-code shorthand", () => {
+  const shorthand = createPricingSearchPlan("Charizard v sh03");
+  assert.equal(shorthand.interpretations[0]?.canonical, "SWSH03");
+  assert.match(shorthand.ftsQuery, /"sh03"\*/);
+  assert.match(shorthand.ftsQuery, /"swsh03"\*/);
+  assert.ok(shorthand.tokens.every((token) => token.alternatives.length <= 6));
+  assert.equal(createPricingSearchPlan("sh").interpretations.length, 0);
+
+  const repository = new PricingRepository();
+  const aliasCsv = [
+    headers.join(","),
+    "swsh03-charizard-v,Card,Charizard V,SWSH03: Darkness Ablaze,019/189,Holofoil,English,LP,7.26,7.00,1.00,2026-07-31,",
+    "swsh09-charizard-v,Card,Charizard V,SWSH09: Brilliant Stars,017/172,Holofoil,English,LP,6.00,5.50,1.00,2026-07-31,",
+  ].join("\n");
+  repository.importTestCsv("pokemon-en", aliasCsv, contract);
+  const result = repository.search("pokemon-en", "Charizard v sh03");
+  assert.equal(result.singles[0]?.setName, "SWSH03: Darkness Ablaze");
+  assert.equal(
+    result.interpretations?.[0]?.message,
+    "Understood SH03 as SWSH03",
+  );
+  repository.close();
 });
 
 test("inactive or unknown category is distinct from no match in loaded category", () => {

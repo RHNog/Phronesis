@@ -1,5 +1,41 @@
 # CTO Product Development Conversation History
 
+## 2026-07-31 — Event Stock Control And Intelligent Set Search
+
+The Product Owner directed Phronesis to ingest human-maintained event stock from Google Sheets into local SQL, let sellers choose the exact option at Sale time from either Event Ledger surface, and produce sold plus expected-leftover/physical-verification evidence. The same direction required the catalogue search to understand intent at higher confidence after `Charizard v sh03` failed to find `SWSH03: Darkness Ablaze`.
+
+`PHR-STRUCT-20260731-005` assigns `PHR-WORKFLOW-012` and `PHR-UX-016`. The implemented design uses an owner-scoped native Sheet with exact Item Name, Price, Quantity, Color, and Variation columns, explicit CSV export, strict validation, and a SHA-256-recorded immutable event manifest in local SQLite. Full Event Ledger and Vendor Workspace Quick Sale reuse one exact-option picker and the canonical Event Ledger transaction. Tracked Sale rows atomically append negative movements; reversal appends compensation. Manual lines remain explicitly untracked. Physical counts remain append-only observations, and reports separate whole-Sale actual amount, imported list price, expected leftover, counted quantity, and variance.
+
+Catalogue retrieval and ranking now share one bounded, escaped intent plan. `SH03`, `SH3`, `SWSH03`, and `SWSH3` resolve as the same numbered-set intent, all other logical query tokens remain required, and the UI displays `Understood SH03 as SWSH03` without rewriting or auto-selecting catalogue identity.
+
+The native Sheet, complete disposable import/Sale/count/report/reversal workflow, exact live SH03 result, 10,000-option median search of 29.93 ms, 284/284 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, and 390px no-overflow/clean-console gates pass. No live user event was mutated. Authenticated live Sheet sync, global Inventory allocation, broader typo/OCR interpretation, external transactions, commit, and push remain outside this increment. Same-session Chief Architect conformance passes; Product Review remains pending.
+
+## 2026-07-31 — Vendor Workspace Lite Event Ledger
+
+The Product Owner directed Phronesis to let a buyer record an incidental Sale without leaving Vendor Workspace while retaining Event Ledger as the seller's panel. Both interfaces must feed the same event control.
+
+`PHR-STRUCT-20260731-004` assigns `PHR-UX-015`. Vendor Checkout is now an Event station with default `Purchase intake` and `Quick sale`. The Lite mode records one overall Sale amount, one to 25 manually described item/quantity rows, payment method, and optional note through the canonical active event, authorized `/api/event-ledger`, validation, `PurchaseLedgerRepository`, idempotency, returned summary, and immutable activity. Event start, full activity, cash adjustment, reversal, correction, close, and reconciliation remain exclusively in `/event-ledger`; manual Sales do not mutate Inventory.
+
+An isolated production-runtime review started a $100.00 drawer, entered a two-item $25.50 Cash Sale from Vendor Workspace at 390px, and observed $125.50 expected cash plus $25.50 gross sales immediately in both the Lite panel and full Event Ledger, including both sold-item descriptions. Purchase intake remained present, desktop and phone layouts had no horizontal overflow, required controls met 44px, and the browser console was clean. Full 279/279 tests, TypeScript, lint, production build, diff hygiene, and private-service health pass. Same-session Chief Architect conformance passes; Product Review, commit, and push remain pending.
+
+## 2026-07-31 — Complete Phone Application Shell
+
+During Event Ledger Product Review, the Product Owner asked where the rest of Phronesis was. Inspection confirmed a shared-shell defect: the persistent desktop sidebar was hidden below the `md` breakpoint, but the top bar offered no mobile navigation replacement. The operator could use the current workflow and Search but could not move to another Phronesis destination without editing the URL.
+
+`PHR-STRUCT-20260731-003` assigns `PHR-UX-014`, which now passes the same server entitlement-filtered `navigationItems` list to the desktop sidebar and an accessible phone drawer. The drawer exposes Opportunities, Vendor Workspace, Event Ledger, Market Watch, Inventory, and Settings when authorized, preserves active-route state, and supports explicit close, backdrop, Escape, focus containment/restoration, body-scroll restoration, and automatic desktop-breakpoint dismissal. Search and User remain available at 390px.
+
+Focused navigation tests pass 5/5 and the full suite passes 278/278. Standalone TypeScript, warning-free lint, production build, diff hygiene, private-service health, complete six-route phone navigation, 44–52px touch targets, zero horizontal overflow, desktop recovery, and zero-console-error checks pass. Same-session Chief Architect conformance passes; Product Review, commit, and push remain pending.
+
+## 2026-07-31 — Event Cash Ledger Approval
+
+The Product Owner approved replacing the purchase-only event operating experience with a frictionless Event Cash Ledger. Each event begins with an explicit opening cash amount and one event currency. Operators record Sales and Purchases throughout the event; payment method determines whether an entry affects expected drawer cash. Closing records actual counted cash and exposes the exact over/short variance.
+
+The approved amendment requires every manual Sale to state what was actually sold and permits more than one manually described item in a single Sale. One Sale owns one overall amount plus one to 25 description/quantity item lines. Manual Sales are deliberately independent of catalogue and Inventory identity and do not decrement an Inventory lot. Existing evaluated purchases preserve immutable receipts and Inventory intake and gain one atomic linked cash-ledger entry, avoiding double entry.
+
+`PHR-WORKFLOW-006` is reopened as an approved additive revision under `PHR-STRUCT-20260731-002`. Payment processing, customer CRM, tax, settlement, accounting export, profit claims, multi-currency events, and automatic manual-sale Inventory reconciliation remain outside scope. Implementation and validation proceed automatically through the canonical workflow; Product Review remains the acceptance gate.
+
+Implementation now passes the complete 278-test suite after the separately documented `PHR-UX-014` phone-shell correction, standalone TypeScript, warning-free lint, production build, private runtime health, desktop review, and 390px no-overflow/minimum-touch-target review. Live workflow review proved a two-item cash Sale, a non-cash Purchase that did not alter expected drawer cash, and immutable closing variance; its disposable review records were removed at that gate. Same-session Chief Architect conformance passes. The feature remains Product Review pending and has not been declared CTO accepted.
+
 ## 2026-07-30 — LigaMagic/TCGplayer Acquired-Data Validation
 
 The Product Owner deferred listing readiness to the backlog and made LigaMagic/TCGplayer arbitrage validation the immediate priority. Listing readiness is now bounded as `PHR-WORKFLOW-011`: readiness gates, internal reservations, price/margin evidence, draft review, and cancellation, explicitly excluding publication, payment, shipping, repricing, and settlement.
