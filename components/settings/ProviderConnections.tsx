@@ -66,17 +66,17 @@ export default function ProviderConnections({ secureRegistrationReady }: { secur
           const state = states.find((candidate) => candidate.providerId === provider.id);
           const status = state?.status ?? "CHECKING";
           return (
-            <article key={provider.id} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+            <article key={provider.id} className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
               <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <h4 className="font-semibold text-zinc-100">{provider.label}</h4>
                   <p className="mt-1 text-xs leading-5 text-zinc-500">{provider.purpose}</p>
                 </div>
-                <span className="rounded-full bg-zinc-800 px-2.5 py-1 text-[11px] font-semibold text-cyan-200">{status.replaceAll("_", " ")}</span>
+                <span className="shrink-0 rounded-full bg-zinc-800 px-2.5 py-1 text-[11px] font-semibold text-cyan-200">{status.replaceAll("_", " ")}</span>
               </div>
               <dl className="mt-4 space-y-2 text-xs">
-                <div><dt className="text-zinc-500">Registration</dt><dd className="mt-1 font-mono text-zinc-300">{provider.keys}</dd></div>
-                <div><dt className="text-zinc-500">Activation</dt><dd className="mt-1 text-zinc-300">{provider.enable}</dd></div>
+                <div><dt className="text-zinc-500">Registration</dt><dd className="mt-1 break-all font-mono text-zinc-300">{provider.keys}</dd></div>
+                <div><dt className="text-zinc-500">Activation</dt><dd className="mt-1 break-words text-zinc-300">{provider.enable}</dd></div>
               </dl>
             </article>
           );

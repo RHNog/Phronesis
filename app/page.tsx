@@ -22,13 +22,13 @@ export default async function Home() {
     <AppShell requiredModule="INTELLIGENCE">
       <div className="w-full space-y-6">
         <OpportunityHeader />
+        <RegionalArbitrageWorkspace />
         <HotOpportunitiesWorkspace
           opportunities={opportunities}
           strategies={seedStrategies}
           strategyProfiles={seedStrategyProfiles}
           defaultStrategyId={defaultStrategyId}
         />
-        <RegionalArbitrageWorkspace />
       </div>
     </AppShell>
   );

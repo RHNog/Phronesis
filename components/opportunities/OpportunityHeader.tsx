@@ -3,10 +3,11 @@ export default function OpportunityHeader() {
     <header>
       <div>
         <h2 className="text-3xl font-semibold tracking-tight text-white">
-          🔥 Hot Opportunities
+          Opportunity Intelligence
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          The highest-value buying opportunities detected across all watchlists.
+          Compare exact cross-market candidates and monitor buying
+          opportunities.
         </p>
       </div>
     </header>

@@ -19,6 +19,11 @@ The operator's first question is “What should I offer?” The second is “Why
 - Each row shows artwork, exact printing, direction, net spread, ROI, confidence, and current gate.
 - The primary action is `Verify availability`, opening a focused drawer/form for executable price, quantity, counterparty label, observed time, and notes.
 - Keep gross spread behind progressive disclosure; lead with net outcome and missing inputs.
+- Lead with a compact queue summary: total exact candidates, direction mix, costed/actionable count, and blocked count.
+- Use explicit direction filters (`All`, `US → Brazil`, `Brazil → US`) without hiding the truth gates.
+- Candidate cards use a strong identity column, a directional route, paired market anchors, and a net/gate decision area. Missing net values render as `Pending costs`, never as a zero return.
+- Provide a direct Settings route when the current gate is incomplete costs.
+- Keep the verification form adjacent to the selected candidate on desktop and in normal document flow on mobile; do not use a horizontally dependent table or modal-only interaction.
 
 ## Responsive Behavior
 

@@ -1,5 +1,28 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Catalogue Completion And Arbitrage Targets
+
+- Assignment: `PHR-CATALOGUE-ARBITRAGE-PRECISION-20260731`
+- Document ID: `PHR-STRUCT-20260731-001`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Features: `PHR-ARCH-013`, `PHR-UX-013`, `PHR-WORKFLOW-007`
+- Objective: move LigaMagic/TCGplayer reconciliation as close as defensibly possible to complete supported coverage, add precise owner-defined arbitrage targets, and make the two routes visibly and economically distinct.
+- Matching boundary: exact full identity remains primary; every LigaMagic-specific recovery is named and bounded by exact name/collector/finish, compatible material qualifiers, or explicit catalogue semantics. Textless, fuzzy adoption, populated collector conflicts, language collapse, treatment collapse, forced edition mappings, Art/Stat collapse, and duplicate target adoption remain prohibited.
+- Target boundary: acquisition range, gross resale value, gross spread, net profit, profit margin, ROI, and evidence age are nullable and route/currency specific. No policy values may be invented and no target may replace identity, freshness, cost, or executable-availability evidence.
+- Acceptance: named match-method counts and residual reasons are reproducible across two builds; ambiguity and Textless adoption remain zero; direction changes reverse acquisition/exit semantics; Settings persists validated nullable targets; tests, type, lint, build, diff, desktop, and 390px review pass.
+- Verified result: 131,869 unique mappings, 64.66% supported emitted-row coverage, 83.04% supported consumer-priced coverage, 98.44% accepted-match price comparability, zero duplicate TCGplayer targets, zero ambiguous adoption, and zero quarantined-shell adoption. Two full rebuilds produced byte-identical reports and fingerprint `8b96e2472cd3504d06a75bc475b158ef8bec5a722f2570b2bb33d133f8c22304`. Direction-correct target profiles and economics pass the 271-test suite, TypeScript, lint, production build, diff hygiene, and 390px review.
+- Product boundary: secure connector credential entry is not part of this feature. Provider cards remain configuration/status documentation until an authenticated credential-vault slice is approved; no secret is collected in the current Settings UI.
+
+## Active Assignment — Arbitrage Visual Presentation
+
+- Assignment: `PHR-ARBITRAGE-PRESENTATION-20260730`
+- Document ID: `PHR-STRUCT-20260730-014`
+- Status: `PRODUCT REVIEW READY`
+- Features: `PHR-UX-013`, `PHR-WORKFLOW-007`
+- Objective: keep the four owner-controlled direction-cost settings available for later population and make Arbitrage the primary, responsive Opportunities decision surface.
+- Verified result: Settings labels the nullable cost policy as awaiting owner inputs; Opportunities leads with 50 exact candidates, route summaries and filters, evidence age, net-first economics, explicit blockers, and focused availability verification. No cost was invented and no candidate advanced beyond its evidence gate. The 261-test suite, standalone TypeScript, warning-free lint, production build, diff hygiene, desktop review, and 390px no-overflow review pass.
+- Next gate: Product Owner visual approval. Commit, remote continuity, and private deployment follow only after approval of the visible result.
+
 ## Active Assignment — LigaMagic/TCGplayer Crosswalk Validation
 
 - Assignment: `PHR-ARBITRAGE-DATA-VALIDATION-20260730`

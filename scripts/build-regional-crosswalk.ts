@@ -28,11 +28,18 @@ try {
   const temporaryPath = `${reportPath}.tmp`;
   writeFileSync(temporaryPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   renameSync(temporaryPath, reportPath);
-  const { editionAliases, topUnmatchedEditions, ...summary } = report;
+  const {
+    editionAliases,
+    worldChampionshipPlayerAliases,
+    topUnmatchedEditions,
+    ...summary
+  } = report;
   process.stdout.write(`${JSON.stringify({
     ...summary,
     reportPath,
     editionAliasPreview: editionAliases.slice(0, 20),
+    worldChampionshipPlayerAliasPreview:
+      worldChampionshipPlayerAliases.slice(0, 20),
     topUnmatchedEditions,
   }, null, 2)}\n`);
 } finally {

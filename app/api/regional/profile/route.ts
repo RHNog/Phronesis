@@ -28,12 +28,8 @@ export async function PATCH(request: Request) {
   try {
     const profile = (await request.json()) as RegionalCostProfile;
     return Response.json({
-      profile: getRegionalIntelligenceRepository().updateCosts({
-        usToBrazilFixedBrl: profile.usToBrazilFixedBrl,
-        usToBrazilPercent: profile.usToBrazilPercent,
-        brazilToUsFixedUsd: profile.brazilToUsFixedUsd,
-        brazilToUsPercent: profile.brazilToUsPercent,
-      }),
+      profile:
+        getRegionalIntelligenceRepository().updateDecisionSettings(profile),
     });
   } catch (error) {
     return Response.json(

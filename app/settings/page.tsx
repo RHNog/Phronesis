@@ -15,7 +15,8 @@ export default function SettingsPage() {
             Settings
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
-            Manage Business Profiles used by purchase evaluation.
+            Manage purchase profiles, regional economics, providers, and team
+            access.
           </p>
         </header>
 
