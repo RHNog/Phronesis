@@ -1,5 +1,14 @@
 # Roadmap
 
+## Product Review Candidate: Event Flip And Display Case Inventory
+
+- Implemented: finalized event Purchases feed a derived Event Flip queue; exact single-card lots support multi-select quantity and editable intended Sale price before one retry-safe Add-to-Case action (`PHR-WORKFLOW-013`).
+- Implemented: Display Case reserves receipt-backed units, combines them visibly with prepared opening stock, and provides price, return, Sale, reversal, count, variance, and CSV verification controls (`PHR-WORKFLOW-014`).
+- Preserved: General Inventory remains ownership/cost authority and now exposes owned, Case reserved, and generally available quantities with reservation-safe disposition/count/void guards.
+- Implemented: Vendor Workspace can send each eligible exact-card purchase line directly to Case only after the buyer enters its intended Case Sale price; receipt, Inventory, and reservation are atomic.
+- Verified: focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, 390px no-overflow, 44–48px controls, and clean browser console.
+- Deferred: exact Bulk itemization, Binder Inventory (`PHR-WORKFLOW-015`), multiple named cases, scanner/label workflows, settlement, marketplace publication, and public deployment.
+
 ## Product Review Candidate: Event Stock Control And Intent-Aware Search
 
 - Implemented: an owner-scoped native Google Sheet template and strict five-column CSV contract feed an immutable event-scoped SQLite stock snapshot (`PHR-WORKFLOW-012`).

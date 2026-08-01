@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { InventoryRepository } from "@/lib/inventory/InventoryRepository";
+import { DisplayCaseRepository } from "@/lib/events/DisplayCaseRepository";
 import {
   EventStockRepository,
   type ResolvedEventSaleItem,
@@ -22,6 +23,7 @@ import {
   type EventSaleDraft,
   type EventSaleItem,
   type PurchaseEvent,
+  type PurchaseCasePlacementDraft,
   type PurchaseLine,
   type PurchaseLineDraft,
   type PurchasePrincipal,
@@ -37,11 +39,13 @@ function parseLine(value: string): PurchaseLine {
 export class PurchaseLedgerRepository {
   private readonly inventory: InventoryRepository;
   readonly eventStock: EventStockRepository;
+  readonly displayCase: DisplayCaseRepository;
 
   constructor(private readonly database: DatabaseSync) {
     this.migrate();
     this.eventStock = new EventStockRepository(database);
     this.inventory = new InventoryRepository(database);
+    this.displayCase = new DisplayCaseRepository(database);
   }
 
   migrate() {
@@ -282,10 +286,10 @@ export class PurchaseLedgerRepository {
     const now = new Date().toISOString();
 
     this.withTransaction(() => {
-      const resolvedItems = this.eventStock.resolveSaleItems(
+      const resolvedItems = this.displayCase.resolveSaleItems(
         principal,
         eventId,
-        sale.items,
+        this.eventStock.resolveSaleItems(principal, eventId, sale.items),
       );
       this.insertLedgerEntry({
         id,
@@ -304,8 +308,8 @@ export class PurchaseLedgerRepository {
       const insertItem = this.database.prepare(
         `INSERT INTO phronesis_event_sale_item(
            entry_id, position, description, quantity, event_stock_item_id,
-           unit_list_price_cents, color, variation
-         ) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+           event_case_item_id, unit_list_price_cents, color, variation
+         ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       );
       resolvedItems.forEach((item, position) => {
         insertItem.run(
@@ -314,6 +318,7 @@ export class PurchaseLedgerRepository {
           item.description,
           item.quantity,
           item.inventoryItemId ?? null,
+          item.caseItemId ?? null,
           item.unitListPriceCents ?? null,
           item.color ?? null,
           item.variation ?? null,
@@ -326,14 +331,22 @@ export class PurchaseLedgerRepository {
         resolvedItems as ResolvedEventSaleItem[],
         now,
       );
+      this.displayCase.recordSaleMovements(
+        principal,
+        eventId,
+        id,
+        resolvedItems,
+        now,
+      );
       this.insertAudit(principal, "EVENT_SALE_RECORDED", null, {
         entryId: id,
         eventId,
         amountCents: sale.amountCents,
         paymentMethod: sale.paymentMethod,
         itemCount: resolvedItems.length,
-        trackedItemCount: resolvedItems.filter((item) => item.inventoryItemId)
-          .length,
+        trackedItemCount: resolvedItems.filter(
+          (item) => item.inventoryItemId || item.caseItemId,
+        ).length,
       });
     });
 
@@ -495,6 +508,13 @@ export class PurchaseLedgerRepository {
           id,
           now,
         );
+        this.displayCase.reverseSaleMovements(
+          principal,
+          eventId,
+          original.id,
+          id,
+          now,
+        );
       }
       this.insertAudit(principal, "EVENT_ENTRY_REVERSED", null, {
         entryId: id,
@@ -648,6 +668,7 @@ export class PurchaseLedgerRepository {
     eventId: string,
     idempotencyKey: string,
     paymentMethod: EventPaymentMethod = "CASH",
+    casePlacements: readonly PurchaseCasePlacementDraft[] = [],
   ): PurchaseReceipt {
     this.assertIdempotencyKey(idempotencyKey);
     const method = validateEventPaymentMethod(paymentMethod);
@@ -670,6 +691,7 @@ export class PurchaseLedgerRepository {
       method,
       lines,
       true,
+      casePlacements,
     );
   }
 
@@ -700,6 +722,7 @@ export class PurchaseLedgerRepository {
       method,
       [this.hydrateLine(draft, exactMatch)],
       false,
+      [],
     );
   }
 
@@ -736,6 +759,7 @@ export class PurchaseLedgerRepository {
     }
     const now = new Date().toISOString();
     this.withTransaction(() => {
+      this.displayCase.assertReceiptCanVoid(principal.workspaceId, receiptId);
       const result = this.database
         .prepare(
           `UPDATE phronesis_purchase_receipt SET voided_at=?
@@ -787,6 +811,7 @@ export class PurchaseLedgerRepository {
     paymentMethod: EventPaymentMethod,
     lines: readonly PurchaseLine[],
     clearCart: boolean,
+    casePlacements: readonly PurchaseCasePlacementDraft[],
   ): PurchaseReceipt {
     const totalCents = lines.reduce(
       (sum, line) =>
@@ -799,6 +824,10 @@ export class PurchaseLedgerRepository {
     }
     const id = randomUUID();
     const now = new Date().toISOString();
+    const placements = this.validateCheckoutCasePlacements(
+      lines,
+      casePlacements,
+    );
 
     this.withTransaction(() => {
       this.assertActiveEvent(principal.workspaceId, eventId);
@@ -837,6 +866,45 @@ export class PurchaseLedgerRepository {
         },
         lines,
       );
+      if (placements.length) {
+        const selections = placements.map((placement) => {
+          const sourceLinePosition = lines.findIndex(
+            (line) => line.id === placement.lineId,
+          );
+          const lot = this.database
+            .prepare(
+              `SELECT id FROM phronesis_inventory_lot
+               WHERE workspace_id=? AND source_receipt_id=?
+                 AND source_line_position=? AND voided_at IS NULL`,
+            )
+            .get(
+              principal.workspaceId,
+              id,
+              sourceLinePosition,
+            ) as SqlRow | undefined;
+          if (!lot) {
+            throw new Error(
+              "Receipt-backed Inventory was not available for Case placement.",
+            );
+          }
+          const line = lines[sourceLinePosition];
+          if (!line || line.kind !== "EXACT") {
+            throw new Error("Only exact single cards can be sent to the Case.");
+          }
+          return {
+            inventoryLotId: String(lot.id),
+            quantity: placement.quantity,
+            salePriceCents: placement.salePriceCents,
+          };
+        });
+        this.displayCase.addToCase(
+          principal,
+          eventId,
+          selections,
+          `receipt-case:${id}`,
+          "VENDOR_CHECKOUT",
+        );
+      }
       this.insertLedgerEntry({
         id: randomUUID(),
         principal,
@@ -863,6 +931,7 @@ export class PurchaseLedgerRepository {
         totalCents,
         lineCount: lines.length,
         paymentMethod,
+        displayCaseLineCount: placements.length,
       });
     });
 
@@ -875,6 +944,45 @@ export class PurchaseLedgerRepository {
       voidedAt: null,
       lines: [...lines],
     };
+  }
+
+  private validateCheckoutCasePlacements(
+    lines: readonly PurchaseLine[],
+    rawPlacements: readonly PurchaseCasePlacementDraft[],
+  ): PurchaseCasePlacementDraft[] {
+    if (rawPlacements.length > 50) {
+      throw new Error("No more than 50 purchase lines can be sent to the Case.");
+    }
+    const placements = rawPlacements.map((placement) => ({
+      lineId: typeof placement.lineId === "string" ? placement.lineId.trim() : "",
+      quantity: Number(placement.quantity),
+      salePriceCents: Number(placement.salePriceCents),
+    }));
+    if (new Set(placements.map((placement) => placement.lineId)).size !== placements.length) {
+      throw new Error("Each purchase line can be sent to the Case only once.");
+    }
+    for (const placement of placements) {
+      if (!placement.lineId || placement.lineId.length > 120) {
+        throw new Error("Purchase line identity is invalid for Case placement.");
+      }
+      if (!Number.isSafeInteger(placement.salePriceCents) || placement.salePriceCents <= 0) {
+        throw new Error("Case Sale price must be a positive cent value.");
+      }
+      const line = lines.find((candidate) => candidate.id === placement.lineId);
+      if (!line || line.kind !== "EXACT" || line.productType !== "SINGLE") {
+        throw new Error("Only exact single-card purchase lines can be sent to the Case.");
+      }
+      if (
+        !Number.isInteger(placement.quantity) ||
+        placement.quantity <= 0 ||
+        placement.quantity > line.quantity
+      ) {
+        throw new Error(
+          `Case quantity must be between 1 and the ${line.quantity} purchased units.`,
+        );
+      }
+    }
+    return placements;
   }
 
   private hydrateLine(
@@ -992,7 +1100,8 @@ export class PurchaseLedgerRepository {
       .prepare(
         `
         SELECT item.entry_id, item.position, item.description, item.quantity,
-          item.event_stock_item_id, item.unit_list_price_cents,
+          item.event_stock_item_id, item.event_case_item_id,
+          item.unit_list_price_cents,
           item.color, item.variation
         FROM phronesis_event_sale_item AS item
         JOIN phronesis_event_ledger_entry AS entry ON entry.id=item.entry_id
@@ -1011,6 +1120,9 @@ export class PurchaseLedgerRepository {
         quantity: Number(row.quantity),
         inventoryItemId: row.event_stock_item_id
           ? String(row.event_stock_item_id)
+          : null,
+        caseItemId: row.event_case_item_id
+          ? String(row.event_case_item_id)
           : null,
         unitListPriceCents:
           row.unit_list_price_cents === null
@@ -1043,6 +1155,7 @@ export class PurchaseLedgerRepository {
     const itemRows = this.database
       .prepare(
         `SELECT position, description, quantity, event_stock_item_id,
+           event_case_item_id,
            unit_list_price_cents, color, variation
          FROM phronesis_event_sale_item
          WHERE entry_id=? ORDER BY position`,
@@ -1057,6 +1170,9 @@ export class PurchaseLedgerRepository {
         quantity: Number(item.quantity),
         inventoryItemId: item.event_stock_item_id
           ? String(item.event_stock_item_id)
+          : null,
+        caseItemId: item.event_case_item_id
+          ? String(item.event_case_item_id)
           : null,
         unitListPriceCents:
           item.unit_list_price_cents === null

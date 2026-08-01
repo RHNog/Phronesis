@@ -128,6 +128,22 @@ export async function POST(request: Request) {
             body.eventId,
             body.idempotencyKey,
             paymentMethod,
+            Array.isArray(body.casePlacements)
+              ? body.casePlacements.map((placement) => {
+                  const candidate =
+                    placement && typeof placement === "object"
+                      ? (placement as Record<string, unknown>)
+                      : {};
+                  return {
+                    lineId:
+                      typeof candidate.lineId === "string"
+                        ? candidate.lineId
+                        : "",
+                    quantity: Number(candidate.quantity),
+                    salePriceCents: Number(candidate.salePriceCents),
+                  };
+                })
+              : [],
           ),
         },
         { status: 201 },

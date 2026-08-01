@@ -223,6 +223,7 @@ export class EventStockRepository {
     principal: PurchasePrincipal,
     eventId: string,
     query = "",
+    maximumResults = 40,
   ): EventStockSnapshot {
     this.assertEvent(principal.workspaceId, eventId, false);
     const manifestRow = this.activeImportRow(principal.workspaceId, eventId);
@@ -276,10 +277,10 @@ export class EventStockRepository {
       eventId,
       manifest,
       summary,
-      items: scored.slice(0, 40).map((candidate) => candidate.item),
+      items: scored.slice(0, maximumResults).map((candidate) => candidate.item),
       query,
       resultCount: scored.length,
-      truncated: scored.length > 40,
+      truncated: scored.length > maximumResults,
     };
   }
 
@@ -603,7 +604,8 @@ export class EventStockRepository {
            ON reversal.reversal_of_entry_id=entry.id
          WHERE entry.workspace_id=? AND entry.event_id=?
            AND entry.entry_type='SALE' AND reversal.id IS NULL
-           AND item.event_stock_item_id IS NULL`,
+           AND item.event_stock_item_id IS NULL
+           AND item.event_case_item_id IS NULL`,
       )
       .get(workspaceId, eventId) as SqlRow;
     return Number(row.quantity);

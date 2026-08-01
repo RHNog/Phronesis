@@ -293,7 +293,7 @@ test("Event Inventory API remains authorized and local", () => {
   assert.match(liteLedger, /EventSaleItemsEditor/);
   assert.match(fullLedger, /inventoryItemId: item\.inventoryItemId/);
   assert.match(liteLedger, /inventoryItemId: item\.inventoryItemId/);
-  assert.match(saleEditor, /\/api\/event-inventory/);
+  assert.match(saleEditor, /\/api\/event-sale-options/);
   assert.doesNotMatch(saleEditor, /\/api\/event-ledger/);
   assert.match(inventoryControl, /aria-expanded=\{verificationOpen\}/);
   assert.match(inventoryControl, /Physical verification/);

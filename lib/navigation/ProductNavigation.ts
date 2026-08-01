@@ -8,6 +8,8 @@ export type PrimaryNavigationItem = {
     | "opportunities"
     | "vendor-workspace"
     | "event-ledger"
+    | "event-flip"
+    | "display-case"
     | "market-watch"
     | "inventory"
     | "settings";
@@ -44,6 +46,22 @@ export const primaryNavigation = [
     matches: ["/event-ledger"],
   },
   {
+    id: "event-flip",
+    label: "Event Flip",
+    href: "/event-flip",
+    area: "Manage",
+    module: "INVENTORY",
+    matches: ["/event-flip"],
+  },
+  {
+    id: "display-case",
+    label: "Display Case",
+    href: "/display-case",
+    area: "Manage",
+    module: "INVENTORY",
+    matches: ["/display-case"],
+  },
+  {
     id: "market-watch",
     label: "Market Watch",
     href: "/watchlists",
@@ -53,7 +71,7 @@ export const primaryNavigation = [
   },
   {
     id: "inventory",
-    label: "Inventory",
+    label: "General Inventory",
     href: "/inventory",
     area: "Manage",
     module: "INVENTORY",

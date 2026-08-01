@@ -1,10 +1,18 @@
 # Product Roadmap
 
+## Current Delivery — Event Inventory Lanes
+
+- Product Review pending: Purchase-fed Event Flip with multi-card selection, quantity validation, intended Sale pricing, and one retry-safe Add-to-Case action (`PHR-WORKFLOW-013`).
+- Product Review pending: one Display Case view for prepared opening stock and receipt-backed event flips, with atomic linked Sales/reversals, returns, counts, and verification (`PHR-WORKFLOW-014`).
+- Operational boundary: General Inventory owns acquisition, cost, and total on-hand evidence; Display Case is a reservation over exact card lots and never duplicate ownership.
+- Backlog: Binder Inventory (`PHR-WORKFLOW-015`) needs named binder/page/pocket, movement, Sale selection, and reconciliation design before implementation.
+
 ## Current Delivery — Inventory Operations
 
 - Completed: event checkout automatically creates auditable exact-card and aggregate Bulk inventory lots (`PHR-WORKFLOW-008`).
 - Completed: workspace locations, physical-count reconciliation, quantity basis, and append-only movement/count history (`PHR-WORKFLOW-009`).
 - Completed: classified sale/disposition ledger, gross recorded sales, retry-safe creation, and non-destructive reversal (`PHR-WORKFLOW-010`).
+- Product Review pending: General Inventory exposes Display Case reserved and generally available quantities and blocks operations that would invalidate active Case evidence (`PHR-WORKFLOW-014`).
 - Operational: acquisition evidence, on-hand quantity, location, source provenance, reconciliation, disposition history, and void propagation.
 - Backlog: marketplace-neutral listing readiness (`PHR-WORKFLOW-011`) with readiness gates, reserved quantities, price/margin evidence, listing drafts, review, and cancellation. Publication, payments, shipping, and automatic repricing remain outside that backlog item.
 - Inventory priority is paused while regional arbitrage validation is active.
@@ -64,7 +72,7 @@ Potential capabilities:
 - Dead-stock detection.
 - Restock and buylist recommendations.
 
-Receipt-backed intake, condition/variant identity, acquisition cost basis, locations, and physical-count reconciliation are operational through `PHR-WORKFLOW-008` and `PHR-WORKFLOW-009`. The remaining bullets describe later maturity increments.
+Receipt-backed intake, condition/variant identity, acquisition cost basis, locations, and physical-count reconciliation are operational through `PHR-WORKFLOW-008` and `PHR-WORKFLOW-009`. Event Flip and Display Case extend that ownership evidence under `PHR-WORKFLOW-013` and `PHR-WORKFLOW-014`; Binder Inventory is separately deferred as `PHR-WORKFLOW-015`. The remaining bullets describe later maturity increments.
 
 ### Portfolio Tracking
 

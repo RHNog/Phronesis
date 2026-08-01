@@ -1,5 +1,16 @@
 # Prompt History
 
+## Event Flip And Display Case Inventory — 2026-07-31
+
+`PHR-STRUCT-20260731-006` authorizes `PHR-WORKFLOW-013` to derive a multi-card Event Flip queue from receipt-backed purchases and `PHR-WORKFLOW-014` to reserve, sell, return, count, and report Display Case cards without duplicating General Inventory ownership. `PHR-WORKFLOW-015` records Binder Inventory as a separately deferred product lane.
+
+Execution completed with Product Review pending. Implementation reports and conformance records live under `docs/implementation-reports/` and `docs/reviews/` for both active Feature IDs.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-WORKFLOW-013-event-flip-queue-prompt.md`.
+- `docs/prompts/PHR-WORKFLOW-014-display-case-inventory-prompt.md`.
+
 ## Event Stock Control And Intent-Aware Search — 2026-07-31
 
 `PHR-STRUCT-20260731-005` authorizes `PHR-WORKFLOW-012` to ingest a canonical Google-Sheet CSV snapshot into event-scoped local stock, link both Sale surfaces to append-only quantity movements and reconciliation reports, and authorizes `PHR-UX-016` to interpret bounded catalogue shorthand such as `SH03 → SWSH03` without automatic identity adoption.

@@ -236,6 +236,12 @@ export class InventoryRepository {
       ? previousReconciledQuantity ?? receiptOrApproximateQuantity
       : Number(lot.current_quantity);
     const nextReconciledQuantity = countSpecified ? Number(input.countedQuantity) : previousReconciledQuantity;
+    const displayCaseQuantity = this.displayCaseQuantityForLot(input.lotId);
+    if (countSpecified && Number(input.countedQuantity) < displayCaseQuantity) {
+      throw new Error(
+        `Physical count cannot be below the ${displayCaseQuantity} units reserved in the Display Case. Reconcile the Case first.`,
+      );
+    }
     const locationChanged = previousLocationId !== nextLocationId;
     const countChanged = countSpecified && (
       previousReconciledQuantity === null || previousOnHandQuantity !== nextReconciledQuantity
@@ -342,7 +348,13 @@ export class InventoryRepository {
     if (!lot || lot.voided_at) throw new Error("An active inventory lot was not found.");
     const onHandQuantity = this.onHandQuantityFromRow(lot);
     if (onHandQuantity === null) throw new Error("A physical count is required before disposing this lot.");
-    if (input.quantity > onHandQuantity) throw new Error("Disposition quantity exceeds known on-hand quantity.");
+    const displayCaseQuantity = this.displayCaseQuantityForLot(input.lotId);
+    const generalAvailableQuantity = onHandQuantity - displayCaseQuantity;
+    if (input.quantity > generalAvailableQuantity) {
+      throw new Error(
+        `Disposition quantity exceeds known available quantity: ${Math.max(0, generalAvailableQuantity)} units are available outside the Display Case.`,
+      );
+    }
 
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -418,11 +430,17 @@ export class InventoryRepository {
   }
 
   listWorkspace(workspaceId: string): InventorySnapshot {
+    const caseQuantitySql = this.tableExists("phronesis_event_case_movement")
+      ? `COALESCE((SELECT SUM(case_movement.quantity_delta)
+          FROM phronesis_event_case_movement AS case_movement
+          WHERE case_movement.inventory_lot_id=lot.id), 0)`
+      : "0";
     const lots = (this.database.prepare(`
       SELECT lot.*, location.name AS location_name,
         COALESCE((SELECT SUM(disposition.quantity)
           FROM phronesis_inventory_disposition disposition
-          WHERE disposition.lot_id=lot.id AND disposition.reversed_at IS NULL), 0) AS net_disposed_quantity
+          WHERE disposition.lot_id=lot.id AND disposition.reversed_at IS NULL), 0) AS net_disposed_quantity,
+        ${caseQuantitySql} AS display_case_quantity
       FROM phronesis_inventory_lot lot
       LEFT JOIN phronesis_inventory_location location ON location.id=lot.location_id
       WHERE lot.workspace_id=?
@@ -448,6 +466,14 @@ export class InventoryRepository {
         activeDispositionCount: Number(dispositionSummary.active_disposition_count),
         soldUnitCount: Number(dispositionSummary.sold_unit_count),
         grossSalesCents: Number(dispositionSummary.gross_sales_cents),
+        displayCaseUnitCount: active.reduce(
+          (sum, lot) => sum + lot.displayCaseQuantity,
+          0,
+        ),
+        generalAvailableUnitCount: active.reduce(
+          (sum, lot) => sum + (lot.generalAvailableQuantity ?? 0),
+          0,
+        ),
       },
       lots,
       locations: this.listLocations(workspaceId),
@@ -563,6 +589,21 @@ export class InventoryRepository {
     return null;
   }
 
+  private displayCaseQuantityForLot(lotId: string): number {
+    if (!this.tableExists("phronesis_event_case_movement")) return 0;
+    const row = this.database.prepare(`
+      SELECT COALESCE(SUM(quantity_delta), 0) AS quantity
+      FROM phronesis_event_case_movement WHERE inventory_lot_id=?
+    `).get(lotId) as SqlRow;
+    return Number(row.quantity);
+  }
+
+  private tableExists(name: string): boolean {
+    return Boolean(this.database.prepare(`
+      SELECT 1 FROM sqlite_master WHERE type='table' AND name=?
+    `).get(name));
+  }
+
   private reconcileReceipts() {
     const table = this.database.prepare(`
       SELECT name FROM sqlite_master WHERE type='table' AND name='phronesis_purchase_receipt'
@@ -589,6 +630,8 @@ export class InventoryRepository {
   }
 
   private lotFromRow(row: SqlRow): InventoryLot {
+    const onHandQuantity = this.onHandQuantityFromRow(row);
+    const displayCaseQuantity = Number(row.display_case_quantity ?? 0);
     return {
       id: String(row.id),
       workspaceId: String(row.workspace_id),
@@ -615,7 +658,10 @@ export class InventoryRepository {
       approximateWeight: row.approximate_weight ? String(row.approximate_weight) : null,
       locationId: row.location_id ? String(row.location_id) : null,
       locationName: row.location_name ? String(row.location_name) : "Unassigned",
-      onHandQuantity: this.onHandQuantityFromRow(row),
+      onHandQuantity,
+      displayCaseQuantity,
+      generalAvailableQuantity:
+        onHandQuantity === null ? null : onHandQuantity - displayCaseQuantity,
       quantityBasis: Number(row.net_disposed_quantity ?? 0) > 0
         ? "LEDGER"
         : row.reconciled_quantity !== null

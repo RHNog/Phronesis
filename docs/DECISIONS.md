@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-07-31 — Display Case is an allocation over owned inventory, not a second ownership ledger
+
+- **Status:** Accepted for Product Review.
+- **Context:** Event Purchases must become immediate sorting work and physically displayed cards must be sold and counted without duplicating receipt quantity, acquisition cost, or General Inventory ownership. Prepared Sheet stock also needs to remain visible even though it has no receipt-backed lot.
+- **Decision:** Event Flip is derived from finalized receipt/Inventory evidence. Display Case stores append-only reservation, price, Sale, reversal, return, and count evidence over exact single-card lots. Prepared stock remains a separate source joined only in presentation/reporting. A Case-linked Sale updates Case, its underlying Inventory lot, and the Event Ledger in one transaction. General Inventory availability subtracts Case reservations.
+- **Consequences:** Allocation never decrements or duplicates owned quantity. General dispositions/counts and receipt voids cannot invalidate active reservations. Case list price is not realized revenue. Exact sealed, Bulk, and manual Purchases remain General-only until a later itemization contract. Binder Inventory is deferred under its own permanent Feature ID.
+
 ## 2026-07-31 — Event stock uses a local immutable snapshot and separate reconciliation evidence
 
 - **Status:** Accepted for Product Review.

@@ -1,5 +1,19 @@
 # CTO Product Development Conversation History
 
+## 2026-07-31 — Purchase-Fed Event Flip And Display Case Inventory
+
+The Product Owner defined three operational inventory lanes. General Inventory remains the ownership, acquisition-cost, and broad sealed/supplies control. Every event Purchase must feed an Event Flip panel so a handler can sort exact cards, select several, edit intended Sale prices, and add them to a physical Display Case. Display Case must show what should be exposed, decrease through Sales, increase through purchase allocations, and support rapid end-of-event verification. Binder Inventory must be preserved as a later product lane.
+
+`PHR-STRUCT-20260731-006` assigns `PHR-WORKFLOW-013` and `PHR-WORKFLOW-014`; `PHR-WORKFLOW-015` records Binder intent without premature implementation. Event Flip derives immediately from finalized receipt-backed Inventory rather than copying queue or ownership state. Exact `SINGLE` lots are actionable. Exact sealed, aggregate Bulk, and description-only manual Purchases remain visible but General-only until a separately approved itemization workflow establishes exact identity.
+
+Display Case is a reserved allocation over owned lots. Allocation changes Case-reserved and generally available quantities but not total owned. Prepared Sheet stock remains a separate no-lot source presented beside event flips. Both Event Ledger Sale surfaces share one source-labelled picker. Explicit Case-linked Sales atomically update Case, the underlying General Inventory lot, the Event Ledger, and sold-item evidence; reversal restores both only when later General count evidence has not made restoration ambiguous. Handler price remains intended/list evidence, while the actual whole-Sale amount remains on the Event Ledger.
+
+The implementation adds retry-safe allocation/return, append-only price/movement/count evidence, combined verification CSV, reservation-safe disposition/count/receipt-void guards, dedicated Event Flip and Display Case destinations, and owned/reserved/available presentation in General Inventory. Focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, and 390px no-overflow/clean-console gates pass. The browser review prompted a full-width phone search and conditional sticky batch bar so the empty state remains unobstructed. No live event was mutated. Product Review, commit, and push remain pending.
+
+The Product Owner then approved a faster Vendor Workspace path: before finalizing an eligible exact-card purchase, the buyer may mark the cart line for Display Case and must enter its intended Case price. The receipt, receipt-backed Inventory lot, initial Case price, and Case reservation must commit together. Cards not selected for Case continue to surface in Event Flip, preserving that workflow as the sorting and exception queue.
+
+The quantity amendment distinguishes acquisition from placement: an exact purchase may contain multiple copies, but direct Case quantity defaults to one and is independently editable only up to the purchased quantity. Any remainder stays generally available and continues to surface in Event Flip.
+
 ## 2026-07-31 — Event Stock Control And Intelligent Set Search
 
 The Product Owner directed Phronesis to ingest human-maintained event stock from Google Sheets into local SQL, let sellers choose the exact option at Sale time from either Event Ledger surface, and produce sold plus expected-leftover/physical-verification evidence. The same direction required the catalogue search to understand intent at higher confidence after `Charizard v sh03` failed to find `SWSH03: Darkness Ablaze`.

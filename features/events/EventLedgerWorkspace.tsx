@@ -353,6 +353,7 @@ export default function EventLedgerWorkspace({
         description: item.description,
         quantity: Number(item.quantity),
         inventoryItemId: item.inventoryItemId,
+        caseItemId: item.caseItemId,
       }));
       if (items.some((item) => !item.description.trim())) {
         setError("Describe every item sold.");

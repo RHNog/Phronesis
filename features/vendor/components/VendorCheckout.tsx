@@ -8,6 +8,7 @@ import {
   PURCHASE_PRODUCT_LINES,
   type EventCurrency,
   type EventPaymentMethod,
+  type ExactPurchaseLine,
   type PurchaseEvent,
   type PurchaseLine,
   type PurchaseProductLine,
@@ -42,9 +43,8 @@ function money(cents: number, currency: EventCurrency | null = "USD") {
 
 function cents(value: string): number | null {
   const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0
-    ? Math.round(parsed * 100)
-    : null;
+  const rounded = Number.isFinite(parsed) ? Math.round(parsed * 100) : 0;
+  return rounded > 0 ? rounded : null;
 }
 
 export default function VendorCheckout({
@@ -78,12 +78,16 @@ export default function VendorCheckout({
     key: "",
     value: "",
   });
+  const [exactQuantity, setExactQuantity] = useState("1");
   const [exactNotes, setExactNotes] = useState("");
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkLines, setBulkLines] = useState<PurchaseProductLine[]>([]);
   const [bulkPaid, setBulkPaid] = useState("");
   const [bulkNotes, setBulkNotes] = useState("");
   const [bulkQuantity, setBulkQuantity] = useState("");
+  const [casePlacementsByLine, setCasePlacementsByLine] = useState<
+    Record<string, { price: string; quantity: string }>
+  >({});
 
   async function load() {
     const response = await fetch("/api/purchases", { cache: "no-store" });
@@ -159,6 +163,11 @@ export default function VendorCheckout({
       setMessage("Enter the actual agreed purchase price.");
       return;
     }
+    const quantity = Number(exactQuantity);
+    if (!Number.isInteger(quantity) || quantity <= 0 || quantity > 1000) {
+      setMessage("Purchase quantity must be between 1 and 1000.");
+      return;
+    }
     const success = await mutate({
       action: "add-line",
       eventId: state.event.id,
@@ -167,7 +176,7 @@ export default function VendorCheckout({
         categoryId: match.categoryId,
         sku: match.sku,
         condition: match.productType === "SEALED" ? "Unopened" : condition,
-        quantity: 1,
+        quantity,
         actualPaidCents: paid,
         recommendedOfferCents:
           recommendedOffer === null ? null : Math.round(recommendedOffer * 100),
@@ -177,6 +186,7 @@ export default function VendorCheckout({
       },
     });
     if (success) {
+      setExactQuantity("1");
       setExactNotes("");
       setMessage(`${match.name} added to event checkout.`);
     }
@@ -210,15 +220,65 @@ export default function VendorCheckout({
     }
   }
 
+  async function removeLine(lineId: string) {
+    const success = await mutate({
+      action: "remove-line",
+      lineId,
+    });
+    if (success) {
+      setCasePlacementsByLine((current) => {
+        const next = { ...current };
+        delete next[lineId];
+        return next;
+      });
+    }
+  }
+
   async function finalize() {
     if (!state.event || !state.cart.length) return;
+    const selectedCaseLines = state.cart.filter(
+      (line): line is ExactPurchaseLine =>
+        line.kind === "EXACT" &&
+        line.productType === "SINGLE" &&
+        Object.prototype.hasOwnProperty.call(casePlacementsByLine, line.id),
+    );
+    const casePlacements = selectedCaseLines.map((line) => ({
+      lineId: line.id,
+      quantity: Number(casePlacementsByLine[line.id]?.quantity),
+      salePriceCents: cents(casePlacementsByLine[line.id]?.price ?? ""),
+    }));
+    if (casePlacements.some((placement) => placement.salePriceCents === null)) {
+      setMessage("Enter a positive Case Sale price for every selected card.");
+      return;
+    }
+    if (
+      casePlacements.some(
+        (placement, index) =>
+          !Number.isInteger(placement.quantity) ||
+          placement.quantity <= 0 ||
+          placement.quantity > selectedCaseLines[index].quantity,
+      )
+    ) {
+      setMessage(
+        "Case quantity must be between 1 and the purchased quantity for every selected card.",
+      );
+      return;
+    }
     const success = await mutate({
       action: "checkout",
       eventId: state.event.id,
       paymentMethod,
       idempotencyKey: `checkout:${crypto.randomUUID()}`,
+      casePlacements,
     });
-    if (success) setMessage("Purchase receipt finalized and ledgered.");
+    if (success) {
+      setCasePlacementsByLine({});
+      setMessage(
+        selectedCaseLines.length
+          ? `Purchase finalized and ${selectedCaseLines.length} card ${selectedCaseLines.length === 1 ? "was" : "were"} sent to the Display Case.`
+          : "Purchase receipt finalized and ledgered.",
+      );
+    }
   }
 
   const total = useMemo(
@@ -232,6 +292,9 @@ export default function VendorCheckout({
     [state.cart],
   );
   const eventCurrency = state.event?.currency ?? null;
+  const selectedCaseLineCount = state.cart.filter((line) =>
+    Object.prototype.hasOwnProperty.call(casePlacementsByLine, line.id),
+  ).length;
 
   return (
     <section
@@ -339,6 +402,19 @@ export default function VendorCheckout({
                           value: event.target.value,
                         })
                       }
+                      className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-zinc-100"
+                    />
+                  </label>
+                  <label className="mt-3 block text-xs text-zinc-400">
+                    Purchase quantity
+                    <input
+                      type="number"
+                      min="1"
+                      max="1000"
+                      step="1"
+                      inputMode="numeric"
+                      value={exactQuantity}
+                      onChange={(event) => setExactQuantity(event.target.value)}
                       className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-zinc-100"
                     />
                   </label>
@@ -455,46 +531,134 @@ export default function VendorCheckout({
             </div>
             {state.cart.length ? (
               <ul className="mt-3 space-y-2">
-                {state.cart.map((line) => (
-                  <li
-                    key={line.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-zinc-800 p-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm text-zinc-200">
-                        {line.kind === "BULK"
-                          ? `Bulk · ${line.productLines.map((item) => productLineLabels[item]).join(", ")}`
-                          : line.name}
-                      </p>
-                      <p className="mt-1 text-xs text-zinc-500">
-                        {line.kind === "BULK"
-                          ? line.notes
-                          : `${line.setName} · ${line.condition}`}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-sm font-semibold text-zinc-100">
-                        {money(
-                          line.actualPaidCents *
-                            (line.kind === "EXACT" ? line.quantity : 1),
-                          eventCurrency,
-                        )}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          void mutate({
-                            action: "remove-line",
-                            lineId: line.id,
-                          })
-                        }
-                        className="min-h-11 px-2 text-xs text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
+                {state.cart.map((line) => {
+                  const caseEligible =
+                    line.kind === "EXACT" && line.productType === "SINGLE";
+                  const sendToCase = Object.prototype.hasOwnProperty.call(
+                    casePlacementsByLine,
+                    line.id,
+                  );
+                  return (
+                    <li
+                      key={line.id}
+                      className="rounded-lg border border-zinc-800 p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm text-zinc-200">
+                            {line.kind === "BULK"
+                              ? `Bulk · ${line.productLines.map((item) => productLineLabels[item]).join(", ")}`
+                              : line.name}
+                          </p>
+                          <p className="mt-1 text-xs text-zinc-500">
+                            {line.kind === "BULK"
+                              ? line.notes
+                              : `${line.setName} · ${line.condition}`}
+                          </p>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <p className="text-sm font-semibold text-zinc-100">
+                            {money(
+                              line.actualPaidCents *
+                                (line.kind === "EXACT" ? line.quantity : 1),
+                              eventCurrency,
+                            )}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => void removeLine(line.id)}
+                            className="min-h-11 px-2 text-xs text-red-300"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                      {caseEligible ? (
+                        <div className="mt-3 border-t border-zinc-800 pt-3">
+                          <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-zinc-200">
+                            <input
+                              type="checkbox"
+                              checked={sendToCase}
+                              onChange={(event) => {
+                                const checked = event.target.checked;
+                                setCasePlacementsByLine((current) => {
+                                  if (!checked) {
+                                    const next = { ...current };
+                                    delete next[line.id];
+                                    return next;
+                                  }
+                                  return {
+                                    ...current,
+                                    [line.id]: {
+                                      quantity: "1",
+                                      price: line.marketReferenceCents
+                                        ? (line.marketReferenceCents / 100).toFixed(2)
+                                        : "",
+                                    },
+                                  };
+                                });
+                              }}
+                              className="size-4 accent-cyan-300"
+                            />
+                            Send directly to Display Case
+                          </label>
+                          {sendToCase ? (
+                            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                              <label className="block text-xs font-medium text-zinc-400">
+                                Case quantity
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max={line.quantity}
+                                  step="1"
+                                  inputMode="numeric"
+                                  value={casePlacementsByLine[line.id]?.quantity ?? "1"}
+                                  onChange={(event) =>
+                                    setCasePlacementsByLine((current) => ({
+                                      ...current,
+                                      [line.id]: {
+                                        ...(current[line.id] ?? { price: "" }),
+                                        quantity: event.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="mt-1 min-h-11 w-full rounded-lg border border-cyan-700 bg-zinc-900 px-3 text-zinc-100 focus:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
+                                />
+                              </label>
+                              <label className="block text-xs font-medium text-zinc-400">
+                                Case Sale price · required
+                                <input
+                                  type="number"
+                                  min="0.01"
+                                  step="0.01"
+                                  inputMode="decimal"
+                                  value={casePlacementsByLine[line.id]?.price ?? ""}
+                                  onChange={(event) =>
+                                    setCasePlacementsByLine((current) => ({
+                                      ...current,
+                                      [line.id]: {
+                                        ...(current[line.id] ?? { quantity: "1" }),
+                                        price: event.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="mt-1 min-h-11 w-full rounded-lg border border-cyan-700 bg-zinc-900 px-3 text-zinc-100 focus:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
+                                />
+                              </label>
+                              <p className="text-xs text-zinc-500 sm:col-span-2">
+                                Defaults to 1 of {line.quantity} purchased. Remaining copies stay available in General Inventory and Event Flip.
+                              </p>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : line.kind === "EXACT" ? (
+                        <p className="mt-3 border-t border-zinc-800 pt-3 text-xs text-zinc-500">
+                          Sealed products stay in General Inventory.
+                        </p>
+                      ) : null}
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <p className="mt-4 rounded-lg border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
@@ -525,7 +689,9 @@ export default function VendorCheckout({
               onClick={finalize}
               className="mt-4 min-h-12 w-full rounded-lg bg-emerald-300 px-4 font-semibold text-zinc-950 disabled:opacity-50"
             >
-              Finalize purchase receipt
+              {selectedCaseLineCount
+                ? `Finalize purchase + send ${selectedCaseLineCount} to Case`
+                : "Finalize purchase receipt"}
             </button>
             <Link
               href="/event-ledger"

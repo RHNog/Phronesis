@@ -69,6 +69,8 @@ export type InventoryLot = {
   locationId: string | null;
   locationName: string;
   onHandQuantity: number | null;
+  displayCaseQuantity: number;
+  generalAvailableQuantity: number | null;
   quantityBasis: InventoryQuantityBasis;
   netDisposedQuantity: number;
   lastCountedAt: string | null;
@@ -87,6 +89,8 @@ export type InventorySummary = {
   activeDispositionCount: number;
   soldUnitCount: number;
   grossSalesCents: number;
+  displayCaseUnitCount: number;
+  generalAvailableUnitCount: number;
 };
 
 export type InventorySnapshot = {

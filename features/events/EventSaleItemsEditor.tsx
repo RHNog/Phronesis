@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type {
-  EventStockItem,
-  EventStockSnapshot,
-} from "@/lib/events/eventStock";
+  EventSaleOption,
+  EventSaleOptionsSnapshot,
+} from "@/lib/events/displayCase";
 import type { EventCurrency } from "@/lib/purchases/domain";
 
 export type EventSaleItemInput = {
@@ -12,6 +12,8 @@ export type EventSaleItemInput = {
   description: string;
   quantity: string;
   inventoryItemId?: string;
+  caseItemId?: string;
+  source?: EventSaleOption["source"];
   unitListPriceCents?: number;
   color?: string | null;
   variation?: string | null;
@@ -28,10 +30,6 @@ function money(cents: number, currency: EventCurrency | null): string {
     style: "currency",
     currency,
   }).format(cents / 100);
-}
-
-function optionDescription(item: EventStockItem): string {
-  return [item.name, item.variation, item.color].filter(Boolean).join(" · ");
 }
 
 export default function EventSaleItemsEditor({
@@ -52,7 +50,7 @@ export default function EventSaleItemsEditor({
   accent?: "cyan" | "emerald";
 }) {
   const [query, setQuery] = useState("");
-  const [snapshot, setSnapshot] = useState<EventStockSnapshot | null>(null);
+  const [snapshot, setSnapshot] = useState<EventSaleOptionsSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const normalizedQuery = query.trim();
@@ -63,16 +61,16 @@ export default function EventSaleItemsEditor({
       () => {
         setLoading(true);
         void fetch(
-          `/api/event-inventory?eventId=${encodeURIComponent(eventId)}&q=${encodeURIComponent(normalizedQuery)}`,
+          `/api/event-sale-options?eventId=${encodeURIComponent(eventId)}&q=${encodeURIComponent(normalizedQuery)}`,
           { cache: "no-store" },
         )
           .then(async (response) => {
             const body = (await response.json().catch(() => ({}))) as {
-              snapshot?: EventStockSnapshot;
+              snapshot?: EventSaleOptionsSnapshot;
               error?: string;
             };
             if (!response.ok || !body.snapshot) {
-              throw new Error(body.error ?? "Event Inventory could not load.");
+              throw new Error(body.error ?? "Sale inventory options could not load.");
             }
             if (!cancelled) {
               setSnapshot(body.snapshot);
@@ -84,7 +82,7 @@ export default function EventSaleItemsEditor({
               setError(
                 reason instanceof Error
                   ? reason.message
-                  : "Event Inventory could not load.",
+                  : "Sale inventory options could not load.",
               );
             }
           })
@@ -103,17 +101,22 @@ export default function EventSaleItemsEditor({
   const selectedIds = useMemo(
     () =>
       new Set(
-        items.flatMap((item) =>
-          item.inventoryItemId ? [item.inventoryItemId] : [],
-        ),
+        items.flatMap((item) => {
+          if (item.inventoryItemId) return [`prepared:${item.inventoryItemId}`];
+          if (item.caseItemId) return [`case:${item.caseItemId}`];
+          return [];
+        }),
       ),
     [items],
   );
 
-  function chooseStockItem(stockItem: EventStockItem) {
+  function chooseStockItem(stockItem: EventSaleOption) {
     if (disabled || stockItem.expectedQuantity < 1) return;
     const existingIndex = items.findIndex(
-      (item) => item.inventoryItemId === stockItem.id,
+      (item) =>
+        (stockItem.inventoryItemId &&
+          item.inventoryItemId === stockItem.inventoryItemId) ||
+        (stockItem.caseItemId && item.caseItemId === stockItem.caseItemId),
     );
     if (existingIndex >= 0) {
       const existing = items[existingIndex];
@@ -140,16 +143,19 @@ export default function EventSaleItemsEditor({
     }
     const selected: EventSaleItemInput = {
       id: crypto.randomUUID(),
-      description: optionDescription(stockItem),
+      description: stockItem.description,
       quantity: "1",
-      inventoryItemId: stockItem.id,
-      unitListPriceCents: stockItem.unitPriceCents,
+      inventoryItemId: stockItem.inventoryItemId,
+      caseItemId: stockItem.caseItemId,
+      source: stockItem.source,
+      unitListPriceCents: stockItem.unitListPriceCents,
       color: stockItem.color,
       variation: stockItem.variation,
       expectedQuantity: stockItem.expectedQuantity,
     };
     const emptyIndex = items.findIndex(
-      (item) => !item.inventoryItemId && !item.description.trim(),
+      (item) =>
+        !item.inventoryItemId && !item.caseItemId && !item.description.trim(),
     );
     onChange(
       emptyIndex >= 0
@@ -186,39 +192,39 @@ export default function EventSaleItemsEditor({
 
       <div className="mt-2 rounded-xl border border-zinc-800 bg-zinc-950/70 p-3">
         <label className="block text-xs font-medium text-zinc-400">
-          Search Event Inventory
+          Search Display Case
           <input
             type="search"
             autoComplete="off"
             maxLength={200}
             value={query}
-            disabled={disabled || !snapshot?.manifest}
+            disabled={disabled || !snapshot?.summary.totalExpectedQuantity}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={
-              snapshot?.manifest
-                ? "Name, color, variation, or price"
-                : "Import Event Inventory in the full ledger first"
+              snapshot?.summary.totalExpectedQuantity
+                ? "Name, set, number, condition, color, or price"
+                : "Add opening stock or Event Flip cards first"
             }
             className={`mt-2 min-h-12 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-base text-zinc-100 outline-none disabled:cursor-not-allowed disabled:opacity-60 ${focusClass}`}
           />
         </label>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500">
           <span>
-            {snapshot?.manifest
-              ? `${snapshot.summary.expectedQuantity} of ${snapshot.summary.openingQuantity} units expected`
+            {snapshot?.summary.totalExpectedQuantity
+              ? `${snapshot.summary.totalExpectedQuantity} units expected · ${snapshot.summary.preparedExpectedQuantity} opening · ${snapshot.summary.displayCaseExpectedQuantity} flips`
               : "Manual Sale lines remain available for unlisted items."}
           </span>
           {loading ? <span role="status">Searching…</span> : null}
         </div>
 
-        {normalizedQuery && snapshot?.manifest ? (
+        {normalizedQuery && snapshot?.summary.totalExpectedQuantity ? (
           <div
             className="mt-3 space-y-2"
             role="list"
-            aria-label="Event Inventory results"
+            aria-label="Display Case Sale results"
           >
-            {snapshot.items.length ? (
-              snapshot.items.map((stockItem) => {
+            {snapshot.options.length ? (
+              snapshot.options.map((stockItem) => {
                 const unavailable = stockItem.expectedQuantity < 1;
                 const selected = selectedIds.has(stockItem.id);
                 return (
@@ -234,15 +240,20 @@ export default function EventSaleItemsEditor({
                       <span className="block truncate text-sm font-semibold text-zinc-100">
                         {stockItem.name}
                       </span>
-                      <span className="mt-1 block truncate text-xs text-zinc-400">
-                        {[stockItem.variation, stockItem.color]
-                          .filter(Boolean)
-                          .join(" · ") || "Standard option"}
+                      <span className="mt-1 flex min-w-0 items-center gap-2 text-xs text-zinc-400">
+                        <span className="shrink-0 rounded-full border border-zinc-700 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-300">
+                          {stockItem.source === "DISPLAY_CASE"
+                            ? "Event flip"
+                            : "Opening"}
+                        </span>
+                        <span className="truncate">
+                          {stockItem.details || "Standard option"}
+                        </span>
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
                       <span className="block text-sm font-semibold tabular-nums text-cyan-200">
-                        {money(stockItem.unitPriceCents, currency)}
+                        {money(stockItem.unitListPriceCents, currency)}
                       </span>
                       <span className="mt-1 block text-xs text-zinc-500">
                         {unavailable
@@ -257,8 +268,8 @@ export default function EventSaleItemsEditor({
               })
             ) : (
               <p className="rounded-lg border border-dashed border-zinc-800 px-3 py-5 text-center text-sm text-zinc-500">
-                No stocked option matches this search. Add an untracked item
-                only if it truly was not in the imported manifest.
+                No Case option matches this search. Add an untracked item only
+                if it truly is not in opening stock or Event Flip inventory.
               </p>
             )}
           </div>
@@ -273,7 +284,7 @@ export default function EventSaleItemsEditor({
 
       <div className="mt-3 space-y-3">
         {items.map((item, index) => {
-          const tracked = Boolean(item.inventoryItemId);
+          const tracked = Boolean(item.inventoryItemId || item.caseItemId);
           return (
             <div
               key={item.id}
@@ -283,7 +294,9 @@ export default function EventSaleItemsEditor({
                 <div className="min-w-0 self-center">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-                      Tracked
+                      {item.source === "DISPLAY_CASE"
+                        ? "Event flip"
+                        : "Opening stock"}
                     </span>
                     <span className="text-xs text-zinc-500">
                       Item {index + 1}
@@ -294,7 +307,7 @@ export default function EventSaleItemsEditor({
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     {item.unitListPriceCents === undefined
-                      ? "Imported option"
+                      ? "Tracked Case option"
                       : `${money(item.unitListPriceCents, currency)} list · ${item.expectedQuantity ?? "?"} expected`}
                   </p>
                 </div>
@@ -309,7 +322,7 @@ export default function EventSaleItemsEditor({
                     onChange={(event) =>
                       updateItem(item.id, { description: event.target.value })
                     }
-                    placeholder="Describe an item absent from the manifest"
+                    placeholder="Describe an item absent from the Display Case"
                     className={`mt-1 min-h-11 w-full rounded-lg border border-amber-900/70 bg-zinc-900 px-3 text-base text-zinc-100 outline-none disabled:opacity-50 ${focusClass}`}
                   />
                 </label>

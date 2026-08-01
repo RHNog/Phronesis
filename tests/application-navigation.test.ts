@@ -14,8 +14,10 @@ test("primary navigation contains only operational product destinations", () => 
       { label: "Opportunities", href: "/" },
       { label: "Vendor Workspace", href: "/vendor" },
       { label: "Event Ledger", href: "/event-ledger" },
+      { label: "Event Flip", href: "/event-flip" },
+      { label: "Display Case", href: "/display-case" },
       { label: "Market Watch", href: "/watchlists" },
-      { label: "Inventory", href: "/inventory" },
+      { label: "General Inventory", href: "/inventory" },
       { label: "Settings", href: "/settings" },
     ],
   );
@@ -23,7 +25,7 @@ test("primary navigation contains only operational product destinations", () => 
     primaryNavigation.map(({ href }) => String(href)).includes("#"),
     false,
   );
-  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 6);
+  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 8);
 });
 
 test("contextual routes resolve to their owning product area", () => {
@@ -35,6 +37,8 @@ test("contextual routes resolve to their owning product area", () => {
   assert.equal(resolvePrimaryNavigation("/vendor")?.area, "Decide");
   assert.equal(resolvePrimaryNavigation("/evaluate")?.area, "Decide");
   assert.equal(resolvePrimaryNavigation("/event-ledger")?.area, "Manage");
+  assert.equal(resolvePrimaryNavigation("/event-flip")?.area, "Manage");
+  assert.equal(resolvePrimaryNavigation("/display-case")?.area, "Manage");
   assert.equal(resolvePrimaryNavigation("/watchlists")?.area, "Monitor");
   assert.equal(resolvePrimaryNavigation("/inventory")?.area, "Manage");
   assert.equal(resolvePrimaryNavigation("/settings")?.area, "Administer");
@@ -64,7 +68,9 @@ test("module filtering preserves every authorized destination and no others", ()
     ),
     [
       { label: "Opportunities", href: "/" },
-      { label: "Inventory", href: "/inventory" },
+      { label: "Event Flip", href: "/event-flip" },
+      { label: "Display Case", href: "/display-case" },
+      { label: "General Inventory", href: "/inventory" },
     ],
   );
 });

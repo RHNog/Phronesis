@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## Product Review Candidate — Event Flip And Display Case Inventory — 2026-07-31
+
+- `PHR-WORKFLOW-013` and `PHR-WORKFLOW-014` are implemented under `PHR-STRUCT-20260731-006`; `PHR-WORKFLOW-015` records Binder Inventory for later design. The feature-branch worktree remains uncommitted pending Product Owner review.
+- Every finalized event Purchase appears in Event Flip. Exact single-card lots can be multi-selected, quantity-checked, intended-price edited, and reserved into Display Case; sealed, Bulk, and manual Purchase evidence remains visible and General-only.
+- Display Case combines prepared opening stock with receipt-backed event flips while preserving source and ownership boundaries. Both Sale surfaces use one source-labelled picker; linked Sale and eligible reversal update Case, General Inventory, and Event Ledger atomically.
+- Vendor Workspace purchase lines now offer direct Case routing with Case quantity defaulting to one, editable through purchased quantity, and a required Case Sale price; the receipt, Inventory lot, initial price, and reservation commit together, while unallocated copies remain in Event Flip.
+- General Inventory now exposes owned on-hand, Case reserved, and generally available quantities and blocks dispositions, counts, and receipt voids that would invalidate Case evidence. Case returns are retry-safe and physical counts remain append-only variance observations.
+- Verification is green at focused 6/6 and full 290/290 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, desktop, 390px no-overflow, 44–48px controls, and clean browser console.
+- No live event mutation, provider request, external transaction, dependency, public deployment, commit, or push occurred. Same-session conformance passes; CTO Product Review remains pending.
+
 ## Product Review Candidate — Event Stock Control And Intent-Aware Search — 2026-07-31
 
 - `PHR-WORKFLOW-012` and `PHR-UX-016` are implemented under `PHR-STRUCT-20260731-005`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.

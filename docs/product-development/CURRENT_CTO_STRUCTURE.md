@@ -1,5 +1,24 @@
 # Current Phronesis CTO Structure
 
+## Active Assignment — Event Flip And Display Case Inventory
+
+- Assignment: `PHR-EVENT-FLIP-DISPLAY-CASE-20260731`
+- Document ID: `PHR-STRUCT-20260731-006`
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Features: `PHR-WORKFLOW-013`, `PHR-WORKFLOW-014`; future `PHR-WORKFLOW-015`
+- Priority: Critical
+- Objective: make every event Purchase visible to a sorting handler; let exact single-card lots be multi-selected, quantity-checked, Sale-priced, and added to a receipt-linked Display Case; make linked Sales reduce both Case and underlying owned quantity; and provide combined end-of-event verification.
+- Inventory rule: General Inventory remains acquisition/cost/on-hand authority. Display Case is a reserved event allocation, not duplicate ownership. Prepared Sheet stock remains a distinct no-lot source. Binder Inventory is documented but not implemented.
+- Intake rule: exact `SINGLE` receipt lots are actionable. Exact sealed, aggregate Bulk, and description-only manual Purchases remain visible but cannot become a specific Case card until a later itemization workflow establishes identity and quantity.
+- Financial rule: handler-entered Case price is intended/list evidence. Whole-Sale actual amount remains on the Event Ledger and cannot be arbitrarily allocated across items.
+- Quantity rule: Case allocation reserves but does not decrement total owned quantity. Case-linked Sale decrements Case and underlying General Inventory atomically. Reversal restores both only when no later physical count makes restoration ambiguous.
+- Authorization: Event Flip and Display Case use `INVENTORY:VIEW/OPERATE`; Sale search/write retains `VENDOR_WORKSPACE` authorization. Repository ownership checks remain authoritative.
+- Constraints: additive local SQLite only; preserve receipts, cost basis, General Inventory, Event Stock, cash math, manual fallback, and existing authorization. No Bulk identity fabrication, Binder implementation, provider call, payment, settlement, accounting, external transaction, public deployment, dependency, commit, or push.
+- Acceptance: immediate purchase visibility, multi-card Case allocation, editable prices, reservation math, merged Sale search, atomic Sale/reversal, receipt/disposition/count guards, prepared-source visibility, physical variance/reporting, full deterministic gates, and desktop/390px private review.
+- Approved amendment: Vendor Workspace purchase lines must expose an inline `Send to Display Case` choice and require the handler to enter the intended Case price before checkout. Case quantity defaults to one, is editable up to purchased quantity, and leaves remaining copies outside Case. Receipt, Inventory intake, and Case placement remain one atomic operation; unselected eligible cards continue to Event Flip.
+- Verified result: every finalized event Purchase now appears in Event Flip; exact single-card lots support multi-select quantity and intended-price allocation into a receipt-linked Case, while sealed, Bulk, and manual evidence remains truthfully non-actionable. Vendor Workspace additionally offers direct-to-Case routing with a required intended price inside the atomic receipt/Inventory transaction. Display Case combines prepared opening stock with event-flip allocations, both Sale surfaces share one source-labelled picker, and linked Sale/reversal updates Case, General Inventory, and Event Ledger atomically. General Inventory exposes owned, Case-reserved, and generally available quantities and blocks operations that would consume a reservation. Append-only Case prices, returns, counts, and a combined CSV verification report are available. Focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, and 390px no-overflow/clean-console checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
 ## Active Assignment — Event Stock Control And Intent-Aware Search
 
 - Assignment: `PHR-EVENT-STOCK-SEARCH-20260731`

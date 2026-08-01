@@ -109,6 +109,7 @@ export default function VendorEventSalePanel({
       description: item.description.trim(),
       quantity: Number(item.quantity),
       inventoryItemId: item.inventoryItemId,
+      caseItemId: item.caseItemId,
     }));
     if (soldItems.some((item) => !item.description)) {
       setError("Describe every item sold.");

@@ -292,17 +292,17 @@ export default function EventInventoryControl({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
-            Local show stock
+            Opening Case source
           </p>
           <h2
             id="event-inventory-heading"
             className="mt-2 text-xl font-semibold text-white"
           >
-            Event Inventory
+            Opening Display Stock
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-            Prepare the five-column Google Sheet, export the Event Inventory tab
-            as CSV, and import one immutable local snapshot before selling.
+            Prepare the five-column Google Sheet, export its display-stock tab as
+            CSV, and import one immutable opening snapshot before selling.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

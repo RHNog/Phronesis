@@ -24,6 +24,7 @@ export type EventSaleItemDraft = {
   description: string;
   quantity: number;
   inventoryItemId?: string;
+  caseItemId?: string;
 };
 
 export type EventSaleDraft = {
@@ -82,6 +83,12 @@ export type ExactPurchaseLine = ExactPurchaseLineDraft & {
 export type BulkPurchaseLine = BulkPurchaseLineDraft & { id: string };
 export type PurchaseLine = ExactPurchaseLine | BulkPurchaseLine;
 
+export type PurchaseCasePlacementDraft = {
+  lineId: string;
+  quantity: number;
+  salePriceCents: number;
+};
+
 export type PurchaseEvent = {
   id: string;
   name: string;
@@ -111,9 +118,13 @@ export type PurchaseReceipt = {
 
 export type PurchasePrincipal = { workspaceId: string; operatorUserId: string };
 
-export type EventSaleItem = Omit<EventSaleItemDraft, "inventoryItemId"> & {
+export type EventSaleItem = Omit<
+  EventSaleItemDraft,
+  "inventoryItemId" | "caseItemId"
+> & {
   position: number;
   inventoryItemId: string | null;
+  caseItemId: string | null;
   unitListPriceCents: number | null;
   color: string | null;
   variation: string | null;
@@ -360,5 +371,6 @@ function validateSaleItem(value: unknown, index: number): EventSaleItemDraft {
     ),
     quantity,
     inventoryItemId: optionalText(input.inventoryItemId, 120),
+    caseItemId: optionalText(input.caseItemId, 120),
   };
 }

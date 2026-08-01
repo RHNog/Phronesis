@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type {
   InventoryDisposition,
@@ -201,10 +202,15 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
     <section className="w-full max-w-[1500px] space-y-6" aria-labelledby="inventory-heading">
       <header>
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Manage · cost basis</p>
-        <h1 id="inventory-heading" className="mt-2 text-3xl font-semibold tracking-tight text-white">Inventory</h1>
+        <h1 id="inventory-heading" className="mt-2 text-3xl font-semibold tracking-tight text-white">General Inventory</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-          Purchases appear here automatically when an event receipt is finalized. Exact cards retain their printing and condition; Bulk remains a truthful aggregate lot.
+          Acquisition, cost basis, and total owned quantity live here. Display Case cards remain linked to these receipt lots and are shown as reserved—not duplicated ownership.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold">
+          <Link href="/event-flip" className="inline-flex min-h-11 items-center rounded-lg border border-fuchsia-800 px-3 text-fuchsia-200">Event Flip</Link>
+          <Link href="/display-case" className="inline-flex min-h-11 items-center rounded-lg border border-cyan-800 px-3 text-cyan-200">Display Case</Link>
+          <span className="inline-flex min-h-11 items-center rounded-lg border border-zinc-800 px-3 text-zinc-500">Binder Inventory · planned</span>
+        </div>
       </header>
 
       {error ? <div role="alert" className="rounded-xl border border-red-900/70 bg-red-950/40 p-4 text-sm text-red-200">{error}</div> : null}
@@ -215,7 +221,7 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
           <label className="flex-1 text-sm text-zinc-300">
             New inventory location
             <input value={locationName} onChange={(event) => setLocationName(event.target.value)} maxLength={80} required
-              placeholder="Display case, Shelf A, Bulk box 3…"
+              placeholder="Shelf A, Sealed bin, Bulk box 3…"
               className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-white outline-none focus:border-cyan-400" />
           </label>
           <button disabled={saving || !locationName.trim()} className="min-h-11 rounded-lg bg-cyan-400 px-5 font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50">
@@ -229,6 +235,8 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
           ["Recorded acquisition cost", snapshot ? cost(snapshot.summary.totalCostBasisCents) : "—"],
           ["Active lots", snapshot?.summary.activeLotCount ?? "—"],
           ["Exact units", snapshot?.summary.exactUnitCount ?? "—"],
+          ["Reserved in Display Case", snapshot?.summary.displayCaseUnitCount ?? "—"],
+          ["Available in General", snapshot?.summary.generalAvailableUnitCount ?? "—"],
           ["Bulk lots", snapshot?.summary.bulkLotCount ?? "—"],
           ["Units disposed", snapshot?.summary.netDisposedUnitCount ?? "—"],
           ["Units sold", snapshot?.summary.soldUnitCount ?? "—"],
@@ -270,6 +278,7 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
               <div>
                 <p className="text-xs uppercase tracking-wide text-zinc-600">On hand</p>
                 <p className="mt-1 text-sm text-zinc-200">{lot.onHandQuantity === null ? "Unspecified" : lot.onHandQuantity.toLocaleString()}</p>
+                {lot.displayCaseQuantity ? <p className="mt-1 text-xs font-semibold text-fuchsia-300">{lot.displayCaseQuantity.toLocaleString()} reserved in Case · {lot.generalAvailableQuantity?.toLocaleString() ?? "?"} General</p> : null}
                 <p className="mt-1 text-xs text-zinc-500">{lot.quantityBasis === "LEDGER" ? "Count/intake minus ledger" : lot.quantityBasis === "COUNTED" ? "Physical count" : lot.quantityBasis === "APPROXIMATE" ? "Approximate intake" : lot.quantityBasis === "RECEIPT" ? "Receipt quantity" : "Unknown basis"}</p>
                 {lot.netDisposedQuantity ? <p className="mt-1 text-xs text-amber-300">{lot.netDisposedQuantity.toLocaleString()} disposed</p> : null}
               </div>
@@ -291,8 +300,8 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
               <div className="flex flex-col gap-2">
                 {canOperate && !lot.voidedAt ? (
                   <>
-                    <button type="button" onClick={() => openDisposition(lot)} disabled={lot.onHandQuantity === null || lot.onHandQuantity <= 0}
-                      title={lot.onHandQuantity === null ? "Record a physical count first" : lot.onHandQuantity <= 0 ? "No units are on hand" : undefined}
+                    <button type="button" onClick={() => openDisposition(lot)} disabled={lot.generalAvailableQuantity === null || lot.generalAvailableQuantity <= 0}
+                      title={lot.generalAvailableQuantity === null ? "Record a physical count first" : lot.generalAvailableQuantity <= 0 ? "No units are available outside the Display Case" : undefined}
                       className="min-h-10 rounded-lg bg-cyan-400 px-3 text-sm font-semibold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40">
                       Record disposition
                     </button>
@@ -376,8 +385,9 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
               </label>
               <label className="block text-sm text-zinc-300">
                 Physical count (optional)
-                <input type="number" min={0} step={1} value={physicalCount} onChange={(event) => setPhysicalCount(event.target.value)} placeholder={`Current: ${managingLot.onHandQuantity ?? "unknown"}`}
+                <input type="number" min={managingLot.displayCaseQuantity} step={1} value={physicalCount} onChange={(event) => setPhysicalCount(event.target.value)} placeholder={`Current: ${managingLot.onHandQuantity ?? "unknown"}`}
                   className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
+                {managingLot.displayCaseQuantity ? <span className="mt-1 block text-xs text-fuchsia-300">Cannot count below {managingLot.displayCaseQuantity} units reserved in the Display Case.</span> : null}
               </label>
               <label className="block text-sm text-zinc-300">
                 Reason
@@ -400,7 +410,7 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 sm:items-center" role="presentation">
           <form onSubmit={recordDisposition} role="dialog" aria-modal="true" aria-labelledby="disposition-heading" className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-700 bg-zinc-950 p-5 shadow-2xl">
             <h2 id="disposition-heading" className="text-xl font-semibold text-white">Record disposition · {disposingLot.name}</h2>
-            <p className="mt-1 text-sm text-zinc-500">{disposingLot.onHandQuantity} currently on hand. This creates an append-only inventory record.</p>
+            <p className="mt-1 text-sm text-zinc-500">{disposingLot.generalAvailableQuantity} available in General Inventory · {disposingLot.displayCaseQuantity} reserved in the Display Case. This creates an append-only inventory record.</p>
             <div className="mt-5 space-y-4">
               <label className="block text-sm text-zinc-300">
                 Disposition type
@@ -414,7 +424,7 @@ export default function InventoryWorkspace({ canOperate }: { canOperate: boolean
               </label>
               <label className="block text-sm text-zinc-300">
                 Quantity
-                <input type="number" min={1} max={disposingLot.onHandQuantity ?? undefined} step={1} required value={dispositionQuantity} onChange={(event) => setDispositionQuantity(event.target.value)}
+                <input type="number" min={1} max={disposingLot.generalAvailableQuantity ?? undefined} step={1} required value={dispositionQuantity} onChange={(event) => setDispositionQuantity(event.target.value)}
                   className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-white" />
               </label>
               {dispositionType === "SALE" ? (

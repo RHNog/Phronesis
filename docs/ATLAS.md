@@ -35,6 +35,10 @@
 - `PHR-WORKFLOW-012` adds event-scoped stock allocation from a strict five-column, SHA-256-recorded Google Sheet CSV snapshot. Both Sale surfaces use one exact-option picker; Sale/reversal movements and ledger rows commit atomically, while manual lines remain explicitly untracked.
 - Event stock does not replace global Inventory. Opening quantities and imported option facts remain immutable after the first tracked Sale; expected leftover is derived from append-only movements, and physical counts remain separate variance evidence.
 - Sold reports preserve the actual whole-Sale amount separately from imported unit list price. Leftover reports preserve opening, sold, expected, counted, and variance without inferring loss or another Sale.
+- `PHR-WORKFLOW-013` derives Event Flip directly from finalized receipt-backed Inventory. Exact single-card lots can be quantity-selected and intended-price marked in batches; Vendor Workspace may instead mark an eligible cart line with a required Case price so receipt, lot, and reservation commit together. Sealed, aggregate Bulk, and description-only manual Purchases remain visible but General-only until separately itemized.
+- `PHR-WORKFLOW-014` models Display Case as a reserved allocation over owned Inventory. Allocation changes reserved/general-available quantities but not total owned; a linked Sale atomically decrements Case and the underlying lot, and eligible reversal restores both.
+- Display Case combines prepared opening stock and purchase-derived Case items only at the presentation/report boundary. One source-labelled Sale picker serves full and Lite Event Ledger, while actual whole-Sale revenue remains separate from imported or handler-entered list price.
+- General Inventory exposes owned on-hand, Display Case reserved, and generally available quantities and rejects dispositions, counts, or receipt voids that would invalidate Case evidence. Binder Inventory is reserved as future `PHR-WORKFLOW-015` with no current route or schema.
 - Vendor Workspace defaults to Purchase intake and exposes only incidental Sale capture plus current expected cash/gross sales. Event start, full activity, adjustment, reversal, correction, close, and reconciliation remain owned by `/event-ledger`.
 - Employee activation codes are salted scrypt hashes and only unlock an invited identity ceremony; server module entitlements remain authoritative.
 - `CuratedArtworkStore` binds validated local raster content to one category/SKU and serves it through the protected artwork boundary.
@@ -93,7 +97,9 @@ Decide     -> Vendor Workspace    -> /vendor and /evaluate
 Monitor    -> Market Watch        -> /watchlists
 Administer -> Settings            -> /settings
 Manage     -> Event Ledger        -> /event-ledger
-Manage     -> Inventory           -> /inventory
+Manage     -> Event Flip          -> /event-flip
+Manage     -> Display Case        -> /display-case
+Manage     -> General Inventory   -> /inventory
 ```
 
 Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. `AppShell` passes one server entitlement-filtered list to the persistent desktop sidebar and the accessible phone drawer; responsive renderers never own permission logic. Developer routes are intentionally outside this map.
