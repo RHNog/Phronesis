@@ -7,7 +7,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import CardThumbnail from "@/components/cards/CardThumbnail";
+import CardThumbnailPreview from "@/components/cards/CardThumbnailPreview";
 import type {
   CardImageCandidate,
   CardImageUrls,
@@ -20,7 +20,9 @@ import {
 } from "@/data/seedStrategies";
 import EvaluationSummary from "@/features/vendor/components/EvaluationSummary";
 import VendorCheckout from "@/features/vendor/components/VendorCheckout";
+import GradingCertificateLookup from "@/features/vendor/components/GradingCertificateLookup";
 import RegionalMarketPanel from "@/features/vendor/components/RegionalMarketPanel";
+import PriceChartingGradedArea from "@/features/vendor/components/PriceChartingGradedArea";
 import {
   createSnapshotWatchlistEntry,
   watchlistEntryKey,
@@ -50,6 +52,7 @@ import {
   type SearchMatch,
   type UnifiedPricingSearchResponse,
 } from "@/lib/pricing/types";
+import { tcgplayerVerificationUrl } from "@/lib/pricing/tcgplayerVerification";
 import type { Card } from "@/types/card";
 import type { CardConditionCode } from "@/types/conditionProfile";
 import type { MarketPrice } from "@/types/marketPrice";
@@ -111,6 +114,9 @@ function bestReference(price: PriceState | null): {
   cents: number | null;
   label: string;
 } {
+  if (price?.directLowCents !== null && price?.directLowCents !== undefined) {
+    return { cents: price.directLowCents, label: "TCG Direct Low" };
+  }
   if (
     price?.marketPriceCents !== null &&
     price?.marketPriceCents !== undefined
@@ -190,15 +196,14 @@ export function createSnapshotPurchaseEvaluation(input: {
     finish,
     price: reference.cents / 100,
     priceType:
-      input.price.marketPriceCents !== null
+      input.price.directLowCents !== null && input.price.directLowCents !== undefined
+        ? "lowest_known"
+        : input.price.marketPriceCents !== null
         ? "market_estimate"
         : "lowest_known",
     updatedAt: input.price.snapshotDate,
     confidence: 85,
-    condition:
-      input.match.productType === "SEALED"
-        ? "Unopened"
-        : conditionLabel(input.condition),
+    condition: input.match.productType === "SEALED" ? "NM" : conditionCodes[input.condition],
     conditionSpecific: true,
   };
   const businessProfile =
@@ -257,7 +262,7 @@ function ResultButton({
       }`}
     >
       <span className="flex items-center gap-3">
-        <CardThumbnail
+        <CardThumbnailPreview
           alt={`${group.name}, ${group.setName}`}
           assetKey={group.id}
           candidates={thumbnailCandidates(match, artwork)}
@@ -290,48 +295,6 @@ function ResultButton({
         </span>
       </span>
     </button>
-  );
-}
-
-function OfferFirstSummary({
-  evaluation,
-}: {
-  evaluation: PurchaseEvaluation | null;
-}) {
-  if (!evaluation || evaluation.status !== "READY") return null;
-  const ladder = evaluation.negotiationLadder;
-  return (
-    <section
-      aria-label="Recommended buying offer"
-      className="rounded-xl border border-cyan-800 bg-cyan-950/35 p-4"
-    >
-      <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">
-        Recommended offer
-      </p>
-      <p className="mt-2 text-4xl font-semibold tabular-nums text-white">
-        ${evaluation.recommendedOffer.toLocaleString()}
-      </p>
-      <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-        <div className="rounded-lg bg-zinc-950/70 p-3">
-          <p className="text-zinc-500">Opening</p>
-          <p className="mt-1 font-semibold text-zinc-100">
-            ${ladder.openingOffer.toLocaleString()}
-          </p>
-        </div>
-        <div className="rounded-lg bg-zinc-950/70 p-3">
-          <p className="text-zinc-500">Target</p>
-          <p className="mt-1 font-semibold text-cyan-200">
-            ${ladder.targetOffer.toLocaleString()}
-          </p>
-        </div>
-        <div className="rounded-lg bg-zinc-950/70 p-3">
-          <p className="text-zinc-500">Walk away</p>
-          <p className="mt-1 font-semibold text-amber-200">
-            ${ladder.maximumBuyPrice.toLocaleString()}
-          </p>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -734,7 +697,7 @@ export default function SnapshotVendorWorkspace({
         </div>
       </header>
 
-      <div className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/70 p-3">
+      {!selectedMatch ? <div className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/70 p-3">
         <label className="text-xs font-medium text-zinc-300">
           Search every catalogue
           <input
@@ -761,7 +724,12 @@ export default function SnapshotVendorWorkspace({
             {response.interpretations.map((item) => item.message).join(" · ")}
           </p>
         ) : null}
-      </div>
+      </div> : (
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-cyan-900/60 bg-cyan-950/20 p-3">
+          <div className="min-w-0"><p className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300">Selection locked for evaluation</p><p className="truncate text-sm text-zinc-200">{selectedGroup?.name ?? selectedMatch.name} · {selectedMatch.setName}{selectedMatch.collectorNumber ? ` · #${selectedMatch.collectorNumber}` : ""}</p></div>
+          <button type="button" onClick={resetSelection} className="min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200 hover:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300">Search another card</button>
+        </div>
+      )}
 
       {error ? (
         <p
@@ -772,10 +740,13 @@ export default function SnapshotVendorWorkspace({
         </p>
       ) : null}
 
-      <div className="mt-5 grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(230px,0.8fr)_minmax(280px,1fr)_minmax(300px,0.95fr)]">
-        <section
+      <div
+        data-vendor-primary-workflow
+        className="mt-5 grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(360px,0.85fr)_minmax(520px,1.15fr)]"
+      >
+        {!selectedMatch ? <section
           aria-labelledby="catalogue-results-heading"
-          className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-950/70 p-3 xl:max-h-[calc(100vh-14rem)] xl:overflow-y-auto"
+          className="order-1 min-w-0 rounded-xl border border-zinc-800 bg-zinc-950/70 p-3 xl:max-h-[calc(100vh-14rem)] xl:overflow-y-auto"
         >
           <div className="flex items-center justify-between gap-3 px-1 pb-3">
             <h2
@@ -823,11 +794,31 @@ export default function SnapshotVendorWorkspace({
               })}
             </ul>
           )}
-        </section>
+        </section> : null}
 
+        <div className="order-2 min-w-0 xl:sticky xl:top-5"><VendorCheckout
+          canOperate={canOperate}
+          condition={condition}
+          marketReferenceCents={reference.cents}
+          match={selectedMatch}
+          price={price}
+          offer={
+            offerEvaluation?.status === "READY"
+              ? {
+                  recommendedOffer: offerEvaluation.recommendedOffer,
+                  openingOffer: offerEvaluation.negotiationLadder.openingOffer,
+                  targetOffer: offerEvaluation.negotiationLadder.targetOffer,
+                  maximumBuyPrice: offerEvaluation.negotiationLadder.maximumBuyPrice,
+                  tcgLowCents: price?.listingPriceCents ?? null,
+                  tcgMarketCents: price?.marketPriceCents ?? null,
+                  tcgDirectLowCents: price?.directLowCents ?? null,
+                }
+              : null
+          }
+        /></div>
         <section
           aria-labelledby="snapshot-evidence-heading"
-          className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/70 p-4"
+          className={`${selectedMatch ? "order-1" : "order-3 xl:col-span-1"} min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/70 p-4`}
         >
           <h2
             id="snapshot-evidence-heading"
@@ -843,7 +834,7 @@ export default function SnapshotVendorWorkspace({
           ) : (
             <div className="mt-4">
               <div className="flex items-start gap-4">
-                <CardThumbnail
+                <CardThumbnailPreview
                   alt={`${selectedGroup?.name ?? selectedMatch.name}, ${selectedMatch.setName}`}
                   assetKey={selectedGroup?.id ?? selectedMatch.sku}
                   candidates={thumbnailCandidates(
@@ -851,6 +842,7 @@ export default function SnapshotVendorWorkspace({
                     selectedArtwork,
                   )}
                   className="w-16"
+                  focusable
                   selected
                 />
                 <div className="min-w-0">
@@ -874,6 +866,22 @@ export default function SnapshotVendorWorkspace({
                     {selectedFreshness?.snapshotDate
                       ? `Catalogue ${timestamp(selectedFreshness.snapshotDate)}`
                       : "Catalogue freshness unavailable"}
+                  </p>
+                  <a
+                    aria-label={`Verify ${selectedGroup?.name ?? selectedMatch.name} on TCGplayer (opens in a new tab)`}
+                    className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-cyan-700 bg-cyan-950/40 px-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400 hover:bg-cyan-950/70 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                    href={tcgplayerVerificationUrl(selectedMatch)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Verify on TCGplayer
+                    <span aria-hidden="true" className="ml-2">
+                      ↗
+                    </span>
+                  </a>
+                  <p className="mt-1 text-[11px] text-zinc-500">
+                    External manual cross-check; your Phronesis selection stays
+                    unchanged.
                   </p>
                 </div>
               </div>
@@ -925,6 +933,8 @@ export default function SnapshotVendorWorkspace({
                 </p>
               )}
 
+              {selectedMatch.productType === "SINGLE" ? <PriceChartingGradedArea match={selectedMatch} /> : null}
+
               {!price ? (
                 <div className="mt-5 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
                   <p className="font-semibold">No price in this condition.</p>
@@ -942,6 +952,7 @@ export default function SnapshotVendorWorkspace({
               ) : (
                 <>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {price.directLowCents !== null && price.directLowCents !== undefined ? <div className="rounded-lg border border-emerald-400/60 bg-emerald-950/40 p-3 sm:col-span-2"><p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">Primary reference · TCG Direct Low</p><p className="mt-1 text-3xl font-semibold tabular-nums text-emerald-200">{money(price.directLowCents)}</p><p className="mt-1 text-xs text-emerald-100/70">Direct-qualified listing floor; takes precedence in the offer calculation.</p></div> : null}
                     <div className="rounded-lg bg-zinc-950 p-3">
                       <p className="text-xs text-zinc-500">Market price</p>
                       <p className="mt-1 text-xl font-semibold tabular-nums text-white">
@@ -1065,7 +1076,7 @@ export default function SnapshotVendorWorkspace({
 
         <section
           aria-labelledby="vendor-decision-heading"
-          className="min-w-0 space-y-4 xl:sticky xl:top-5"
+          className="order-4 min-w-0 space-y-4 xl:col-span-2"
         >
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
             <h2
@@ -1103,9 +1114,6 @@ export default function SnapshotVendorWorkspace({
                   ))}
                 </select>
               </label>
-            </div>
-            <div className="mt-4">
-              <OfferFirstSummary evaluation={offerEvaluation} />
             </div>
             {selectedMatch ? (
               <div className="mt-4">
@@ -1148,20 +1156,9 @@ export default function SnapshotVendorWorkspace({
                   : "The offer ladder is ready above. Enter the seller's asking price for a decision comparison."}
             </div>
           )}
+          <GradingCertificateLookup />
         </section>
       </div>
-      <VendorCheckout
-        canOperate={canOperate}
-        condition={condition}
-        marketReferenceCents={reference.cents}
-        match={selectedMatch}
-        price={price}
-        recommendedOffer={
-          offerEvaluation?.status === "READY"
-            ? offerEvaluation.recommendedOffer
-            : null
-        }
-      />
     </section>
   );
 }

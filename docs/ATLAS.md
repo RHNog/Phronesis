@@ -26,6 +26,11 @@
 
 ## Card-Show Operations
 
+- `PHR-UX-020` keeps purchase corrections inside the canonical operator-owned open cart. Exact lines may change unit value and quantity; Bulk may change total value and optional approximate count. The server preserves line identity/evidence, finalization rejects unsaved UI drafts, and submitted receipt/ledger/Inventory/Case records remain immutable.
+- `PHR-UX-019` places the canonical ready buying offer immediately above `Current purchase` in the single Event station. Its collapsed state shows the recommendation plus TCG Low/Market evidence; expansion reveals the existing opening, target, and walk-away ladder without introducing another calculation path.
+- `PHR-API-009` owns one embedded grader registry. PSA may use its documented bearer-authenticated public API when configured; Beckett/BCCG, TAG, CGC, and SGC are explicit `OFFICIAL_API_REQUIRED` capabilities and never fall through to scraping.
+- `PHR-UX-018` makes rapid purchase composition spatially primary: Catalogue results sit beside the single canonical Event station on desktop, while evidence and buying analysis remain in a second band. Phone DOM order is results, checkout, evidence, decision; no transaction owner or state is duplicated.
+
 - `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.
 - `PurchaseLedgerRepository` owns workspace/operator events, payment-aware ledger entries, sold-item rows, carts, idempotent immutable receipts, close snapshots, and append-only reversal/void audit in the ignored application database. `PHR-WORKFLOW-006` extends those records additively without rewriting receipt evidence.
 - An Event begins with declared single-currency opening cash. Manual Sales carry one overall amount plus one or more required description/quantity sold-item rows and never require or mutate Inventory.
@@ -46,6 +51,7 @@
 
 ## Identity-Backed Price Monitoring And Market Evidence
 
+- `PHR-API-008` dedicates a local 100-credit UTC-day PkmnPrices policy budget to `/v1/sealed`. Open Pokémon set metadata orders releases newest first; durable usage/cursors prevent restart overrun, and exact local name+set corroboration is required before artwork resolution. The worker remains dormant without a sealed-enabled provider key.
 - `WatchlistRepository` owns user/workspace-scoped default lists, exact variant memberships, soft deletion, history, and deterministic legacy ownership in the shared ignored SQLite boundary.
 - Vendor Workspace creates an exact artwork/finish/condition/language watch in one action; duplicate tracking is idempotent and newly created membership can be undone inline.
 - Verified Pricing Update Tool receipts refresh matching watch entries from the local pricing repository without creating a second provider schedule.
@@ -80,6 +86,7 @@
 
 - `PHR-TECH-008` activates Lorcana snapshot pricing, raises strict Pokémon set reconciliation through an explicit alias registry, and adds validated Lorcast AVIF retention. Magic, Pokémon, One Piece, and Lorcana are now loaded catalogue games; Riftbound is deferred.
 - `PricingRepository.searchAll` owns unified local catalogue search; the API remains backward compatible with category-specific requests.
+- `PHR-UX-016` keeps retrieval and scoring on one escaped intent plan. `pricing_search_aliases` stores only reproducible high-confidence One Piece code-to-title discovery aliases derived from exact collector rows; it never changes canonical products or selected identity.
 - `groupSearchMatchesByArtwork` creates deterministic category/name/set/collector/language artwork groups while preserving alternate-art descriptors and sealed products.
 - Vendor Workspace selects a group, then an exact Finish SKU, then Condition; only that exact snapshot record reaches `evaluatePurchase`.
 - `/api/pricing/artwork` dispatches Magic to Scryfall, Pokémon to TCGdex, Lorcana to Lorcast, and One Piece to the official Bandai English card list. Riftbound returns an explicit authorization state.
@@ -300,7 +307,7 @@ Rule: the command palette routes typed selections and never owns workflow busine
 - Fallback: `components/cards/CardImagePlaceholder.tsx`
 - Source order: Repository, Replay, Provider, then Placeholder; repeated resolutions report Cached.
 - Performance boundary: UI resolution cache owns URL selection; Next.js and browser HTTP caches own image bytes.
-- Extension boundary: hover previews, contextual overlays, and quick actions attach to existing image slots.
+- Extension boundary: `CardThumbnailPreview` attaches viewport-clamped hover/focus enlargement to existing image candidates; contextual overlays and quick actions remain future extensions.
 
 Rule: product modules must not independently render or select card artwork.
 

@@ -1,5 +1,39 @@
 # Prompt History
 
+## Editable Purchase Cart — 2026-08-01
+
+`PHR-STRUCT-20260801-006` authorizes `PHR-UX-020` to edit value and quantity on an employee-owned unsubmitted purchase-cart line, expose explicit Save changes and Remove item controls, and preserve immutable downstream purchase evidence.
+
+Implementation prompt: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
+
+## Sealed Readiness And Embedded Verification — 2026-08-01
+
+`PHR-STRUCT-20260801-005` authorizes `PHR-API-008` to spend a strict local 100-credit UTC-day budget only on newest-first PkmnPrices sealed ingestion, `PHR-UX-019` to put the canonical recommendation in a compact expandable cart-adjacent tile, and `PHR-API-009` to embed only authorized grading-certificate interfaces.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-API-008-pkmnprices-sealed-ingestion-prompt.md`.
+- `docs/prompts/PHR-UX-019-compact-checkout-offer-prompt.md`.
+- `docs/prompts/PHR-API-009-grading-certificate-lookup-prompt.md`.
+
+## Adjacent Search And Checkout Workspace — 2026-08-01
+
+`PHR-STRUCT-20260801-004` authorizes `PHR-UX-018` to place the single canonical VendorCheckout beside catalogue results on desktop while preserving a semantic linear phone order and all existing event behavior.
+
+Implementation prompt: `docs/prompts/PHR-UX-018-adjacent-search-checkout-workspace-prompt.md`.
+
+## Catalogue Verification Controls — 2026-08-01
+
+`PHR-STRUCT-20260801-003` authorizes `PHR-UX-017` to add a reusable enlarged catalogue-artwork preview and a fixed-origin, exact-context TCGplayer cross-check link without external API calls or identity mutation.
+
+Implementation prompt: `docs/prompts/PHR-UX-017-catalogue-verification-controls-prompt.md`.
+
+## One Piece Set-Code Search Resolution — 2026-08-01
+
+`PHR-STRUCT-20260801-002` extends `PHR-UX-016` so OP/EB/ST/PRB codes resolve through high-confidence aliases derived from exact imported catalogue evidence, with special/weak/ambiguous mappings failing closed.
+
+Implementation prompt: `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+
 ## Timed Event Worker Access — 2026-07-31
 
 `PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.

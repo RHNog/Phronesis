@@ -111,6 +111,13 @@ export async function POST(request: Request) {
         removed: ledger.removeLine(principal, body.lineId),
       });
     }
+    if (body.action === "update-line") {
+      if (typeof body.lineId !== "string")
+        throw new Error("Cart line is required.");
+      return Response.json({
+        line: ledger.updateLine(principal, body.lineId, body.changes),
+      });
+    }
     if (body.action === "checkout") {
       if (
         typeof body.eventId !== "string" ||

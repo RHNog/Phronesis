@@ -42,6 +42,17 @@ The first approved alias family covers common Pokémon era code normalization:
 - Leading-zero variants are equivalent for canonical `SWSH`, `SM`, `SV`, and `XY` numbered codes.
 - Expansion changes candidate retrieval and ranking only. It never rewrites catalogue identity or auto-selects a result.
 
+The 2026-08-01 enhancement adds One Piece set-code resolution without maintaining a brittle hand-authored title list:
+
+- Recognize compact, dashed, spaced, padded, and unpadded `OP`, `EB`, `ST`, and `PRB` numbered set codes.
+- Derive each code's canonical human set name from exact imported single-card collector numbers and their catalogue set names.
+- Persist only mappings supported by at least two distinct products and a dominant, semantically compatible set-name candidate.
+- Exclude tournament, promotion, prerelease, championship, winner, anniversary, and other special-event catalogue labels from canonical set authority.
+- Fail closed when the imported catalogue does not provide sufficient or unambiguous evidence.
+- Add the derived set-name phrase as an alternative for the original code token, so `OP13 booster` requires both the OP13/Carrying On His Will intent and `booster`.
+
+The approved collector-number amendment treats one-to-three-digit numeric One Piece query tokens as the catalogue's three-digit collector form. `22` therefore expands to `022`, while an already padded `022` remains literal. The expansion is category-scoped to One Piece, visible to the operator, bounded to one canonical alternative, and never drops card-name or set-code terms.
+
 ## Functional Requirements
 
 - Preserve Unicode/diacritic/punctuation normalization and all existing name, set, collector, finish, and sealed-product search behavior.
@@ -53,6 +64,12 @@ The first approved alias family covers common Pokémon era code normalization:
 - Vendor Workspace presents the interpretation without claiming automatic identity certainty.
 - `Charizard v sh03` must return the canonical `SWSH03: Darkness Ablaze` artwork first.
 - Existing `Charizard v` ranking and multi-catalogue routing must not regress.
+- `OP13 booster` must return sealed `Carrying On His Will` products and disclose `Understood OP13 as Carrying On His Will`.
+- `OP13` alone must continue to return matching single cards; aliasing cannot suppress literal collector-code matches.
+- One Piece aliases must refresh transactionally after a One Piece catalogue import and bootstrap deterministically for an already populated local database.
+- Unified search must merge interpretation metadata from the category whose local catalogue supplied the alias.
+- `Monkey.D.Luffy OP16 22` and `Monkey.D.Luffy OP16 022` must retrieve the same `OP16-022` identities.
+- Collector normalization must not apply to four-digit values, alphanumeric tokens, or non-One Piece category searches.
 
 ## Non-Functional Requirements
 
@@ -62,7 +79,7 @@ Expansion is bounded to no more than six alternatives per token and preserves in
 
 ### Scalability
 
-Alias families are pure data/rules in one query-planning module and can be extended per catalogue without UI or repository branching.
+Static spelling families remain pure query-planning rules. Catalogue-derived aliases use one local evidence table and one derivation module so new One Piece releases become searchable after import without UI changes or code-specific title edits.
 
 ### Maintainability
 
@@ -70,7 +87,7 @@ Candidate retrieval and scoring share the same normalized alias plan. UI code on
 
 ### Reliability
 
-Unrecognized identifiers keep literal behavior. Ambiguous shorthand may broaden visible candidates but cannot auto-select, persist, or mutate an identity.
+Unrecognized identifiers keep literal behavior. Ambiguous or weakly evidenced catalogue-derived aliases fail closed. Recognized shorthand may broaden visible candidates but cannot auto-select, persist a selected identity, or mutate catalogue identity.
 
 ### Accessibility
 
@@ -86,7 +103,7 @@ Every FTS alternative is normalized and quote-escaped; raw MATCH syntax is never
 
 ### Extensibility
 
-Future bounded families may include documented game/set aliases, collector prefixes, language terms, OCR normalization, and spelling correction with explicit confidence.
+Future bounded families may include other evidence-derived game/set aliases, collector prefixes, language terms, OCR normalization, and spelling correction with explicit confidence.
 
 ### Responsiveness
 
@@ -96,6 +113,7 @@ Interpretation text wraps below the search field without changing the 390px resu
 
 - As an event operator, I can type the set shorthand I remember and immediately see the intended printing.
 - As an owner, I can see how Phronesis interpreted shorthand before I select an exact card.
+- As a One Piece operator, I can type the printed set code I know and still reach sealed products stored under the set's human title.
 
 ## Acceptance Criteria
 
@@ -103,6 +121,9 @@ Interpretation text wraps below the search field without changing the 390px resu
 - Query-plan tests cover case, leading-zero, canonical, shorthand, unknown-token, escaping, and bounded-expansion behavior.
 - Existing search, grouping, pricing, and artwork tests remain green.
 - Private phone review reproduces the screenshot query and returns the intended card without horizontal overflow or console errors.
+- Repository tests prove `OP13 booster` resolves to `Carrying On His Will` sealed products while `OP13` still returns singles.
+- Tests prove OP/EB/ST/PRB padded and unpadded parsing, special-label exclusion, low-evidence rejection, ambiguity rejection, multiword matching, and unified interpretation propagation.
+- Regression tests prove `22 ↔ 022` collector equivalence and preserve all-token rejection for an unrelated card name.
 
 ## Edge Cases
 
@@ -110,6 +131,11 @@ Interpretation text wraps below the search field without changing the 390px resu
 - `sh999` may expand structurally but returns no result when no canonical set exists.
 - Unknown alphanumeric terms remain literal.
 - A shorthand that matches multiple visible products remains a result list requiring explicit user choice.
+- A code supported only by a special-event set label, one product, or tied canonical candidates remains literal and does not acquire a derived interpretation.
+- `ST01 booster` may correctly return no result because `ST01` resolves to a Starter Deck while `booster` remains required.
+- `022` is already canonical and does not emit a redundant interpretation.
+- `000`, values longer than three digits, and tokens containing letters are not treated as collector-number shorthand.
+- A number in another game remains governed by that catalogue's existing literal search behavior.
 
 ## Dependencies
 
@@ -122,10 +148,11 @@ Interpretation text wraps below the search field without changing the 390px resu
 - Typo-tolerant name retrieval using an indexed trigram strategy.
 - Natural-language field extraction, OCR, barcode, and voice input.
 - Evidence-backed aliases for other game catalogues.
+- Optional explicit provider set registries when an authoritative catalogue exposes set-code metadata directly.
 
 ## Technical Notes
 
-Create a pure `pricingSearchPlan` module used by both repository candidate retrieval and `searchScore`. Return an optional `interpretations` array on search responses. Keep alias expansion separate from identity reconciliation; search is a discovery surface, not a crosswalk authority.
+`pricingSearchPlan` remains the shared retrieval/scoring plan and accepts bounded resolved aliases. A separate pure One Piece derivation module extracts set codes from exact collector numbers, selects only a dominant compatible title, and persists evidence counts in `pricing_search_aliases`. Repository search resolves aliases before generating MATCH syntax. Multiword alternatives use FTS phrases and the same phrase-aware coverage rule in scoring. Return an optional `interpretations` array on search responses. Keep alias expansion separate from selected identity reconciliation; search is a discovery surface, not a crosswalk authority.
 
 ## UI / UX Notes
 
@@ -134,6 +161,7 @@ Render concise feedback such as `Understood SH03 as SWSH03` beneath the search h
 ## Success Metrics
 
 - `Charizard v sh03` reaches the intended SWSH03 card in the first result.
+- `OP13 booster` reaches Carrying On His Will sealed products without a hard-coded OP13 title mapping.
 - No increase in automatic identity adoption; search remains selection-driven.
 - No measurable regression in bounded local search latency.
 
@@ -150,5 +178,5 @@ Render concise feedback such as `Understood SH03 as SWSH03` beneath the search h
 - Related implementation report: `docs/implementation-reports/PHR-UX-016-intent-aware-catalogue-search-report.md`.
 - Related conformance review: `docs/reviews/PHR-UX-016-intent-aware-catalogue-search-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-UX-016.md`.
-- Last modified: 2026-07-31.
-- Modification reason: deterministic implementation, full verification, and private 390px reproduction of the reported failure completed.
+- Last modified: 2026-08-01.
+- Modification reason: extend intent-aware search from static Pokémon spelling aliases to evidence-derived One Piece set-code/title resolution and zero-padded One Piece collector-number equivalence after the reported `OP13 booster` and `OP16 22` failures.

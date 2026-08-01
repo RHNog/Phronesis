@@ -59,7 +59,14 @@ function watch(overrides: Partial<WatchlistEntry> = {}) {
     },
     condition: "NM",
     currentValuation: 100,
-    developerDiagnostics: { apiSaved: true, cacheAgeMs: null, observationAgeMs: null, providerHit: false, replay: false, repositoryHit: true },
+    developerDiagnostics: {
+      apiSaved: true,
+      cacheAgeMs: null,
+      observationAgeMs: null,
+      providerHit: false,
+      replay: false,
+      repositoryHit: true,
+    },
     finish: "Foil",
     id: "legacy-watch",
     language: "English",
@@ -81,18 +88,30 @@ test("targetless watches do not display a misleading difference", () => {
 });
 
 test("refresh failure takes precedence over recently refreshed", () => {
-  assert.equal(getMarketStatus({ lastRefresh: new Date().toISOString(), observationSource: "Repository", percentToTarget: null, refreshStatus: "Refresh Failed" }), "Refresh Recommended");
+  assert.equal(
+    getMarketStatus({
+      lastRefresh: new Date().toISOString(),
+      observationSource: "Repository",
+      percentToTarget: null,
+      refreshStatus: "Refresh Failed",
+    }),
+    "Refresh Recommended",
+  );
 });
 
 test("failed client refresh preserves the last successful refresh and explains non-JSON failures", async () => {
   const original = globalThis.fetch;
-  globalThis.fetch = (async () => new Response("upstream failure", { status: 500 })) as typeof fetch;
+  globalThis.fetch = (async () =>
+    new Response("upstream failure", { status: 500 })) as typeof fetch;
   try {
     const entry = watch();
     const refreshed = await refreshWatchlistEntry({ entry, manual: true });
     assert.equal(refreshed.refreshStatus, "Refresh Failed");
     assert.equal(refreshed.lastRefresh, entry.lastRefresh);
-    assert.match(refreshed.developerDiagnostics.errorMessage ?? "", /failed with 500/i);
+    assert.match(
+      refreshed.developerDiagnostics.errorMessage ?? "",
+      /failed with 500/i,
+    );
   } finally {
     globalThis.fetch = original;
   }
@@ -110,7 +129,10 @@ test("a strict unique legacy watch reconciles to its exact catalogue SKU", () =>
 });
 
 test("legacy reconciliation tolerates provider set-label drift only when physical identity is unique", () => {
-  const renamedSet = { ...match, setName: "Game Day & Store Championship Promos" };
+  const renamedSet = {
+    ...match,
+    setName: "Game Day & Store Championship Promos",
+  };
   const pricing = {
     findBySku: () => null,
     search: () => ({ singles: [renamedSet], sealed: [] }),
@@ -132,11 +154,33 @@ test("legacy reconciliation tolerates provider set-label drift only when physica
 
 test("visible Pokémon identities produce bounded independent artwork queries", () => {
   const results = [
-    { ...match, categoryId: "pokemon-en", name: "Code Card - First Partner", setName: "First Partner Pack", sku: "code" },
-    { ...match, categoryId: "pokemon-en", name: "Mudkip", setName: "First Partner Pack", sku: "mudkip" },
-    { ...match, categoryId: "pokemon-en", name: "Bulbasaur", setName: "First Partner Pack", sku: "bulbasaur" },
+    {
+      ...match,
+      categoryId: "pokemon-en",
+      name: "Code Card - First Partner",
+      setName: "First Partner Pack",
+      sku: "code",
+    },
+    {
+      ...match,
+      categoryId: "pokemon-en",
+      name: "Mudkip",
+      setName: "First Partner Pack",
+      sku: "mudkip",
+    },
+    {
+      ...match,
+      categoryId: "pokemon-en",
+      name: "Bulbasaur",
+      setName: "First Partner Pack",
+      sku: "bulbasaur",
+    },
   ];
-  assert.deepEqual(providerArtworkQueries("pokemon-en", "first par", results), ["Code Card - First Partner", "Mudkip", "Bulbasaur"]);
+  assert.deepEqual(providerArtworkQueries("pokemon-en", "first par", results), [
+    "Code Card - First Partner",
+    "Mudkip",
+    "Bulbasaur",
+  ]);
 });
 
 test("employee activation codes are hashed, single-use, and preserve assigned modules", () => {
@@ -150,10 +194,21 @@ test("employee activation codes are hashed, single-use, and preserve assigned mo
   assert.ok(invitation.activationCode);
   assert.equal(repository.findPendingInvitation(invitation.email), null);
   repository.redeemActivationCode(invitation.activationCode!);
-  assert.throws(() => repository.redeemActivationCode(invitation.activationCode!), /invalid|already used/i);
-  const membership = repository.provisionInvitedUser(invitation.email, "employee-user");
-  assert.deepEqual(membership.entitlements, [{ module: "VENDOR_WORKSPACE", access: "OPERATE" }]);
-  assert.equal(repository.authorize("employee-user", "MARKET_WATCH", "VIEW").allowed, false);
+  assert.throws(
+    () => repository.redeemActivationCode(invitation.activationCode!),
+    /invalid|already used/i,
+  );
+  const membership = repository.provisionInvitedUser(
+    invitation.email,
+    "employee-user",
+  );
+  assert.deepEqual(membership.entitlements, [
+    { module: "VENDOR_WORKSPACE", access: "OPERATE" },
+  ]);
+  assert.equal(
+    repository.authorize("employee-user", "MARKET_WATCH", "VIEW").allowed,
+    false,
+  );
   repository.close();
 });
 
@@ -161,32 +216,164 @@ test("event checkout persists exact and mixed Bulk lines into an idempotent rece
   const database = new DatabaseSync(":memory:");
   const ledger = new PurchaseLedgerRepository(database);
   const principal = { workspaceId: "workspace", operatorUserId: "employee" };
-  const event = ledger.createEvent(principal, { name: "Saturday Show", eventDate: "2026-08-01", location: "Convention Center" });
-  ledger.addLine(principal, event.id, validatePurchaseLineDraft({
-    kind: "EXACT", categoryId: match.categoryId, sku: match.sku, condition: "NM", quantity: 1,
-    actualPaidCents: 6000, recommendedOfferCents: 6000, marketReferenceCents: 10000, snapshotDate: "2026-07-30T12:00:00.000Z",
-  }), match);
-  ledger.addLine(principal, event.id, validatePurchaseLineDraft({
-    kind: "BULK", productLines: ["MAGIC", "POKEMON"], actualPaidCents: 2000, notes: "Two mixed low-value boxes", approximateQuantity: 1000,
-  }));
+  const event = ledger.createEvent(principal, {
+    name: "Saturday Show",
+    eventDate: "2026-08-01",
+    location: "Convention Center",
+  });
+  ledger.addLine(
+    principal,
+    event.id,
+    validatePurchaseLineDraft({
+      kind: "EXACT",
+      categoryId: match.categoryId,
+      sku: match.sku,
+      condition: "NM",
+      quantity: 1,
+      actualPaidCents: 6000,
+      recommendedOfferCents: 6000,
+      marketReferenceCents: 10000,
+      snapshotDate: "2026-07-30T12:00:00.000Z",
+    }),
+    match,
+  );
+  ledger.addLine(
+    principal,
+    event.id,
+    validatePurchaseLineDraft({
+      kind: "BULK",
+      productLines: ["MAGIC", "POKEMON"],
+      actualPaidCents: 2000,
+      notes: "Two mixed low-value boxes",
+      approximateQuantity: 1000,
+    }),
+  );
   const receipt = ledger.checkout(principal, event.id, "checkout:test-0001");
   assert.equal(receipt.totalCents, 8000);
   assert.equal(receipt.lines.length, 2);
-  assert.equal(ledger.checkout(principal, event.id, "checkout:test-0001").id, receipt.id);
+  assert.equal(
+    ledger.checkout(principal, event.id, "checkout:test-0001").id,
+    receipt.id,
+  );
   assert.equal(ledger.listCart(principal, event.id).length, 0);
-  assert.ok(ledger.voidReceipt(principal, receipt.id, "Corrected by administrator").voidedAt);
+  assert.ok(
+    ledger.voidReceipt(principal, receipt.id, "Corrected by administrator")
+      .voidedAt,
+  );
+  database.close();
+});
+
+test("open purchase cart lines edit value and quantity without changing identity", () => {
+  const database = new DatabaseSync(":memory:");
+  const ledger = new PurchaseLedgerRepository(database);
+  const principal = { workspaceId: "workspace", operatorUserId: "employee" };
+  const event = ledger.createEvent(principal, {
+    name: "Editable Cart Show",
+    eventDate: "2026-08-01",
+  });
+  const exact = ledger.addLine(
+    principal,
+    event.id,
+    validatePurchaseLineDraft({
+      kind: "EXACT",
+      categoryId: match.categoryId,
+      sku: match.sku,
+      condition: "NM",
+      quantity: 1,
+      actualPaidCents: 6000,
+      recommendedOfferCents: 6000,
+      marketReferenceCents: 10000,
+      snapshotDate: "2026-07-30T12:00:00.000Z",
+    }),
+    match,
+  );
+  const bulk = ledger.addLine(
+    principal,
+    event.id,
+    validatePurchaseLineDraft({
+      kind: "BULK",
+      productLines: ["MAGIC", "POKEMON"],
+      actualPaidCents: 2000,
+      notes: "Mixed collection",
+      approximateQuantity: 100,
+    }),
+  );
+
+  const updatedExact = ledger.updateLine(principal, exact.id, {
+    actualPaidCents: 4500,
+    quantity: 3,
+  });
+  assert.equal(updatedExact.kind, "EXACT");
+  if (updatedExact.kind === "EXACT") {
+    assert.equal(updatedExact.actualPaidCents, 4500);
+    assert.equal(updatedExact.quantity, 3);
+    assert.equal(updatedExact.sku, match.sku);
+    assert.equal(updatedExact.condition, "NM");
+    assert.equal(updatedExact.marketReferenceCents, 10000);
+  }
+  const updatedBulk = ledger.updateLine(principal, bulk.id, {
+    actualPaidCents: 2500,
+    quantity: null,
+  });
+  assert.equal(updatedBulk.kind, "BULK");
+  if (updatedBulk.kind === "BULK") {
+    assert.equal(updatedBulk.actualPaidCents, 2500);
+    assert.equal(updatedBulk.approximateQuantity, null);
+    assert.deepEqual(updatedBulk.productLines, ["MAGIC", "POKEMON"]);
+    assert.equal(updatedBulk.notes, "Mixed collection");
+  }
+  assert.throws(
+    () =>
+      ledger.updateLine(principal, exact.id, {
+        actualPaidCents: 0,
+        quantity: 3,
+      }),
+    /positive/i,
+  );
+  assert.throws(
+    () =>
+      ledger.updateLine(principal, exact.id, {
+        actualPaidCents: 4500,
+        quantity: 0,
+      }),
+    /between 1 and 1000/i,
+  );
+  assert.throws(
+    () =>
+      ledger.updateLine(
+        { workspaceId: "workspace", operatorUserId: "other-employee" },
+        exact.id,
+        { actualPaidCents: 4500, quantity: 2 },
+      ),
+    /not found/i,
+  );
+  assert.equal(ledger.removeLine(principal, bulk.id), true);
+  const receipt = ledger.checkout(principal, event.id, "checkout:edited-cart");
+  assert.equal(receipt.totalCents, 13_500);
+  assert.equal(receipt.lines.length, 1);
   database.close();
 });
 
 test("Bulk requires both supported product ownership and notes", () => {
-  assert.throws(() => validatePurchaseLineDraft({ kind: "BULK", productLines: [], actualPaidCents: 10, notes: "" }), /product line/i);
+  assert.throws(
+    () =>
+      validatePurchaseLineDraft({
+        kind: "BULK",
+        productLines: [],
+        actualPaidCents: 10,
+        notes: "",
+      }),
+    /product line/i,
+  );
 });
 
 test("curated product artwork is integrity checked and bound to exact SKU", async () => {
   const directory = mkdtempSync(join(tmpdir(), "phronesis-curated-"));
   try {
     const store = new CuratedArtworkStore(directory);
-    const bytes = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0]);
+    const bytes = Uint8Array.from([
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0,
+    ]);
     await store.put("pokemon-en", "first-partner-mudkip", bytes, "image/png");
     const stored = await store.get("pokemon-en", "first-partner-mudkip");
     assert.deepEqual(Array.from(stored.bytes), Array.from(bytes));
@@ -196,23 +383,63 @@ test("curated product artwork is integrity checked and bound to exact SKU", asyn
   }
 });
 
-test("the manual watch composer and offer-first checkout are wired into production surfaces", () => {
-  const watchlist = readFileSync(new URL("../features/watchlist/WatchlistWorkspace.tsx", import.meta.url), "utf8");
-  const vendor = readFileSync(new URL("../features/vendor/components/SnapshotVendorWorkspace.tsx", import.meta.url), "utf8");
+test("the manual watch composer and compact cart-adjacent offer are wired into production surfaces", () => {
+  const watchlist = readFileSync(
+    new URL("../features/watchlist/WatchlistWorkspace.tsx", import.meta.url),
+    "utf8",
+  );
+  const vendor = readFileSync(
+    new URL(
+      "../features/vendor/components/SnapshotVendorWorkspace.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
   assert.match(watchlist, /CreateWatchlistEntryDialog/);
-  assert.match(vendor, /OfferFirstSummary/);
+  const checkout = readFileSync(
+    new URL(
+      "../features/vendor/components/VendorCheckout.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const purchaseRoute = readFileSync(
+    new URL("../app/api/purchases/route.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(checkout, /Recommended offer/);
+  assert.match(checkout, /TCG Low/);
+  assert.match(checkout, /TCG Market/);
+  assert.match(checkout, /Unit purchase price/);
+  assert.match(checkout, /Purchase quantity/);
+  assert.match(checkout, /Save changes/);
+  assert.match(checkout, /Remove item/);
+  assert.match(checkout, /Save every cart change before finalizing/);
+  assert.match(purchaseRoute, /body\.action === "update-line"/);
+  assert.doesNotMatch(vendor, /OfferFirstSummary/);
   assert.match(vendor, /VendorCheckout/);
   assert.match(vendor, /Owner image override/);
 });
 
-test("Settings owns provider health and employee-login readiness without accepting secrets", () => {
-  const settings = readFileSync(new URL("../app/settings/page.tsx", import.meta.url), "utf8");
-  const providers = readFileSync(new URL("../components/settings/ProviderConnections.tsx", import.meta.url), "utf8");
-  const access = readFileSync(new URL("../components/auth/AccessManagement.tsx", import.meta.url), "utf8");
+test("Settings owns provider health and owner-only encrypted credential registration", () => {
+  const settings = readFileSync(
+    new URL("../app/settings/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const providers = readFileSync(
+    new URL("../components/settings/ProviderConnections.tsx", import.meta.url),
+    "utf8",
+  );
+  const access = readFileSync(
+    new URL("../components/auth/AccessManagement.tsx", import.meta.url),
+    "utf8",
+  );
   assert.match(settings, /ProviderConnections/);
   assert.match(providers, /provider-health/);
   assert.match(providers, /Secret entry remains locked/);
-  assert.doesNotMatch(providers, /type=["']password/);
+  assert.match(providers, /type="password"/);
+  assert.match(providers, /administration\/provider-credentials/);
+  assert.match(providers, /Save securely/);
   assert.match(access, /api\/auth\/callback\/github/);
   assert.match(access, /PHRONESIS_AUTH_MODE=OPTIONAL/);
 });

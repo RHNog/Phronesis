@@ -5,6 +5,22 @@
 
 ### Added
 
+- Exact TCG Direct Low ingestion, persistence, prominent evidence, and first-priority buying valuation (`PHR-BR-001`).
+
+- Persistent right-side Purchase Cart rail with direct intake movement, plus the owner-authorized, globally throttled PriceCharting graded-evidence adapter (`PHR-UX-023`, `PHR-API-010`).
+
+- Clickable encrypted provider registration, selection-focused Vendor Workspace composition, and a PriceCharting Graded Area whose live token-in-query adapter remains approval-gated (`PHR-UX-021`, `PHR-UX-022`, `PHR-API-010`).
+
+- Inline Vendor purchase-cart editing for exact unit value/quantity and Bulk total/count, with explicit save, visible removal, unsaved-checkout protection, and Case-quantity safety (`PHR-UX-020`).
+
+- Newest-first, sealed-only PkmnPrices ingestion with a durable exact 100-credit UTC-day ceiling, exact artwork resolution, and Settings health (`PHR-API-008`).
+
+- Embedded grading-certificate lookup with an official PSA adapter and explicit no-network authorization gates for Beckett/BCCG, TAG, CGC, and SGC (`PHR-API-009`).
+
+- Compact expandable recommended offer immediately above the Vendor Workspace cart, including TCG Low/Market evidence and the existing negotiation ladder (`PHR-UX-019`).
+
+- Adjacent Vendor Workspace catalogue results and canonical Event station/cart on desktop, with evidence/decision preserved below and semantic no-overflow phone stacking (`PHR-UX-018`).
+
 - Restart-safe exact Pokémon/One Piece artwork mappings and an idempotent bounded event-readiness command; the active catalogue now has 32,566 Pokémon and 3,224 One Piece product mappings plus a 1,000-image local hot set (`PHR-API-004`, `PHR-TECH-007`).
 
 - Independent Event Ledger and Event Flip employee permissions in Settings, with compatibility migration and page/API/navigation enforcement (`PHR-ARCH-012`).
@@ -199,6 +215,11 @@
 - Roadmap now points Market Provider v2 toward live listings and recent sales.
 
 ### Fixed
+
+- Fixed catalogue-verification friction by adding a safe exact-context TCGplayer cross-check and viewport-clamped canonical artwork enlargement to Vendor Workspace results (`PHR-UX-017`).
+
+- Fixed `OP13 booster` and equivalent OP/EB/ST/PRB searches by deriving fail-closed One Piece set-code aliases from exact local catalogue evidence (`PHR-UX-016`).
+- Fixed One Piece zero-padded collector retrieval so unpadded input such as `22` resolves to printed `022` without weakening required query terms (`PHR-UX-016`).
 
 - Fixed missing Pokémon thumbnails caused by collector-number suffixes in TCGplayer commerce titles, replaced raw-query-only One Piece discovery with visible collector identities, and made zero-art provider responses report `NO_MATCH` (`PHR-API-004`).
 

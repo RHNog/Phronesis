@@ -1,5 +1,51 @@
 # Agent Handoff
 
+## Product Review Candidate — Editable Purchase Cart — 2026-08-01
+
+- `PHR-UX-020` is implemented under `PHR-STRUCT-20260801-006`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- Exact cart lines expose editable Unit purchase price and Purchase quantity. Bulk exposes Bulk total paid and optional Approximate count. Each line has Save changes and Remove item.
+- The canonical purchase route and repository update only the requesting operator's active-event cart payload and preserve identity, condition, notes, recommendation, and market evidence.
+- Unsaved edits block receipt finalization, and a saved quantity reduction clamps any pending direct-to-Case quantity.
+- Verification is green at focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, production build, diff hygiene, live edit/persistence/remove/Case-clamp flow, 390×844 no overflow, 44px controls, and clean browser logs.
+- A disposable live cart line was removed after verification; the active cart is empty and no receipt, ledger entry, Inventory lot, or Case allocation was created.
+- No dependency, public deployment, commit, or push occurred. Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Sealed Readiness And Embedded Verification — 2026-08-01
+
+- `PHR-API-008`, `PHR-UX-019`, and `PHR-API-009` are implemented under `PHR-STRUCT-20260801-005`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- PkmnPrices ingestion is sealed-only, newest-release-first, restart-safe, and capped at exactly 100 local-policy credits per UTC day. Exact identity evidence is required before artwork adoption.
+- The Vendor Event station now shows the canonical ready recommendation directly above `Current purchase`, with TCG Low/Market in the collapsed summary and the offer ladder on expansion.
+- Vendor Workspace includes embedded certificate lookup. PSA uses the official API when configured; Beckett/BCCG, TAG, CGC, and SGC return `OFFICIAL_API_REQUIRED` without automated traffic.
+- Verification is green at combined focused 12/12 and full 314/314 tests, TypeScript, warning-free lint, production build, diff hygiene, live desktop composition/expansion, and 390×844 responsive rendering.
+- `PKMNPRICES_API_KEY` and `PSA_API_TOKEN` are absent from the private runtime. No credit or certificate request was transmitted. Configure server-side credentials and restart the private service to activate; the PkmnPrices key must include sealed access.
+- No dependency, public deployment, commit, or push occurred. Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Adjacent Search And Checkout Workspace — 2026-08-01
+
+- `PHR-UX-018` is implemented under `PHR-STRUCT-20260801-004` as a reversible Vendor Workspace recomposition.
+- Catalogue results and the single canonical Event station/cart are adjacent on desktop; Snapshot evidence and Buying decision remain in the secondary band. No checkout state, API, receipt, ledger, Inventory, Display Case, or Quick Sale logic was duplicated or changed.
+- Live review measured 351px results beside 586px checkout at 1280px and the correct results → checkout → evidence → decision order at 390px, with zero horizontal overflow at both sizes.
+- Verification is green at focused 21/21 and full 305/305 tests, TypeScript, warning-free lint, production build, and private service. No event mutation, dependency, public deployment, commit, or push occurred.
+- Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Catalogue Verification Controls — 2026-08-01
+
+- `PHR-UX-017` is implemented under `PHR-STRUCT-20260801-003` as a reversible Vendor Workspace verification layer.
+- Exact selected catalogue identity produces a safely encoded TCGplayer all-products search; the 44px link opens with `noopener noreferrer` and never changes Phronesis identity or selection.
+- `CardThumbnailPreview` reuses canonical image candidates/cache for result hover and selected-image focus/touch, renders through a viewport-clamped fixed portal, and dismisses on Escape or interaction exit.
+- Live `OP16-022` evidence measured a 252×348 contained preview, zero phone horizontal overflow, correct external URL, and no new browser warning/error after bounded on-demand image loading remediation.
+- Verification is green at full 305/305, focused 10/10, TypeScript, warning-free lint, production build, diff hygiene, and private service. No provider API, external navigation, mutation, dependency, public deployment, commit, or push occurred.
+- Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — One Piece Set-Code Search Resolution — 2026-08-01
+
+- `PHR-UX-016` is enhanced under `PHR-STRUCT-20260801-002`: OP/EB/ST/PRB codes resolve to human set titles derived from exact local single-card catalogue evidence, not hard-coded release names.
+- The active catalogue produced 55 fail-closed aliases. OP13 resolves to Carrying On His Will from 165 base-set products and `OP13 booster` returns all four loaded sealed formats while OP13 singles remain searchable.
+- One Piece numeric collector input is now zero-padded before FTS retrieval: `OP16 22` and `OP16 022` return the same two `OP16-022` Monkey.D.Luffy identities, while the mismatched `Zoro OP16 22` query returns zero.
+- Every non-alias token remains required, special-event/weak/ambiguous mappings are rejected, and the operator still selects the exact result.
+- Verification is green at focused 19/19 and full 302/302 tests, TypeScript, warning-free lint, production build, diff hygiene, private API/health, 21.58 ms loopback response, and 390×844 no-overflow/clean-console review.
+- The private service is rebuilt with the additive alias table. No provider, source catalogue, selected identity, inventory, public deployment, commit, or push changed. Same-session conformance passes; CTO Product Review remains pending.
+
 ## Product Review Candidate — Event Flip And Display Case Inventory — 2026-07-31
 
 - `PHR-WORKFLOW-013` and `PHR-WORKFLOW-014` are implemented under `PHR-STRUCT-20260731-006`; `PHR-WORKFLOW-015` records Binder Inventory for later design. The feature-branch worktree remains uncommitted pending Product Owner review.

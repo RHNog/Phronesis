@@ -20,6 +20,7 @@ const sourcePolicies = new Map<string, SourcePolicy>([
   ["cards.scryfall.io", { authorization: "PROVIDER_API", path: /^\/(?:art_crop|border_crop|large|normal|png|small)\// }],
   ["en.onepiece-cardgame.com", { authorization: "PRODUCT_OWNER_ATTESTED_BANDAI", path: /^\/images\/cardlist\/card\/[A-Za-z0-9_-]+\.png$/ }],
   ["static.tcgplayer.com", { authorization: "VERIFIED_CATALOGUE", path: /^\// }],
+  ["images.pkmnprices.com", { authorization: "PROVIDER_API", path: /^\/sealed\// }],
 ]);
 
 export type ArtworkCacheMetadata = {

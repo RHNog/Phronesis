@@ -40,6 +40,7 @@ function magicCsv(): string {
       Number: "42",
       Condition: "Near Mint",
       "TCG Market Price": "12.3456",
+      "TCG Direct Low": "15.5000",
       "TCG Low Price With Shipping": "11.2500",
       "TCG Low Price": "10.0000",
     }),
@@ -113,6 +114,7 @@ test("TCGplayer catalogue adapter groups condition SKUs and preserves finish and
     ];
     assert.equal(rows.length, 4);
     assert.equal(rows[0].marketPriceCents, 1_235);
+    assert.equal(rows[0].directLowCents, 1_550);
     assert.equal(rows[0].shippingCents, 125);
     assert.equal(rows[0].sku, rows[1].sku);
     assert.notEqual(rows[0].sourceSku, rows[1].sourceSku);
@@ -222,6 +224,7 @@ test("observer imports only completed catalogues and repeated checkpoints are id
     assert.equal(normal.prices.NEAR_MINT?.sourceSku, "1001");
     assert.equal(normal.prices.LIGHTLY_PLAYED?.sourceSku, "1002");
     assert.equal(normal.prices.NEAR_MINT?.deliveredPriceCents, 1_125);
+    assert.equal(normal.prices.NEAR_MINT?.directLowCents, 1_550);
     assert.equal(result.category.syncStatus, "CURRENT");
     const unified = repository.searchAll(
       "Test Card 42",

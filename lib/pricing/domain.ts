@@ -170,7 +170,8 @@ export function searchScore(
   if (matchedTokens.length !== plan.tokens.length) return 0;
   score += matchedTokens.length * 6;
   for (const interpretation of plan.interpretations) {
-    if (set.split(" ").includes(interpretation.canonical.toLowerCase())) {
+    const canonical = normalizeSearchText(interpretation.canonical);
+    if (canonical && (set === canonical || set.includes(canonical))) {
       score += 45;
     }
   }

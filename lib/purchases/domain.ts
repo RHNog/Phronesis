@@ -83,6 +83,11 @@ export type ExactPurchaseLine = ExactPurchaseLineDraft & {
 export type BulkPurchaseLine = BulkPurchaseLineDraft & { id: string };
 export type PurchaseLine = ExactPurchaseLine | BulkPurchaseLine;
 
+export type PurchaseCartLineUpdate = {
+  actualPaidCents: number;
+  quantity: number | null;
+};
+
 export type PurchaseCasePlacementDraft = {
   lineId: string;
   quantity: number;
@@ -316,6 +321,37 @@ export function validatePurchaseLineDraft(value: unknown): PurchaseLineDraft {
         ? item.notes.trim() || undefined
         : undefined,
   };
+}
+
+export function validatePurchaseCartLineUpdate(
+  value: unknown,
+  kind: PurchaseLine["kind"],
+): PurchaseCartLineUpdate {
+  if (!value || typeof value !== "object") {
+    throw new Error("Cart line changes are required.");
+  }
+  const input = value as Record<string, unknown>;
+  const actualPaidCents = positiveCents(
+    input.actualPaidCents,
+    kind === "EXACT" ? "Unit purchase price" : "Bulk total paid",
+  );
+  if (kind === "EXACT") {
+    const quantity = Number(input.quantity);
+    if (!Number.isInteger(quantity) || quantity <= 0 || quantity > 1000) {
+      throw new Error("Quantity must be between 1 and 1000.");
+    }
+    return { actualPaidCents, quantity };
+  }
+  const quantity =
+    input.quantity === undefined ||
+    input.quantity === null ||
+    input.quantity === ""
+      ? null
+      : Number(input.quantity);
+  if (quantity !== null && (!Number.isSafeInteger(quantity) || quantity <= 0)) {
+    throw new Error("Approximate quantity must be a positive whole number.");
+  }
+  return { actualPaidCents, quantity };
 }
 
 function positiveCents(value: unknown, label: string): number {

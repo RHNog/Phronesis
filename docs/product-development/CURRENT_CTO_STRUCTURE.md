@@ -1,5 +1,88 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Editable Purchase Cart
+
+- Assignment: `PHR-EDITABLE-PURCHASE-CART-20260801`
+- Document ID: `PHR-STRUCT-20260801-006`
+- Feature: `PHR-UX-020`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Priority: Critical
+- Objective: let Vendor Workspace employees edit unit/total purchase value and quantity directly on an unsubmitted cart line and remove unwanted lines before receipt finalization.
+- Integrity rule: update only the employee-owned active-event cart payload; identity, condition, recommendation, market evidence, event ownership, receipts, ledger, Inventory, and Display Case evidence remain immutable.
+- Interaction rule: exact lines edit unit price and quantity; Bulk edits total paid and optional approximate count. Each line exposes explicit Save changes and Remove item controls; checkout cannot proceed with unsaved edits.
+- Constraints: preserve the single canonical cart and purchase API, receipt/Inventory/Case transaction, authorization, and responsive adjacent workspace. No post-checkout editing, dependency, public deployment, commit, or push.
+- Acceptance: persisted exact/Bulk corrections, correct totals, owner isolation, active-event validation, visible removal, Case-quantity clamp, invalid-input feedback, 390px containment, and full gates.
+- Delivery lane: Fast Lane with an additive API action and no schema migration.
+- Work order: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
+- Verified result: exact and Bulk edits persist through the canonical owner-scoped cart update, unsaved changes block checkout, reduced quantity clamps pending Case quantity, and Remove item returns the cart to its prior state. Focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, diff hygiene, production build, live desktop interaction, and 390×844 no-overflow/44px-control checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner review.
+
+## Active Revision — Sealed Readiness And Embedded Verification
+
+- Assignment: `PHR-SEALED-CHECKOUT-CERTS-20260801`
+- Document ID: `PHR-STRUCT-20260801-005`
+- Features: `PHR-API-008`, `PHR-UX-019`, `PHR-API-009`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY; PROVIDER ACTIVATION GATED`
+- Priority: Critical
+- Objective: spend the configured 100-credit PkmnPrices UTC-day budget only on newest-first sealed products, place a compact expandable recommended offer directly above the Event cart, and add in-Phronesis certificate verification through authorized grader interfaces.
+- Provider rule: PkmnPrices `/v1/sealed` is the only paid endpoint; open Pokémon set metadata supplies release order; PSA is the only immediately functional grader API; Beckett/BCCG, TAG, CGC, and SGC remain explicit API-authorization gates and are not scraped.
+- Identity rule: sealed artwork attaches only through exact TCGplayer product ID or exact normalized name plus set; ambiguous records remain staged.
+- Security rule: `PKMNPRICES_API_KEY` and `PSA_API_TOKEN` remain server-only and are never returned, logged, committed, or accepted by an unauthenticated client.
+- Constraints: preserve existing checkout calculations, purchase APIs, cart, Event Ledger, Inventory and Case behavior; no fuzzy adoption, scraping, dependency, public deployment, commit, or push.
+- Acceptance: 100-credit UTC ceiling and restart safety, newest-first cursor, truthful plan/configuration state, exact image resolution, compact offer tile above cart, functional configured PSA lookup, zero-network unsupported graders, responsive UI, and full gates.
+- Work orders: `docs/prompts/PHR-API-008-pkmnprices-sealed-ingestion-prompt.md`, `docs/prompts/PHR-UX-019-compact-checkout-offer-prompt.md`, and `docs/prompts/PHR-API-009-grading-certificate-lookup-prompt.md`.
+- Verified result: combined focused 12/12 and full 314/314 tests, TypeScript, warning-free lint, diff hygiene, production build, live side-by-side desktop composition, offer disclosure behavior, and 390×844 responsive rendering pass. PkmnPrices and PSA credentials are not configured, so no provider credit or certificate request was transmitted.
+- Next accountable role: CTO Product Review, followed by server-side credential registration and private-service restart when sealed-enabled PkmnPrices and PSA credentials are available. Same-session Chief Architect conformance passed but is not independent Product Owner review.
+
+## Active Revision — Adjacent Search And Checkout Workspace
+
+- Assignment: `PHR-ADJACENT-VENDOR-CHECKOUT-20260801`
+- Document ID: `PHR-STRUCT-20260801-004`
+- Feature: `PHR-UX-018`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Priority: Critical
+- Objective: place Event checkout/cart beside catalogue results on desktop so rapid exact-card price entry and cart composition remain in one visual work area.
+- Product rule: the existing single VendorCheckout, purchase API, cart, receipt, ledger, Inventory, Display Case routing, and Quick Sale behavior remain authoritative and unchanged.
+- Layout rule: primary desktop band is results + checkout; secondary band is evidence + buying decision. Phone order is results → checkout → evidence → decision.
+- Constraints: presentation-only recomposition; no duplicate checkout, business-rule/API/database/auth change, hidden analytical panel, dependency, public deployment, commit, or push.
+- Acceptance: adjacent desktop geometry, immediate selected-card composer update, one checkout instance, safe nested breakpoints, 390px semantic order/no overflow, existing workflow regressions, and full gates pass.
+- Delivery lane: Fast Lane, reversible UI composition.
+- Work order: `docs/prompts/PHR-UX-018-adjacent-search-checkout-workspace-prompt.md`.
+- Verified result: at the standard 1280px private-review viewport, results measure 351px beside the 586px Event station with zero overflow. At 390px, results → checkout → evidence → decision render in semantic order at 343px width with zero overflow. Focused 21/21 and full 305/305 tests, TypeScript, warning-free lint, production build, private service, and responsive geometry pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner review.
+
+## Active Revision — Catalogue Verification Controls
+
+- Assignment: `PHR-CATALOGUE-VERIFY-20260801`
+- Document ID: `PHR-STRUCT-20260801-003`
+- Feature: `PHR-UX-017`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Priority: High
+- Objective: let Vendor Workspace operators enlarge the current catalogue artwork and open an exact-context TCGplayer search for manual double-checking, especially when a thumbnail is missing or questionable.
+- Product rule: external TCGplayer content is operator corroboration only; it never mutates, selects, or automatically verifies a Phronesis identity.
+- Interaction rule: result thumbnails preview on precise-pointer hover; the selected evidence thumbnail also supports keyboard focus/touch. The fixed preview cannot interfere with result selection or overflow the viewport.
+- Constraints: reuse canonical image candidates/cache; fixed encoded HTTPS TCGplayer search origin; no API call, scraping, external write, automatic reconciliation, dependency, database, public deployment, commit, or push.
+- Acceptance: exact identity-sensitive link, safe new-tab behavior, enlarged cached preview, truthful placeholder fallback, keyboard/Escape behavior, 390px containment, existing search/purchase regressions, and full gates pass.
+- Delivery lane: Fast Lane, one reversible presentation-only slice.
+- Work order: `docs/prompts/PHR-UX-017-catalogue-verification-controls-prompt.md`.
+- Verified result: exact One Piece `OP16-022` selection exposes an encoded `tcgplayer.com/search/all/product` link with `noopener noreferrer`; the canonical preview opens at 252×348, remains viewport-contained at phone width, dismisses with Escape, and the link measures 44px high. Full 305/305 tests, focused 10/10 remediation checks, TypeScript, warning-free lint, production build, diff hygiene, private health, zero horizontal overflow, and no new browser warning/error pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner review.
+
+## Active Revision — One Piece Set-Code Search Resolution
+
+- Assignment: `PHR-ONEPIECE-SET-SEARCH-20260801`
+- Document ID: `PHR-STRUCT-20260801-002`
+- Feature: `PHR-UX-016`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Objective: make queries such as `OP13 booster` connect One Piece printed set codes to sealed products stored under canonical human set names.
+- Product rule: aliases are derived from exact imported single-card collector codes, not manually maintained release-title guesses; every remaining query term stays mandatory and the operator still selects the result.
+- Evidence rule: only sufficiently supported, dominant, semantically compatible OP/EB/ST/PRB mappings are persisted. Special-event/reprint labels and ambiguous or weak evidence fail closed.
+- Constraints: local additive SQLite only; no provider call, fuzzy identity adoption, source-catalogue rewrite, dependency, auto-selection, public deployment, commit, or push.
+- Acceptance: `OP13 booster` returns Carrying On His Will sealed products with visible interpretation; OP13 singles remain available; OP/EB/ST/PRB parsing and fail-closed rules are deterministic; existing Pokémon/global search and full gates pass.
+- Delivery lane: Fast Lane, one reversible additive slice.
+- Verified result: the active catalogue derived 55 aliases (17 OP, 3 EB, 33 ST, 2 PRB). OP13 resolves to Carrying On His Will from 165 base-set products versus a 3-product compatible runner-up; `OP13 booster` returns Booster Box, Box Case, Booster Pack, and Sleeved Booster Pack, while OP13 singles remain available and unrelated required terms return no match. One Piece collector input `22` now canonicalizes to `022`: both `Monkey.D.Luffy OP16 22` and `Monkey.D.Luffy OP16 022` return the same two `OP16-022` printings, while `Zoro OP16 22` returns zero. Focused and full 302/302 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, API, and 390×844 no-overflow/clean-console checks pass.
+- Next accountable role: CTO Product Review. Same-session Chief Architect conformance passed but is not independent Product Owner acceptance.
+
 ## Active Revision — Pokémon And One Piece Artwork Readiness
 
 - Assignment: `PHR-ARTWORK-READINESS-20260801`

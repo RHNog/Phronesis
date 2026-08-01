@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cards.lorcast.io", pathname: "/**" },
       { protocol: "https", hostname: "assets.tcgdex.net", pathname: "/**" },
       { protocol: "https", hostname: "static.tcgplayer.com", pathname: "/**" },
+      { protocol: "https", hostname: "images.pkmnprices.com", pathname: "/sealed/**" },
     ],
   },
 };

@@ -1,5 +1,32 @@
 # Roadmap
 
+## Product Review Candidate: Editable Purchase Cart
+
+- Implemented: exact cart lines edit unit purchase value and quantity; Bulk edits total paid and optional approximate count (`PHR-UX-020`).
+- Implemented: each line exposes Save changes and Remove item, unsaved edits block checkout, and a reduced purchase quantity clamps pending Case quantity.
+- Preserved: identity/evidence fields, receipts, Event Ledger, Inventory, Display Case, payment, and authorization boundaries remain unchanged.
+- Verified: focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, production build, live persistence/removal/Case-clamp checks, and 390×844 no-overflow/44px controls.
+
+## Product Review Candidate: Sealed Readiness And Embedded Verification
+
+- Implemented: a restart-safe PkmnPrices `/v1/sealed` worker applies the full configured 100-credit UTC-day ceiling to newest-first Pokémon sealed ingestion and exact artwork resolution (`PHR-API-008`).
+- Implemented: the canonical recommended offer is now a compact expandable tile immediately above the cart with small TCG Low and TCG Market evidence (`PHR-UX-019`).
+- Implemented: Vendor Workspace contains a native official PSA certificate connector plus truthful no-network capability gates for Beckett/BCCG, TAG, CGC, and SGC (`PHR-API-009`).
+- Verified: combined 12/12 focused and 314/314 full tests, TypeScript, warning-free lint, production build, live desktop composition, disclosure behavior, and 390×844 responsive rendering.
+- Activation gate: register a sealed-enabled `PKMNPRICES_API_KEY` and `PSA_API_TOKEN` server-side, then restart the private service. No provider credit or certificate request was consumed during validation.
+
+## Product Review Candidate: Adjacent Search And Checkout Workspace
+
+- Implemented: Catalogue results and the canonical Event station/cart form one adjacent desktop operational band; evidence and buying decision form the secondary band (`PHR-UX-018`).
+- Preserved: checkout state, receipt/ledger/Inventory transactions, Quick Sale, evidence, and buying intelligence remain unchanged.
+- Verified: focused 21/21 and full 305/305 tests, TypeScript, lint, production build, private service, 1280px adjacent geometry, and 390px semantic stacking with zero horizontal overflow.
+
+## Product Review Candidate: Catalogue Verification Controls
+
+- Implemented: selected catalogue identities expose a safe prefilled TCGplayer cross-check and canonical enlarged artwork preview (`PHR-UX-017`).
+- Preserved: TCGplayer remains manual corroboration; Phronesis identity, artwork resolution, pricing evidence, and selection remain unchanged.
+- Verified: full 305/305 tests, focused 10/10 remediation checks, TypeScript, lint, production build, private service, 252×348 viewport-clamped preview, Escape dismissal, 44px phone link, zero horizontal overflow, and no new browser warning/error.
+
 ## Product Review Candidate: Event Flip And Display Case Inventory
 
 - Implemented: finalized event Purchases feed a derived Event Flip queue; exact single-card lots support multi-select quantity and editable intended Sale price before one retry-safe Add-to-Case action (`PHR-WORKFLOW-013`).
@@ -13,8 +40,8 @@
 
 - Implemented: an owner-scoped native Google Sheet template and strict five-column CSV contract feed an immutable event-scoped SQLite stock snapshot (`PHR-WORKFLOW-012`).
 - Implemented: full Event Ledger and Vendor Workspace Quick Sale share exact option search, atomic decrement/reversal, manual fallback, physical count evidence, and sold/leftover reports.
-- Implemented: bounded structured search interprets `SH03` as `SWSH03`, discloses that interpretation, and preserves explicit card selection (`PHR-UX-016`).
-- Verified: complete disposable stock workflow, 10,000-option median search of 29.93 ms, intended Darkness Ablaze Charizard first, 284/284 tests, TypeScript, lint, build, diff hygiene, private health, and 390px no-overflow/clean-console review.
+- Implemented: bounded structured search interprets `SH03` as `SWSH03`, derives high-confidence One Piece OP/EB/ST/PRB code-to-title aliases from exact local catalogue evidence, and normalizes bounded One Piece collector input such as `22` to printed `022`, disclosing every interpretation while preserving explicit card selection (`PHR-UX-016`).
+- Verified: complete disposable stock workflow, intended Darkness Ablaze Charizard first, active `OP13 booster` Carrying On His Will sealed results, 55 evidence-derived One Piece aliases, 302/302 tests, TypeScript, lint, build, diff hygiene, private health, and 390px no-overflow/clean-console review.
 - Deferred: authenticated live Google synchronization, global Inventory allocation, barcode/SKU contract v2, and broader typo/OCR interpretation.
 
 ## Product Review Candidate: Vendor Workspace Quick Sale

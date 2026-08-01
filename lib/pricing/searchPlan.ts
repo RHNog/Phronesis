@@ -6,6 +6,12 @@ export type PricingSearchInterpretation = {
   message: string;
 };
 
+export type PricingSearchResolvedAlias = {
+  input: string;
+  canonical: string;
+  message?: string;
+};
+
 export type PricingSearchTokenPlan = {
   token: string;
   alternatives: string[];
@@ -19,6 +25,14 @@ export type PricingSearchPlan = {
 };
 
 const numberedPokemonFamilies = ["swsh", "sv", "sm", "xy"] as const;
+const coalescedCodeFamilies = new Set([
+  ...numberedPokemonFamilies,
+  "sh",
+  "op",
+  "eb",
+  "st",
+  "prb",
+]);
 
 function unique(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))].slice(0, 6);
@@ -57,12 +71,35 @@ function escapeFtsTerm(value: string): string {
   return `"${value.replaceAll('"', '""')}"*`;
 }
 
-export function createPricingSearchPlan(query: string): PricingSearchPlan {
+function logicalSearchTokens(normalized: string): string[] {
+  const source = normalized.split(" ").filter(Boolean);
+  const coalesced: string[] = [];
+  for (let index = 0; index < source.length; index += 1) {
+    const token = source[index];
+    const next = source[index + 1];
+    if (coalescedCodeFamilies.has(token) && /^\d{1,2}$/.test(next ?? "")) {
+      coalesced.push(`${token}${next}`);
+      index += 1;
+    } else {
+      coalesced.push(token);
+    }
+  }
+  return unique(coalesced);
+}
+
+export function createPricingSearchPlan(
+  query: string,
+  resolvedAliases: readonly PricingSearchResolvedAlias[] = [],
+): PricingSearchPlan {
   const normalized = normalizeSearchText(query);
-  const logicalTokens = unique(normalized.split(" ").filter(Boolean));
+  const logicalTokens = logicalSearchTokens(normalized);
   const interpretations: PricingSearchInterpretation[] = [];
+  const aliasesByInput = new Map(
+    resolvedAliases.map((alias) => [normalizeSearchText(alias.input).replaceAll(" ", ""), alias]),
+  );
   const tokens = logicalTokens.map((token) => {
     const structured = structuredAlternatives(token);
+    const resolved = aliasesByInput.get(token);
     if (structured.canonical && structured.canonical !== token) {
       interpretations.push({
         input: token.toUpperCase(),
@@ -70,9 +107,22 @@ export function createPricingSearchPlan(query: string): PricingSearchPlan {
         message: `Understood ${token.toUpperCase()} as ${structured.canonical.toUpperCase()}`,
       });
     }
+    if (resolved) {
+      interpretations.push({
+        input: token.toUpperCase(),
+        canonical: resolved.canonical,
+        message:
+          resolved.message ??
+          `Understood ${token.toUpperCase()} as ${resolved.canonical}`,
+      });
+    }
     return {
       token,
-      alternatives: unique([token, ...structured.alternatives]),
+      alternatives: unique([
+        token,
+        ...structured.alternatives,
+        ...(resolved ? [normalizeSearchText(resolved.canonical)] : []),
+      ]),
     };
   });
   return {
@@ -93,6 +143,13 @@ export function tokenPlanMatchesText(
   token: PricingSearchTokenPlan,
   normalizedText: string,
 ): boolean {
+  if (
+    token.alternatives.some(
+      (alternative) => alternative.includes(" ") && normalizedText.includes(alternative),
+    )
+  ) {
+    return true;
+  }
   const candidateTokens = normalizedText.split(" ").filter(Boolean);
   return token.alternatives.some((alternative) =>
     candidateTokens.some(

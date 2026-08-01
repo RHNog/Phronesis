@@ -8,7 +8,7 @@ import type {
   ProductType,
 } from "@/lib/pricing/types";
 
-export const TCGPLAYER_CATALOG_CONTRACT_VERSION = "tcgplayer-catalog-v1";
+export const TCGPLAYER_CATALOG_CONTRACT_VERSION = "tcgplayer-catalog-v2-direct-low";
 export const TCGPLAYER_CATALOG_SCHEMA_VERSION = "tcgplayer-16-column-2026-07";
 
 export const TCGPLAYER_CATALOG_HEADERS = [
@@ -216,6 +216,7 @@ export function* readTcgplayerCatalog(
     }
     const condition = conditionParts(values.Condition, rowNumber);
     const marketPriceCents = parseMoney(values["TCG Market Price"], "market price", rowNumber);
+    const directLowCents = parseMoney(values["TCG Direct Low"], "direct low", rowNumber);
     const listingPriceCents = parseMoney(values["TCG Low Price"], "low price", rowNumber);
     const deliveredLowCents = parseMoney(values["TCG Low Price With Shipping"], "low price with shipping", rowNumber);
     const shippingCents = listingPriceCents !== null && deliveredLowCents !== null && deliveredLowCents >= listingPriceCents
@@ -243,6 +244,7 @@ export function* readTcgplayerCatalog(
       language: condition.language,
       condition: condition.condition,
       marketPriceCents,
+      directLowCents,
       listingPriceCents,
       shippingCents,
       shippingSource: shippingCents === null ? "UNKNOWN" : "EXPORTED",

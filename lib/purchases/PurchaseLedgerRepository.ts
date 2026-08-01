@@ -11,6 +11,7 @@ import {
   validateEventCashAdjustmentDraft,
   validateEventManualPurchaseDraft,
   validateEventPaymentMethod,
+  validatePurchaseCartLineUpdate,
   validateEventSaleDraft,
   type EventCashAdjustmentDraft,
   type EventCurrency,
@@ -663,6 +664,55 @@ export class PurchaseLedgerRepository {
     return Number(result.changes) === 1;
   }
 
+  updateLine(
+    principal: PurchasePrincipal,
+    lineId: string,
+    rawChanges: unknown,
+  ): PurchaseLine {
+    const row = this.database
+      .prepare(
+        `SELECT event_id, payload_json FROM phronesis_purchase_cart_line
+         WHERE id=? AND workspace_id=? AND operator_user_id=?`,
+      )
+      .get(lineId, principal.workspaceId, principal.operatorUserId) as
+      SqlRow | undefined;
+    if (!row) throw new Error("Cart line was not found.");
+    const eventId = String(row.event_id);
+    this.assertActiveEvent(principal.workspaceId, eventId);
+    const line = parseLine(String(row.payload_json));
+    const changes = validatePurchaseCartLineUpdate(rawChanges, line.kind);
+    const updated: PurchaseLine =
+      line.kind === "EXACT"
+        ? {
+            ...line,
+            actualPaidCents: changes.actualPaidCents,
+            quantity: changes.quantity!,
+          }
+        : {
+            ...line,
+            actualPaidCents: changes.actualPaidCents,
+            approximateQuantity: changes.quantity,
+          };
+    const result = this.database
+      .prepare(
+        `UPDATE phronesis_purchase_cart_line
+         SET payload_json=?, updated_at=?
+         WHERE id=? AND workspace_id=? AND operator_user_id=? AND event_id=?`,
+      )
+      .run(
+        JSON.stringify(updated),
+        new Date().toISOString(),
+        lineId,
+        principal.workspaceId,
+        principal.operatorUserId,
+        eventId,
+      );
+    if (Number(result.changes) !== 1) {
+      throw new Error("Cart line could not be updated.");
+    }
+    return updated;
+  }
+
   checkout(
     principal: PurchasePrincipal,
     eventId: string,
@@ -877,11 +927,8 @@ export class PurchaseLedgerRepository {
                WHERE workspace_id=? AND source_receipt_id=?
                  AND source_line_position=? AND voided_at IS NULL`,
             )
-            .get(
-              principal.workspaceId,
-              id,
-              sourceLinePosition,
-            ) as SqlRow | undefined;
+            .get(principal.workspaceId, id, sourceLinePosition) as
+            SqlRow | undefined;
           if (!lot) {
             throw new Error(
               "Receipt-backed Inventory was not available for Case placement.",
@@ -951,26 +998,39 @@ export class PurchaseLedgerRepository {
     rawPlacements: readonly PurchaseCasePlacementDraft[],
   ): PurchaseCasePlacementDraft[] {
     if (rawPlacements.length > 50) {
-      throw new Error("No more than 50 purchase lines can be sent to the Case.");
+      throw new Error(
+        "No more than 50 purchase lines can be sent to the Case.",
+      );
     }
     const placements = rawPlacements.map((placement) => ({
-      lineId: typeof placement.lineId === "string" ? placement.lineId.trim() : "",
+      lineId:
+        typeof placement.lineId === "string" ? placement.lineId.trim() : "",
       quantity: Number(placement.quantity),
       salePriceCents: Number(placement.salePriceCents),
     }));
-    if (new Set(placements.map((placement) => placement.lineId)).size !== placements.length) {
+    if (
+      new Set(placements.map((placement) => placement.lineId)).size !==
+      placements.length
+    ) {
       throw new Error("Each purchase line can be sent to the Case only once.");
     }
     for (const placement of placements) {
       if (!placement.lineId || placement.lineId.length > 120) {
-        throw new Error("Purchase line identity is invalid for Case placement.");
+        throw new Error(
+          "Purchase line identity is invalid for Case placement.",
+        );
       }
-      if (!Number.isSafeInteger(placement.salePriceCents) || placement.salePriceCents <= 0) {
+      if (
+        !Number.isSafeInteger(placement.salePriceCents) ||
+        placement.salePriceCents <= 0
+      ) {
         throw new Error("Case Sale price must be a positive cent value.");
       }
       const line = lines.find((candidate) => candidate.id === placement.lineId);
       if (!line || line.kind !== "EXACT" || line.productType !== "SINGLE") {
-        throw new Error("Only exact single-card purchase lines can be sent to the Case.");
+        throw new Error(
+          "Only exact single-card purchase lines can be sent to the Case.",
+        );
       }
       if (
         !Number.isInteger(placement.quantity) ||

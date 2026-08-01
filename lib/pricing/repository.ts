@@ -18,6 +18,12 @@ import {
   createPricingSearchPlan,
   type PricingSearchPlan,
 } from "@/lib/pricing/searchPlan";
+import {
+  canonicalOnePieceCollectorNumber,
+  canonicalOnePieceSetCode,
+  deriveOnePieceSetAliases,
+  type OnePieceSetEvidenceRow,
+} from "@/lib/pricing/setAliases";
 import type { PricingExportContract } from "@/lib/pricing/contract";
 import {
   parsePricingExport,
@@ -90,6 +96,7 @@ export class PricingRepository {
         sku TEXT NOT NULL,
         condition_key TEXT NOT NULL,
         market_price_cents INTEGER,
+        direct_low_cents INTEGER,
         listing_price_cents INTEGER,
         shipping_cents INTEGER,
         shipping_source TEXT NOT NULL,
@@ -117,6 +124,7 @@ export class PricingRepository {
         sku TEXT NOT NULL,
         condition_key TEXT NOT NULL,
         market_price_cents INTEGER,
+        direct_low_cents INTEGER,
         listing_price_cents INTEGER,
         shipping_cents INTEGER,
         shipping_source TEXT NOT NULL,
@@ -170,6 +178,14 @@ export class PricingRepository {
         snapshots_inserted INTEGER,
         last_error TEXT
       );
+      CREATE TABLE IF NOT EXISTS pricing_search_aliases (
+        category_id TEXT NOT NULL,
+        alias TEXT NOT NULL,
+        canonical_text TEXT NOT NULL,
+        evidence_count INTEGER NOT NULL CHECK(evidence_count >= 2),
+        runner_up_count INTEGER NOT NULL CHECK(runner_up_count >= 0),
+        PRIMARY KEY(category_id, alias)
+      );
       CREATE VIRTUAL TABLE IF NOT EXISTS pricing_search USING fts5(
         category_id UNINDEXED,
         sku UNINDEXED,
@@ -180,11 +196,106 @@ export class PricingRepository {
         tokenize='unicode61 remove_diacritics 2'
       );
     `);
+    const latestColumns = this.database.prepare("PRAGMA table_info(pricing_latest)").all() as Array<{ name: string }>;
+    if (!latestColumns.some((column) => column.name === "direct_low_cents")) this.database.exec("ALTER TABLE pricing_latest ADD COLUMN direct_low_cents INTEGER");
+    const historyColumns = this.database.prepare("PRAGMA table_info(pricing_history)").all() as Array<{ name: string }>;
+    if (!historyColumns.some((column) => column.name === "direct_low_cents")) this.database.exec("ALTER TABLE pricing_history ADD COLUMN direct_low_cents INTEGER");
     this.ensureColumn("pricing_latest", "source_sku", "TEXT");
     this.ensureColumn("pricing_history", "source_sku", "TEXT");
     this.ensureColumn("pricing_category_state", "checkpoint_at", "TEXT");
     this.ensureColumn("pricing_category_state", "source_hash", "TEXT");
     this.ensureColumn("pricing_category_state", "contract_version", "TEXT");
+    this.refreshOnePieceSetAliases();
+  }
+
+  private refreshOnePieceSetAliases(): void {
+    const rows = this.database
+      .prepare(
+        `
+        SELECT p.sku, p.set_name, p.collector_number
+        FROM pricing_search s
+        JOIN pricing_products p
+          ON p.category_id=s.category_id AND p.sku=s.sku
+        WHERE p.category_id='onepiece-en' AND p.product_type='SINGLE'
+          AND p.collector_number IS NOT NULL AND p.collector_number <> ''
+      `,
+      )
+      .all() as SqlRow[];
+    const aliases = deriveOnePieceSetAliases(
+      rows.map(
+        (row): OnePieceSetEvidenceRow => ({
+          sku: String(row.sku),
+          setName: String(row.set_name),
+          collectorNumber: row.collector_number as string | null,
+        }),
+      ),
+    );
+    const insert = this.database.prepare(`
+      INSERT INTO pricing_search_aliases(
+        category_id, alias, canonical_text, evidence_count, runner_up_count
+      ) VALUES('onepiece-en', ?, ?, ?, ?)
+    `);
+    this.database.exec("SAVEPOINT refresh_onepiece_search_aliases");
+    try {
+      this.database
+        .prepare("DELETE FROM pricing_search_aliases WHERE category_id='onepiece-en'")
+        .run();
+      for (const alias of aliases) {
+        insert.run(
+          alias.alias,
+          alias.canonicalSetName,
+          alias.evidenceCount,
+          alias.runnerUpCount,
+        );
+      }
+      this.database.exec("RELEASE refresh_onepiece_search_aliases");
+    } catch (error) {
+      this.database.exec("ROLLBACK TO refresh_onepiece_search_aliases");
+      this.database.exec("RELEASE refresh_onepiece_search_aliases");
+      throw error;
+    }
+  }
+
+  private createSearchPlan(
+    categoryId: string,
+    query: string,
+  ): PricingSearchPlan {
+    const basePlan = createPricingSearchPlan(query);
+    if (categoryId !== "onepiece-en" || !basePlan.tokens.length) {
+      return basePlan;
+    }
+    const findAlias = this.database.prepare(`
+      SELECT canonical_text FROM pricing_search_aliases
+      WHERE category_id=? AND alias=?
+    `);
+    const resolved = basePlan.tokens.flatMap((token) => {
+      const alias = canonicalOnePieceSetCode(token.token);
+      if (alias) {
+        const row = findAlias.get(categoryId, alias) as SqlRow | undefined;
+        if (row) {
+          const canonical = String(row.canonical_text);
+          return [
+            {
+              input: token.token,
+              canonical,
+              message: `Understood ${alias.toUpperCase()} as ${canonical}`,
+            },
+          ];
+        }
+      }
+      const collectorNumber = canonicalOnePieceCollectorNumber(token.token);
+      if (!collectorNumber || collectorNumber === token.token) return [];
+      return [
+        {
+          input: token.token,
+          canonical: collectorNumber,
+          message: `Understood collector ${token.token} as ${collectorNumber}`,
+        },
+      ];
+    });
+    return resolved.length
+      ? createPricingSearchPlan(query, resolved)
+      : basePlan;
   }
 
   private ensureColumn(
@@ -304,6 +415,7 @@ export class PricingRepository {
           language TEXT NOT NULL,
           image_url TEXT,
           market_price_cents INTEGER,
+          direct_low_cents INTEGER,
           listing_price_cents INTEGER,
           shipping_cents INTEGER,
           shipping_source TEXT NOT NULL,
@@ -317,9 +429,9 @@ export class PricingRepository {
       const stageRow = this.database.prepare(`
         INSERT INTO pricing_import_stage(
           category_id, sku, condition_key, product_type, name, set_name, collector_number,
-          variant, language, image_url, market_price_cents, listing_price_cents,
+          variant, language, image_url, market_price_cents, direct_low_cents, listing_price_cents,
           shipping_cents, shipping_source, delivered_price_cents, snapshot_date, source_sku
-        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       for (const row of rows) {
         rowsRead += 1;
@@ -365,6 +477,7 @@ export class PricingRepository {
             row.language,
             row.imageUrl,
             row.marketPriceCents,
+            row.directLowCents ?? null,
             row.listingPriceCents,
             delivery.shippingCents,
             delivery.shippingSource,
@@ -428,33 +541,37 @@ export class PricingRepository {
         SELECT category_id, sku, MIN(name), MIN(set_name), COALESCE(MIN(collector_number), ''), MIN(variant)
         FROM pricing_import_stage GROUP BY category_id, sku;
         INSERT OR IGNORE INTO pricing_history(
-          category_id, sku, condition_key, market_price_cents, listing_price_cents,
+          category_id, sku, condition_key, market_price_cents, direct_low_cents, listing_price_cents,
           shipping_cents, shipping_source, delivered_price_cents, snapshot_date, source_sku
         )
-        SELECT s.category_id, s.sku, s.condition_key, s.market_price_cents, s.listing_price_cents,
+        SELECT s.category_id, s.sku, s.condition_key, s.market_price_cents, s.direct_low_cents, s.listing_price_cents,
           s.shipping_cents, s.shipping_source, s.delivered_price_cents, s.snapshot_date, s.source_sku
         FROM pricing_import_stage s
         LEFT JOIN pricing_latest l ON l.category_id=s.category_id AND l.sku=s.sku AND l.condition_key=s.condition_key
         WHERE l.sku IS NULL OR l.market_price_cents IS NOT s.market_price_cents
+          OR l.direct_low_cents IS NOT s.direct_low_cents
           OR l.listing_price_cents IS NOT s.listing_price_cents
           OR l.shipping_cents IS NOT s.shipping_cents
           OR l.shipping_source IS NOT s.shipping_source
           OR l.delivered_price_cents IS NOT s.delivered_price_cents;
       `);
+      if (metadata.categoryId === "onepiece-en") {
+        this.refreshOnePieceSetAliases();
+      }
       snapshotsInserted = Number(
         (this.database.prepare("SELECT changes() AS count").get() as SqlRow)
           .count,
       );
       this.database.exec(`
         INSERT INTO pricing_latest(
-          category_id, sku, condition_key, market_price_cents, listing_price_cents,
+          category_id, sku, condition_key, market_price_cents, direct_low_cents, listing_price_cents,
           shipping_cents, shipping_source, delivered_price_cents, snapshot_date, source_sku
         )
-        SELECT category_id, sku, condition_key, market_price_cents, listing_price_cents,
+        SELECT category_id, sku, condition_key, market_price_cents, direct_low_cents, listing_price_cents,
           shipping_cents, shipping_source, delivered_price_cents, snapshot_date, source_sku
         FROM pricing_import_stage WHERE true
         ON CONFLICT(category_id, sku, condition_key) DO UPDATE SET
-          market_price_cents=excluded.market_price_cents, listing_price_cents=excluded.listing_price_cents,
+          market_price_cents=excluded.market_price_cents, direct_low_cents=excluded.direct_low_cents, listing_price_cents=excluded.listing_price_cents,
           shipping_cents=excluded.shipping_cents, shipping_source=excluded.shipping_source,
           delivered_price_cents=excluded.delivered_price_cents, snapshot_date=excluded.snapshot_date,
           source_sku=excluded.source_sku;
@@ -589,7 +706,7 @@ export class PricingRepository {
     query: string,
     now = new Date(),
   ): PricingSearchResponse {
-    const plan = createPricingSearchPlan(query);
+    const plan = this.createSearchPlan(categoryId, query);
     const category = getActivePricingCategory(categoryId);
     if (!category) {
       return {
@@ -695,9 +812,19 @@ export class PricingRepository {
       a.name.localeCompare(b.name) ||
       a.categoryId.localeCompare(b.categoryId) ||
       a.sku.localeCompare(b.sku);
+    const interpretations = [
+      ...new Map(
+        responses
+          .flatMap((response) => response.interpretations ?? [])
+          .map((interpretation) => [
+            `${interpretation.input}|${interpretation.canonical}`,
+            interpretation,
+          ]),
+      ).values(),
+    ];
     return {
       query,
-      interpretations: responses[0]?.interpretations ?? [],
+      interpretations,
       categories: responses.map((response) => response.category),
       sealedSuppressed: queryClearlyTargetsSingle(query),
       singles: responses
@@ -873,6 +1000,7 @@ export class PricingRepository {
     for (const row of latest) {
       const state: PriceState = {
         marketPriceCents: row.market_price_cents as number | null,
+        directLowCents: row.direct_low_cents as number | null,
         listingPriceCents: row.listing_price_cents as number | null,
         shippingCents: row.shipping_cents as number | null,
         shippingSource: row.shipping_source as

@@ -1,5 +1,53 @@
 # CTO Product Development Conversation History
 
+## 2026-08-01 — Editable Purchase Cart
+
+The Product Owner directed Phronesis to make the Vendor Workspace purchase cart editable by value and quantity and to add line removal. `PHR-STRUCT-20260801-006` assigns the bounded implementation to `PHR-UX-020`.
+
+The existing server-backed operator cart remains authoritative. Exact lines now expose Unit purchase price and Purchase quantity; Bulk exposes Bulk total paid and optional Approximate count. Each line has explicit Save changes and Remove item controls. The update route validates positive integer-cent value, exact quantity from 1 through 1000, optional positive Bulk count, active event, workspace, and operator ownership. It preserves card/Bulk identity, condition, notes, recommendation, and market evidence. Unsaved UI changes block checkout, and reducing an exact quantity clamps a pending direct-to-Case quantity.
+
+Live private review used one disposable, clearly labelled Black Lotus cart line. `$10.00 × 2` became `$12.34 × 3`, the saved subtotal persisted as `$37.02`, unsaved finalization was blocked, and reducing purchase quantity to one clamped Case quantity from three to one. Remove item returned the cart to its original empty state. No receipt, Event Ledger entry, Inventory lot, or Case allocation was created. At 390×844, document scroll width equalled client width, inputs/actions measured 44px high, and browser logs were clean.
+
+Focused 16/16 and full 315/315 tests, TypeScript, warning-free ESLint, diff hygiene, and the Next.js 16.2.12 production build pass. Same-session conformance passes but is not independent Product Owner approval. Product Review, commit, push, and public deployment remain pending.
+
+## 2026-08-01 — Sealed Readiness And Embedded Verification
+
+The Product Owner directed Phronesis to dedicate the entire 100-credit daily PkmnPrices allowance to sealed Pokémon products from newest releases backward, move the recommended buying offer immediately above the cart in a compact expandable tile, research embedded certificate verification for PSA, Beckett, TAG, CCG/CGC, and other graders, and begin implementation. `PHR-STRUCT-20260801-005` assigns the release to `PHR-API-008`, `PHR-UX-019`, and `PHR-API-009`.
+
+Phronesis now has a supervised PkmnPrices `/v1/sealed` worker. Open Pokémon set metadata determines release order; a durable UTC-day usage ledger, release/page cursor, provider-reported charge accounting, and exact 100-credit local ceiling survive retries and restarts. Provider records are staged locally and artwork resolves only through exact source-ID plus name/set corroboration or exact normalized name+set fallback. Missing credentials, 403 plan denial, rate limits, or malformed upstream data fail closed without diverting a credit to singles. The active private runtime has no `PKMNPRICES_API_KEY`, and official documentation restricts sealed access to Pro/Business, so no provider credit was consumed during verification.
+
+The existing purchase-evaluation result now feeds a native disclosure directly above `Current purchase`. Its collapsed state shows the recommendation with small TCG Low and TCG Market evidence; expansion reveals Opening, Target, and Walk away. The previous large lower offer card was removed without changing calculations, actual-price defaulting, cart state, or receipt behavior. Live desktop review confirmed the tile in the adjacent checkout; a 390×844 viewport confirmed the compact responsive state.
+
+Official-source research found a documented bearer-authenticated PSA public API and public web lookup forms for Beckett/BGS/BVG/BCCG, TAG, CGC, and SGC. No documented machine API was found for the latter providers. Phronesis therefore implements PSA behind a server-only `PSA_API_TOKEN` and registers every other grader as `OFFICIAL_API_REQUIRED`; unsupported selections issue no automated request and do not open a browser. `CCG` was interpreted as CGC, while BCCG remains under Beckett. No live PSA call occurred because the token is absent.
+
+Combined focused 12/12 and full 314/314 tests, TypeScript, warning-free ESLint, diff hygiene, production build, and live responsive UI verification pass. Same-session conformance passes but is not independent Product Owner approval. Credential activation, Product Review, commit, push, and public deployment remain pending.
+
+## 2026-08-01 — Adjacent Search And Checkout Workspace
+
+The Product Owner directed Phronesis to place checkout/cart beside Vendor Workspace catalogue results so an event buyer can select cards, enter actual prices, and compose a cart without moving between distant page bands. `PHR-STRUCT-20260801-004` assigns the reversible layout increment to `PHR-UX-018`.
+
+Vendor Workspace now has one primary responsive band containing Catalogue results and the single canonical `VendorCheckout`, with checkout receiving the wider desktop column. Snapshot evidence and Buying decision remain fully available in a secondary band. The Event station retains Purchase intake, Quick Sale, cart state, payment, Display Case routing, finalization, APIs, authorization, and transaction ownership. Its internal purchase split is delayed to the extra-wide breakpoint so nested minimum-width columns cannot overflow the new composition.
+
+Live private review measured a 351px results column beside a 586px Event station at 1280px, with zero horizontal overflow. At 390px, results, checkout, evidence, and decision stack in that semantic order at 343px width with zero overflow. Focused 21/21 and full 305/305 tests, TypeScript, warning-free lint, production build, and private runtime pass. No business rule, API, database, dependency, event record, public deployment, commit, or push changed. Same-session conformance passes; Product Review remains pending.
+
+## 2026-08-01 — Catalogue Verification Controls
+
+The Product Owner requested a direct TCGplayer double-check for catalogue cards whose thumbnail is absent or questionable, plus a larger image on thumbnail hover. `PHR-STRUCT-20260801-003` assigns the bounded presentation-only increment to `PHR-UX-017`.
+
+Vendor Workspace now builds a safely encoded public TCGplayer all-products search from the selected visible name, collector number, and set. The 44px external link opens in a new tab with `noopener noreferrer` and explicitly states that Phronesis selection remains unchanged. `CardThumbnailPreview` reuses canonical image candidates and the same-origin cache, renders above scroll containers through a fixed portal, clamps to the viewport, supports result hover plus selected-image focus/touch, and dismisses on Escape, blur, scroll, resize, or hover exit. Missing artwork remains a truthful placeholder and never blocks the TCGplayer link.
+
+Live One Piece verification used the exact `OP16-022` Monkey.D.Luffy result. The preview measured 252×348 and remained contained at phone width with document scroll width equal to client width; the external link measured 44px and contained the expected encoded query. An initial development LCP warning from the on-demand large image was remediated by eagerly loading only the mounted preview; the final interaction produced no new warning/error. Full 305/305 tests, focused 10/10 remediation checks, TypeScript, warning-free lint, production build, private service, and diff hygiene pass. No external link was opened, provider API called, identity mutated, public deployment performed, or commit/push created.
+
+## 2026-08-01 — One Piece Set-Code Search Resolution
+
+The Product Owner reported that `OP13 booster` returned no result even though TCGplayer exposed Carrying On His Will sealed products, then approved implementation. Diagnosis proved that One Piece singles carry `OP13-*` collector numbers while sealed products carry the human set name and a blank collector number; the all-token FTS plan therefore had no row containing both literal `OP13` and `booster`.
+
+`PHR-STRUCT-20260801-002` extends `PHR-UX-016` through one Fast Lane slice. Phronesis now derives OP/EB/ST/PRB code-to-title aliases from exact imported single-card collector numbers, requires at least two distinct products and a dominant semantically compatible title, excludes special-event/promotion/tournament authority, and fails closed on weak or contested evidence. The additive local alias table bootstraps existing databases and refreshes within One Piece imports. Multiword aliases flow through the same escaped FTS plan and phrase-aware scorer; all remaining query terms stay mandatory and explicit result selection is unchanged.
+
+The active event catalogue derived 55 aliases: 17 OP, 3 EB, 33 ST, and 2 PRB. OP13 resolves to Carrying On His Will with 165 supporting base-set products versus a 3-product compatible runner-up. The live API and 390×844 Vendor Workspace return Booster Box, Booster Box Case, Booster Pack, and Sleeved Booster Pack for `OP13 booster`, show `Understood OP13 as Carrying On His Will`, retain 40 OP13 single results, and return zero for `OP13 Charizard`. Focused 19/19 and full 302/302 tests, TypeScript, warning-free lint, production build, private health, diff hygiene, zero horizontal overflow, and clean console pass. Same-session conformance passes but is not independent Product Owner review; no provider, source catalogue, selected identity, inventory, or public system changed.
+
+The Product Owner then reported that `Monkey.D.Luffy OP16 022` matched while the equivalent unpadded `OP16 22` did not. The FTS index stored collector token `022`, so prefix retrieval discarded `22` before ranking. `PHR-UX-016` now canonicalizes bounded one-to-three-digit One Piece collector tokens to three digits before retrieval, visibly disclosing `Understood collector 22 as 022`. Live verification returns the same Normal and Alternate Art `OP16-022` identities for `22` and `022`, while `Zoro OP16 22` returns zero; all terms remain mandatory.
+
 ## 2026-08-01 — Pokémon And One Piece Artwork Readiness
 
 The Product Owner asked Phronesis to fix missing catalogue thumbnails in one pass and anticipate the widest safe Pokémon and One Piece coverage before the next day's event. Runtime diagnosis proved the screenshot's `Mega Dragonite ex` assets existed in TCGdex, but TCGplayer's commerce title appended `- 152/217`; that longer string produced no provider search result. One Piece discovery also relied on the raw user phrase rather than visible collector identities, provider mappings were process-memory only, and a healthy zero-art result was labelled operational.

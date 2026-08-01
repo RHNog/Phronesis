@@ -18,6 +18,7 @@ type CardImageProps = {
   candidates: CardImageCandidate[];
   className?: string;
   developerMode?: boolean;
+  loading?: "eager" | "lazy";
   overlay?: ReactNode;
   selected?: boolean;
   size?: CardImageSize;
@@ -36,6 +37,7 @@ export default function CardImage({
   candidates,
   className = "",
   developerMode = false,
+  loading = "lazy",
   overlay,
   selected = false,
   size = "card",
@@ -63,7 +65,7 @@ export default function CardImage({
           alt={alt}
           className="h-full w-full object-cover"
           height={dimensions[size].height}
-          loading="lazy"
+          loading={loading}
           onError={() => setFailedUrl(resolution.url)}
           sizes={size === "thumbnail" ? "80px" : size === "card" ? "240px" : "480px"}
           src={resolution.url!}

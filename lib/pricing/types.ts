@@ -22,6 +22,7 @@ export type NormalizedPricingRow = {
   language: string;
   condition: PricingCondition | null;
   marketPriceCents: number | null;
+  directLowCents?: number | null;
   listingPriceCents: number | null;
   shippingCents: number | null;
   shippingSource: ShippingSource;
@@ -33,6 +34,7 @@ export type NormalizedPricingRow = {
 export type PriceState = Pick<
   NormalizedPricingRow,
   | "marketPriceCents"
+  | "directLowCents"
   | "listingPriceCents"
   | "shippingCents"
   | "shippingSource"
