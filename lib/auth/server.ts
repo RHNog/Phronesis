@@ -4,11 +4,13 @@ import { DatabaseSync } from "node:sqlite";
 import { betterAuth } from "better-auth";
 import { APIError } from "better-auth/api";
 import { AuthorizationRepository } from "@/lib/auth/AuthorizationRepository";
+import { EventAccessRepository } from "@/lib/auth/EventAccessRepository";
 import { getAuthDatabasePath, getAuthRuntimeStatus } from "@/lib/auth/config";
 
 let database: DatabaseSync | undefined;
 let authorizationRepository: AuthorizationRepository | undefined;
 let authServer: ReturnType<typeof createAuthServer> | undefined;
+let eventAccessRepository: EventAccessRepository | undefined;
 
 export function getAuthDatabase(): DatabaseSync {
   if (!database) {
@@ -23,6 +25,11 @@ export function getAuthDatabase(): DatabaseSync {
 export function getAuthorizationRepository(): AuthorizationRepository {
   authorizationRepository ??= new AuthorizationRepository(getAuthDatabase());
   return authorizationRepository;
+}
+
+export function getEventAccessRepository(): EventAccessRepository {
+  eventAccessRepository ??= new EventAccessRepository(getAuthDatabase());
+  return eventAccessRepository;
 }
 
 export function createAuthServer(

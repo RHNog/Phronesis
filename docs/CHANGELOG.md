@@ -5,6 +5,8 @@
 
 ### Added
 
+- Single-use timed event worker codes, scoped operational sessions, and immediate expiry, event-close, and revocation enforcement (`PHR-ARCH-014`).
+
 - Purchase-fed Event Flip, Vendor direct-to-Case checkout with required Case price, receipt-linked Display Case reservation/Sale/count control, combined prepared/event-flip verification, and General Inventory reservation safety (`PHR-WORKFLOW-013`, `PHR-WORKFLOW-014`), with Binder Inventory reserved for later design (`PHR-WORKFLOW-015`).
 
 - Repository-native Handoff continuity with populated canonical project state, backlog, active task, generated operational context, and Git-bound validation evidence.

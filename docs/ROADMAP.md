@@ -89,6 +89,7 @@
 - Implemented: catalogue-first watch refresh, unique legacy identity reconciliation, truthful failure state, and secret-free provider health (`PHR-TECH-010`).
 - Implemented: manual watch composer and immediate offer ladder (`PHR-UX-010`, `PHR-UX-011`).
 - Implemented / activation gated: module-at-invite single-use employee activation (`PHR-ARCH-012`).
+- Implemented / product review pending: account-free timed event worker codes with scoped operational sessions (`PHR-ARCH-014`).
 - Implemented: persistent exact/Bulk event cart and immutable receipts (`PHR-WORKFLOW-006`).
 - Implemented: bounded artwork resolution and exact-SKU curated local images (`PHR-API-004`).
 - Accepted locally at checkpoint `6c38c1f`. Required authentication and unconfigured external providers remain gated; GitHub publication is not part of this checkpoint.

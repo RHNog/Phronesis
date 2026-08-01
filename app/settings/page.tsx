@@ -1,6 +1,7 @@
 import AppShell from "@/components/ui/AppShell";
 import BusinessProfilesSettings from "@/features/settings/components/BusinessProfilesSettings";
 import AccessManagement from "@/components/auth/AccessManagement";
+import EventAccessManagement from "@/components/auth/EventAccessManagement";
 import ProviderConnections from "@/components/settings/ProviderConnections";
 import { getAuthRuntimeStatus } from "@/lib/auth/config";
 import RegionalCostProfileSettings from "@/features/settings/components/RegionalCostProfileSettings";
@@ -31,6 +32,9 @@ export default function SettingsPage() {
           active={
             authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode
           }
+        />
+        <EventAccessManagement
+          active={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode}
         />
       </div>
     </AppShell>

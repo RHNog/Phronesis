@@ -1,0 +1,2 @@
+import EventAccessLogin from "@/components/auth/EventAccessLogin";
+export default function EventAccessPage(){return <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-5 py-10 text-zinc-100"><section className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl sm:p-8"><p className="text-xs font-semibold uppercase tracking-[.22em] text-cyan-300">Phronesis event access</p><h1 className="mt-3 text-3xl font-semibold">Join the event</h1><EventAccessLogin /></section></main>}

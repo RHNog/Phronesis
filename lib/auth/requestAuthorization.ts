@@ -8,7 +8,13 @@ import type {
   PhronesisModule,
 } from "@/lib/auth/domain";
 import { PHRONESIS_MODULES } from "@/lib/auth/domain";
-import { getAuthorizationRepository, getAuthServer } from "@/lib/auth/server";
+import { EVENT_ACCESS_COOKIE } from "@/lib/auth/EventAccessRepository";
+import { getAuthorizationRepository, getAuthServer, getEventAccessRepository } from "@/lib/auth/server";
+
+function cookieValue(headers: Headers, name: string): string | null {
+  const match = headers.get("cookie")?.split(";").map((entry) => entry.trim()).find((entry) => entry.startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
+}
 
 function compatibilityDecision(
   module: PhronesisModule,
@@ -58,12 +64,18 @@ export async function authorizeHeaders(
       : deniedDecision(module, requiredAccess, "AUTH_NOT_CONFIGURED");
   }
   const session = await getAuthServer().api.getSession({ headers: requestHeaders });
+  if (session?.user.id) return getAuthorizationRepository().authorize(session.user.id, module, requiredAccess);
+  const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
+  if (eventToken) {
+    const eventDecision = getEventAccessRepository().authorize(eventToken, module, requiredAccess);
+    if (eventDecision) return eventDecision;
+  }
   if (!session?.user.id) {
     return status.mode === "OPTIONAL"
       ? compatibilityDecision(module, requiredAccess)
       : deniedDecision(module, requiredAccess, "UNAUTHENTICATED");
   }
-  return getAuthorizationRepository().authorize(session.user.id, module, requiredAccess);
+  return deniedDecision(module, requiredAccess, "UNAUTHENTICATED");
 }
 
 export async function authorizeRequest(
@@ -122,8 +134,17 @@ export async function getVisibleModules(): Promise<readonly PhronesisModule[]> {
     return PHRONESIS_MODULES;
   }
   if (!status.readyForRequiredMode) return [];
-  const session = await getAuthServer().api.getSession({ headers: await headers() });
-  if (!session?.user.id) return mode === "OPTIONAL" ? PHRONESIS_MODULES : [];
+  const requestHeaders = await headers();
+  const session = await getAuthServer().api.getSession({ headers: requestHeaders });
+  if (!session?.user.id) {
+    const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
+    if (eventToken) {
+      return PHRONESIS_MODULES.filter((module) =>
+        getEventAccessRepository().authorize(eventToken, module, "VIEW")?.allowed,
+      );
+    }
+    return mode === "OPTIONAL" ? PHRONESIS_MODULES : [];
+  }
   const profile = getAuthorizationRepository().getMembershipProfile(session.user.id);
   if (!profile || profile.status !== "ACTIVE") return [];
   return profile.entitlements.map((entitlement) => entitlement.module);

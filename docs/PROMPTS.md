@@ -1,5 +1,9 @@
 # Prompt History
 
+## Timed Event Worker Access — 2026-07-31
+
+`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+
 ## Event Flip And Display Case Inventory — 2026-07-31
 
 `PHR-STRUCT-20260731-006` authorizes `PHR-WORKFLOW-013` to derive a multi-card Event Flip queue from receipt-backed purchases and `PHR-WORKFLOW-014` to reserve, sell, return, count, and report Display Case cards without duplicating General Inventory ownership. `PHR-WORKFLOW-015` records Binder Inventory as a separately deferred product lane.

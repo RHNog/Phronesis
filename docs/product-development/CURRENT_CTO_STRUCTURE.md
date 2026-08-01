@@ -1,5 +1,13 @@
 # Current Phronesis CTO Structure
 
+## Active Product Work — 2026-07-31
+
+- Structure: `PHR-STRUCT-20260731-001`
+- Feature: `PHR-ARCH-014`
+- Objective: account-free, timed, event-bound worker access with operational module scoping.
+- Status: `IMPLEMENTED — PRODUCT REVIEW PENDING`
+- Next gate: regression/build evidence, responsive review, conformance, and CTO acceptance.
+
 ## Active Assignment — Event Flip And Display Case Inventory
 
 - Assignment: `PHR-EVENT-FLIP-DISPLAY-CASE-20260731`

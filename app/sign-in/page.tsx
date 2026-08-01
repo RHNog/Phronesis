@@ -1,5 +1,6 @@
 import GitHubSignInButton from "@/components/auth/GitHubSignInButton";
 import { getAuthRuntimeStatus } from "@/lib/auth/config";
+import EventAccessLogin from "@/components/auth/EventAccessLogin";
 
 function safeCallback(value: string | string[] | undefined): string {
   const candidate = Array.isArray(value) ? value[0] : value;
@@ -30,6 +31,7 @@ export default async function SignInPage({
             </p>
           )}
         </div>
+        <EventAccessLogin callbackURL={callbackURL} />
       </section>
     </main>
   );

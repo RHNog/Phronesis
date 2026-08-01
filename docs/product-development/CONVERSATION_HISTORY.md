@@ -278,6 +278,21 @@ Fresh web zoom evidence then failed at 200% and 400%. Its diagnostics ruled out 
 
 This ledger preserves material product-development context across chat sessions. It does not claim to be a verbatim transcript unless a transcript is explicitly attached and identified. Never store credentials or unnecessary sensitive information here.
 
+## 2026-07-31 — Timed Event Worker Login
+
+### User Intent
+
+- Let event workers access Phronesis for the duration of an event using a system-generated code and no external account.
+
+### CTO Direction
+
+- Assigned `PHR-ARCH-014`: a separate event-bound authentication path with one-time codes, narrow operational module assignments, automatic expiry/event-close invalidation, and owner revocation.
+- Permanent GitHub identity remains mandatory for owner/administrator operations; temporary workers never receive Administration or permanent membership.
+
+### Acceptance State
+
+Implemented locally; verification is in progress. Production enforcement remains gated on transition from OPTIONAL to REQUIRED authentication mode.
+
 ## 2026-07-28 — Canonical Repository Reconciliation
 
 ### User Intent
