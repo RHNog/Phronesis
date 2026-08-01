@@ -1,5 +1,7 @@
 export const PHRONESIS_MODULES = [
   "VENDOR_WORKSPACE",
+  "EVENT_LEDGER",
+  "EVENT_FLIP",
   "MARKET_WATCH",
   "INVENTORY",
   "PRICING_OPERATIONS",
@@ -51,6 +53,8 @@ export function defaultEntitlementsForRole(role: MembershipRole): readonly Modul
     case "OPERATOR":
       return [
         { module: "VENDOR_WORKSPACE", access: "OPERATE" },
+        { module: "EVENT_LEDGER", access: "OPERATE" },
+        { module: "EVENT_FLIP", access: "OPERATE" },
         { module: "MARKET_WATCH", access: "OPERATE" },
         { module: "INVENTORY", access: "OPERATE" },
         { module: "PRICING_OPERATIONS", access: "VIEW" },
@@ -59,6 +63,8 @@ export function defaultEntitlementsForRole(role: MembershipRole): readonly Modul
     case "VIEWER":
       return [
         { module: "VENDOR_WORKSPACE", access: "VIEW" },
+        { module: "EVENT_LEDGER", access: "VIEW" },
+        { module: "EVENT_FLIP", access: "VIEW" },
         { module: "MARKET_WATCH", access: "VIEW" },
         { module: "INVENTORY", access: "VIEW" },
         { module: "INTELLIGENCE", access: "VIEW" },

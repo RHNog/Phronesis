@@ -6,7 +6,7 @@
 
 ## Status
 
-Completed — CTO Accepted; Activation Gated
+Completed — CTO Accepted; Event Surface Enhancement Product Review Pending
 
 ## Priority
 
@@ -27,6 +27,8 @@ Extend `PHR-ARCH-011` with module selection at invitation time and a single-use,
 ## Functional Requirements
 
 - Owner assigns exact module/access pairs before issuing an invitation.
+- Event Ledger and Event Flip are independent permissions in Settings; neither is implicitly granted by Vendor Workspace or General Inventory for new assignments.
+- Existing Vendor Workspace assignments migrate to the same-level Event Ledger assignment, and existing Inventory assignments migrate to the same-level Event Flip assignment.
 - Generate a high-entropy single-use activation code and private activation URL.
 - Store only a keyed or salted hash, expiry, status, and audit metadata.
 - Redeeming a valid code establishes only an activation context; normal identity proof is still required.
@@ -48,6 +50,7 @@ Extend `PHR-ARCH-011` with module selection at invitation time and a single-use,
 - Invalid, expired, revoked, and consumed codes fail closed.
 - Module access is enforced on server routes.
 - Existing GitHub invitation compatibility remains functional.
+- Event Ledger and Event Flip navigation, pages, and APIs enforce their respective independent permission.
 
 ## Dependencies
 
@@ -69,5 +72,5 @@ Extend `PHR-ARCH-011` with module selection at invitation time and a single-use,
 - Origin: Product Owner employee-access request, 2026-07-30.
 - Related implementation prompt: `docs/prompts/PHR-ARCH-012-employee-activation-module-access-prompt.md`.
 - Related tests: `docs/testing/PHR-CARD-SHOW-OPERATIONS-20260730-validation.md`.
-- Last modified: 2026-07-30.
-- Modification reason: Initial approved specification with security-preserving staged passkey boundary.
+- Last modified: 2026-07-31.
+- Modification reason: Add independently selectable Event Ledger and Event Flip employee permissions while preserving existing access.

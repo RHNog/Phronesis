@@ -5,6 +5,8 @@
 
 ### Added
 
+- Independent Event Ledger and Event Flip employee permissions in Settings, with compatibility migration and page/API/navigation enforcement (`PHR-ARCH-012`).
+
 - Single-use timed event worker codes, scoped operational sessions, and immediate expiry, event-close, and revocation enforcement (`PHR-ARCH-014`).
 
 - Purchase-fed Event Flip, Vendor direct-to-Case checkout with required Case price, receipt-linked Display Case reservation/Sale/count control, combined prepared/event-flip verification, and General Inventory reservation safety (`PHR-WORKFLOW-013`, `PHR-WORKFLOW-014`), with Binder Inventory reserved for later design (`PHR-WORKFLOW-015`).

@@ -3,7 +3,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { accessSatisfies, type AuthorizationDecision, type ModuleAccessLevel, type ModuleEntitlement, type PhronesisModule } from "@/lib/auth/domain";
 
 type SqlRow = Record<string, string | number | null>;
-const ALLOWED_MODULES = ["VENDOR_WORKSPACE", "INVENTORY"] as const;
+const ALLOWED_MODULES = ["VENDOR_WORKSPACE", "EVENT_LEDGER", "EVENT_FLIP", "INVENTORY"] as const;
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 export const EVENT_ACCESS_COOKIE = "phronesis-event-access";
@@ -33,7 +33,7 @@ function assertEntitlements(values: readonly ModuleEntitlement[]): void {
   if (!values.length) throw new Error("Assign at least one event module.");
   const seen = new Set<string>();
   for (const value of values) {
-    if (!ALLOWED_MODULES.includes(value.module as (typeof ALLOWED_MODULES)[number])) throw new Error("Event access is limited to Vendor Workspace and Inventory.");
+    if (!ALLOWED_MODULES.includes(value.module as (typeof ALLOWED_MODULES)[number])) throw new Error("Event access is limited to Vendor Workspace, Event Ledger, Event Flip, and Inventory.");
     if (value.access !== "VIEW" && value.access !== "OPERATE") throw new Error("Event access cannot grant administration permission.");
     if (seen.has(value.module)) throw new Error("Duplicate event module assignment.");
     seen.add(value.module);

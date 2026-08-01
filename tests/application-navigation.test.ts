@@ -52,7 +52,7 @@ test("unknown and developer routes do not select production navigation", () => {
 
 test("module filtering preserves every authorized destination and no others", () => {
   assert.deepEqual(
-    navigationForModules(["VENDOR_WORKSPACE"]).map(({ label, href }) => ({
+    navigationForModules(["VENDOR_WORKSPACE", "EVENT_LEDGER"]).map(({ label, href }) => ({
       label,
       href,
     })),
@@ -63,7 +63,7 @@ test("module filtering preserves every authorized destination and no others", ()
   );
 
   assert.deepEqual(
-    navigationForModules(["INTELLIGENCE", "INVENTORY"]).map(
+    navigationForModules(["INTELLIGENCE", "EVENT_FLIP", "INVENTORY"]).map(
       ({ label, href }) => ({ label, href }),
     ),
     [

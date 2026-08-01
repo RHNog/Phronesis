@@ -42,7 +42,7 @@ export const primaryNavigation = [
     label: "Event Ledger",
     href: "/event-ledger",
     area: "Manage",
-    module: "VENDOR_WORKSPACE",
+    module: "EVENT_LEDGER",
     matches: ["/event-ledger"],
   },
   {
@@ -50,7 +50,7 @@ export const primaryNavigation = [
     label: "Event Flip",
     href: "/event-flip",
     area: "Manage",
-    module: "INVENTORY",
+    module: "EVENT_FLIP",
     matches: ["/event-flip"],
   },
   {

@@ -25,7 +25,7 @@ function requiredString(value: unknown, message: string): string {
 }
 
 export async function GET(request: Request) {
-  const authorization = await authorizeRequest(request, "INVENTORY", "VIEW");
+  const authorization = await authorizeRequest(request, "EVENT_FLIP", "VIEW");
   if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const eventId = new URL(request.url).searchParams.get("eventId") ?? undefined;
   try {
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const authorization = await authorizeRequest(
     request,
-    "INVENTORY",
+    "EVENT_FLIP",
     "OPERATE",
   );
   if (!authorization.allowed) return authorizationErrorResponse(authorization);

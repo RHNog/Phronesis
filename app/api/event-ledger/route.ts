@@ -39,7 +39,7 @@ function requiredNonNegativeCents(value: unknown, label: string): number {
 export async function GET(request: Request) {
   const authorization = await authorizeRequest(
     request,
-    "VENDOR_WORKSPACE",
+    "EVENT_LEDGER",
     "VIEW",
   );
   if (!authorization.allowed) return authorizationErrorResponse(authorization);
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
 
   const authorization = await authorizeRequest(
     request,
-    "VENDOR_WORKSPACE",
+    "EVENT_LEDGER",
     "OPERATE",
   );
   if (!authorization.allowed) return authorizationErrorResponse(authorization);

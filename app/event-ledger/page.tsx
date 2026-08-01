@@ -4,13 +4,13 @@ import { accessSatisfies } from "@/lib/auth/domain";
 import { requirePageModule } from "@/lib/auth/requestAuthorization";
 
 export default async function EventLedgerPage() {
-  const authorization = await requirePageModule("VENDOR_WORKSPACE", "VIEW");
+  const authorization = await requirePageModule("EVENT_LEDGER", "VIEW");
   const canOperate = authorization.assignedAccess
     ? accessSatisfies(authorization.assignedAccess, "OPERATE")
     : false;
 
   return (
-    <AppShell requiredModule="VENDOR_WORKSPACE">
+    <AppShell requiredModule="EVENT_LEDGER">
       <EventLedgerWorkspace canOperate={canOperate} />
     </AppShell>
   );

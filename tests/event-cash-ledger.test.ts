@@ -373,8 +373,8 @@ test("the production surface exposes authorized multi-item entry and canonical e
     "utf8",
   );
 
-  assert.match(route, /"VENDOR_WORKSPACE",\s*"VIEW"/);
-  assert.match(route, /"VENDOR_WORKSPACE",\s*"OPERATE"/);
+  assert.match(route, /"EVENT_LEDGER",\s*"VIEW"/);
+  assert.match(route, /"EVENT_LEDGER",\s*"OPERATE"/);
   assert.match(route, /validateEventSaleDraft/);
   assert.match(page, /EventLedgerWorkspace/);
   assert.match(workspace, /EventSaleItemsEditor/);

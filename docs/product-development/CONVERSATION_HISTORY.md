@@ -278,6 +278,10 @@ Fresh web zoom evidence then failed at 200% and 400%. Its diagnostics ruled out 
 
 This ledger preserves material product-development context across chat sessions. It does not claim to be a verbatim transcript unless a transcript is explicitly attached and identified. Never store credentials or unnecessary sensitive information here.
 
+## 2026-07-31 — Independent Event Employee Permissions
+
+The CTO directed that Event Ledger and Event Flip be individually selectable for employees in Settings. `PHR-ARCH-012` was enhanced with first-class `EVENT_LEDGER` and `EVENT_FLIP` permissions across invitation editing, timed worker access, navigation, pages, and APIs. Existing Vendor Workspace and Inventory assignments migrate to the corresponding event permission at the same access level to prevent surprise access loss.
+
 ## 2026-07-31 — Timed Event Worker Login
 
 ### User Intent

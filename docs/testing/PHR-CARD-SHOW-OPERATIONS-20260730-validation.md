@@ -4,6 +4,16 @@ Date: 2026-07-30
 Assignment: `PHR-CARD-SHOW-OPERATIONS-20260730`
 Verdict: **PASS — CTO ACCEPTED; AUTH ACTIVATION GATED**
 
+## 2026-07-31 — Independent Event Permissions
+
+- `EVENT_LEDGER` and `EVENT_FLIP` are independently selectable for permanent employees and timed workers.
+- Navigation, pages, GET APIs, and mutation APIs enforce the corresponding new permission.
+- Legacy Vendor Workspace and Inventory entitlements migrate to Event Ledger and Event Flip respectively at the same access level.
+- Focused authorization/navigation/event tests: 24/24 passed.
+- Full supported suite: 295/295 passed.
+- ESLint, standalone TypeScript, production build, and diff checks passed.
+- Settings browser verification confirmed both choices appear independently with Not Assigned, View, Operate, and Admin levels for permanent employees.
+
 ## Automated verification
 
 - Focused operations suite: 11/11 passed.

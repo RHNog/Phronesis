@@ -8,6 +8,8 @@
 
 Add module selection at invitation time and a safe single-use employee activation-code ceremony.
 
+Enhancement (2026-07-31): make `EVENT_LEDGER` and `EVENT_FLIP` independently selectable and server-enforced permissions. Migrate existing `VENDOR_WORKSPACE` and `INVENTORY` entitlements respectively so no active employee loses established access.
+
 ## Required Reading
 
 - `docs/architecture/PHR-ARCH-012-employee-activation-module-access.md`

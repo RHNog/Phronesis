@@ -108,7 +108,7 @@ export class AuthorizationRepository {
         ON phronesis_membership(user_id, status);
       CREATE TABLE IF NOT EXISTS phronesis_entitlement (
         membership_id TEXT NOT NULL,
-        module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
+        module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
         access TEXT NOT NULL CHECK(access IN ('VIEW','OPERATE','ADMIN')),
         updated_at TEXT NOT NULL,
         PRIMARY KEY(membership_id, module),
@@ -148,9 +148,43 @@ export class AuthorizationRepository {
         window_started_at TEXT NOT NULL
       );
     `);
+    this.migrateEventSurfaceEntitlements();
     this.ensureColumn("phronesis_invitation", "activation_code_hash", "TEXT");
     this.ensureColumn("phronesis_invitation", "activation_code_salt", "TEXT");
     this.ensureColumn("phronesis_invitation", "activated_at", "TEXT");
+  }
+
+  private migrateEventSurfaceEntitlements(): void {
+    const schema = this.database.prepare(
+      "SELECT sql FROM sqlite_master WHERE type='table' AND name='phronesis_entitlement'",
+    ).get() as SqlRow | undefined;
+    if (String(schema?.sql ?? "").includes("EVENT_LEDGER")) return;
+    const now = new Date().toISOString();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.exec(`
+        ALTER TABLE phronesis_entitlement RENAME TO phronesis_entitlement_legacy;
+        CREATE TABLE phronesis_entitlement (
+          membership_id TEXT NOT NULL,
+          module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
+          access TEXT NOT NULL CHECK(access IN ('VIEW','OPERATE','ADMIN')),
+          updated_at TEXT NOT NULL,
+          PRIMARY KEY(membership_id, module),
+          FOREIGN KEY(membership_id) REFERENCES phronesis_membership(id) ON DELETE CASCADE
+        );
+        INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
+          SELECT membership_id,module,access,updated_at FROM phronesis_entitlement_legacy;
+        INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
+          SELECT membership_id,'EVENT_LEDGER',access,'${now}' FROM phronesis_entitlement_legacy WHERE module='VENDOR_WORKSPACE';
+        INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
+          SELECT membership_id,'EVENT_FLIP',access,'${now}' FROM phronesis_entitlement_legacy WHERE module='INVENTORY';
+        DROP TABLE phronesis_entitlement_legacy;
+      `);
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
   }
 
   private ensureColumn(table: string, column: string, type: string): void {

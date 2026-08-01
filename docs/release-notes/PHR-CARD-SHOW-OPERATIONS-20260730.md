@@ -1,5 +1,9 @@
 # Card-Show Operations — 2026-07-30
 
+## 2026-07-31 Permission Enhancement
+
+Event Ledger and Event Flip are now independent employee permissions in Settings. Assigning Vendor Workspace no longer automatically exposes Event Ledger, and assigning General Inventory no longer automatically exposes Event Flip for new employees. Existing employees retain established access through a compatibility migration. Timed event workers can also receive either event surface independently.
+
 - Market Watch refreshes exact products from current local catalogues and explains failures without losing prior prices.
 - Manual watch creation can set target, no-target intent, notes, and reason before saving.
 - Buying Decision now shows the recommended offer immediately.

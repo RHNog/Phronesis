@@ -586,7 +586,7 @@ test("Case routes remain authorized and Vendor checkout exposes direct placement
     new URL("../app/api/purchases/route.ts", import.meta.url),
     "utf8",
   );
-  assert.match(flipRoute, /authorizeRequest\(request, "INVENTORY", "VIEW"\)/);
+  assert.match(flipRoute, /authorizeRequest\(request, "EVENT_FLIP", "VIEW"\)/);
   assert.match(caseRoute, /authorizeRequest\(request, "INVENTORY", "VIEW"\)/);
   assert.match(saleOptions, /"VENDOR_WORKSPACE",\s*"VIEW"/);
   assert.match(vendorCheckout, /Send directly to Display Case/);
