@@ -8,7 +8,7 @@ const baseUrl = "https://api.tcgdex.net/v2/en";
 const defaultCacheTtlMs = 6 * 60 * 60 * 1000;
 const setCacheTtlMs = 24 * 60 * 60 * 1000;
 
-type SearchResult = {
+export type TcgdexSearchResult = {
   cards: Card[];
   durationMs: number;
   errorKind?: TcgdexErrorKind;
@@ -17,6 +17,8 @@ type SearchResult = {
 };
 
 type CacheRecord = SearchResult & { cachedAt: number };
+
+type SearchResult = TcgdexSearchResult;
 
 export type TcgdexProviderOptions = {
   cacheTtlMs?: number;
@@ -78,11 +80,53 @@ export class TcgdexProvider implements IdentityProvider {
     return this.cardsById.get(id) ?? null;
   }
 
+  async listAllCardsWithDiagnostics(): Promise<TcgdexSearchResult> {
+    const startedAt = this.now();
+    const pageSize = 20_000;
+    const maximumPages = 10;
+    try {
+      const sets = await this.getSets();
+      const rawResponses: TcgdexCardBrief[] = [];
+      for (let page = 1; page <= maximumPages; page += 1) {
+        const url = new URL(`${baseUrl}/cards`);
+        url.searchParams.set("pagination:itemsPerPage", String(pageSize));
+        url.searchParams.set("pagination:page", String(page));
+        const response = await this.fetcher(url, {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(30_000),
+        });
+        if (!response.ok) {
+          if (response.status === 429) return this.failure(startedAt, "RATE_LIMITED", "TCGdex rate limit reached.");
+          return this.failure(startedAt, "PROVIDER_OFFLINE", `TCGdex cards returned ${response.status}.`);
+        }
+        const payload = await response.json() as unknown;
+        const pageRecords = Array.isArray(payload) ? payload as TcgdexCardBrief[] : [];
+        rawResponses.push(...pageRecords);
+        if (pageRecords.length < pageSize) break;
+        if (page === maximumPages) {
+          return this.failure(startedAt, "PROVIDER_OFFLINE", "TCGdex pagination exceeded the safety limit.");
+        }
+      }
+      const cards = this.normalizeCards(rawResponses, sets);
+      return {
+        cards,
+        durationMs: this.now() - startedAt,
+        errorKind: cards.length ? undefined : "NO_MATCH",
+        rawResponses,
+      };
+    } catch (error) {
+      return this.failure(startedAt, "NETWORK_FAILURE", error instanceof Error ? error.message : "TCGdex catalogue request failed.");
+    }
+  }
+
   private async getSets(): Promise<TcgdexSetBrief[]> {
     if (this.setCache && this.now() - this.setCache.cachedAt < setCacheTtlMs) return this.setCache.sets;
     const url = new URL(`${baseUrl}/sets`);
     url.searchParams.set("pagination:itemsPerPage", "1000");
-    const response = await this.fetcher(url, { headers: { Accept: "application/json" } });
+    const response = await this.fetcher(url, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(30_000),
+    });
     if (!response.ok) throw new Error(`TCGdex sets returned ${response.status}.`);
     const payload = await response.json() as unknown;
     const sets = Array.isArray(payload) ? payload as TcgdexSetBrief[] : [];
@@ -97,7 +141,10 @@ export class TcgdexProvider implements IdentityProvider {
     try {
       const [sets, response] = await Promise.all([
         this.getSets(),
-        this.fetcher(url, { headers: { Accept: "application/json" } }),
+        this.fetcher(url, {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(15_000),
+        }),
       ]);
       if (!response.ok) {
         if (response.status === 429) return this.failure(startedAt, "RATE_LIMITED", "TCGdex rate limit reached.");
@@ -106,12 +153,7 @@ export class TcgdexProvider implements IdentityProvider {
       }
       const payload = await response.json() as unknown;
       const rawResponses = Array.isArray(payload) ? payload as TcgdexCardBrief[] : [];
-      const validSets = sets.filter((set): set is Required<Pick<TcgdexSetBrief, "id" | "name">> => Boolean(set.id && set.name));
-      const cards = rawResponses.map((raw) => {
-        const set = validSets.find((candidate) => raw.id?.startsWith(`${candidate.id}-`));
-        return set ? normalizeTcgdexCard(raw, set.name) : null;
-      }).filter((card): card is Card => Boolean(card));
-      cards.forEach((card) => this.cardsById.set(card.id, card));
+      const cards = this.normalizeCards(rawResponses, sets);
       const result: SearchResult = {
         cards,
         durationMs: this.now() - startedAt,
@@ -123,6 +165,19 @@ export class TcgdexProvider implements IdentityProvider {
     } catch (error) {
       return this.failure(startedAt, "NETWORK_FAILURE", error instanceof Error ? error.message : "TCGdex request failed.");
     }
+  }
+
+  private normalizeCards(rawResponses: TcgdexCardBrief[], sets: TcgdexSetBrief[]): Card[] {
+    const setNames = new Map(sets
+      .filter((set): set is Required<Pick<TcgdexSetBrief, "id" | "name">> => Boolean(set.id && set.name))
+      .map((set) => [set.id, set.name]));
+    const cards = rawResponses.map((raw) => {
+      const separator = raw.id?.lastIndexOf("-") ?? -1;
+      const setName = separator > 0 ? setNames.get(raw.id!.slice(0, separator)) : undefined;
+      return setName ? normalizeTcgdexCard(raw, setName) : null;
+    }).filter((card): card is Card => Boolean(card));
+    cards.forEach((card) => this.cardsById.set(card.id, card));
+    return cards;
   }
 
   private failure(startedAt: number, errorKind: TcgdexErrorKind, errorMessage: string): SearchResult {

@@ -67,10 +67,18 @@ export function deliveredPriceFor(
 }
 
 const finishOnlyParenthetical = /\((?:\d{2,4}|[a-z]{1,4}\d{1,4}|(?:etched|foil|holofoil|reverse holofoil|rainbow foil|surge foil|galaxy foil|confetti foil|pool party foil|textured foil|cold foil))\)\s*$/i;
+const commerceCollectorSuffix = /\s+[-\u2013\u2014]\s+(?:#\s*)?(?:(?:[a-z]{1,8}\d{0,4}-)?\d{1,4}[a-z]?\s*\/\s*(?:[a-z]{0,8})?\d{1,4}[a-z]?|(?:op|st|eb|prb|p|don)\d{0,3}-\d{1,4}|\d{1,4}[a-z]?)\s*$/i;
 
 export function artworkIdentityName(value: string): string {
   let name = value.trim();
-  while (finishOnlyParenthetical.test(name)) name = name.replace(finishOnlyParenthetical, "").trim();
+  let previous = "";
+  while (name !== previous) {
+    previous = name;
+    name = name
+      .replace(finishOnlyParenthetical, "")
+      .replace(commerceCollectorSuffix, "")
+      .trim();
+  }
   return name;
 }
 

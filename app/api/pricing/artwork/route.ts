@@ -33,9 +33,21 @@ export async function GET(request: Request) {
     return NextResponse.json({ artwork: {}, status: "NO_QUERY" });
   }
   try {
-    const pricing = getPricingRepository().search(categoryId, query);
+    const repository = getPricingRepository();
+    const pricing = repository.search(categoryId, query);
     const matches = [...pricing.singles, ...pricing.sealed];
-    const queries = providerArtworkQueries(categoryId, query, matches);
+    const persistedArtwork = repository.getArtworkResolutions(matches);
+    const localArtwork: Record<string, { normal: string }> = {};
+    await Promise.all(matches.map(async (match) => {
+      if (match.imageUrl) localArtwork[match.sku] = { normal: match.imageUrl };
+      if (await getCuratedArtworkStore().has(match.categoryId, match.sku)) {
+        localArtwork[match.sku] = { normal: curatedArtworkUrl(match.categoryId, match.sku) };
+      }
+    }));
+    const unresolvedMatches = matches.filter((match) =>
+      match.productType === "SINGLE" && !persistedArtwork[match.sku] && !localArtwork[match.sku]
+    );
+    const queries = providerArtworkQueries(categoryId, query, unresolvedMatches);
     const providers = await Promise.all(queries.map((providerQuery) => categoryId === "magic-en"
       ? scryfall.searchCardsWithDiagnostics(providerQuery)
       : categoryId === "pokemon-en"
@@ -45,19 +57,21 @@ export async function GET(request: Request) {
           : lorcast.searchCardsWithDiagnostics(providerQuery)));
     const cards = [...new Map(providers.flatMap((provider) => provider.cards).map((card) => [card.id, card])).values()];
     const resolvedArtwork = categoryId === "onepiece-en"
-      ? resolveOnePieceSnapshotArtwork(matches, cards)
-      : resolveSnapshotArtwork(matches, cards);
-    const localArtwork: Record<string, { normal: string }> = {};
-    await Promise.all(matches.map(async (match) => {
-      if (match.imageUrl) localArtwork[match.sku] = { normal: match.imageUrl };
-      if (await getCuratedArtworkStore().has(match.categoryId, match.sku)) {
-        localArtwork[match.sku] = { normal: curatedArtworkUrl(match.categoryId, match.sku) };
-      }
-    }));
-    const providerArtwork = Object.fromEntries(Object.entries(resolvedArtwork).map(([sku, urls]) => [sku, durableArtworkUrls(urls)]));
+      ? resolveOnePieceSnapshotArtwork(unresolvedMatches, cards)
+      : resolveSnapshotArtwork(unresolvedMatches, cards);
+    if (Object.keys(resolvedArtwork).length) {
+      repository.saveArtworkResolutions(
+        unresolvedMatches,
+        resolvedArtwork,
+        categoryId === "magic-en" ? "scryfall" : categoryId === "pokemon-en" ? "tcgdex" : categoryId === "onepiece-en" ? "bandai-onepiece" : "lorcast",
+      );
+    }
+    const rawProviderArtwork = { ...persistedArtwork, ...resolvedArtwork };
+    const providerArtwork = Object.fromEntries(Object.entries(rawProviderArtwork).map(([sku, urls]) => [sku, durableArtworkUrls(urls)]));
     const artwork = { ...providerArtwork, ...localArtwork };
+    const providerReachable = providers.some((provider) => !provider.errorMessage);
     return NextResponse.json(
-      { artwork, status: Object.keys(artwork).length || providers.some((provider) => !provider.errorMessage) ? "OPERATIONAL" : "UNAVAILABLE" },
+      { artwork, status: Object.keys(artwork).length ? "OPERATIONAL" : providerReachable || queries.length === 0 ? "NO_MATCH" : "UNAVAILABLE" },
       { headers: { "Cache-Control": "private, max-age=300" } },
     );
   } catch {

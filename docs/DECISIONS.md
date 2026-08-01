@@ -72,7 +72,7 @@
 - Use the official Bandai English card list as the primary One Piece artwork source; retain Scrydex only as a possible structured fallback.
 - Match base, parallel/reprint, and SP assets only from strict product/set, card-number, normalized-name, and explicit qualifier evidence. Ambiguity fails to a placeholder.
 - Retain authorized provider raster bytes locally through a same-origin exact-allowlist cache. Store ignored content and provenance metadata; reject redirects, invalid MIME/signatures, oversize responses, credentials, and unapproved paths.
-- Permit bounded prewarming of images already mapped by an active event search, but not provider-wide bulk acquisition.
+- Permit bounded prewarming of images already mapped by an active search or exact local catalogue reconciliation, but not unbounded provider-wide image acquisition. Full provider card metadata may be enumerated read-only to build exact local mappings; the operator must set an explicit image limit.
 
 ## 2026-07-29 — Unified search, deterministic artwork grouping, and official provider boundaries
 

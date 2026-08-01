@@ -5,6 +5,8 @@
 
 ### Added
 
+- Restart-safe exact Pokémon/One Piece artwork mappings and an idempotent bounded event-readiness command; the active catalogue now has 32,566 Pokémon and 3,224 One Piece product mappings plus a 1,000-image local hot set (`PHR-API-004`, `PHR-TECH-007`).
+
 - Independent Event Ledger and Event Flip employee permissions in Settings, with compatibility migration and page/API/navigation enforcement (`PHR-ARCH-012`).
 
 - Single-use timed event worker codes, scoped operational sessions, and immediate expiry, event-close, and revocation enforcement (`PHR-ARCH-014`).
@@ -197,6 +199,8 @@
 - Roadmap now points Market Provider v2 toward live listings and recent sales.
 
 ### Fixed
+
+- Fixed missing Pokémon thumbnails caused by collector-number suffixes in TCGplayer commerce titles, replaced raw-query-only One Piece discovery with visible collector identities, and made zero-art provider responses report `NO_MATCH` (`PHR-API-004`).
 
 - Prevented Phronesis roles from resolving Structure commands through Muamba Arte or other cross-project artifacts (`PHR-WORKFLOW-002`).
 - Documented zero-valued Offer Ladder prevention and the Online Marketplace policy correction for low-dollar opportunities.

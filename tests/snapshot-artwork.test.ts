@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { providerArtworkQueries, providerArtworkQuery, resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
+import { artworkIdentityName } from "../lib/pricing/domain";
 import type { SearchMatch } from "../lib/pricing/types";
 import type { Card } from "../types/card";
 
@@ -42,6 +43,19 @@ function card(overrides: Partial<Card> = {}): Card {
 test("snapshot artwork resolves a verified set and collector-number match", () => {
   const artwork = resolveSnapshotArtwork([match()], [card()]);
   assert.equal(artwork["snapshot:bolt"].small, "https://cards.scryfall.io/small/front/a/b/bolt.jpg");
+});
+
+test("provider discovery removes bounded commerce collector suffixes without erasing card subtitles", () => {
+  assert.equal(artworkIdentityName("Mega Dragonite ex - 152/217"), "Mega Dragonite ex");
+  assert.equal(artworkIdentityName("Monkey.D.Luffy (Alternate Art) - OP01-003"), "Monkey.D.Luffy (Alternate Art)");
+  assert.equal(artworkIdentityName("Mulan - Resourceful Recruit"), "Mulan - Resourceful Recruit");
+  const dragonite = match({
+    categoryId: "pokemon-en",
+    name: "Mega Dragonite ex - 152/217",
+    setName: "ME: Ascended Heroes",
+    collectorNumber: "152/217",
+  });
+  assert.deepEqual(providerArtworkQueries("pokemon-en", "Mega Dragonite", [dragonite]), ["Mega Dragonite ex"]);
 });
 
 test("Magic artwork queries exact visible names and tolerates unique provider set-label drift", () => {
@@ -117,6 +131,15 @@ test("Pokémon artwork uses explicit TCGplayer to TCGdex set aliases", () => {
     ["SV: Scarlet & Violet 151", "151"],
     ["SV: Scarlet & Violet Promo Cards", "SVP Black Star Promos"],
     ["Diamond and Pearl Promos", "DP Black Star Promos"],
+    ["SWSH: Sword & Shield Promo Cards", "SWSH Black Star Promos"],
+    ["Black and White Promos", "BW Black Star Promos"],
+    ["HGSS Promos", "HGSS Black Star Promos"],
+    ["Nintendo Promos", "Nintendo Black Star Promos"],
+    ["WoTC Promo", "Wizards Black Star Promos"],
+    ["ME: Mega Evolution Promo", "MEP Black Star Promos"],
+    ["EX Dragon Frontiers", "Dragon Frontiers"],
+    ["XY - Primal Clash", "Primal Clash"],
+    ["SM - Team Up", "Team Up"],
   ] as const;
 
   for (const [catalogueSet, providerSet] of cases) {
@@ -164,6 +187,25 @@ test("Pokémon set aliases do not weaken collector-number or ambiguity checks", 
   );
 });
 
+test("Pokémon artwork accepts normalized set conventions but not unrelated special-product sets", () => {
+  const dragonite = match({
+    categoryId: "pokemon-en",
+    name: "Mega Dragonite ex - 152/217",
+    setName: "ME: Ascended Heroes",
+    collectorNumber: "152/217",
+  });
+  const unique = card({
+    id: "me02.5-152",
+    game: "Pokemon",
+    name: "Mega Dragonite ex",
+    set: "Ascended Heroes",
+    number: "152",
+    imageUrls: { small: "https://assets.tcgdex.net/en/me/me02.5/152/low.webp" },
+  });
+  assert.equal(resolveSnapshotArtwork([dragonite], [unique])[dragonite.sku].small, unique.imageUrls?.small);
+  assert.deepEqual(resolveSnapshotArtwork([{ ...dragonite, setName: "Prize Pack Series Cards" }], [unique]), {});
+});
+
 test("snapshot artwork does not guess across ambiguous or mismatched printings", () => {
   assert.deepEqual(resolveSnapshotArtwork([match()], [card({ number: "147" })]), {});
   assert.deepEqual(
@@ -192,9 +234,38 @@ test("One Piece artwork selects base, unique parallel, and explicit SP without g
   const base = resolveOnePieceSnapshotArtwork([match({ categoryId: "onepiece-en", sku: "base", name: "Monkey.D.Luffy (003)", setName: "Romance Dawn", collectorNumber: "OP01-003" })], cards);
   const parallel = resolveOnePieceSnapshotArtwork([match({ categoryId: "onepiece-en", sku: "parallel", name: "Monkey.D.Luffy (Alternate Art)", setName: "Romance Dawn", collectorNumber: "OP01-003" })], cards);
   const sp = resolveOnePieceSnapshotArtwork([match({ categoryId: "onepiece-en", sku: "sp", name: "Uta (SP)", setName: "Extra Booster: One Piece Heroines Edition", collectorNumber: "EB03-003" })], cards);
+  const numberedSp = resolveOnePieceSnapshotArtwork([match({ categoryId: "onepiece-en", sku: "numbered-sp", name: "Uta (003) (SP)", setName: "Extra Booster: One Piece Heroines Edition", collectorNumber: "EB03-003" })], cards);
   const unknown = resolveOnePieceSnapshotArtwork([match({ categoryId: "onepiece-en", sku: "unknown", name: "Monkey.D.Luffy (Winner Pack)", setName: "Romance Dawn", collectorNumber: "OP01-003" })], cards);
   assert.ok(base.base);
   assert.equal(parallel.parallel.small, "https://en.onepiece-cardgame.com/images/cardlist/card/OP01-003_p1.png");
   assert.equal(sp.sp.small, "https://en.onepiece-cardgame.com/images/cardlist/card/EB03-003_p2.png");
+  assert.equal(numberedSp["numbered-sp"].small, "https://en.onepiece-cardgame.com/images/cardlist/card/EB03-003_p2.png");
   assert.deepEqual(unknown, {});
+});
+
+test("One Piece discovery uses visible collector identities and rejects special-product fallback", () => {
+  const baseMatch = match({
+    categoryId: "onepiece-en",
+    sku: "base",
+    name: "Monkey.D.Luffy (003) - OP01-003",
+    setName: "Romance Dawn",
+    collectorNumber: "OP01-003",
+  });
+  assert.deepEqual(providerArtworkQueries("onepiece-en", "Luffy", [baseMatch]), ["OP01-003"]);
+  const baseCard = card({
+    id: "base",
+    game: "One Piece",
+    name: "Monkey.D.Luffy",
+    set: "-ROMANCE DAWN- [OP01]",
+    number: "OP01-003",
+    rarity: "L",
+    providerIdentity: { providerId: "bandai-onepiece", providerRecordId: "OP01-003" },
+  });
+  assert.ok(resolveOnePieceSnapshotArtwork([baseMatch], [baseCard]).base);
+  assert.deepEqual(resolveOnePieceSnapshotArtwork([baseMatch], [
+    baseCard,
+    { ...baseCard, id: "duplicate", imageUrl: "https://example.test/duplicate.png" },
+  ]), {});
+  assert.deepEqual(resolveOnePieceSnapshotArtwork([{ ...baseMatch, name: "Monkey.D.Luffy - OP01-003 [Serial Number]", setName: "One Piece Promotion Cards" }], [baseCard]), {});
+  assert.deepEqual(resolveOnePieceSnapshotArtwork([{ ...baseMatch, setName: "Romance Dawn Pre-Release Cards" }], [baseCard]), {});
 });

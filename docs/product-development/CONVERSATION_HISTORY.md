@@ -1,5 +1,15 @@
 # CTO Product Development Conversation History
 
+## 2026-08-01 — Pokémon And One Piece Artwork Readiness
+
+The Product Owner asked Phronesis to fix missing catalogue thumbnails in one pass and anticipate the widest safe Pokémon and One Piece coverage before the next day's event. Runtime diagnosis proved the screenshot's `Mega Dragonite ex` assets existed in TCGdex, but TCGplayer's commerce title appended `- 152/217`; that longer string produced no provider search result. One Piece discovery also relied on the raw user phrase rather than visible collector identities, provider mappings were process-memory only, and a healthy zero-art result was labelled operational.
+
+Under `PHR-STRUCT-20260801-001`, the accepted `PHR-API-004` objective was revised to normalize bounded discovery titles, query visible identities, persist complete-identity-guarded mappings, expose truthful `NO_MATCH`, and add explicit event prewarming. `PHR-TECH-007` now permits only a configurable bounded prewarm over verified local mappings, not an unbounded image crawl.
+
+The active `.data/mobile-review.sqlite` reconciliation compared 43,732 Pokémon products with 23,444 TCGdex cards and 6,895 One Piece products with 4,450 deduplicated official Bandai cards. It retained 32,566 exact Pokémon and 3,224 exact One Piece product mappings. A 1,000-image priority hot set cached with zero failures. Unsafe earlier fallbacks for Prize Pack, prerelease, release-event, serial-numbered, tournament, manga, and other special products were removed; those products and unsupported sealed items remain placeholders unless an authoritative exact or curated image exists.
+
+Focused 35/35 and full 300/300 tests, TypeScript, lint, diff, production build, private health, same-origin image, and 390×844 visual checks pass. The four exact Dragonite thumbnails render at natural width 245 with zero overflow; representative official One Piece images render at natural width 600 with no console errors. Same-session conformance passes but is not independent review. No pricing, inventory, credential, external account, public deployment, or upstream catalogue state changed.
+
 ## 2026-07-31 — Purchase-Fed Event Flip And Display Case Inventory
 
 The Product Owner defined three operational inventory lanes. General Inventory remains the ownership, acquisition-cost, and broad sealed/supplies control. Every event Purchase must feed an Event Flip panel so a handler can sort exact cards, select several, edit intended Sale prices, and add them to a physical Display Case. Display Case must show what should be exposed, decrease through Sales, increase through purchase allocations, and support rapid end-of-event verification. Binder Inventory must be preserved as a later product lane.

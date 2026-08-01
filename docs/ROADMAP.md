@@ -91,7 +91,7 @@
 - Implemented / activation gated: module-at-invite single-use employee activation (`PHR-ARCH-012`).
 - Implemented / product review pending: account-free timed event worker codes with scoped operational sessions (`PHR-ARCH-014`).
 - Implemented: persistent exact/Bulk event cart and immutable receipts (`PHR-WORKFLOW-006`).
-- Implemented: bounded artwork resolution and exact-SKU curated local images (`PHR-API-004`).
+- Implemented: bounded artwork resolution, restart-safe exact provider mappings, bounded event prewarming, and exact-SKU curated local images (`PHR-API-004`, `PHR-TECH-007`).
 - Accepted locally at checkpoint `6c38c1f`. Required authentication and unconfigured external providers remain gated; GitHub publication is not part of this checkpoint.
 
 ## Active: Identity-Backed Price Monitoring

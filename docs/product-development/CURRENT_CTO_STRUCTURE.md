@@ -1,5 +1,17 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Pokémon And One Piece Artwork Readiness
+
+- Assignment: `PHR-ARTWORK-READINESS-20260801`
+- Document ID: `PHR-STRUCT-20260801-001`
+- Feature: `PHR-API-004` with `PHR-TECH-007` cache dependency
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Objective: repair missing phone thumbnails in one end-to-end pass and prepare the largest safe Pokémon/One Piece artwork baseline possible before the 2026-08-02 event.
+- Identity rule: provider discovery may remove commerce-only collector suffixes and documented set-era labels; attachment still requires exact printing evidence. Special/stamped/serial/event variants fail closed.
+- Operational result: 32,566 Pokémon and 3,224 One Piece product mappings persisted; 1,000 priority images cached with zero failures. Sealed or ambiguous products remain placeholders.
+- Verification: focused 35/35, full 300/300, TypeScript, lint, diff, production build, private health, exact same-origin image bytes, and 390×844 visual/console/overflow gates pass.
+- Artifacts: `docs/api/PHR-API-004-product-artwork-coverage.md`, `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`, `docs/testing/PHR-API-004-product-artwork-coverage-validation.md`, `docs/implementation-reports/PHR-API-004-product-artwork-coverage-report.md`, and `docs/reviews/PHR-API-004-product-artwork-coverage-conformance-review.md`.
+
 ## Active Product Work — 2026-07-31
 
 - Structure: `PHR-STRUCT-20260731-001`

@@ -7,11 +7,13 @@ import {
   pricingLookupConfig,
 } from "@/config/pricingLookup";
 import {
+  artworkIdentityKey,
   deliveredPriceFor,
   isStale,
   queryClearlyTargetsSingle,
   searchScore,
 } from "@/lib/pricing/domain";
+import type { CardImageUrls } from "@/types/card";
 import {
   createPricingSearchPlan,
   type PricingSearchPlan,
@@ -48,6 +50,10 @@ export type NormalizedImportMetadata = {
   contractVersion: string;
   sourceSchemaVersion: string;
   checkpointAt?: string | null;
+};
+
+export type ArtworkWarmCandidate = SearchMatch & {
+  artworkPriorityCents: number;
 };
 
 export class PricingRepository {
@@ -93,6 +99,18 @@ export class PricingRepository {
         PRIMARY KEY(category_id, sku, condition_key),
         FOREIGN KEY(category_id, sku) REFERENCES pricing_products(category_id, sku) ON DELETE CASCADE
       );
+      CREATE TABLE IF NOT EXISTS pricing_artwork_resolutions (
+        category_id TEXT NOT NULL,
+        sku TEXT NOT NULL,
+        identity_key TEXT NOT NULL,
+        provider_id TEXT NOT NULL,
+        image_urls_json TEXT NOT NULL,
+        verified_at TEXT NOT NULL,
+        PRIMARY KEY(category_id, sku),
+        FOREIGN KEY(category_id, sku) REFERENCES pricing_products(category_id, sku) ON DELETE CASCADE
+      );
+      CREATE INDEX IF NOT EXISTS pricing_artwork_resolution_identity
+        ON pricing_artwork_resolutions(category_id, identity_key);
       CREATE TABLE IF NOT EXISTS pricing_history (
         id INTEGER PRIMARY KEY,
         category_id TEXT NOT NULL,
@@ -691,6 +709,125 @@ export class PricingRepository {
         .sort(rank)
         .slice(0, pricingLookupConfig.resultLimit),
     };
+  }
+
+  listArtworkCandidates(categoryId: string): ArtworkWarmCandidate[] {
+    const rows = this.database
+      .prepare(
+        `
+      SELECT p.*, MAX(COALESCE(l.market_price_cents, l.listing_price_cents, 0)) AS artwork_priority_cents
+      FROM pricing_products p
+      LEFT JOIN pricing_latest l ON l.category_id=p.category_id AND l.sku=p.sku
+      WHERE p.category_id=? AND p.product_type='SINGLE'
+      GROUP BY p.category_id, p.sku
+      ORDER BY artwork_priority_cents DESC, p.name, p.sku
+    `,
+      )
+      .all(categoryId) as SqlRow[];
+    return rows.map((candidate) => ({
+      categoryId: String(candidate.category_id),
+      sku: String(candidate.sku),
+      productType: "SINGLE",
+      name: String(candidate.name),
+      setName: String(candidate.set_name),
+      collectorNumber: candidate.collector_number as string | null,
+      variant: String(candidate.variant),
+      language: String(candidate.language),
+      imageUrl: candidate.image_url as string | null,
+      score: 0,
+      prices: {},
+      sealedPrice: null,
+      previousMarketPriceCents: null,
+      previousSnapshotDate: null,
+      artworkPriorityCents: Number(candidate.artwork_priority_cents ?? 0),
+    }));
+  }
+
+  getArtworkResolutions(matches: readonly SearchMatch[]): Record<string, CardImageUrls> {
+    const artwork: Record<string, CardImageUrls> = {};
+    const statement = this.database.prepare(
+      `SELECT identity_key, image_urls_json FROM pricing_artwork_resolutions WHERE category_id=? AND sku=?`,
+    );
+    for (const match of matches) {
+      const row = statement.get(match.categoryId, match.sku) as SqlRow | undefined;
+      if (!row || String(row.identity_key) !== artworkIdentityKey(match)) continue;
+      try {
+        const parsed = JSON.parse(String(row.image_urls_json)) as Record<string, unknown>;
+        const urls: CardImageUrls = {};
+        for (const key of ["artCrop", "large", "normal", "small"] as const) {
+          if (typeof parsed[key] === "string" && parsed[key].length > 0) urls[key] = parsed[key];
+        }
+        if (urls.artCrop || urls.large || urls.normal || urls.small) artwork[match.sku] = urls;
+      } catch {
+        // A malformed local row is ignored and can be replaced by the next verified provider result.
+      }
+    }
+    return artwork;
+  }
+
+  saveArtworkResolutions(
+    matches: readonly SearchMatch[],
+    artwork: Record<string, CardImageUrls>,
+    providerId: string,
+  ): number {
+    return this.writeArtworkResolutions(matches, artwork, providerId, false);
+  }
+
+  replaceArtworkResolutions(
+    matches: readonly SearchMatch[],
+    artwork: Record<string, CardImageUrls>,
+    providerId: string,
+  ): number {
+    return this.writeArtworkResolutions(matches, artwork, providerId, true);
+  }
+
+  private writeArtworkResolutions(
+    matches: readonly SearchMatch[],
+    artwork: Record<string, CardImageUrls>,
+    providerId: string,
+    replaceCategory: boolean,
+  ): number {
+    const matchesBySku = new Map(matches.map((match) => [match.sku, match]));
+    const statement = this.database.prepare(`
+      INSERT INTO pricing_artwork_resolutions(category_id, sku, identity_key, provider_id, image_urls_json, verified_at)
+      VALUES(?, ?, ?, ?, ?, ?)
+      ON CONFLICT(category_id, sku) DO UPDATE SET
+        identity_key=excluded.identity_key,
+        provider_id=excluded.provider_id,
+        image_urls_json=excluded.image_urls_json,
+        verified_at=excluded.verified_at
+    `);
+    const verifiedAt = new Date().toISOString();
+    let saved = 0;
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      if (replaceCategory) {
+        const categories = [...new Set(matches.map((match) => match.categoryId))];
+        for (const categoryId of categories) {
+          this.database.prepare(
+            "DELETE FROM pricing_artwork_resolutions WHERE category_id=? AND provider_id=?",
+          ).run(categoryId, providerId);
+        }
+      }
+      for (const [sku, urls] of Object.entries(artwork)) {
+        const match = matchesBySku.get(sku);
+        if (!match || !(urls.artCrop || urls.large || urls.normal || urls.small)) continue;
+        statement.run(
+          match.categoryId,
+          match.sku,
+          artworkIdentityKey(match),
+          providerId,
+          JSON.stringify(urls),
+          verifiedAt,
+        );
+        saved += 1;
+      }
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+    return saved;
   }
 
   findBySku(categoryId: string, sku: string): SearchMatch | null {

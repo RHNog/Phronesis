@@ -78,6 +78,24 @@ test("import is idempotent and stores history only on price change", () => {
   repository.close();
 });
 
+test("verified artwork mappings persist by complete identity and warm candidates retain value priority", () => {
+  const repository = new PricingRepository();
+  repository.importTestCsv("pokemon-en", csv("2026-07-28"), contract);
+  const match = repository.findBySku("pokemon-en", "sv3-199-holo");
+  assert.ok(match);
+  assert.equal(repository.saveArtworkResolutions([match], {
+    [match.sku]: { small: "https://assets.tcgdex.net/en/sv/sv03.5/199/low.webp" },
+  }, "tcgdex"), 1);
+  assert.equal(repository.getArtworkResolutions([match])[match.sku].small, "https://assets.tcgdex.net/en/sv/sv03.5/199/low.webp");
+  assert.equal(repository.listArtworkCandidates("pokemon-en")[0].artworkPriorityCents, 12_000);
+
+  const changedIdentity = { ...match, collectorNumber: "200/165" };
+  assert.deepEqual(repository.getArtworkResolutions([changedIdentity]), {});
+  assert.equal(repository.replaceArtworkResolutions([match], {}, "tcgdex"), 0);
+  assert.deepEqual(repository.getArtworkResolutions([match]), {});
+  repository.close();
+});
+
 test("sealed search is relevance-gated, grouped, and never ordered by price", () => {
   const repository = new PricingRepository();
   repository.importTestCsv("pokemon-en", csv("2026-07-28"), contract);
