@@ -1,5 +1,14 @@
 # Project Atlas
 
+## PriceCharting Bulk Evidence
+
+- `PHR-API-011` extends the live `PHR-API-010` verifier with an immutable local bulk-evidence path; it does not create a parallel canonical catalogue.
+- PriceCharting product ID is the provider Market Identity key. TCG ID, UPC, ASIN, and ePID are typed corroborating aliases and never stand alone as identity proof.
+- A provider receipt is validated and resolved entirely in staging. Only collision-free one-to-one mappings may become active through one atomic receipt pointer; ambiguity, source/target collision, unsupported collectibles, malformed rows, and unmatched identities remain durable diagnostics.
+- The earlier heuristic benchmark found 13,957 collision-free candidates. Implemented resolver v9 proves 33,379 one-to-one candidates, including 32,099 with graded evidence, through decorated-name/full-collector normalization, explicit set and physical-pattern rules, exact annotations, and sibling-proven finish semantics while still enforcing protected qualifiers. Its current residual includes 1,704 collision rows across 745 targets and 387 ambiguous rows; neither class can activate.
+- PriceCharting observations never write TCGplayer-owned price lanes. TCG Direct Low precedence remains authoritative, PriceCharting Ungraded remains separately attributed corroboration, and the CSV supplies no artwork.
+- Receipt, staging, promotion, evidence, and reporting infrastructure are provider/game neutral. The 2026-08-01 owner receipt is dry-run only and no active pointer exists. One Piece and Magic require separate audited identity profiles; recurring acquisition is a later orchestration layer over the same importer.
+
 ## Inventory Operations
 
 - `InventoryRepository` converts finalized receipt lines into immutable-provenance lots, then separately owns operational locations, physical counts, and disposition evidence.

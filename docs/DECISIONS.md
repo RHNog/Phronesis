@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-01 — PriceCharting bulk data remains independent, collision-free evidence
+
+- **Status:** Implemented and product-review ready; owner-file dry run complete and activation pending (`PHR-API-011`).
+- **Context:** The daily PriceCharting CSV can add broad graded and metadata coverage, but PriceCharting products and Phronesis TCGplayer-centred physical SKUs do not share a safe universal key. The measured source includes many-to-one target collisions, duplicated TCG IDs, sparse/duplicated UPCs, non-standard collectibles, and no image or Direct Low field.
+- **Decision:** Preserve each CSV as an immutable receipt, validate and normalize it into provider staging, resolve identities through versioned game rules, and promote only a complete one-to-one collision-free mapping set. Store PriceCharting values as independent observations and retain all non-accepted states with reasons. Never merge them into TCGplayer-owned price lanes or use them to change the offer recommendation.
+- **Consequences:** Automatic Pokémon coverage is capped by proven identity rather than a percentage target. Resolver v9 exceeds the earlier heuristic ceiling only through fixture-gated collector, set, qualifier, annotation, pattern, and finish evidence; every remaining collision and ambiguity stays non-active. Recurring acquisition, One Piece, and Magic reuse the same receipt/promotion infrastructure but require later explicit scheduler and game-profile work.
+
 ## 2026-07-31 — Display Case is an allocation over owned inventory, not a second ownership ledger
 
 - **Status:** Accepted for Product Review.

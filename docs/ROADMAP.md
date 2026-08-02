@@ -1,5 +1,12 @@
 # Roadmap
 
+## Product Review Candidate: PriceCharting Bulk Evidence Import
+
+- Product review ready: `PHR-API-011` implements immutable PriceCharting receipts, strict schema validation, provider-neutral staging, versioned Pokémon resolution, one-to-one collision quarantine, atomic promotion, last-good rollback, active Graded Area consumption, and deterministic coverage reporting. The 91,572-row owner file completed dry-run only; activation, recurrence, One Piece, and Magic remain pending.
+- Implemented measured boundary: resolver v9 proves 33,379 exact one-to-one candidates, including 32,099 with graded evidence; 1,704 converging rows across 745 targets and 387 ambiguous rows remain non-active. Coverage is 80.78% of eligible English single rows and 76.33% of the local Pokémon singles catalogue, using only tested deterministic identity rules.
+- Operator path: owner-operated local dry-run/apply for English Pokémon singles. Sealed records stage but remain strict-gated. The current owner receipt is dry-run only.
+- Deferred: authenticated daily acquisition, recurrence, review-console mutations, and separately audited One Piece and Magic game profiles.
+
 ## Product Review Candidate: Editable Purchase Cart
 
 - Implemented: exact cart lines edit unit purchase value and quantity; Bulk edits total paid and optional approximate count (`PHR-UX-020`).

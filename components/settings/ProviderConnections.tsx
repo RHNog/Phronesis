@@ -12,6 +12,7 @@ type ProviderState = {
   productsStored?: number;
   providerId: string;
   status: string;
+  bulkImport?: { activeReceiptId: number | null; latestReceiptId: number | null; importedAt: string | null; sourceRows: number; reviewRequired: number; status: string };
 };
 
 type CredentialState = { providerId: string; fields: Array<{ field: string; configured: boolean }> };
@@ -149,6 +150,13 @@ export default function ProviderConnections({ secureRegistrationReady }: { secur
                     <div><dt className="text-zinc-500">Today</dt><dd className="mt-1 text-zinc-300">{state?.creditsUsed ?? 0} / {state?.dailyBudget ?? 100} sealed credits</dd></div>
                     <div><dt className="text-zinc-500">Local coverage</dt><dd className="mt-1 text-zinc-300">{state?.productsResolved ?? 0} exact matches · {state?.productsStored ?? 0} records</dd></div>
                     {state?.nextRelease ? <div><dt className="text-zinc-500">Next release</dt><dd className="mt-1 text-zinc-300">{state.nextRelease}</dd></div> : null}
+                  </>
+                ) : null}
+                {provider.id === "pricecharting" && state?.bulkImport ? (
+                  <>
+                    <div><dt className="text-zinc-500">Bulk evidence</dt><dd className="mt-1 text-zinc-300">{state.bulkImport.status.replaceAll("_", " ")} · {state.bulkImport.sourceRows.toLocaleString()} source rows</dd></div>
+                    <div><dt className="text-zinc-500">Identity review</dt><dd className="mt-1 text-zinc-300">{state.bulkImport.reviewRequired.toLocaleString()} records require review</dd></div>
+                    {state.bulkImport.importedAt ? <div><dt className="text-zinc-500">Last activated</dt><dd className="mt-1 text-zinc-300">{new Date(state.bulkImport.importedAt).toLocaleString()}</dd></div> : null}
                   </>
                 ) : null}
               </dl>

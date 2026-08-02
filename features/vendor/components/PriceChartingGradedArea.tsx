@@ -10,18 +10,19 @@ export default function PriceChartingGradedArea({ match }: { match: SearchMatch 
   const [status, setStatus] = useState("LOADING");
   const [evidence, setEvidence] = useState<PriceChartingEvidence[]>([]);
   const [error, setError] = useState("");
+  const [evidenceSource, setEvidenceSource] = useState<"IMPORTED" | "LIVE" | "NONE">("NONE");
   useEffect(() => {
     const controller = new AbortController();
-    const parameters = new URLSearchParams({ name: match.name, set: match.setName, number: match.collectorNumber ?? "" });
+    const parameters = new URLSearchParams({ name: match.name, set: match.setName, number: match.collectorNumber ?? "", category: match.categoryId, sku: match.sku });
     void fetch(`/api/market/pricecharting?${parameters}`, { signal: controller.signal }).then(async (response) => {
-      const body = await response.json() as { status?: string; evidence?: PriceChartingEvidence[]; error?: string };
+      const body = await response.json() as { status?: string; evidence?: PriceChartingEvidence[]; evidenceSource?: "IMPORTED" | "LIVE" | "NONE"; error?: string };
       if (!response.ok) throw new Error(body.error ?? "PriceCharting lookup failed.");
-      setStatus(body.status ?? "NO_MATCH"); setEvidence(body.evidence ?? []);
+      setStatus(body.status ?? "NO_MATCH"); setEvidence(body.evidence ?? []); setEvidenceSource(body.evidenceSource ?? "NONE");
     }).catch((caught) => { if (caught instanceof DOMException && caught.name === "AbortError") return; setError(caught instanceof Error ? caught.message : "Lookup failed."); setStatus("ERROR"); });
     return () => controller.abort();
-  }, [match.sku, match.name, match.setName, match.collectorNumber]);
+  }, [match.categoryId, match.sku, match.name, match.setName, match.collectorNumber]);
   return <section aria-labelledby="graded-area-heading" className="mt-5 rounded-xl border border-violet-900/70 bg-violet-950/20 p-4">
-    <div className="flex items-center justify-between gap-3"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">PriceCharting</p><h3 id="graded-area-heading" className="mt-1 text-sm font-semibold text-white">Graded Area</h3></div><span className="text-[11px] text-zinc-500">Current guide</span></div>
+    <div className="flex items-center justify-between gap-3"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">PriceCharting</p><h3 id="graded-area-heading" className="mt-1 text-sm font-semibold text-white">Graded Area</h3></div><span className="text-[11px] text-zinc-500">{evidenceSource === "IMPORTED" ? "Imported daily guide" : evidenceSource === "LIVE" ? "Live verification" : "Current guide"}</span></div>
     {status === "LOADING" ? <p className="mt-3 text-sm text-zinc-400">Loading graded evidence…</p> : null}
     {status === "NOT_CONFIGURED" ? <p className="mt-3 text-sm text-amber-200">Configure PriceCharting in Settings to load graded values here.</p> : null}
     {status === "NO_MATCH" ? <p className="mt-3 text-sm text-zinc-400">No sufficiently specific provider candidate was found. Phronesis did not infer a match.</p> : null}

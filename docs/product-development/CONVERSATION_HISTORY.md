@@ -1,5 +1,15 @@
 # CTO Product Development Conversation History
 
+## 2026-08-01 — PriceCharting Bulk Evidence Import Architecture
+
+The Product Owner directed Phronesis to devise the PriceCharting importing system before implementing a recurring routine, with One Piece and Magic intended as the next datasets after Pokémon. `PHR-STRUCT-20260801-007` assigns the architecture to `PHR-API-011`; implementation, recurrence, and additional games are not yet started.
+
+The governed design preserves each CSV as an immutable SHA-256 receipt, validates an explicit schema contract, normalizes the full provider file into isolated staging, resolves identity through a versioned game profile, promotes only a complete collision-free one-to-one mapping set, and records independent append-only PriceCharting observations plus a deterministic coverage report. Dry-run is the default, apply is explicit, and an active-receipt pointer preserves last-good rollback. PriceCharting cannot write TCGplayer price lanes, artwork, or recommended-offer values; TCG Direct Low precedence remains unchanged.
+
+A stricter second analysis identified a material collision boundary omitted by the initial row-level estimate. Although 19,163 PriceCharting rows were strong candidates across 16,329 Phronesis Pokémon SKUs, only 13,957 candidates are presently one-to-one and collision-free; 13,596 of those carry graded evidence. These are reconciliation benchmarks rather than automatic-match quotas, and the implementation resolver may accept fewer after stricter identity validation. Another 5,206 strong source rows converge on 2,372 targets and must remain quarantined until a physical-variant distinction or explicit provider-alias decision is proven. Coverage is therefore evidence-gated rather than percentage-driven.
+
+The first implementation work order is ready for an owner-operated local Pokémon dry-run/apply importer in three Standard Lane slices. English sealed records stage but remain strict-gated. Authenticated daily acquisition, scheduling, review-console mutations, and separately audited One Piece and Magic profiles are deferred. Architecture is ready for Product Review; no product code, database migration, source import, provider transmission, commit, push, or deployment occurred in this phase.
+
 ## 2026-08-01 — Editable Purchase Cart
 
 The Product Owner directed Phronesis to make the Vendor Workspace purchase cart editable by value and quantity and to add line removal. `PHR-STRUCT-20260801-006` assigns the bounded implementation to `PHR-UX-020`.
@@ -572,3 +582,27 @@ Current CTO chat. Earlier chat transcripts were not available in the repository 
 ### Acceptance State
 
 Implemented and verified on 2026-07-22. Lint, production build, identity scan, traceability checks, role-file checks, and diff checks passed. Standalone `npx tsc --noEmit` exposed a pre-existing test configuration defect (`TS5097` for `.ts` import extensions); Next.js production type checking passed. External GitHub repository and active checkout-directory renames remain a coordinated follow-up.
+## 2026-08-01 — PriceCharting Bulk Evidence Import Implementation
+
+### Source
+
+Current CTO chat: explicit command `Implement PHR-API-011`.
+
+### User Intent
+
+- Build the previously specified repeatable PriceCharting CSV ingestion system before recurring acquisition and later One Piece/Magic profiles.
+- Maximize exact Pokémon coverage without weakening physical identity or TCG Direct Low precedence.
+
+### Decisions And Result
+
+- Implemented immutable receipts, strict 27-column parsing, normalized staging, reason-coded Pokémon resolver v9, collision quarantine, independent observations, atomic pointer promotion, coverage metrics, Graded Area consumption, and Settings health.
+- Dry-run remains default; `--apply` is explicit and was not executed against the owner file.
+- The owner source hash `a06dcdde0093d82d9c727f390d5d5913eadba1cb1334eb7f683cb34f0d4faac1` staged 91,572 rows and resolver v9 proved 33,379 collision-free exact candidates, including 32,099 with graded evidence. Dry-run receipt `3` remains non-active.
+- TCGplayer price lanes, Direct Low, artwork, recommended offers, and event/inventory systems remain isolated.
+
+### Evidence And Acceptance State
+
+- Resolver v9 increased accepted mappings by 11,731 over v3 without enabling fuzzy matching. Explicit modern/promo/base/championship/Prize Pack set routing, natural-Holo and `Non-Holo` semantics, qualifier-boundary safety, Poké Ball/Master Ball patterns, Shadowless, SH-numbered Shiny, player annotations, sibling-proven finishes, and four printed-name alias families are fixture-gated; generic League, unsupported collectible, name-only, collector-only, and under-specified legacy-finish shortcuts remain prohibited.
+- Focused 21/21 and full 338/338 tests, TypeScript, warning-free lint, production build, and diff hygiene passed after the coverage increase.
+- Same-session conformance verdict: product-review ready. This is not independent approval.
+- Active PriceCharting bulk receipt remains `NULL`; owner activation, recurrence, One Piece, and Magic remain unresolved follow-ups.

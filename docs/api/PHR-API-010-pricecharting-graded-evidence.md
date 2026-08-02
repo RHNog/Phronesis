@@ -12,6 +12,8 @@ PriceCharting requires a paid subscription and a private 40-character token tran
 ## Implemented Boundary
 Settings can securely register `PRICECHARTING_API_TOKEN`, provider health reports activation, and a selected single loads separately attributed Graded Area candidates. The owner explicitly authorized transmission through the vendor-required HTTPS `t` query parameter on 2026-08-01. A global request barrier enforces at least 1.05 seconds between calls, exact queries are cached for six hours, and collector/name screening occurs before detail calls.
 
+`PHR-API-011` separately specifies immutable bulk CSV receipts, collision-free local identity reconciliation, and active imported evidence. The live adapter remains a manual verification path and does not own bulk ingestion, scheduling, or canonical identity.
+
 ## Required Live-Adapter Rules
 - Rate-limit globally to at most one request per second and cache exact resolutions.
 - Never expose the token to the browser, response body, UI state, or application logs.

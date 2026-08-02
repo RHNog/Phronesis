@@ -4,6 +4,7 @@ import { EbayBrowseListingProvider } from "@/lib/providers/eBayProvider";
 import { CardTraderListingProvider } from "@/lib/providers/CardTraderProvider";
 import { getPkmnPricesSealedSummary } from "@/lib/providers/pkmnprices/server";
 import { getProviderCredential } from "@/lib/providers/credentials";
+import { getPriceChartingBulkRepository } from "@/lib/providers/pricecharting/server";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,7 @@ export async function GET(request: Request) {
   const ebay = new EbayBrowseListingProvider({ clientId: getProviderCredential("ebay-browse", "EBAY_CLIENT_ID"), clientSecret: getProviderCredential("ebay-browse", "EBAY_CLIENT_SECRET") }).getStatus();
   const cardTrader = new CardTraderListingProvider({ token: getProviderCredential("cardtrader", "CARDTRADER_API_TOKEN") }).getStatus();
   const sealed = getPkmnPricesSealedSummary();
+  const priceChartingBulk = getPriceChartingBulkRepository().getSummary();
   return Response.json({
     providers: [
       {
@@ -42,7 +44,7 @@ export async function GET(request: Request) {
         providerId: "psa-certificates",
         status: getProviderCredential("psa-certificates", "PSA_API_TOKEN") ? "READY" : "NOT_CONFIGURED",
       },
-      { configured: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")), enabled: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")), providerId: "pricecharting", status: getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN") ? "READY" : "NOT_CONFIGURED" },
+      { configured: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")) || priceChartingBulk.status !== "NOT_IMPORTED", enabled: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")) || priceChartingBulk.status === "CURRENT", providerId: "pricecharting", status: priceChartingBulk.status !== "NOT_IMPORTED" ? priceChartingBulk.status : getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN") ? "READY" : "NOT_CONFIGURED", bulkImport: priceChartingBulk },
     ],
     note: "Configuration health only. Upstream quota is not inferred.",
   });

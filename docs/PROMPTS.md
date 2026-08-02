@@ -1,5 +1,13 @@
 # Prompt History
 
+## PriceCharting Bulk Evidence Import — 2026-08-01
+
+`PHR-STRUCT-20260801-007` specifies `PHR-API-011`: immutable PriceCharting CSV receipts, strict provider staging, versioned Pokémon identity reconciliation, one-to-one collision quarantine, atomic last-good promotion, independent observations, and deterministic coverage reporting. The first work order is local dry-run/apply only; recurrence, One Piece, and Magic remain later objectives.
+
+Implementation prompt: `docs/prompts/PHR-API-011-pricecharting-bulk-evidence-import-prompt.md`.
+
+Implementation completed in the same session: the owner file produced a non-active 91,572-row dry-run receipt, focused and full validation passed, and explicit owner activation remains pending.
+
 ## Editable Purchase Cart — 2026-08-01
 
 `PHR-STRUCT-20260801-006` authorizes `PHR-UX-020` to edit value and quantity on an employee-owned unsubmitted purchase-cart line, expose explicit Save changes and Remove item controls, and preserve immutable downstream purchase evidence.

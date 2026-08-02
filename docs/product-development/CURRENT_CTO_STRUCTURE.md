@@ -1,5 +1,24 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — PriceCharting Bulk Evidence Import
+
+- Assignment: `PHR-PRICECHARTING-BULK-IMPORT-20260801`
+- Document ID: `PHR-STRUCT-20260801-007`
+- Feature: `PHR-API-011`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY; DRY RUN COMPLETE, ACTIVATION PENDING`
+- Priority: High
+- Objective: convert complete PriceCharting CSV receipts into locally available, separately attributed graded and market evidence without weakening Phronesis identity or TCG Direct Low precedence.
+- Identity rule: PriceCharting product ID is the provider key; only exact, unique, one-to-one English Pokémon physical-SKU mappings may auto-promote. TCG ID, UPC, price, release date, sales volume, and name similarity are corroboration only.
+- Collision rule: every source or target collision fails closed. The measured source contains 5,206 otherwise strong rows converging on 2,372 Phronesis targets; none may become active without a later explicit identity proof.
+- Import rule: immutable hashed receipt -> strict versioned validation -> provider staging -> versioned game resolver -> atomic active-receipt promotion -> deterministic coverage report. Dry-run is the default; apply is explicit; last-good evidence survives failure.
+- Evidence rule: PriceCharting observations remain outside TCGplayer-owned price lanes and cannot change artwork or the recommended offer. TCG Direct Low remains first-priority buying evidence.
+- Measured implementation result: owner source hash `a06dcdde...faac1` staged 91,572 rows; resolver v9 proves 33,379 collision-free candidates and 32,099 graded candidates, while retaining 1,704 collision rows across 745 targets, 387 ambiguous rows, 5,851 unmatched rows, 1,425 sealed review rows, 189 quarantined rows, and 48,637 unsupported/non-English rows. The 80.78% eligible-row result comes from fixture-gated exact identity, qualifier, pattern, set, annotation, and sibling-finish evidence—not fuzzy matching.
+- Delivery lane: Standard Lane with receipt/staging, resolution/promotion, and consumption/operations slices when implementation is authorized.
+- Constraints: no scheduler, authenticated CSV acquisition, One Piece, Magic, image ingestion, sealed fuzzy matching, dependency, public deployment, commit, or push. `--apply` remains an explicit owner operation and has not run.
+- Artifacts: `docs/api/PHR-API-011-pricecharting-bulk-evidence-import.md`, `docs/prompts/PHR-API-011-pricecharting-bulk-evidence-import-prompt.md`, and `docs/testing/PHR-API-011-pricecharting-bulk-evidence-import-validation.md`.
+- Verified result: focused 21/21 and full 338/338 tests, TypeScript, warning-free lint, production build, and diff hygiene pass. The owner CSV recomputed dry-run receipt `3`; active receipt remains `NULL`.
+- Next accountable role: CTO Product Review and explicit activation decision. Recurring acquisition remains a later objective.
+
 ## Active Revision — Editable Purchase Cart
 
 - Assignment: `PHR-EDITABLE-PURCHASE-CART-20260801`
