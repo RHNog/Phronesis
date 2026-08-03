@@ -111,7 +111,14 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
     new URL("../app/vendor/page.tsx", import.meta.url),
     "utf8",
   );
+  const carousel = readFileSync(
+    new URL("../components/cards/ProductArtworkCarousel.tsx", import.meta.url),
+    "utf8",
+  );
   assert.match(route, /SnapshotVendorWorkspace/);
+  assert.match(carousel, /Previous packaging image/);
+  assert.match(carousel, /Next packaging image/);
+  assert.match(carousel, /aria-live="polite"/);
   assert.doesNotMatch(route, /Open price lookup/);
   assert.match(component, /data-vendor-primary-workflow/);
   assert.match(

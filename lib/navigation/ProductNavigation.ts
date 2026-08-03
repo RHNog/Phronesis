@@ -12,6 +12,7 @@ export type PrimaryNavigationItem = {
     | "display-case"
     | "market-watch"
     | "inventory"
+    | "artwork-review"
     | "settings";
   label: string;
   href: string;
@@ -76,6 +77,14 @@ export const primaryNavigation = [
     area: "Manage",
     module: "INVENTORY",
     matches: ["/inventory"],
+  },
+  {
+    id: "artwork-review",
+    label: "Artwork Review",
+    href: "/artwork-review",
+    area: "Administer",
+    module: "ADMINISTRATION",
+    matches: ["/artwork-review"],
   },
   {
     id: "settings",

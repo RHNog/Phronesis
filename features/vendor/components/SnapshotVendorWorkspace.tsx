@@ -8,6 +8,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import CardThumbnailPreview from "@/components/cards/CardThumbnailPreview";
+import ProductArtworkCarousel from "@/components/cards/ProductArtworkCarousel";
 import type {
   CardImageCandidate,
   CardImageUrls,
@@ -61,7 +62,7 @@ import type { PrintingVariant } from "@/types/printingVariant";
 const pendingTrackStorageKey = "phronesis.pending-price-track.v1";
 
 type ArtworkProvenance = {
-  kind: "OWNER_APPROVED_REPRESENTATIVE" | "ASSISTED_REPRESENTATIVE";
+  kind: "OWNER_APPROVED_REPRESENTATIVE" | "ASSISTED_REPRESENTATIVE" | "OWNER_APPROVED_PACKAGING_GALLERY";
   label: string;
   reviewedAt: string;
 };
@@ -325,6 +326,7 @@ export default function SnapshotVendorWorkspace({
     useState("convention-buying");
   const [strategyId, setStrategyId] = useState(defaultStrategyId);
   const [artwork, setArtwork] = useState<Record<string, CardImageUrls>>({});
+  const [artworkGalleries, setArtworkGalleries] = useState<Record<string, CardImageUrls[]>>({});
   const [artworkProvenance, setArtworkProvenance] = useState<Record<string, ArtworkProvenance>>({});
   const [artworkUploadMessage, setArtworkUploadMessage] = useState<
     string | null
@@ -439,15 +441,17 @@ export default function SnapshotVendorWorkspace({
               `/api/pricing/artwork?category=${encodeURIComponent(categoryId)}&q=${encodeURIComponent(normalizedQuery)}`,
               { signal: controller.signal },
             );
-            if (!result.ok) return { artwork: {}, provenance: {} };
+            if (!result.ok) return { artwork: {}, galleries: {}, provenance: {} };
             const body = (await result.json()) as {
               artwork?: Record<string, CardImageUrls>;
+              artworkGalleries?: Record<string, CardImageUrls[]>;
               artworkProvenance?: Record<string, ArtworkProvenance>;
             };
-            return { artwork: body.artwork ?? {}, provenance: body.artworkProvenance ?? {} };
+            return { artwork: body.artwork ?? {}, galleries: body.artworkGalleries ?? {}, provenance: body.artworkProvenance ?? {} };
           }),
         );
         setArtwork(Object.assign({}, ...responses.map((item) => item.artwork)));
+        setArtworkGalleries(Object.assign({}, ...responses.map((item) => item.galleries)));
         setArtworkProvenance(Object.assign({}, ...responses.map((item) => item.provenance)));
       } catch (caught) {
         if (caught instanceof DOMException && caught.name === "AbortError")
@@ -480,6 +484,7 @@ export default function SnapshotVendorWorkspace({
   const selectedArtworkProvenance = selectedGroup?.variants
     .map((variant) => artworkProvenance[variant.sku])
     .find(Boolean);
+  const selectedArtworkGallery = selectedMatch ? artworkGalleries[selectedMatch.sku] : undefined;
   const price = selectedMatch ? selectedPrice(selectedMatch, condition) : null;
   const reference = bestReference(price);
   const movement =
@@ -846,16 +851,14 @@ export default function SnapshotVendorWorkspace({
           ) : (
             <div className="mt-4">
               <div className="flex items-start gap-4">
-                <CardThumbnailPreview
+                <ProductArtworkCarousel
                   alt={`${selectedGroup?.name ?? selectedMatch.name}, ${selectedMatch.setName}`}
                   assetKey={selectedGroup?.id ?? selectedMatch.sku}
-                  candidates={thumbnailCandidates(
+                  fallbackCandidates={thumbnailCandidates(
                     selectedMatch,
                     selectedArtwork,
                   )}
-                  className="w-16"
-                  focusable
-                  selected
+                  images={selectedArtworkGallery}
                 />
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">
@@ -881,7 +884,7 @@ export default function SnapshotVendorWorkspace({
                   </p>
                   {selectedArtworkProvenance ? (
                     <p className="mt-2 inline-flex rounded-full border border-amber-700 bg-amber-950/30 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
-                      {selectedArtworkProvenance.label} · packaging may vary
+                      {selectedArtworkProvenance.label}{selectedArtworkProvenance.kind === "OWNER_APPROVED_PACKAGING_GALLERY" ? ` · ${selectedArtworkGallery?.length ?? 0} verified package images` : " · packaging may vary"}
                     </p>
                   ) : null}
                   <a

@@ -18,6 +18,7 @@ test("primary navigation contains only operational product destinations", () => 
       { label: "Display Case", href: "/display-case" },
       { label: "Market Watch", href: "/watchlists" },
       { label: "General Inventory", href: "/inventory" },
+      { label: "Artwork Review", href: "/artwork-review" },
       { label: "Settings", href: "/settings" },
     ],
   );
@@ -25,7 +26,7 @@ test("primary navigation contains only operational product destinations", () => 
     primaryNavigation.map(({ href }) => String(href)).includes("#"),
     false,
   );
-  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 8);
+  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 9);
 });
 
 test("contextual routes resolve to their owning product area", () => {
@@ -42,6 +43,7 @@ test("contextual routes resolve to their owning product area", () => {
   assert.equal(resolvePrimaryNavigation("/watchlists")?.area, "Monitor");
   assert.equal(resolvePrimaryNavigation("/inventory")?.area, "Manage");
   assert.equal(resolvePrimaryNavigation("/settings")?.area, "Administer");
+  assert.equal(resolvePrimaryNavigation("/artwork-review")?.area, "Administer");
 });
 
 test("unknown and developer routes do not select production navigation", () => {

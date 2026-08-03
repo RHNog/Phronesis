@@ -10,7 +10,7 @@ Owner-Governed Pokémon Sealed Artwork Review Queue
 
 ## Status
 
-In Progress — Assisted Recovery Amendment
+Implemented and Live — Dedicated Review Surface Product Review Ready
 
 ## Priority
 
@@ -22,7 +22,7 @@ UX / UI / Workflow / Database / Artwork / Administration / Testing
 
 ## Objective
 
-Recover defensible Pokémon sealed representative imagery automatically, while giving an authorized Phronesis owner or administrator a fast, auditable way to review the genuinely uncertain remainder without weakening the existing exact-artwork contract.
+Recover defensible Pokémon sealed representative imagery automatically, preserve multiple valid packaging artworks under one market SKU, and give an authorized Phronesis owner or administrator a fast, auditable way to review the genuinely uncertain remainder without weakening the existing exact-artwork contract.
 
 ## Background
 
@@ -34,7 +34,7 @@ The current ambiguity report is JSON intended for engineering audit. It is not p
 
 ## Proposed Solution
 
-Add an Administration Settings panel backed by a local review queue and a conservative assisted-recovery pass. A staging command reads the pinned public `ptcg-assets` manifest, generates review candidates for ambiguous Pokémon sealed identities, and persists only metadata in the local pricing database. The assisted pass may adopt a candidate only when the catalogue set and product class are exact and a versioned policy proves that the image is a safe representative rather than an exact package claim. Automated decisions receive `ASSISTED_REPRESENTATIVE` provenance and append-only audit evidence. The UI shows the unresolved remainder one product at a time with set, class, candidate filename, lazy-loaded image, and explicit owner actions. Exact, assisted-representative, and owner-representative coverage remain separately reported and every representative decision is reversible.
+Add a dedicated temporary Administration navigation surface backed by a local review queue and a conservative assisted-recovery pass. A staging command reads the pinned public `ptcg-assets` manifest, generates review candidates for ambiguous Pokémon sealed identities, and persists only metadata in the local pricing database. The assisted pass may adopt a candidate only when the catalogue set and product class are exact and a versioned policy proves that the image is a safe representative rather than an exact package claim. Automated decisions receive `ASSISTED_REPRESENTATIVE` provenance and append-only audit evidence. The UI shows the unresolved remainder one product at a time with set, class, candidate filename, lazy-loaded image, and explicit owner actions. Exact, assisted-representative, and owner-representative coverage remain separately reported and every representative decision is reversible.
 
 ## Functional Requirements
 
@@ -52,6 +52,12 @@ Add an Administration Settings panel backed by a local review queue and a conser
 - Record actor, action, timestamp, identity key, candidate source, and optional reason as append-only review evidence.
 - Surface active representative provenance to the Vendor Workspace artwork response so downstream UI can distinguish owner-approved from Phronesis-assisted imagery and label both truthfully.
 - Preserve exact community mappings and all unrelated catalogue, pricing, checkout, inventory, event, and provider evidence.
+- Expose the queue at `/artwork-review` as a temporary Administration navigation tab and remove it from the Settings page without changing its authorization boundary.
+- Build browser requests from the current origin, serialize search parameters explicitly, and ignore every aborted request by signal state so Safari navigation cannot replace real queue counts with an empty error state.
+- Model package artwork as one-to-many when several wrappers or boxes are valid presentations of the same catalogue SKU. Do not create synthetic SKUs or merge separately priced TCGplayer identities.
+- Let an owner approve two or more active candidates together as one packaging gallery in a single action; validate every selected candidate against the current product identity and source allow-list.
+- Keep packaging-gallery provenance separate from exact artwork and representative imagery, expose its count independently, and make the complete gallery reversible as one audited decision.
+- Return ordered packaging galleries through the Vendor Workspace artwork endpoint and render previous/next carousel controls in Snapshot Evidence while using the first image as the compact result thumbnail.
 
 ## Non-Functional Requirements
 
@@ -112,11 +118,14 @@ Add an Administration Settings panel backed by a local review queue and a conser
 - Reject, restore, and undo actions are persisted and survive restart.
 - Vendor artwork responses identify active representative images.
 - The queue is usable at desktop and 390px widths.
+- A shared-SKU booster pack can retain multiple approved wrapper artworks and cycle through them without changing price, purchase, or catalogue identity.
+- A separately priced regional/package identity remains a distinct SKU and is never collapsed into the gallery merely because its name is similar.
 - Focused tests, full tests, TypeScript, lint, production build, and diff hygiene pass.
 
 ## Edge Cases
 
 - A product may have multiple wrapper arts; each remains independently reviewable.
+- Gallery approval requires at least two selected active candidates for one current SKU. A gallery cannot overwrite exact or curated artwork, and undo removes only the gallery resolution.
 - A stale candidate whose identity key no longer matches the catalogue cannot be accepted.
 - An existing exact mapping blocks representative approval.
 - A source candidate removed by a later revision remains in immutable event history but is not newly offered.
@@ -144,11 +153,12 @@ Add an Administration Settings panel backed by a local review queue and a conser
 
 ## UI / UX Notes
 
-- Place the queue in Settings after provider connections.
+- Place the queue in its own temporary `Artwork Review` Administration tab; Settings retains provider, cost, profile, and access configuration only.
 - Lead each card with the catalogue product, set, product class, and reason.
 - Show candidate source filename directly beneath the image.
 - Use explicit wording: `Approve representative`, never `Verify exact`.
 - Keep an Accepted/Rejected filter so decisions can be reversed without SQLite access.
+- For a product with multiple valid wrapper candidates, provide one explicit `Approve all as packaging gallery` action and one product-level `Undo packaging gallery` action.
 
 ## Success Metrics
 
@@ -165,7 +175,8 @@ Add an Administration Settings panel backed by a local review queue and a conser
 
 - Originating prompt: Product Owner request on 2026-08-02 to quantify compute and build a simple manual sealed-image review tool.
 - Related implementation prompt: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`.
-- Related tests: `tests/sealed-artwork-review.test.ts` and repository/UI source assertions; focused 17/17 and full 366/366 pass.
+- Related tests: `tests/sealed-artwork-review.test.ts`, `tests/snapshot-vendor-workspace.test.ts`, and navigation/source assertions; packaging-gallery focused 16/16 and full 370/370 pass.
 - Related release notes: `docs/release-notes/PHR-UX-024-sealed-artwork-review-queue.md`.
 - Last modified: 2026-08-02.
-- Modification reason: Product Owner authorized Phronesis to perform the defensible review work automatically and reserve human review for genuine ambiguity.
+- Modification reason: Product Owner required multiple legitimate package artworks to remain attached to one shared SKU and be presented as a carousel, without collapsing separately priced identities.
+- Runtime evidence: the active Fossil 1st Edition SKU contains three ordered wrapper images with packaging-gallery provenance; active summary is 364 exact, 132 total representatives, 1 gallery, 497 visible, and 878 pending. `/artwork-review`, `/vendor`, and the artwork API return HTTP 200 through the private service. Focused 16/16, full 370/370, TypeScript, lint, production build, and diff hygiene pass.

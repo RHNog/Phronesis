@@ -1,5 +1,43 @@
 # PHR-UX-024 — Sealed Artwork Review Queue Validation
 
+## 2026-08-02 Packaging Gallery Amendment
+
+### Result
+
+Pass — Shared-SKU Packaging Gallery Implemented And Live
+
+### Automated Evidence
+
+- Focused artwork-review and Vendor Workspace suite: 16/16 pass.
+- Full repository suite: 370/370 pass.
+- `npx tsc --noEmit --incremental false`: pass.
+- `npm run lint`: pass with no warnings.
+- `npm run build`: pass on Next.js 16.2.12; `/artwork-review` remains present.
+- `git diff --check`: pass.
+
+### Behavioral Evidence
+
+- Gallery acceptance requires at least two active, allow-listed candidates for the same current SKU identity.
+- Acceptance stores one ordered gallery transactionally, retains a stable first-image thumbnail, and records every selected source in append-only evidence.
+- Repeating the same acceptance is idempotent; an active gallery blocks conflicting single-candidate mutations.
+- Product-level undo removes only the matching gallery resolution and rows in one transaction while retaining the audit trail.
+- The artwork API returns an ordered gallery plus `OWNER_APPROVED_PACKAGING_GALLERY` provenance; Vendor Snapshot Evidence cycles the images without changing the selected product.
+- The carousel exposes labelled previous/next controls, an `aria-live` position indicator, and hover/tap enlargement through the existing preview component.
+
+### Runtime And Data Evidence
+
+- Active gallery: `Fossil Booster Pack [1st Edition]`, SKU `tcg:86ade0ff4771fdd788131f39`.
+- Ordered sources: Aerodactyl, Lapras, and Zapdos Fossil booster wrappers.
+- Active summary: 364 exact, 118 assisted representative, 14 owner representative, 1 packaging gallery, 497 visible, 878 pending, and 2,894 total sealed products.
+- The distinct Unlimited SKU was not mutated because all three source files contain 1st Edition wrapper evidence.
+- The live artwork endpoint returned all three durable URLs in order and gallery provenance; private `/artwork-review` and `/vendor` returned HTTP 200 and the existing tailnet mapping remained healthy.
+
+### Safety Evidence
+
+- One market SKU remains one product identity; the gallery does not create synthetic identities or duplicate price observations.
+- Separately priced TCG-derived variants remain separate SKUs.
+- No exact or curated artwork was overwritten, and no public deployment, commit, or push occurred.
+
 ## Result
 
 Pass — Assisted Recovery Applied; Product Review Ready

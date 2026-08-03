@@ -3,7 +3,6 @@ import BusinessProfilesSettings from "@/features/settings/components/BusinessPro
 import AccessManagement from "@/components/auth/AccessManagement";
 import EventAccessManagement from "@/components/auth/EventAccessManagement";
 import ProviderConnections from "@/components/settings/ProviderConnections";
-import SealedArtworkReview from "@/components/settings/SealedArtworkReview";
 import { getAuthRuntimeStatus } from "@/lib/auth/config";
 import RegionalCostProfileSettings from "@/features/settings/components/RegionalCostProfileSettings";
 
@@ -29,7 +28,6 @@ export default function SettingsPage() {
             authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode
           }
         />
-        <SealedArtworkReview />
         <AccessManagement
           active={
             authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode

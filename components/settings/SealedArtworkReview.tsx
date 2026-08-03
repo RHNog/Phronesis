@@ -21,6 +21,7 @@ type ReviewProduct = {
   setName: string;
   productClass: string;
   reason: string;
+  galleryActive: boolean;
   candidates: ReviewCandidate[];
 };
 type ReviewQueue = {
@@ -31,6 +32,7 @@ type ReviewQueue = {
     representative: number;
     ownerRepresentative: number;
     assistedRepresentative: number;
+    packagingGallery: number;
     visible: number;
     totalSealed: number;
     pending: number;
@@ -42,7 +44,7 @@ type ReviewQueue = {
 const emptyQueue: ReviewQueue = {
   items: [],
   page: { limit: 6, offset: 0, total: 0 },
-  summary: { exact: 0, representative: 0, ownerRepresentative: 0, assistedRepresentative: 0, visible: 0, totalSealed: 0, pending: 0, accepted: 0, rejected: 0 },
+  summary: { exact: 0, representative: 0, ownerRepresentative: 0, assistedRepresentative: 0, packagingGallery: 0, visible: 0, totalSealed: 0, pending: 0, accepted: 0, rejected: 0 },
 };
 
 function percentage(value: number, total: number): string {
@@ -60,12 +62,18 @@ export default function SealedArtworkReview() {
   const [offset, setOffset] = useState(0);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [loadError, setLoadError] = useState("");
 
   const load = useCallback(async (signal?: AbortSignal) => {
-    const params = new URLSearchParams({ state, q: query.trim(), limit: "6", offset: String(offset) });
-    const response = await fetch(`/api/administration/sealed-artwork-review?${params}`, { signal });
-    const body = await response.json() as ReviewQueue & { error?: string };
-    if (!response.ok) throw new Error(body.error ?? "Artwork review queue could not be loaded.");
+    const endpoint = new URL("/api/administration/sealed-artwork-review", window.location.origin);
+    endpoint.searchParams.set("state", state);
+    endpoint.searchParams.set("q", query.trim());
+    endpoint.searchParams.set("limit", "6");
+    endpoint.searchParams.set("offset", String(offset));
+    const response = await fetch(endpoint.toString(), { signal });
+    const body = await response.json().catch(() => null) as (ReviewQueue & { error?: string }) | null;
+    if (!response.ok || !body) throw new Error(body?.error ?? `Artwork review queue could not be loaded (${response.status}).`);
+    setLoadError("");
     setQueue(body);
   }, [offset, query, state]);
 
@@ -73,9 +81,8 @@ export default function SealedArtworkReview() {
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
       void load(controller.signal).catch((error) => {
-        if (!(error instanceof DOMException && error.name === "AbortError")) {
-          setMessage(error instanceof Error ? error.message : "Artwork review queue could not be loaded.");
-        }
+        if (controller.signal.aborted) return;
+        setLoadError(error instanceof Error ? error.message : "Artwork review queue could not be loaded.");
       });
     }, 180);
     return () => {
@@ -146,6 +153,34 @@ export default function SealedArtworkReview() {
     }
   }
 
+  async function mutateGallery(action: "APPROVE_GALLERY" | "UNDO_GALLERY", product: ReviewProduct) {
+    setBusy(true);
+    setMessage(action === "APPROVE_GALLERY" ? "Creating packaging gallery…" : "Undoing packaging gallery…");
+    try {
+      const response = await fetch("/api/administration/sealed-artwork-review", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          action,
+          categoryId: product.categoryId,
+          sku: product.sku,
+          sourceUrls: action === "APPROVE_GALLERY" ? product.candidates.map((candidate) => candidate.sourceUrl) : undefined,
+        }),
+      });
+      const body = await response.json().catch(() => null) as { error?: string } | null;
+      if (!response.ok) throw new Error(body?.error ?? "Packaging gallery could not be updated.");
+      setOffset(0);
+      setMessage(action === "APPROVE_GALLERY"
+        ? `${product.candidates.length} packaging images saved under one product SKU.`
+        : "Packaging gallery undone; candidates returned to review.");
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Packaging gallery could not be updated.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const { summary } = queue;
   return (
     <section aria-labelledby="sealed-artwork-review-title" className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
@@ -161,10 +196,11 @@ export default function SealedArtworkReview() {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-6">
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3"><p className="text-xs text-zinc-500">Exact</p><p className="mt-1 text-xl font-semibold text-white">{summary.exact.toLocaleString()}</p><p className="text-xs text-zinc-400">{percentage(summary.exact, summary.totalSealed)}</p></div>
         <div className="rounded-xl border border-cyan-900 bg-cyan-950/20 p-3"><p className="text-xs text-cyan-300">Assisted representative</p><p className="mt-1 text-xl font-semibold text-white">{summary.assistedRepresentative.toLocaleString()}</p><p className="text-xs text-zinc-400">{percentage(summary.assistedRepresentative, summary.totalSealed)}</p></div>
         <div className="rounded-xl border border-cyan-900 bg-cyan-950/20 p-3"><p className="text-xs text-cyan-300">Owner representative</p><p className="mt-1 text-xl font-semibold text-white">{summary.ownerRepresentative.toLocaleString()}</p><p className="text-xs text-zinc-400">{percentage(summary.ownerRepresentative, summary.totalSealed)}</p></div>
+        <div className="rounded-xl border border-violet-900 bg-violet-950/20 p-3"><p className="text-xs text-violet-300">Packaging galleries</p><p className="mt-1 text-xl font-semibold text-white">{summary.packagingGallery.toLocaleString()}</p><p className="text-xs text-zinc-400">{percentage(summary.packagingGallery, summary.totalSealed)}</p></div>
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3"><p className="text-xs text-zinc-500">Visible total</p><p className="mt-1 text-xl font-semibold text-white">{summary.visible.toLocaleString()}</p><p className="text-xs text-zinc-400">{percentage(summary.visible, summary.totalSealed)}</p></div>
         <div className="rounded-xl border border-amber-900 bg-amber-950/20 p-3"><p className="text-xs text-amber-300">Pending products</p><p className="mt-1 text-xl font-semibold text-white">{summary.pending.toLocaleString()}</p><p className="text-xs text-zinc-400">of {summary.totalSealed.toLocaleString()} sealed</p></div>
       </div>
@@ -179,13 +215,18 @@ export default function SealedArtworkReview() {
       </div>
 
       {message ? <p role="status" className="mt-4 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-cyan-200">{message}</p> : null}
+      {loadError ? <p role="alert" className="mt-4 rounded-lg border border-red-900 bg-red-950/20 px-4 py-3 text-sm text-red-200">{loadError}</p> : null}
 
       <div aria-busy={busy} className="mt-4 space-y-4">
         {!queue.items.length ? <p className="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500">No {state.toLowerCase()} products in this view. Refresh candidates if the queue has not been staged yet.</p> : queue.items.map((product) => (
           <article key={product.sku} className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div><h4 className="font-semibold text-white">{product.name}</h4><p className="mt-1 text-sm text-zinc-400">{product.setName} · {label(product.productClass)}</p><p className="mt-1 text-xs text-zinc-500">{label(product.reason)} · {product.sku}</p></div>
-              <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${state === "PENDING" ? "border-amber-700 text-amber-200" : state === "ACCEPTED" ? "border-emerald-700 text-emerald-200" : "border-red-900 text-red-200"}`}>{state === "PENDING" ? "Human check required" : state === "ACCEPTED" ? "Representative active" : "Candidate rejected"}</span>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {state === "PENDING" && product.candidates.length > 1 ? <button type="button" disabled={busy} onClick={() => void mutateGallery("APPROVE_GALLERY", product)} className="min-h-11 rounded-lg border border-violet-600 bg-violet-950/30 px-3 text-sm font-semibold text-violet-200 disabled:opacity-50">Approve all {product.candidates.length} as packaging gallery</button> : null}
+                {state === "ACCEPTED" && product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutateGallery("UNDO_GALLERY", product)} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo packaging gallery</button> : null}
+                <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${state === "PENDING" ? "border-amber-700 text-amber-200" : state === "ACCEPTED" ? "border-emerald-700 text-emerald-200" : "border-red-900 text-red-200"}`}>{state === "PENDING" ? "Human check required" : product.galleryActive ? "Packaging gallery active" : state === "ACCEPTED" ? "Representative active" : "Candidate rejected"}</span>
+              </div>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {product.candidates.map((candidate) => (
@@ -196,7 +237,7 @@ export default function SealedArtworkReview() {
                   <p className="mt-3 break-all font-mono text-[11px] leading-5 text-zinc-400">{candidate.sourcePath}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {state === "PENDING" ? <><button type="button" disabled={busy} onClick={() => void mutate("ACCEPT", product, candidate)} className="min-h-11 flex-1 rounded-lg bg-cyan-300 px-3 text-sm font-semibold text-zinc-950 disabled:opacity-50">Approve representative</button><button type="button" disabled={busy} onClick={() => void mutate("REJECT", product, candidate)} className="min-h-11 rounded-lg border border-red-900 px-3 text-sm font-semibold text-red-200 disabled:opacity-50">Reject</button></> : null}
-                    {state === "ACCEPTED" ? <button type="button" disabled={busy} onClick={() => void mutate("UNDO", product, candidate)} className="min-h-11 w-full rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo approval</button> : null}
+                    {state === "ACCEPTED" && !product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutate("UNDO", product, candidate)} className="min-h-11 w-full rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo approval</button> : null}
                     {state === "REJECTED" ? <button type="button" disabled={busy} onClick={() => void mutate("RESTORE", product, candidate)} className="min-h-11 w-full rounded-lg border border-cyan-700 px-3 text-sm font-semibold text-cyan-200 disabled:opacity-50">Restore candidate</button> : null}
                   </div>
                 </div>

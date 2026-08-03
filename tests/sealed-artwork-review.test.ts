@@ -61,7 +61,7 @@ test("owner representative approval is labelled, audited, exact-safe, and revers
   }]);
 
   let queue = repository.getArtworkReviewQueue();
-  assert.deepEqual(queue.summary, { exact: 1, representative: 0, ownerRepresentative: 0, assistedRepresentative: 0, visible: 1, totalSealed: 2, pending: 1, accepted: 0, rejected: 0 });
+  assert.deepEqual(queue.summary, { exact: 1, representative: 0, ownerRepresentative: 0, assistedRepresentative: 0, packagingGallery: 0, visible: 1, totalSealed: 2, pending: 1, accepted: 0, rejected: 0 });
   repository.decideArtworkReview({ action: "ACCEPT", categoryId: "pokemon-en", sku: "pack", sourceUrl: source("base1/packshots/charizard.png"), actorUserId: "owner" });
   queue = repository.getArtworkReviewQueue({ state: "ACCEPTED" });
   assert.equal(queue.summary.exact, 1);
@@ -77,6 +77,55 @@ test("owner representative approval is labelled, audited, exact-safe, and revers
   assert.equal(queue.summary.pending, 1);
   assert.equal(repository.getArtworkResolutions([review]).pack, undefined);
   assert.equal(repository.database.prepare("SELECT COUNT(*) AS count FROM pricing_artwork_review_events").get()!.count, 2);
+  repository.close();
+});
+
+test("owner packaging gallery preserves multiple wrapper images under one SKU and reverses atomically", () => {
+  const repository = new PricingRepository();
+  const pack = insertSealed(repository, "fossil-pack", "Fossil Booster Pack [1st Edition]", "Fossil");
+  const paths = ["Aerodactyl", "Lapras", "Zapdos"].map((name) => `base3/packshots/Fossil_Booster_${name}.webp`);
+  repository.stageArtworkReviewCandidates("pokemon-en", "ptcg-assets", sha, [pack], paths.map((path, rank) => ({
+    sku: pack.sku,
+    sourcePath: path,
+    sourceUrl: source(path),
+    productClass: "BOOSTER_PACK",
+    reason: "DESCRIPTOR_NOT_UNIQUE",
+    rank,
+  })));
+  const input = {
+    action: "ACCEPT" as const,
+    categoryId: "pokemon-en",
+    sku: pack.sku,
+    sourceUrls: paths.map(source),
+    actorUserId: "owner",
+  };
+  assert.equal(repository.decideArtworkGallery(input), "APPLIED");
+  assert.equal(repository.decideArtworkGallery(input), "ALREADY_APPLIED");
+  assert.deepEqual(repository.getArtworkGalleries([pack])[pack.sku].map((urls) => urls.normal), paths.map(source));
+  assert.equal(repository.getArtworkResolutionProvenance([pack])[pack.sku].kind, "OWNER_APPROVED_PACKAGING_GALLERY");
+  const accepted = repository.getArtworkReviewQueue({ state: "ACCEPTED" });
+  assert.equal(accepted.summary.packagingGallery, 1);
+  assert.equal(accepted.summary.representative, 0);
+  assert.equal(accepted.summary.exact, 0);
+  assert.equal(accepted.items[0].galleryActive, true);
+  assert.equal(accepted.items[0].candidates.length, 3);
+  assert.throws(() => repository.decideArtworkReview({
+    action: "REJECT",
+    categoryId: "pokemon-en",
+    sku: pack.sku,
+    sourceUrl: source(paths[0]),
+    actorUserId: "owner",
+  }), /packaging gallery/i);
+  assert.equal(repository.decideArtworkGallery({
+    action: "UNDO",
+    categoryId: "pokemon-en",
+    sku: pack.sku,
+    actorUserId: "owner",
+  }), "REVOKED");
+  assert.equal(repository.getArtworkGalleries([pack])[pack.sku], undefined);
+  assert.equal(repository.getArtworkResolutions([pack])[pack.sku], undefined);
+  assert.equal(repository.getArtworkReviewQueue().summary.pending, 1);
+  assert.equal(repository.database.prepare("SELECT COUNT(*) AS count FROM pricing_artwork_review_events").get()!.count, 6);
   repository.close();
 });
 
@@ -165,15 +214,24 @@ test("review reject and restore survive restaging while exact artwork blocks app
   repository.close();
 });
 
-test("Settings and Vendor Workspace expose the governed review and representative label", () => {
+test("dedicated Administration tab and Vendor Workspace expose the governed review and representative label", () => {
   const settings = readFileSync(new URL("../app/settings/page.tsx", import.meta.url), "utf8");
+  const reviewPage = readFileSync(new URL("../app/artwork-review/page.tsx", import.meta.url), "utf8");
   const panel = readFileSync(new URL("../components/settings/SealedArtworkReview.tsx", import.meta.url), "utf8");
   const vendor = readFileSync(new URL("../features/vendor/components/SnapshotVendorWorkspace.tsx", import.meta.url), "utf8");
-  assert.match(settings, /SealedArtworkReview/);
+  assert.doesNotMatch(settings, /SealedArtworkReview/);
+  assert.match(reviewPage, /requiredModule="ADMINISTRATION"/);
+  assert.match(reviewPage, /SealedArtworkReview/);
+  assert.match(panel, /window\.location\.origin/);
+  assert.match(panel, /controller\.signal\.aborted/);
   assert.match(panel, /Approve representative/);
   assert.match(panel, /Refresh candidates/);
   assert.match(panel, /Run safe recovery/);
+  assert.match(panel, /Approve all.*as packaging gallery/);
+  assert.match(panel, /Undo packaging gallery/);
   assert.match(panel, /Undo approval/);
   assert.match(vendor, /packaging may vary/);
+  assert.match(vendor, /ProductArtworkCarousel/);
+  assert.match(vendor, /artworkGalleries/);
   assert.match(vendor, /response\?\.sealed/);
 });

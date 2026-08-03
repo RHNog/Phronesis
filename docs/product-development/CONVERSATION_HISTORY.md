@@ -649,3 +649,38 @@ Current CTO chat: explicit command `Implement PHR-API-011`.
 ### Acceptance State
 
 Implementation and active application are product-review ready. Focused 14/14 and full 369/369 tests, TypeScript, warning-free lint, diff hygiene, and direct SQLite mapping verification passed. No commit or push was requested.
+
+## 2026-08-02 — Temporary Artwork Review Tab
+
+### User Intent
+
+- Explain why the embedded Settings review panel showed no products.
+- Put the sealed-artwork workflow in a separate temporary tab.
+
+### Decision And Result
+
+- The zero counters were a failed queue API load, not exhausted or deleted review data. The active database retains 884 pending products.
+- Added a dedicated `/artwork-review` Administration navigation destination and removed the panel from Settings.
+- Hardened Safari loading with a current-origin endpoint, explicit query serialization, abort-state handling, and resilient response parsing.
+- Restarted the existing loopback/tailnet-only private review service; the new page and queue API return HTTP 200, and the existing Tailscale mapping remains healthy.
+
+### Acceptance State
+
+Implemented and live for Product Owner review. Focused 11/11 and full 369/369 tests, TypeScript, warning-free lint, production build, diff hygiene, direct database audit, local page/API checks, and private-service status passed. No commit or push was requested.
+
+## 2026-08-02 — Shared-SKU Packaging Galleries
+
+### User Intent
+
+- Properly display products that share one SKU and price identity but have multiple legitimate wrapper or packaging artworks.
+- Prefer gathering those pictures under the product identity and presenting them as a carousel instead of forcing one representative image.
+
+### Decision And Result
+
+- Artwork multiplicity is separate from catalogue identity multiplicity. Multiple wrappers for one priced SKU form an ordered packaging gallery; independently priced TCG-derived editions, regions, or named variants remain separate SKUs.
+- Added bulk gallery approval and atomic undo to Artwork Review, separate gallery provenance and coverage, ordered artwork API output, and an accessible Vendor Workspace Snapshot carousel.
+- Applied the Aerodactyl, Lapras, and Zapdos wrappers to `Fossil Booster Pack [1st Edition]` as one three-image gallery. The separate Unlimited identity remains unresolved because those sources visibly carry the 1st Edition mark.
+
+### Acceptance State
+
+Implemented and live for Product Owner review. Focused 16/16 and full 370/370 tests, TypeScript, warning-free lint, production build, diff hygiene, transactional/idempotency/undo evidence, live API verification, private page checks, and tailnet health passed. Same-session review is not independent approval. No commit or push was requested.

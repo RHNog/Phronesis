@@ -37,6 +37,7 @@ export async function GET(request: Request) {
     const pricing = repository.search(categoryId, query);
     const matches = [...pricing.singles, ...pricing.sealed];
     const persistedArtwork = repository.getArtworkResolutions(matches);
+    const persistedGalleries = repository.getArtworkGalleries(matches);
     const artworkProvenance = repository.getArtworkResolutionProvenance(matches);
     const localArtwork: Record<string, { normal: string }> = {};
     await Promise.all(matches.map(async (match) => {
@@ -69,10 +70,14 @@ export async function GET(request: Request) {
     }
     const rawProviderArtwork = { ...persistedArtwork, ...resolvedArtwork };
     const providerArtwork = Object.fromEntries(Object.entries(rawProviderArtwork).map(([sku, urls]) => [sku, durableArtworkUrls(urls)]));
+    const artworkGalleries = Object.fromEntries(Object.entries(persistedGalleries).map(([sku, gallery]) => [
+      sku,
+      gallery.map((urls) => durableArtworkUrls(urls)),
+    ]));
     const artwork = { ...providerArtwork, ...localArtwork };
     const providerReachable = providers.some((provider) => !provider.errorMessage);
     return NextResponse.json(
-      { artwork, artworkProvenance, status: Object.keys(artwork).length ? "OPERATIONAL" : providerReachable || queries.length === 0 ? "NO_MATCH" : "UNAVAILABLE" },
+      { artwork, artworkGalleries, artworkProvenance, status: Object.keys(artwork).length ? "OPERATIONAL" : providerReachable || queries.length === 0 ? "NO_MATCH" : "UNAVAILABLE" },
       { headers: { "Cache-Control": "private, max-age=300" } },
     );
   } catch {

@@ -1,5 +1,23 @@
 # PHR-UX-024 — Implementation Report
 
+## 2026-08-02 Packaging Gallery Amendment
+
+### Delivered
+
+- Transactional `pricing_artwork_galleries` persistence keyed by catalogue SKU and identity, with deterministic positions and atomic reversal.
+- `OWNER_APPROVED_PACKAGING_GALLERY` provenance and separate gallery coverage reporting.
+- Bulk `Approve all as packaging gallery` and product-level undo actions in the temporary Artwork Review tab.
+- Ordered galleries in the artwork API and an accessible carousel in Vendor Workspace Snapshot Evidence.
+- Conflict protection against exact/curated resolution replacement and against single-candidate mutations while a gallery is active.
+
+### Applied Result
+
+The active `Fossil Booster Pack [1st Edition]` identity now presents Aerodactyl, Lapras, and Zapdos wrappers as one three-image gallery. The first image remains the compact thumbnail; all three are available for operator verification in Snapshot Evidence. Product identity, quantity, price evidence, and cart behavior are unchanged. The Unlimited Fossil booster identity remains unresolved because the staged images are edition-specific.
+
+### Verification
+
+Focused 16/16 and full 370/370 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, live API order/provenance inspection, page HTTP checks, and private-service health passed. Review was performed in the same session and is not independent approval.
+
 ## Delivered
 
 - Candidate metadata staging from the immutable public community source.

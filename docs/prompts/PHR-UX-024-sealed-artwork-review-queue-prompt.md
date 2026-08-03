@@ -28,7 +28,11 @@ Implement a conservative Phronesis-assisted Pokémon sealed artwork recovery pas
 - Add a versioned assisted-selection policy that only accepts exact-set, compatible-class, non-value-sensitive representative candidates.
 - Add dry-run/apply operations with considered, applied, already-applied, blocked, and skipped counts.
 - Add Administration API reads and mutations with minimal DTOs and source allow-list validation.
-- Add a responsive Settings review panel with assisted recovery, search, state filters, lazy images, and approve/reject/restore/undo controls.
+- Add a responsive dedicated `/artwork-review` Administration tab with assisted recovery, search, state filters, lazy images, and approve/reject/restore/undo controls; remove the panel from Settings.
+- Use a current-origin absolute API URL, explicit query serialization, abort-signal checks, and resilient response parsing so Safari request cancellation or malformed responses cannot masquerade as an empty queue.
+- Add one-to-many, identity-keyed packaging-gallery persistence with append-only approval/revocation evidence. Gallery approval requires at least two allow-listed active candidates for one current SKU and cannot overwrite exact/curated artwork.
+- Add product-level bulk approval/undo controls in Artwork Review and return ordered gallery DTOs from the Vendor Workspace artwork endpoint.
+- Render a responsive, keyboard-operable Snapshot Evidence carousel while preserving the first image as the compact search-result thumbnail and preserving one price/purchase identity.
 - Preserve exact mappings and label owner-approved versus Phronesis-assisted representative artwork in the Vendor Workspace response/UI.
 - Return separate exact, owner-representative, assisted-representative, and total visible coverage.
 
@@ -52,6 +56,8 @@ Implement a conservative Phronesis-assisted Pokémon sealed artwork recovery pas
 - Reject/restore/undo survive repository restart.
 - Unsafe source URLs and stale identities fail closed.
 - Queue pagination/search/status and summary counts are deterministic.
+- Packaging-gallery apply/undo is atomic, idempotent, exact-safe, and keeps all selected images under one SKU.
+- Vendor Workspace receives ordered gallery images and exposes accessible previous/next controls without changing selection or pricing.
 - Responsive source assertions, full tests, TypeScript, lint, build, and diff hygiene pass.
 
 ## Documentation Updates
@@ -60,7 +66,7 @@ Implement a conservative Phronesis-assisted Pokémon sealed artwork recovery pas
 
 ## Acceptance Criteria
 
-- Phronesis automatically recovers the defensible representative subset, and the owner can review only the remaining exceptions in Settings. All decisions remain reversible and audited.
+- Phronesis automatically recovers the defensible representative subset, and the owner can review only the remaining exceptions in a dedicated temporary Administration tab. All decisions remain reversible and audited.
 
 ## Non-Goals
 

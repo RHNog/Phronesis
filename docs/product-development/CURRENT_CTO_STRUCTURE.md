@@ -1,5 +1,36 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Shared-SKU Packaging Galleries
+
+- Assignment: `PHR-SEALED-PACKAGING-GALLERY-20260802`
+- Document ID: `PHR-STRUCT-20260802-006`
+- Feature: `PHR-UX-024`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: preserve multiple valid wrapper/package images under one catalogue SKU and display them as a carousel without changing product identity or price evidence.
+- Identity rule: artwork multiplicity is not identity multiplicity. Wrapper art for one priced booster SKU becomes an ordered gallery; region/edition/package variants with separate TCG-derived identities remain separate SKUs.
+- Safety rule: an owner bulk-approves at least two active, allow-listed candidates for one current identity. Galleries cannot overwrite exact or curated artwork and are atomically reversible with append-only evidence.
+- Acceptance: one-click gallery approval/undo, separate gallery coverage, ordered artwork API, accessible Vendor Snapshot carousel, Fossil booster proof, mobile containment, full gates, and live private verification.
+- Work order: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`.
+- Result: the active `Fossil Booster Pack [1st Edition]` TCG-derived SKU now owns one ordered three-image gallery containing the Aerodactyl, Lapras, and Zapdos wrappers. Its catalogue identity, price evidence, and purchase behavior remain singular. The separate Unlimited SKU remains unresolved because the available wrapper files visibly carry the 1st Edition mark.
+- Coverage: 364 exact, 118 assisted representative, 14 owner representative, 1 packaging gallery, and 497 total visible products across 2,894 sealed identities; 878 products remain pending owner review.
+- Verification: focused 16/16 and full 370/370 tests, TypeScript without incremental output, warning-free lint, production build, diff hygiene, transactional/idempotency/undo evidence, live artwork API gallery order and provenance, private page HTTP 200, and tailnet mapping health pass.
+- Next accountable role: Product Owner visual review through `Artwork Review` and the Vendor Workspace Snapshot carousel. Commit and push remain separately gated.
+
+## Active Revision — Temporary Artwork Review Tab
+
+- Assignment: `PHR-SEALED-ARTWORK-TAB-20260802`
+- Document ID: `PHR-STRUCT-20260802-005`
+- Feature: `PHR-UX-024`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: restore the non-empty sealed review queue after a Safari request-path failure and move the workflow from Settings into a separate temporary Administration tab.
+- Product rule: the tab changes access and presentation only; it does not erase candidates, merge identities, or weaken exact/representative provenance.
+- Acceptance: `/artwork-review` navigation, Settings removal, ADMINISTRATION authorization, current-origin and abort-safe queue loading, truthful non-zero active counts, desktop/mobile private verification, and full gates.
+- Work order: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`.
+- Result: `Artwork Review` is a separate temporary Administration destination; Settings no longer embeds the queue. The active database retains 884 pending products, and `Celebrations Mini Tin Display` remains the first intentional exception.
+- Runtime remediation: the screenshot represented a failed API load, not an empty queue. The client now uses a current-origin absolute endpoint, abort-state suppression, and resilient response parsing; the loopback service was restarted and both `/artwork-review` and the queue API returned 200 through the configured private-review runtime.
+- Verification: focused 11/11 and full 369/369 tests, TypeScript, warning-free lint, production build, diff hygiene, direct SQLite count, page/API HTTP 200, and tailnet mapping health pass.
+- Next accountable role: Product Owner phone review at the existing tailnet-only 9443 URL. Commit and push remain separately gated.
+
 ## Active Revision — TCGplayer Mini Tin Variant Reconciliation
 
 - Assignment: `PHR-POKEMON-MINI-TIN-IDENTITY-20260802`

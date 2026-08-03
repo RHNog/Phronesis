@@ -61,6 +61,25 @@ export async function POST(request: Request) {
         headers: { "Cache-Control": "private, no-store" },
       });
     }
+    if (action === "APPROVE_GALLERY" || action === "UNDO_GALLERY") {
+      const categoryId = String(body?.categoryId ?? "");
+      const sku = String(body?.sku ?? "");
+      const sourceUrls = Array.isArray(body?.sourceUrls)
+        ? body.sourceUrls.filter((value): value is string => typeof value === "string")
+        : [];
+      if (categoryId !== "pokemon-en" || !sku ||
+        (action === "APPROVE_GALLERY" && (sourceUrls.length < 2 || sourceUrls.some((sourceUrl) => !isApprovedArtworkSource(sourceUrl))))) {
+        throw new Error("A valid Pokémon sealed packaging gallery is required.");
+      }
+      const result = getPricingRepository().decideArtworkGallery({
+        action: action === "APPROVE_GALLERY" ? "ACCEPT" : "UNDO",
+        categoryId,
+        sku,
+        sourceUrls,
+        actorUserId: authorization.userId ?? "legacy-local-owner",
+      });
+      return Response.json({ ok: true, result }, { headers: { "Cache-Control": "private, no-store" } });
+    }
     if (!new Set(["ACCEPT", "REJECT", "RESTORE", "UNDO"]).has(action)) {
       throw new Error("Unsupported artwork review action.");
     }

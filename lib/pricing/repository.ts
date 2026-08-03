@@ -86,6 +86,7 @@ export type ArtworkReviewProduct = {
   setName: string;
   productClass: string;
   reason: string;
+  galleryActive: boolean;
   candidates: ArtworkReviewCandidate[];
 };
 
@@ -97,6 +98,7 @@ export type ArtworkReviewQueue = {
     representative: number;
     ownerRepresentative: number;
     assistedRepresentative: number;
+    packagingGallery: number;
     visible: number;
     totalSealed: number;
     pending: number;
@@ -106,7 +108,7 @@ export type ArtworkReviewQueue = {
 };
 
 export type ArtworkResolutionProvenance = {
-  kind: "OWNER_APPROVED_REPRESENTATIVE" | "ASSISTED_REPRESENTATIVE";
+  kind: "OWNER_APPROVED_REPRESENTATIVE" | "ASSISTED_REPRESENTATIVE" | "OWNER_APPROVED_PACKAGING_GALLERY";
   label: string;
   reviewedAt: string;
 };
@@ -219,6 +221,23 @@ export class PricingRepository {
         PRIMARY KEY(category_id, sku),
         FOREIGN KEY(category_id, sku) REFERENCES pricing_products(category_id, sku) ON DELETE CASCADE
       );
+      CREATE TABLE IF NOT EXISTS pricing_artwork_galleries (
+        category_id TEXT NOT NULL,
+        sku TEXT NOT NULL,
+        identity_key TEXT NOT NULL,
+        provider_id TEXT NOT NULL,
+        source_revision TEXT NOT NULL,
+        source_path TEXT NOT NULL,
+        source_url TEXT NOT NULL,
+        position INTEGER NOT NULL CHECK(position >= 0),
+        reviewed_by TEXT NOT NULL,
+        reviewed_at TEXT NOT NULL,
+        PRIMARY KEY(category_id, sku, source_url),
+        UNIQUE(category_id, sku, position),
+        FOREIGN KEY(category_id, sku) REFERENCES pricing_products(category_id, sku) ON DELETE CASCADE
+      );
+      CREATE INDEX IF NOT EXISTS pricing_artwork_gallery_identity
+        ON pricing_artwork_galleries(category_id, sku, identity_key, position);
       CREATE TABLE IF NOT EXISTS pricing_history (
         id INTEGER PRIMARY KEY,
         category_id TEXT NOT NULL,
@@ -1031,8 +1050,34 @@ export class PricingRepository {
     return artwork;
   }
 
+  getArtworkGalleries(matches: readonly SearchMatch[]): Record<string, CardImageUrls[]> {
+    const galleries: Record<string, CardImageUrls[]> = {};
+    const statement = this.database.prepare(`
+      SELECT identity_key, source_url
+      FROM pricing_artwork_galleries
+      WHERE category_id=? AND sku=?
+      ORDER BY position, source_path
+    `);
+    for (const match of matches) {
+      const rows = statement.all(match.categoryId, match.sku) as SqlRow[];
+      if (!rows.length || rows.some((row) => String(row.identity_key) !== artworkIdentityKey(match))) continue;
+      galleries[match.sku] = rows.map((row) => ({
+        small: String(row.source_url),
+        normal: String(row.source_url),
+        large: String(row.source_url),
+      }));
+    }
+    return galleries;
+  }
+
   getArtworkResolutionProvenance(matches: readonly SearchMatch[]): Record<string, ArtworkResolutionProvenance> {
     const provenance: Record<string, ArtworkResolutionProvenance> = {};
+    const galleryStatement = this.database.prepare(`
+      SELECT identity_key, reviewed_at
+      FROM pricing_artwork_galleries
+      WHERE category_id=? AND sku=?
+      ORDER BY position LIMIT 1
+    `);
     const statement = this.database.prepare(`
       SELECT p.identity_key, p.resolution_kind, p.reviewed_at
       FROM pricing_artwork_resolution_provenance p
@@ -1040,6 +1085,15 @@ export class PricingRepository {
       WHERE p.category_id=? AND p.sku=? AND r.identity_key=p.identity_key
     `);
     for (const match of matches) {
+      const gallery = galleryStatement.get(match.categoryId, match.sku) as SqlRow | undefined;
+      if (gallery && String(gallery.identity_key) === artworkIdentityKey(match)) {
+        provenance[match.sku] = {
+          kind: "OWNER_APPROVED_PACKAGING_GALLERY",
+          label: "Owner-approved packaging gallery",
+          reviewedAt: String(gallery.reviewed_at),
+        };
+        continue;
+      }
       const row = statement.get(match.categoryId, match.sku) as SqlRow | undefined;
       if (!row || String(row.identity_key) !== artworkIdentityKey(match)) continue;
       const kind = String(row.resolution_kind);
@@ -1132,6 +1186,9 @@ export class PricingRepository {
           WHERE e.category_id=c.category_id AND e.sku=c.sku AND e.source_url=c.source_url
           ORDER BY e.id DESC LIMIT 1) AS reviewed_at,
         rp.source_url AS active_representative_url,
+        EXISTS(SELECT 1 FROM pricing_artwork_galleries g
+          WHERE g.category_id=c.category_id AND g.sku=c.sku
+            AND g.identity_key=c.identity_key AND g.source_url=c.source_url) AS active_gallery,
         r.identity_key AS resolution_identity_key
       FROM pricing_artwork_review_candidates c
       JOIN pricing_products p ON p.category_id=c.category_id AND p.sku=c.sku
@@ -1140,12 +1197,13 @@ export class PricingRepository {
       WHERE c.category_id=? AND c.active=1
       ORDER BY p.set_name, p.name, c.candidate_rank, c.source_path
     `).all(categoryId) as SqlRow[];
-    const grouped = new Map<string, { product: ArtworkReviewProduct; hasResolution: boolean; activeRepresentativeUrl: string | null }>();
+    const grouped = new Map<string, { product: ArtworkReviewProduct; hasResolution: boolean; activeRepresentativeUrl: string | null; galleryActive: boolean }>();
     for (const row of rows) {
       const identityCurrent = String(row.identity_key) === String(row.resolution_identity_key ?? row.identity_key);
       const activeRepresentativeUrl = identityCurrent && row.active_representative_url ? String(row.active_representative_url) : null;
       const latestAction = String(row.latest_action ?? "");
-      const candidateState: ArtworkReviewState = activeRepresentativeUrl === String(row.source_url)
+      const galleryActive = Boolean(Number(row.active_gallery ?? 0));
+      const candidateState: ArtworkReviewState = activeRepresentativeUrl === String(row.source_url) || galleryActive
         ? "ACCEPTED"
         : latestAction === "REJECT"
           ? "REJECTED"
@@ -1159,11 +1217,15 @@ export class PricingRepository {
           setName: String(row.set_name),
           productClass: String(row.product_class),
           reason: String(row.reason),
+          galleryActive,
           candidates: [],
         },
         hasResolution: identityCurrent && row.resolution_identity_key !== null,
         activeRepresentativeUrl,
+        galleryActive,
       };
+      entry.galleryActive ||= galleryActive;
+      entry.product.galleryActive ||= galleryActive;
       entry.product.candidates.push({
         sku: String(row.sku),
         sourcePath: String(row.source_path),
@@ -1178,7 +1240,7 @@ export class PricingRepository {
     }
     const all = [...grouped.values()];
     const pendingProducts = all.filter((entry) => !entry.hasResolution && entry.product.candidates.some((candidate) => candidate.state === "PENDING"));
-    const acceptedProducts = all.filter((entry) => Boolean(entry.activeRepresentativeUrl));
+    const acceptedProducts = all.filter((entry) => Boolean(entry.activeRepresentativeUrl) || entry.galleryActive);
     const rejectedProducts = all.filter((entry) => !entry.hasResolution && entry.product.candidates.some((candidate) => candidate.state === "REJECTED"));
     const stateProducts = state === "ACCEPTED" ? acceptedProducts : state === "REJECTED" ? rejectedProducts : pendingProducts;
     const searched = query
@@ -1193,9 +1255,12 @@ export class PricingRepository {
     }));
     const sealed = this.listArtworkCandidates(categoryId, "SEALED");
     const resolved = this.getArtworkResolutions(sealed);
-    const activeRepresentative = this.getArtworkResolutionProvenance(sealed);
-    const representative = Object.keys(activeRepresentative).length;
-    const ownerRepresentative = Object.values(activeRepresentative)
+    const activeProvenance = this.getArtworkResolutionProvenance(sealed);
+    const packagingGallery = Object.values(activeProvenance)
+      .filter((item) => item.kind === "OWNER_APPROVED_PACKAGING_GALLERY").length;
+    const representative = Object.values(activeProvenance)
+      .filter((item) => item.kind !== "OWNER_APPROVED_PACKAGING_GALLERY").length;
+    const ownerRepresentative = Object.values(activeProvenance)
       .filter((item) => item.kind === "OWNER_APPROVED_REPRESENTATIVE").length;
     const assistedRepresentative = representative - ownerRepresentative;
     const visible = Object.keys(resolved).length;
@@ -1203,10 +1268,11 @@ export class PricingRepository {
       items,
       page: { limit, offset, total: searched.length },
       summary: {
-        exact: Math.max(0, visible - representative),
+        exact: Math.max(0, visible - representative - packagingGallery),
         representative,
         ownerRepresentative,
         assistedRepresentative,
+        packagingGallery,
         visible,
         totalSealed: sealed.length,
         pending: pendingProducts.length,
@@ -1214,6 +1280,123 @@ export class PricingRepository {
         rejected: rejectedProducts.length,
       },
     };
+  }
+
+  decideArtworkGallery(input: {
+    action: "ACCEPT" | "UNDO";
+    categoryId: string;
+    sku: string;
+    sourceUrls?: readonly string[];
+    actorUserId: string;
+    note?: string;
+  }): "APPLIED" | "ALREADY_APPLIED" | "REVOKED" {
+    const match = this.findBySku(input.categoryId, input.sku);
+    if (!match || match.productType !== "SEALED") throw new Error("A current sealed product is required.");
+    const identityKey = artworkIdentityKey(match);
+    const currentGallery = this.database.prepare(`
+      SELECT * FROM pricing_artwork_galleries
+      WHERE category_id=? AND sku=? AND identity_key=?
+      ORDER BY position
+    `).all(input.categoryId, input.sku, identityKey) as SqlRow[];
+    const at = new Date().toISOString();
+    if (input.action === "UNDO") {
+      if (!currentGallery.length) throw new Error("Matching packaging gallery was not found.");
+      this.database.exec("BEGIN IMMEDIATE");
+      try {
+        this.database.prepare(
+          "DELETE FROM pricing_artwork_resolutions WHERE category_id=? AND sku=? AND identity_key=? AND provider_id='ptcg-assets-owner-gallery'",
+        ).run(input.categoryId, input.sku, identityKey);
+        this.database.prepare(
+          "DELETE FROM pricing_artwork_galleries WHERE category_id=? AND sku=? AND identity_key=?",
+        ).run(input.categoryId, input.sku, identityKey);
+        const event = this.database.prepare(`
+          INSERT INTO pricing_artwork_review_events(category_id,sku,identity_key,source_url,action,actor_user_id,note,created_at)
+          VALUES(?,?,?,?,?,?,?,?)
+        `);
+        for (const row of currentGallery) {
+          event.run(
+            input.categoryId, input.sku, identityKey, String(row.source_url), "REVOKE",
+            input.actorUserId, input.note?.trim() || "Packaging gallery revoked.", at,
+          );
+        }
+        this.database.exec("COMMIT");
+      } catch (error) {
+        this.database.exec("ROLLBACK");
+        throw error;
+      }
+      return "REVOKED";
+    }
+
+    const requested = [...new Set(input.sourceUrls ?? [])];
+    if (requested.length < 2) throw new Error("Select at least two packaging images for a gallery.");
+    const candidateStatement = this.database.prepare(`
+      SELECT * FROM pricing_artwork_review_candidates
+      WHERE category_id=? AND sku=? AND source_url=? AND active=1
+    `);
+    const candidates = requested.map((sourceUrl) =>
+      candidateStatement.get(input.categoryId, input.sku, sourceUrl) as SqlRow | undefined
+    );
+    if (candidates.some((candidate) => !candidate || String(candidate.identity_key) !== identityKey)) {
+      throw new Error("Every packaging image must be an active candidate for the current SKU identity.");
+    }
+    const ordered = (candidates as SqlRow[]).sort((left, right) =>
+      Number(left.candidate_rank) - Number(right.candidate_rank) || String(left.source_path).localeCompare(String(right.source_path))
+    );
+    if (currentGallery.length &&
+      currentGallery.map((row) => String(row.source_url)).join("\n") === ordered.map((row) => String(row.source_url)).join("\n")) {
+      return "ALREADY_APPLIED";
+    }
+    const existing = this.database.prepare(
+      "SELECT identity_key,provider_id FROM pricing_artwork_resolutions WHERE category_id=? AND sku=?",
+    ).get(input.categoryId, input.sku) as SqlRow | undefined;
+    const provenance = this.database.prepare(
+      "SELECT 1 AS present FROM pricing_artwork_resolution_provenance WHERE category_id=? AND sku=? AND identity_key=?",
+    ).get(input.categoryId, input.sku, identityKey) as SqlRow | undefined;
+    if (existing && !currentGallery.length) {
+      throw new Error(provenance
+        ? "Undo the current representative approval before creating a packaging gallery."
+        : "An exact artwork resolution already exists and cannot be overwritten.");
+    }
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.prepare(
+        "DELETE FROM pricing_artwork_galleries WHERE category_id=? AND sku=?",
+      ).run(input.categoryId, input.sku);
+      const primaryUrl = String(ordered[0].source_url);
+      const urls = JSON.stringify({ small: primaryUrl, normal: primaryUrl, large: primaryUrl });
+      this.database.prepare(`
+        INSERT INTO pricing_artwork_resolutions(category_id,sku,identity_key,provider_id,image_urls_json,verified_at)
+        VALUES(?,?,?,?,?,?)
+        ON CONFLICT(category_id,sku) DO UPDATE SET
+          identity_key=excluded.identity_key,provider_id=excluded.provider_id,
+          image_urls_json=excluded.image_urls_json,verified_at=excluded.verified_at
+      `).run(input.categoryId, input.sku, identityKey, "ptcg-assets-owner-gallery", urls, at);
+      const gallery = this.database.prepare(`
+        INSERT INTO pricing_artwork_galleries(
+          category_id,sku,identity_key,provider_id,source_revision,source_path,
+          source_url,position,reviewed_by,reviewed_at
+        ) VALUES(?,?,?,?,?,?,?,?,?,?)
+      `);
+      const event = this.database.prepare(`
+        INSERT INTO pricing_artwork_review_events(category_id,sku,identity_key,source_url,action,actor_user_id,note,created_at)
+        VALUES(?,?,?,?,?,?,?,?)
+      `);
+      ordered.forEach((candidate, position) => {
+        gallery.run(
+          input.categoryId, input.sku, identityKey, String(candidate.provider_id), String(candidate.source_revision),
+          String(candidate.source_path), String(candidate.source_url), position, input.actorUserId, at,
+        );
+        event.run(
+          input.categoryId, input.sku, identityKey, String(candidate.source_url), "ACCEPT",
+          input.actorUserId, input.note?.trim() || "Approved as a packaging-gallery image.", at,
+        );
+      });
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+    return "APPLIED";
   }
 
   decideArtworkReview(input: {
@@ -1239,6 +1422,10 @@ export class PricingRepository {
     const provenance = this.database.prepare(
       "SELECT * FROM pricing_artwork_resolution_provenance WHERE category_id=? AND sku=?",
     ).get(input.categoryId, input.sku) as SqlRow | undefined;
+    const gallery = this.database.prepare(
+      "SELECT 1 AS present FROM pricing_artwork_galleries WHERE category_id=? AND sku=? AND identity_key=? LIMIT 1",
+    ).get(input.categoryId, input.sku, identityKey) as SqlRow | undefined;
+    if (gallery) throw new Error("Undo the packaging gallery before changing an individual candidate.");
     const eventAction = input.action === "UNDO" ? "REVOKE" : input.action;
     const resolutionKind = input.resolutionKind ?? "OWNER_APPROVED_REPRESENTATIVE";
     const resolutionProvider = resolutionKind === "ASSISTED_REPRESENTATIVE"
