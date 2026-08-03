@@ -10,6 +10,8 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - Canonical root: `/Volumes/JarvisSSD/Projects/Phronesis`.
 - Rollback-only checkout: `/Users/ramonnogueira/Developer/Phronesis`; it is not an active development source.
 - Active branch at Handoff preparation: `codex/phr-price-monitoring-20260730`.
+- Pull request: `RHNog/Phronesis#5`; the 2026-08-03 repair replaces its failing CI-side preparation step with read-only committed-state validation.
+- The pre-repair seal ended at `827858f113ec295c4d2d0d9cf4726aa30a4d4533`; the next generated Handoff package must record the implementation commit that includes the event-worker gateway and `PHR-TECH-011` repair.
 - Verified arbitrage implementation commit: `66e0500d295d079e96e54e6e821b95e6ca46b70d`.
 - Handoff framework adoption baseline: `885b645c7266e52963509774c35e181c06bec9be`.
 - At reconciliation, the local branch and `origin/codex/phr-price-monitoring-20260730` both resolved to `885b645`; the branch was 15 commits ahead of `origin/main` and zero behind.
@@ -17,6 +19,9 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 
 ## Current capabilities
 
+- Independently assignable `ARTWORK_REVIEW` authorization for permanent employees and timed workers, with manual `OPERATE` separated from system-wide `ADMIN` refresh/recovery powers.
+- A dedicated loopback public event-worker gateway that overwrites its ingress marker, blocks owner-only and permanent-authentication paths, and requires a valid timed event session before Phronesis authorization. Its durable launch definition is implemented but public Funnel activation remains gated.
+- GitHub pull-request validation separated into dependency-backed project gates and exact committed Handoff continuity verification; GitHub does not prepare or mutate Handoff state.
 - Editable employee-owned Vendor purchase carts with exact unit value/quantity correction, Bulk total/count correction, visible removal, unsaved-change protection, and downstream receipt integrity.
 - Sealed-only PkmnPrices ingestion with newest-release-first scheduling, an exact 100-credit UTC-day local ceiling, durable restart-safe progress, exact artwork adoption, and Settings/provider health.
 - Compact recommended-offer disclosure immediately above the Vendor Workspace cart, showing TCG Low/Market evidence and expandable opening/target/walk-away values.
@@ -34,6 +39,8 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 
 ## Current constraints
 
+- The public event-worker gateway is not internet-exposed. Tailscale Funnel activation on port 10000 requires explicit Product Owner approval for a bounded event window; the existing private 9443 mapping must remain unchanged.
+- Handoff continuity is publishable only after a clean implementation commit and a successful local bare `./handoff` seal; hosted GitHub checks verify that committed result.
 - The active private runtime has no `PKMNPRICES_API_KEY` or `PSA_API_TOKEN`. Sealed ingestion and live PSA lookup remain dormant until server-side registration and service restart; PkmnPrices sealed access must be enabled by the provider plan.
 - Beckett/BCCG, TAG, CGC, and SGC expose official public lookup pages but no documented machine API found in the 2026-08-01 research, so Phronesis does not automate them.
 - Arbitrage candidates remain `IDENTITY_VERIFIED` until the Product Owner supplies direction-specific fixed and percentage costs and an operator records real executable availability.

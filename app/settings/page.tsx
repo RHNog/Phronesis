@@ -3,11 +3,12 @@ import BusinessProfilesSettings from "@/features/settings/components/BusinessPro
 import AccessManagement from "@/components/auth/AccessManagement";
 import EventAccessManagement from "@/components/auth/EventAccessManagement";
 import ProviderConnections from "@/components/settings/ProviderConnections";
-import { getAuthRuntimeStatus } from "@/lib/auth/config";
+import { getAuthRuntimeStatus, getPublicEventAccessOrigin } from "@/lib/auth/config";
 import RegionalCostProfileSettings from "@/features/settings/components/RegionalCostProfileSettings";
 
 export default function SettingsPage() {
   const authStatus = getAuthRuntimeStatus();
+  const publicEventOrigin = getPublicEventAccessOrigin();
   return (
     <AppShell requiredModule="ADMINISTRATION">
       <div className="w-full space-y-6">
@@ -35,6 +36,7 @@ export default function SettingsPage() {
         />
         <EventAccessManagement
           active={authStatus.mode !== "DISABLED" && authStatus.readyForRequiredMode}
+          publicLoginUrl={publicEventOrigin ? `${publicEventOrigin}/event-access` : null}
         />
       </div>
     </AppShell>

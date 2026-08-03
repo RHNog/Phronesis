@@ -8,12 +8,16 @@ import type {
   PhronesisModule,
 } from "@/lib/auth/domain";
 import { PHRONESIS_MODULES } from "@/lib/auth/domain";
-import { EVENT_ACCESS_COOKIE } from "@/lib/auth/EventAccessRepository";
+import { EVENT_ACCESS_COOKIE } from "@/lib/auth/constants";
 import { getAuthorizationRepository, getAuthServer, getEventAccessRepository } from "@/lib/auth/server";
 
 function cookieValue(headers: Headers, name: string): string | null {
   const match = headers.get("cookie")?.split(";").map((entry) => entry.trim()).find((entry) => entry.startsWith(`${name}=`));
   return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
+}
+
+function isPublicEventIngress(requestHeaders: Headers): boolean {
+  return requestHeaders.get("x-phronesis-public-event") === "1";
 }
 
 function compatibilityDecision(
@@ -56,6 +60,14 @@ export async function authorizeHeaders(
   module: PhronesisModule,
   requiredAccess: ModuleAccessLevel,
 ): Promise<AuthorizationDecision> {
+  if (isPublicEventIngress(requestHeaders)) {
+    const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
+    if (eventToken) {
+      const eventDecision = getEventAccessRepository().authorize(eventToken, module, requiredAccess);
+      if (eventDecision) return eventDecision;
+    }
+    return deniedDecision(module, requiredAccess, "UNAUTHENTICATED");
+  }
   const status = getAuthRuntimeStatus();
   if (status.mode === "DISABLED") return compatibilityDecision(module, requiredAccess);
   if (!status.readyForRequiredMode) {
@@ -128,13 +140,20 @@ export async function requirePageModule(
 }
 
 export async function getVisibleModules(): Promise<readonly PhronesisModule[]> {
+  const requestHeaders = await headers();
+  if (isPublicEventIngress(requestHeaders)) {
+    const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
+    if (!eventToken) return [];
+    return PHRONESIS_MODULES.filter((module) =>
+      getEventAccessRepository().authorize(eventToken, module, "VIEW")?.allowed,
+    );
+  }
   const mode = getAuthMode();
   const status = getAuthRuntimeStatus();
   if (mode === "DISABLED" || (mode === "OPTIONAL" && !status.readyForRequiredMode)) {
     return PHRONESIS_MODULES;
   }
   if (!status.readyForRequiredMode) return [];
-  const requestHeaders = await headers();
   const session = await getAuthServer().api.getSession({ headers: requestHeaders });
   if (!session?.user.id) {
     const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);

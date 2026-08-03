@@ -1,5 +1,12 @@
 # Project Atlas
 
+## GitHub Handoff Continuity
+
+- `PHR-TECH-011` makes GitHub a verifier of committed repository truth, not a second Handoff author.
+- Project validation installs the locked Node dependency graph before test, lint, build, and diff gates. Continuity validation checks the exact PR head with full history.
+- Feature branches receive one pull-request run; direct pushes are limited to `main`, avoiding duplicate email-producing runs for the same feature commit.
+- Local implementation commits remain distinct from the generated Handoff seal so stale or dirty continuity cannot be published as current.
+
 ## Assisted Sealed Artwork Recovery
 
 - `PHR-UX-024` stages uncertain Pokémon sealed community-image metadata and runs a conservative versioned representative policy before exposing the genuine exceptions in Administration Settings.
@@ -94,6 +101,7 @@
 ## Internal Identity And Module Authorization
 
 - `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.
+- `PHR-ARCH-014` permits account-free timed workers to receive only explicit operational modules. `ARTWORK_REVIEW` is independent from `ADMINISTRATION`: worker `OPERATE` covers manual candidate/gallery decisions, while refresh and assisted recovery remain permanent-identity `ADMIN` operations.
 - `AuthorizationRepository` owns the single workspace, memberships, explicit entitlements, local invitations, and append-only audit records in ignored SQLite storage.
 - Secure page, Route Handler, and mutation checks live in the server Data Access Layer. Next.js Proxy and filtered navigation are optimistic/user-experience controls only.
 - Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Required mode fails closed unless base URL, secret, GitHub credentials, migration, and owner invitation are ready.

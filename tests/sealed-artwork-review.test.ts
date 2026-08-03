@@ -214,14 +214,20 @@ test("review reject and restore survive restaging while exact artwork blocks app
   repository.close();
 });
 
-test("dedicated Administration tab and Vendor Workspace expose the governed review and representative label", () => {
+test("dedicated assignable tab and Vendor Workspace expose the governed review and representative label", () => {
   const settings = readFileSync(new URL("../app/settings/page.tsx", import.meta.url), "utf8");
   const reviewPage = readFileSync(new URL("../app/artwork-review/page.tsx", import.meta.url), "utf8");
+  const reviewRoute = readFileSync(new URL("../app/api/administration/sealed-artwork-review/route.ts", import.meta.url), "utf8");
   const panel = readFileSync(new URL("../components/settings/SealedArtworkReview.tsx", import.meta.url), "utf8");
   const vendor = readFileSync(new URL("../features/vendor/components/SnapshotVendorWorkspace.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(settings, /SealedArtworkReview/);
-  assert.match(reviewPage, /requiredModule="ADMINISTRATION"/);
+  assert.match(reviewPage, /requiredModule="ARTWORK_REVIEW"/);
+  assert.match(reviewPage, /requirePageModule\("ARTWORK_REVIEW", "VIEW"\)/);
+  assert.match(reviewPage, /canOperate=/);
+  assert.match(reviewPage, /canAdmin=/);
   assert.match(reviewPage, /SealedArtworkReview/);
+  assert.match(reviewRoute, /"ARTWORK_REVIEW", "VIEW"/);
+  assert.match(reviewRoute, /action === "REFRESH" \|\| action === "ASSIST" \? "ADMIN" : "OPERATE"/);
   assert.match(panel, /window\.location\.origin/);
   assert.match(panel, /controller\.signal\.aborted/);
   assert.match(panel, /Approve representative/);
@@ -230,6 +236,8 @@ test("dedicated Administration tab and Vendor Workspace expose the governed revi
   assert.match(panel, /Approve all.*as packaging gallery/);
   assert.match(panel, /Undo packaging gallery/);
   assert.match(panel, /Undo approval/);
+  assert.match(panel, /canOperate && state === "PENDING"/);
+  assert.match(panel, /canAdmin \? <div/);
   assert.match(vendor, /packaging may vary/);
   assert.match(vendor, /ProductArtworkCarousel/);
   assert.match(vendor, /artworkGalleries/);

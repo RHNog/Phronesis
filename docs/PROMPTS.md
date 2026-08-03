@@ -1,5 +1,11 @@
 # Prompt History
 
+## GitHub Handoff Continuity — 2026-08-03
+
+The Product Owner authorized repair after the Handoff workflow began failing on GitHub while repository continuity still described an earlier implementation. `PHR-TECH-011` separates dependency-backed project validation from committed-state continuity validation, removes CI-side Handoff mutation, and requires the existing dirty implementation to pass the local gate before a canonical seal.
+
+Implementation prompt: `docs/prompts/PHR-TECH-011-github-handoff-continuity-prompt.md`.
+
 ## Sealed Artwork Review Queue — 2026-08-02
 
 The Product Owner first requested a compute estimate and a manual sealed-image review tool, then directed Phronesis to perform the defensible review work automatically. `PHR-UX-024` now specifies local candidate staging, a conservative versioned assisted policy, separately typed representative provenance, append-only decisions, exact-artwork protection, reversible controls, and truthful Vendor Workspace labelling.
@@ -66,7 +72,7 @@ Implementation prompt: `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-pr
 
 ## Timed Event Worker Access — 2026-07-31
 
-`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Its 2026-08-03 amendment adds an independently assignable `ARTWORK_REVIEW` module with manual `OPERATE` versus system-wide `ADMIN` separation. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 
 ## Event Flip And Display Case Inventory — 2026-07-31
 

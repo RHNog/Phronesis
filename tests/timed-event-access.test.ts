@@ -3,6 +3,7 @@ import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { AuthorizationRepository } from "../lib/auth/AuthorizationRepository.ts";
 import { EventAccessRepository } from "../lib/auth/EventAccessRepository.ts";
+import { readFileSync } from "node:fs";
 
 function fixture() {
   const database = new DatabaseSync(":memory:");
@@ -22,6 +23,17 @@ test("event code is single use and creates scoped authorization", () => {
   assert.equal(repository.authorize(session.token,"INVENTORY","VIEW")?.reason,"MODULE_NOT_ASSIGNED");
   assert.equal(repository.authorize(session.token,"ADMINISTRATION","VIEW")?.allowed,false);
   assert.throws(()=>repository.redeem(grant.code!,"other"),/invalid or expired/i);
+});
+
+test("Artwork Review can be the worker's only task without granting system administration", () => {
+  const { repository, workspaceId } = fixture();
+  const grant = repository.createGrant({ workspaceId,eventId:"event-1",workerLabel:"Artwork desk",durationHours:8,actorUserId:"owner",entitlements:[{module:"ARTWORK_REVIEW",access:"OPERATE"}] });
+  const session = repository.redeem(grant.code!, "artwork-client");
+  assert.equal(repository.authorize(session.token,"ARTWORK_REVIEW","VIEW")?.allowed,true);
+  assert.equal(repository.authorize(session.token,"ARTWORK_REVIEW","OPERATE")?.allowed,true);
+  assert.equal(repository.authorize(session.token,"ARTWORK_REVIEW","ADMIN")?.reason,"INSUFFICIENT_ACCESS");
+  assert.equal(repository.authorize(session.token,"VENDOR_WORKSPACE","VIEW")?.reason,"MODULE_NOT_ASSIGNED");
+  assert.equal(repository.authorize(session.token,"ADMINISTRATION","VIEW")?.reason,"MODULE_NOT_ASSIGNED");
 });
 
 test("revocation, expiry, and event closure invalidate sessions immediately", () => {
@@ -44,6 +56,7 @@ test("grant validation prevents administrative or unbounded access", () => {
   const { repository, workspaceId } = fixture();
   const base={workspaceId,eventId:"event-1",workerLabel:"Worker",durationHours:12,actorUserId:"owner"};
   assert.throws(()=>repository.createGrant({...base,entitlements:[{module:"ADMINISTRATION",access:"VIEW"}]}),/limited/i);
+  assert.throws(()=>repository.createGrant({...base,entitlements:[{module:"ARTWORK_REVIEW",access:"ADMIN"}]}),/administration/i);
   assert.throws(()=>repository.createGrant({...base,entitlements:[{module:"INVENTORY",access:"ADMIN"}]}),/administration/i);
   assert.throws(()=>repository.createGrant({...base,durationHours:25,entitlements:[{module:"INVENTORY",access:"VIEW"}]}),/between 1 and 24/i);
 });
@@ -52,4 +65,13 @@ test("failed code attempts are throttled", () => {
   const { repository } = fixture();
   for(let index=0;index<10;index++) assert.throws(()=>repository.redeem("AAAA-BBBB-CCCC-DDDD","same-client"),/invalid/i);
   assert.throws(()=>repository.redeem("AAAA-BBBB-CCCC-DDDD","same-client"),/too many/i);
+});
+
+test("employee and timed-worker Settings expose an Artwork Review only preset", () => {
+  const permanent = readFileSync(new URL("../components/auth/AccessManagement.tsx", import.meta.url), "utf8");
+  const temporary = readFileSync(new URL("../components/auth/EventAccessManagement.tsx", import.meta.url), "utf8");
+  assert.match(permanent, /Artwork Review only/);
+  assert.match(permanent, /module === "ARTWORK_REVIEW" \? "OPERATE" : "NONE"/);
+  assert.match(temporary, /Artwork Review only/);
+  assert.match(temporary, /setVendor\(false\).*setArtworkReview\(true\)/);
 });

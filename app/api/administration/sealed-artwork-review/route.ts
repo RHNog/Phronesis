@@ -12,7 +12,7 @@ export const runtime = "nodejs";
 const states = new Set<ArtworkReviewState>(["PENDING", "ACCEPTED", "REJECTED"]);
 
 export async function GET(request: Request) {
-  const authorization = await authorizeRequest(request, "ADMINISTRATION", "VIEW");
+  const authorization = await authorizeRequest(request, "ARTWORK_REVIEW", "VIEW");
   if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const url = new URL(request.url);
   const source = url.searchParams.get("source") ?? "";
@@ -46,10 +46,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const authorization = await authorizeRequest(request, "ADMINISTRATION", "ADMIN");
-  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
   const action = typeof body?.action === "string" ? body.action.toUpperCase() : "";
+  const authorization = await authorizeRequest(
+    request,
+    "ARTWORK_REVIEW",
+    action === "REFRESH" || action === "ASSIST" ? "ADMIN" : "OPERATE",
+  );
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   try {
     if (action === "REFRESH") {
       return Response.json(await stageSealedArtworkReview(getPricingRepository()), {

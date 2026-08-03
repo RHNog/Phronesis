@@ -92,7 +92,7 @@ Add a dedicated temporary Administration navigation surface backed by a local re
 
 ### Security
 
-- Reads and mutations require `ADMINISTRATION`; mutations require `ADMIN` access.
+- Queue and candidate-image reads require `ARTWORK_REVIEW:VIEW`. Manual candidate and packaging-gallery decisions require `ARTWORK_REVIEW:OPERATE`. Candidate refresh and assisted recovery require `ARTWORK_REVIEW:ADMIN`.
 - Candidate URLs must pass the existing artwork source allow-list.
 - No provider secret or source credential is involved.
 
@@ -153,7 +153,7 @@ Add a dedicated temporary Administration navigation surface backed by a local re
 
 ## UI / UX Notes
 
-- Place the queue in its own temporary `Artwork Review` Administration tab; Settings retains provider, cost, profile, and access configuration only.
+- Place the queue in its own temporary `Artwork Review` tab; Settings retains provider, cost, profile, and access configuration only. The module is independently assignable and does not imply broad Administration access.
 - Lead each card with the catalogue product, set, product class, and reason.
 - Show candidate source filename directly beneath the image.
 - Use explicit wording: `Approve representative`, never `Verify exact`.

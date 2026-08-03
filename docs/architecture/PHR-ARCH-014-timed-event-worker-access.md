@@ -6,7 +6,7 @@
 
 ## Status
 
-Implemented — Product Review Pending
+Public Worker Gateway Implementation In Progress
 
 ## Priority
 
@@ -28,18 +28,24 @@ Permanent Phronesis membership currently requires an invited GitHub identity. Ev
 
 Add an event-access grant and session boundary alongside Better Auth. An authenticated administrator creates a named grant for the currently active event, chooses a duration and operational modules, and receives a single-use human-readable code. The worker redeems that code at `/event-access`; Phronesis stores only code and bearer-token hashes and sets an HttpOnly session cookie. Every authorization rechecks the grant, session, expiry, and active event.
 
+For workers who cannot install Tailscale, expose a separate localhost-only gateway through Tailscale Funnel. The gateway marks every forwarded request as public worker ingress, strips/overwrites any client-supplied marker, blocks owner-only authentication and administration paths at transport level, and leaves the existing private 9443 Serve mapping untouched. Public-ingress authorization fails closed regardless of global `OPTIONAL` compatibility mode and accepts only a valid event-access cookie.
+
 ## Functional Requirements
 
 - Only a permanent identity with `ADMINISTRATION:ADMIN` may list, create, or revoke grants.
 - A grant belongs to exactly one workspace and active event.
 - The owner provides a worker label, duration from one to 24 hours, and at least one allowed operational module.
-- Temporary access is limited to `VENDOR_WORKSPACE` and `INVENTORY`, with `VIEW` or `OPERATE` access. `ADMINISTRATION`, pricing administration, and permanent membership are never available.
+- Temporary access is limited to `VENDOR_WORKSPACE`, `EVENT_LEDGER`, `EVENT_FLIP`, `INVENTORY`, and `ARTWORK_REVIEW`, with `VIEW` or `OPERATE` access. `ADMINISTRATION`, pricing administration, and permanent membership are never available.
+- `ARTWORK_REVIEW:OPERATE` permits manual candidate approval, rejection, restoration, representative undo, packaging-gallery approval, and packaging-gallery undo. Catalogue-wide candidate refresh and assisted recovery require `ARTWORK_REVIEW:ADMIN`, which a timed grant cannot receive.
 - Codes are single-use and shown only in the creation response.
 - Redemption creates a separate random session and an HttpOnly, SameSite=Lax cookie.
 - A session expires at the earliest of its configured expiry, grant revocation, or event closure.
 - Settings shows active and historical grants and permits immediate revocation.
 - The sign-in screen presents both permanent GitHub sign-in and event-code access.
 - Authorization audit records issuance, redemption, revocation, and event-session logout.
+- A successful code redemption returns the first authorized module destination so an Artwork Review-only worker lands on `/artwork-review` instead of an unauthorized default module.
+- Public worker ingress listens only on loopback, is forwarded through a dedicated Funnel port, and never reuses or replaces the private owner Serve port.
+- Public ingress denies owner Settings, employee/grant administration, permanent activation/sign-in, developer routes, and non-event Better Auth endpoints before they reach Next.js.
 
 ## Non-Functional Requirements
 
@@ -49,6 +55,8 @@ Add an event-access grant and session boundary alongside Better Auth. An authent
 - Use constant-time comparisons, one-time redemption, generic invalid-code responses, and per-client attempt throttling.
 - A temporary session must never satisfy identity-required administration endpoints.
 - Prefer permanent authenticated identity when both permanent and temporary cookies exist.
+- Public worker ingress ignores permanent identity and global `OPTIONAL` compatibility. It authorizes only a current event session and must fail closed for a missing, invalid, expired, revoked, or event-closed cookie.
+- Event cookies issued through HTTPS forwarding are `Secure`, including when the local Next.js runtime itself is in development mode behind TLS termination.
 
 ### Reliability And Performance
 
@@ -69,7 +77,7 @@ Add an event-access grant and session boundary alongside Better Auth. An authent
 ## Acceptance Criteria
 
 - A valid one-time code creates a scoped timed session and cannot be redeemed twice.
-- The temporary session authorizes only its assigned operational modules and never administration.
+- The temporary session authorizes only its assigned operational modules and never Administration. A worker assigned only `ARTWORK_REVIEW:OPERATE` sees only Artwork Review in primary navigation and cannot read or operate other product modules.
 - Expired, revoked, or event-closed sessions are rejected immediately.
 - Grant management and worker login are usable on mobile.
 - Unit/integration tests cover issuance, redemption, permissions, expiry, closure, revocation, and rate limiting.
@@ -91,12 +99,12 @@ Add an event-access grant and session boundary alongside Better Auth. An authent
 
 - Permanent password or passkey accounts.
 - SMS/email delivery, device management, Binder permissions, or offline credential redemption.
-- Fine-grained per-route grants beyond the two event-operational modules.
+- General-purpose public hosting. The approved Funnel exposes only the dedicated worker gateway for the active event and is expected to be disabled when public worker access is no longer needed.
 
 ## Traceability
 
 - Originating direction: CTO request on 2026-07-31.
 - Related implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Related tests: `tests/timed-event-access.test.ts`.
-- Last modified: 2026-07-31.
-- Modification reason: initial approved feature specification.
+- Last modified: 2026-08-03.
+- Modification reason: Product Owner, working remotely by phone, explicitly authorized a safe browser-only public access path that must not interrupt the existing private owner connection.

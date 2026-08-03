@@ -1,9 +1,13 @@
 import SealedArtworkReview from "@/components/settings/SealedArtworkReview";
 import AppShell from "@/components/ui/AppShell";
+import { accessSatisfies } from "@/lib/auth/domain";
+import { requirePageModule } from "@/lib/auth/requestAuthorization";
 
-export default function ArtworkReviewPage() {
+export default async function ArtworkReviewPage() {
+  const authorization = await requirePageModule("ARTWORK_REVIEW", "VIEW");
+  const assignedAccess = authorization.assignedAccess ?? "VIEW";
   return (
-    <AppShell requiredModule="ADMINISTRATION">
+    <AppShell requiredModule="ARTWORK_REVIEW">
       <div className="w-full space-y-6">
         <header>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
@@ -17,7 +21,10 @@ export default function ArtworkReviewPage() {
             artwork decisions into permanent Settings.
           </p>
         </header>
-        <SealedArtworkReview />
+        <SealedArtworkReview
+          canOperate={accessSatisfies(assignedAccess, "OPERATE")}
+          canAdmin={accessSatisfies(assignedAccess, "ADMIN")}
+        />
       </div>
     </AppShell>
   );

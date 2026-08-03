@@ -3,13 +3,33 @@ name: Handoff continuity
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 jobs:
+  project-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate project
+        run: |
+          npm run test
+          npm run lint
+          npm run build
+          git diff --check
+
   continuity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare and validate Handoff
-        run: |
-          ./handoff prepare-handoff
-          ./handoff validate-continuity
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Validate committed Handoff
+        run: ./handoff validate-continuity --json

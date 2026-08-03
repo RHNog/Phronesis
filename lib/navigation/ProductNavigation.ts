@@ -83,7 +83,7 @@ export const primaryNavigation = [
     label: "Artwork Review",
     href: "/artwork-review",
     area: "Administer",
-    module: "ADMINISTRATION",
+    module: "ARTWORK_REVIEW",
     matches: ["/artwork-review"],
   },
   {

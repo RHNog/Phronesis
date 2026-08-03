@@ -55,7 +55,7 @@ function label(value: string): string {
   return value.toLowerCase().replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
-export default function SealedArtworkReview() {
+export default function SealedArtworkReview({ canOperate, canAdmin }: { canOperate: boolean; canAdmin: boolean }) {
   const [queue, setQueue] = useState<ReviewQueue>(emptyQueue);
   const [state, setState] = useState<ReviewState>("PENDING");
   const [query, setQuery] = useState("");
@@ -190,10 +190,10 @@ export default function SealedArtworkReview() {
           <h3 id="sealed-artwork-review-title" className="mt-2 text-xl font-semibold text-white">Pokémon sealed image review</h3>
           <p className="mt-2 text-sm leading-6 text-zinc-400">Phronesis can recover safe exact-set representatives automatically. This queue keeps only the ambiguous exceptions for human review; neither path replaces or reclassifies exact artwork.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        {canAdmin ? <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => void assist()} disabled={busy} className="min-h-11 rounded-lg bg-cyan-300 px-4 text-sm font-semibold text-zinc-950 hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-300 disabled:opacity-50">Run safe recovery</button>
           <button type="button" onClick={() => void refresh()} disabled={busy} className="min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200 hover:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300 disabled:opacity-50">Refresh candidates</button>
-        </div>
+        </div> : null}
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-6">
@@ -223,8 +223,8 @@ export default function SealedArtworkReview() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div><h4 className="font-semibold text-white">{product.name}</h4><p className="mt-1 text-sm text-zinc-400">{product.setName} · {label(product.productClass)}</p><p className="mt-1 text-xs text-zinc-500">{label(product.reason)} · {product.sku}</p></div>
               <div className="flex flex-wrap items-center justify-end gap-2">
-                {state === "PENDING" && product.candidates.length > 1 ? <button type="button" disabled={busy} onClick={() => void mutateGallery("APPROVE_GALLERY", product)} className="min-h-11 rounded-lg border border-violet-600 bg-violet-950/30 px-3 text-sm font-semibold text-violet-200 disabled:opacity-50">Approve all {product.candidates.length} as packaging gallery</button> : null}
-                {state === "ACCEPTED" && product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutateGallery("UNDO_GALLERY", product)} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo packaging gallery</button> : null}
+                {canOperate && state === "PENDING" && product.candidates.length > 1 ? <button type="button" disabled={busy} onClick={() => void mutateGallery("APPROVE_GALLERY", product)} className="min-h-11 rounded-lg border border-violet-600 bg-violet-950/30 px-3 text-sm font-semibold text-violet-200 disabled:opacity-50">Approve all {product.candidates.length} as packaging gallery</button> : null}
+                {canOperate && state === "ACCEPTED" && product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutateGallery("UNDO_GALLERY", product)} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo packaging gallery</button> : null}
                 <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${state === "PENDING" ? "border-amber-700 text-amber-200" : state === "ACCEPTED" ? "border-emerald-700 text-emerald-200" : "border-red-900 text-red-200"}`}>{state === "PENDING" ? "Human check required" : product.galleryActive ? "Packaging gallery active" : state === "ACCEPTED" ? "Representative active" : "Candidate rejected"}</span>
               </div>
             </div>
@@ -236,9 +236,9 @@ export default function SealedArtworkReview() {
                   </div>
                   <p className="mt-3 break-all font-mono text-[11px] leading-5 text-zinc-400">{candidate.sourcePath}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {state === "PENDING" ? <><button type="button" disabled={busy} onClick={() => void mutate("ACCEPT", product, candidate)} className="min-h-11 flex-1 rounded-lg bg-cyan-300 px-3 text-sm font-semibold text-zinc-950 disabled:opacity-50">Approve representative</button><button type="button" disabled={busy} onClick={() => void mutate("REJECT", product, candidate)} className="min-h-11 rounded-lg border border-red-900 px-3 text-sm font-semibold text-red-200 disabled:opacity-50">Reject</button></> : null}
-                    {state === "ACCEPTED" && !product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutate("UNDO", product, candidate)} className="min-h-11 w-full rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo approval</button> : null}
-                    {state === "REJECTED" ? <button type="button" disabled={busy} onClick={() => void mutate("RESTORE", product, candidate)} className="min-h-11 w-full rounded-lg border border-cyan-700 px-3 text-sm font-semibold text-cyan-200 disabled:opacity-50">Restore candidate</button> : null}
+                    {canOperate && state === "PENDING" ? <><button type="button" disabled={busy} onClick={() => void mutate("ACCEPT", product, candidate)} className="min-h-11 flex-1 rounded-lg bg-cyan-300 px-3 text-sm font-semibold text-zinc-950 disabled:opacity-50">Approve representative</button><button type="button" disabled={busy} onClick={() => void mutate("REJECT", product, candidate)} className="min-h-11 rounded-lg border border-red-900 px-3 text-sm font-semibold text-red-200 disabled:opacity-50">Reject</button></> : null}
+                    {canOperate && state === "ACCEPTED" && !product.galleryActive ? <button type="button" disabled={busy} onClick={() => void mutate("UNDO", product, candidate)} className="min-h-11 w-full rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-200 disabled:opacity-50">Undo approval</button> : null}
+                    {canOperate && state === "REJECTED" ? <button type="button" disabled={busy} onClick={() => void mutate("RESTORE", product, candidate)} className="min-h-11 w-full rounded-lg border border-cyan-700 px-3 text-sm font-semibold text-cyan-200 disabled:opacity-50">Restore candidate</button> : null}
                   </div>
                 </div>
               ))}

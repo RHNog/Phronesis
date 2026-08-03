@@ -179,6 +179,13 @@ export default function AccessManagement({ active }: { active: boolean }) {
             </div>
             <fieldset>
               <legend className="text-sm font-medium text-zinc-300">Assigned modules</legend>
+              <button
+                type="button"
+                onClick={() => setInviteModules(Object.fromEntries(PHRONESIS_MODULES.map((module) => [module, module === "ARTWORK_REVIEW" ? "OPERATE" : "NONE"])) as Record<PhronesisModule, ModuleAccessLevel | "NONE">)}
+                className="mt-2 min-h-11 rounded-lg border border-violet-700 px-3 text-sm font-semibold text-violet-200"
+              >
+                Artwork Review only
+              </button>
               <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {PHRONESIS_MODULES.map((module) => (
                   <label key={module} className="text-xs text-zinc-400">{label(module)}

@@ -4,47 +4,37 @@
 
 ## Objective
 
-Raise LigaMagic/TCGplayer catalogue reconciliation toward the highest defensible coverage, then make Arbitrage direction semantics and owner-defined target profiles precise without weakening cost or availability gates.
+Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal without activating public ingress.
 
 ## Acceptance criteria
 
-- [x] Reconcile the canonical repository root, active branch, implementation commit, and upstream tracking ref from Git.
-- [x] Recover unique historical TCGplayer rows whose collector number is genuinely absent without relaxing populated collector conflicts.
-- [x] Rebuild the full crosswalk twice, report method-level coverage, and preserve zero adopted ambiguities and zero Textless use.
-- [x] Enforce target-side uniqueness so no accepted LigaMagic identities share one TCGplayer product.
-- [x] Use direction-correct TCGplayer evidence: delivered/listing for US acquisition and market/listing for US resale.
-- [x] Keep candidates non-actionable while direction costs or executable availability are missing.
-- [x] Populate canonical Handoff inputs from verified repository state.
-- [x] Keep all four nullable direction-cost inputs and add precise nullable route-specific target profiles in Settings.
-- [x] Make `US → Brazil` and `Brazil → US` visibly reverse acquisition/exit semantics, currencies, evidence labels, and targets.
-- [x] Present gross proceeds, total cost, net profit, profit margin, and ROI as distinct values.
-- [ ] Obtain Product Owner visual approval for the corrected Arbitrage presentation.
-- [ ] Later: record Product Owner-approved direction-specific costs and verify one real executable opportunity.
+- [x] Diagnose the hosted GitHub failure from Actions logs and reproduce the missing-dependency boundary in a clean checkout.
+- [x] Preserve the existing Artwork Review authorization and public event-gateway implementation in the canonical worktree.
+- [x] Make project validation install locked dependencies before test, lint, build, and diff gates.
+- [x] Make continuity validation read-only against the exact committed PR head with full Git history.
+- [x] Avoid duplicate feature-branch runs by reserving push validation for `main` and pull-request validation for feature work.
+- [x] Pass the full local test, TypeScript, lint, build, and diff-hygiene gate.
+- [ ] Commit the implementation and canonical documentation with no secret-bearing runtime data.
+- [ ] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
+- [ ] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
 
 ## Completed this session
 
-- Reconciled the canonical branch and commits from Git rather than conversation state.
-- Replaced seed Handoff documents with current project state, prioritized backlog, durable continuity decision, and this exact task boundary.
-- Preserved the verified arbitrage implementation at commit `66e0500d295d079e96e54e6e821b95e6ca46b70d` and the Handoff adoption baseline at `885b645c7266e52963509774c35e181c06bec9be`.
-- Profiled the full LigaMagic export and established that `Textless` is a repeated catalogue shell rather than trustworthy treatment evidence.
-- Isolated a deterministic coverage defect: TCGplayer omits collector numbers on many historical catalogue rows that LigaMagic numbers.
-- Defined a strict-to-relaxed matching cascade and precise route-specific target vocabulary in the governing specifications.
-- Implemented and measured exact, evidence-alias, missing-collector, pre-Exodus, historical, explicit-catalogue, edition/product treatment, Art Series/signature, collector-suffix, token, generic-variant, and World Championship match methods.
-- Quarantined 109,763 `Textless` rows, 7,787 historically impossible Foil shells, 4,845 Art Series Foil shells, and 2,970 Normal mirrors of foil-only treatments before they can seed aliases or enter decisions.
-- Reconciled 131,869 unique identities with zero duplicated TCGplayer targets, including 130,183 of 156,779 supported identities carrying LigaMagic consumer price evidence; two full analysis rebuilds produced byte-identical reports and fingerprint `8b96e2472cd3504d06a75bc475b158ef8bec5a722f2570b2bb33d133f8c22304`.
-- Added validated nullable target persistence and direction-correct economics/API/UI semantics.
-- Passed 271 behavioral tests, TypeScript, lint, production build, diff hygiene, and a 390px mobile review with no page overflow.
+- Confirmed the canonical repository, branch, pull request, hosted failure, and stale seal from Git and GitHub evidence.
+- Replaced CI-side Handoff preparation with separate dependency-backed project validation and committed-state continuity verification.
+- Added the governed specification, work order, release notes, architecture decision, roadmap, atlas, and continuity records for `PHR-TECH-011`.
+- Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
 
 ## Remaining work
 
-- Obtain Product Owner visual and policy-model approval.
-- Treat secure provider credential registration as its own authentication/vault slice; the current provider cards remain truthful status/audit views.
+- Commit the implementation, create the Handoff seal, push, and verify the hosted pull-request checks.
+- Present public event-worker activation as a separate Product Owner decision after the repair is green.
 
 ## Blockers
 
-- Product Owner cost and target values are not present in repository evidence and must not be invented; their fields remain nullable.
-- No executable-availability record currently exists.
+- No implementation blocker is currently known.
+- Public Funnel activation remains intentionally blocked on explicit Product Owner approval and a bounded event window.
 
 ## Exact next action
 
-Confirm the private phone-review URL and present the verified operational result for Product Owner review.
+Commit the verified implementation and canonical documentation, then run bare `./handoff` from the clean implementation commit.

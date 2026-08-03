@@ -108,7 +108,7 @@ export class AuthorizationRepository {
         ON phronesis_membership(user_id, status);
       CREATE TABLE IF NOT EXISTS phronesis_entitlement (
         membership_id TEXT NOT NULL,
-        module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
+        module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ARTWORK_REVIEW','ADMINISTRATION')),
         access TEXT NOT NULL CHECK(access IN ('VIEW','OPERATE','ADMIN')),
         updated_at TEXT NOT NULL,
         PRIMARY KEY(membership_id, module),
@@ -148,17 +148,20 @@ export class AuthorizationRepository {
         window_started_at TEXT NOT NULL
       );
     `);
-    this.migrateEventSurfaceEntitlements();
+    this.migrateModuleEntitlements();
     this.ensureColumn("phronesis_invitation", "activation_code_hash", "TEXT");
     this.ensureColumn("phronesis_invitation", "activation_code_salt", "TEXT");
     this.ensureColumn("phronesis_invitation", "activated_at", "TEXT");
   }
 
-  private migrateEventSurfaceEntitlements(): void {
+  private migrateModuleEntitlements(): void {
     const schema = this.database.prepare(
       "SELECT sql FROM sqlite_master WHERE type='table' AND name='phronesis_entitlement'",
     ).get() as SqlRow | undefined;
-    if (String(schema?.sql ?? "").includes("EVENT_LEDGER")) return;
+    const schemaSql = String(schema?.sql ?? "");
+    const hasEventSurfaces = schemaSql.includes("EVENT_LEDGER");
+    const hasArtworkReview = schemaSql.includes("ARTWORK_REVIEW");
+    if (hasEventSurfaces && hasArtworkReview) return;
     const now = new Date().toISOString();
     this.database.exec("BEGIN IMMEDIATE");
     try {
@@ -166,7 +169,7 @@ export class AuthorizationRepository {
         ALTER TABLE phronesis_entitlement RENAME TO phronesis_entitlement_legacy;
         CREATE TABLE phronesis_entitlement (
           membership_id TEXT NOT NULL,
-          module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
+          module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ARTWORK_REVIEW','ADMINISTRATION')),
           access TEXT NOT NULL CHECK(access IN ('VIEW','OPERATE','ADMIN')),
           updated_at TEXT NOT NULL,
           PRIMARY KEY(membership_id, module),
@@ -174,10 +177,12 @@ export class AuthorizationRepository {
         );
         INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
           SELECT membership_id,module,access,updated_at FROM phronesis_entitlement_legacy;
-        INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
+        ${hasEventSurfaces ? "" : `INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
           SELECT membership_id,'EVENT_LEDGER',access,'${now}' FROM phronesis_entitlement_legacy WHERE module='VENDOR_WORKSPACE';
         INSERT INTO phronesis_entitlement(membership_id,module,access,updated_at)
-          SELECT membership_id,'EVENT_FLIP',access,'${now}' FROM phronesis_entitlement_legacy WHERE module='INVENTORY';
+          SELECT membership_id,'EVENT_FLIP',access,'${now}' FROM phronesis_entitlement_legacy WHERE module='INVENTORY';`}
+        INSERT OR IGNORE INTO phronesis_entitlement(membership_id,module,access,updated_at)
+          SELECT id,'ARTWORK_REVIEW','ADMIN','${now}' FROM phronesis_membership WHERE role IN ('OWNER','ADMIN');
         DROP TABLE phronesis_entitlement_legacy;
       `);
       this.database.exec("COMMIT");

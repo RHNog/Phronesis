@@ -1,5 +1,12 @@
 # Roadmap
 
+## Active Repair: GitHub Handoff Continuity
+
+- Repairing: install locked dependencies before project validation and validate the exact committed PR head with full Git history (`PHR-TECH-011`).
+- Preserved: GitHub reads committed Handoff truth; only a successful local `./handoff` may prepare and seal continuity state.
+- Publication gate: the current event-worker gateway and authorization changes must pass the complete local project gate, be committed, and receive a fresh Handoff seal before push.
+- Public exposure remains separate: this repair does not activate Tailscale Funnel or change the existing private 9443 service.
+
 ## Product Review Candidate: Assisted Sealed Artwork Recovery
 
 - Implemented: conservative v1 assisted recovery plus an Administration Settings exception queue with lazy candidate images, search, pagination, and reversible approve/reject/restore/undo controls (`PHR-UX-024`).
@@ -145,7 +152,7 @@
 - Implemented: catalogue-first watch refresh, unique legacy identity reconciliation, truthful failure state, and secret-free provider health (`PHR-TECH-010`).
 - Implemented: manual watch composer and immediate offer ladder (`PHR-UX-010`, `PHR-UX-011`).
 - Implemented / activation gated: module-at-invite single-use employee activation (`PHR-ARCH-012`).
-- Implemented / product review pending: account-free timed event worker codes with scoped operational sessions (`PHR-ARCH-014`).
+- Implemented / product review ready: account-free timed event worker codes with scoped operational sessions, including independently assignable Artwork Review (`PHR-ARCH-014`). Strict isolation still requires the gated `REQUIRED` auth activation.
 - Implemented: persistent exact/Bulk event cart and immutable receipts (`PHR-WORKFLOW-006`).
 - Implemented: bounded artwork resolution, restart-safe exact provider mappings, bounded event prewarming, and exact-SKU curated local images (`PHR-API-004`, `PHR-TECH-007`).
 - Accepted locally at checkpoint `6c38c1f`. Required authentication and unconfigured external providers remain gated; GitHub publication is not part of this checkpoint.

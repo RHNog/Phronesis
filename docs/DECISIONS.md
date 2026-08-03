@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-03 — GitHub verifies committed Handoff state instead of preparing it
+
+- **Status:** Implementing (`PHR-TECH-011`).
+- **Context:** PR #5 repeatedly reported test, lint, and build failures because the Handoff workflow ran project validation before installing npm dependencies. The workflow also regenerated continuity in an ephemeral runner and executed twice for each feature-branch revision.
+- **Decision:** Separate project validation from continuity verification. GitHub pins Node 24, runs `npm ci`, and executes project gates in one job. A second job checks out the exact pull-request head with full history and runs only `./handoff validate-continuity --json`. Feature branches run through `pull_request`; `push` is restricted to `main`.
+- **Consequences:** Missing dependencies no longer masquerade as code defects, duplicate feature notifications stop, and GitHub cannot hide an unsealed repository by preparing temporary generated files. Local closeout must commit human-owned truth and use bare `./handoff` before publication.
+
 ## 2026-08-02 — Assisted sealed imagery remains representative, not exact
 
 - **Status:** Implemented and applied; Product Review ready (`PHR-UX-024`).

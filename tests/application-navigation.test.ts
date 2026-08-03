@@ -75,6 +75,11 @@ test("module filtering preserves every authorized destination and no others", ()
       { label: "General Inventory", href: "/inventory" },
     ],
   );
+
+  assert.deepEqual(
+    navigationForModules(["ARTWORK_REVIEW"]).map(({ label, href }) => ({ label, href })),
+    [{ label: "Artwork Review", href: "/artwork-review" }],
+  );
 });
 
 test("the shared shell gives mobile navigation the server-filtered list", () => {

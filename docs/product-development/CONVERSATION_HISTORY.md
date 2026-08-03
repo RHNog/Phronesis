@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-08-03 — GitHub Handoff Continuity Repair
+
+The Product Owner reported repeated GitHub errors after implementing the Handoff workflow and authorized a repair. Hosted logs and a clean-checkout reproduction established two separate causes: the workflow tried to prepare Handoff state before installing the locked Node dependencies required by the repository validators, and the committed Handoff seal still represented an earlier implementation while the public event-worker gateway remained dirty locally.
+
+`PHR-TECH-011` changes GitHub from a Handoff author into a verifier. One project-validation job installs with `npm ci` and runs tests, lint, build, and diff hygiene. A separate continuity job checks the exact committed pull-request head with full history and never mutates the checkout. Feature branches run through the pull-request event only; direct push validation is limited to `main` to prevent duplicate runs and duplicate failure emails.
+
+The repair deliberately preserves the current `PHR-ARCH-014` public-gateway and Artwork Review authorization implementation. It must pass the full local gate, be committed as implementation truth, receive a fresh local Handoff seal, and pass both hosted jobs. Public Tailscale Funnel activation remains a separate Product Owner gate and is not part of this repair.
+
 ## 2026-08-02 — Assisted Sealed Artwork Recovery And Exception Queue
 
 The Product Owner challenged the remaining sealed coverage, asked for the compute cost of approaching the reviewable 47.5% tier, and first directed Phronesis to build a simple manual verification tool. After seeing where it lived, the Product Owner explicitly redirected Phronesis to perform the defensible review work automatically and let operations move forward. `PHR-UX-024` now combines a versioned assisted policy with an Administration Settings exception queue. Exact, `ASSISTED_REPRESENTATIVE`, and `OWNER_APPROVED_REPRESENTATIVE` coverage remain separate; all representative decisions are audited, reversible, and labelled as packaging-variable in Vendor Workspace.
@@ -684,3 +692,20 @@ Implemented and live for Product Owner review. Focused 11/11 and full 369/369 te
 ### Acceptance State
 
 Implemented and live for Product Owner review. Focused 16/16 and full 370/370 tests, TypeScript, warning-free lint, production build, diff hygiene, transactional/idempotency/undo evidence, live API verification, private page checks, and tailnet health passed. Same-session review is not independent approval. No commit or push was requested.
+## 2026-08-03 — Assignable Artwork Review Worker Access
+
+### User Intent
+
+- Assign Artwork Review as the sole task for a permanent employee or temporary worker.
+- Let a worker reach Phronesis without installing Tailscale or another client.
+
+### Decision And Result
+
+- Added a dedicated `ARTWORK_REVIEW` module instead of granting broad Administration. `VIEW` reads the queue/images, `OPERATE` records manual candidate and gallery decisions, and `ADMIN` alone runs source refresh or assisted recovery.
+- Added the module to permanent employee selectors and timed worker codes, with page/API/navigation enforcement. An artwork-only worker receives only the Artwork Review destination.
+- Migrated the live authorization database additively and backfilled only the existing Owner with `ARTWORK_REVIEW:ADMIN`.
+- Confirmed the installed Tailscale client supports Funnel, which would provide a normal public HTTPS link to browser-only workers. The current 9443 mapping remains Serve/tailnet-only; no public exposure was activated.
+
+### Acceptance State
+
+Implemented and live for Product Owner review. Full 373/373 tests, TypeScript, warning-free lint, production build, diff hygiene, live migration audit, private service health, and HTTPS page verification pass. Authentication remains `OPTIONAL`; strict task isolation requires a separately approved change to `REQUIRED`. Commit, push, and Funnel activation were not requested or performed.

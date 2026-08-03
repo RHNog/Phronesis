@@ -218,6 +218,8 @@
 
 ### Fixed
 
+- Repaired GitHub Handoff continuity by installing locked npm dependencies before project validation, checking the exact committed PR head, verifying rather than regenerating Handoff artifacts, and eliminating duplicate feature-branch push/PR runs (`PHR-TECH-011`).
+
 - Fixed catalogue-verification friction by adding a safe exact-context TCGplayer cross-check and viewport-clamped canonical artwork enlargement to Vendor Workspace results (`PHR-UX-017`).
 
 - Fixed `OP13 booster` and equivalent OP/EB/ST/PRB searches by deriving fail-closed One Piece set-code aliases from exact local catalogue evidence (`PHR-UX-016`).

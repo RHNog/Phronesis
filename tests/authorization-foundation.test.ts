@@ -19,7 +19,7 @@ test("owner bootstrap invitation provisions one active fully entitled membership
   );
   assert.equal(membership.role, "OWNER");
   assert.equal(membership.status, "ACTIVE");
-  assert.equal(membership.entitlements.length, 8);
+  assert.equal(membership.entitlements.length, 9);
   assert.equal(
     repository.authorize("user-owner", "ADMINISTRATION", "ADMIN").allowed,
     true,
@@ -59,6 +59,10 @@ test("role defaults remain coarse while explicit module entitlements are authori
   );
   assert.equal(
     repository.authorize("user-operator", "ADMINISTRATION", "VIEW").reason,
+    "MODULE_NOT_ASSIGNED",
+  );
+  assert.equal(
+    repository.authorize("user-operator", "ARTWORK_REVIEW", "VIEW").reason,
     "MODULE_NOT_ASSIGNED",
   );
   repository.close();
@@ -140,7 +144,32 @@ test("legacy employee access migrates to independent event permissions", () => {
   const migrated = new AuthorizationRepository(database);
   assert.equal(migrated.authorize("legacy-user", "EVENT_LEDGER", "OPERATE").allowed, true);
   assert.equal(migrated.authorize("legacy-user", "EVENT_FLIP", "VIEW").allowed, true);
+  assert.equal(migrated.authorize("legacy-user", "ARTWORK_REVIEW", "VIEW").reason, "MODULE_NOT_ASSIGNED");
   assert.equal(migrated.getMembershipProfile("legacy-user")?.id, membership.id);
+  database.close();
+});
+
+test("existing owners and admins receive Artwork Review admin during module migration", () => {
+  const database = new DatabaseSync(":memory:");
+  const initial = new AuthorizationRepository(database);
+  initial.createInvitation({ email: "owner@example.com", role: "OWNER" });
+  initial.provisionInvitedUser("owner@example.com", "owner-user");
+  database.exec(`
+    ALTER TABLE phronesis_entitlement RENAME TO phronesis_entitlement_current;
+    CREATE TABLE phronesis_entitlement (
+      membership_id TEXT NOT NULL,
+      module TEXT NOT NULL CHECK(module IN ('VENDOR_WORKSPACE','EVENT_LEDGER','EVENT_FLIP','MARKET_WATCH','INVENTORY','PRICING_OPERATIONS','INTELLIGENCE','ADMINISTRATION')),
+      access TEXT NOT NULL CHECK(access IN ('VIEW','OPERATE','ADMIN')),
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY(membership_id,module),
+      FOREIGN KEY(membership_id) REFERENCES phronesis_membership(id) ON DELETE CASCADE
+    );
+    INSERT INTO phronesis_entitlement SELECT membership_id,module,access,updated_at
+      FROM phronesis_entitlement_current WHERE module != 'ARTWORK_REVIEW';
+    DROP TABLE phronesis_entitlement_current;
+  `);
+  const migrated = new AuthorizationRepository(database);
+  assert.equal(migrated.authorize("owner-user", "ARTWORK_REVIEW", "ADMIN").allowed, true);
   database.close();
 });
 
