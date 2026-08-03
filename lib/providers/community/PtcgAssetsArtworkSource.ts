@@ -225,6 +225,34 @@ function uniqueNamedProductAsset(match: SearchMatch, candidates: readonly PtcgAs
   return exact.length === 1 ? exact[0] : undefined;
 }
 
+const miniTinRegionGeneration = new Map([
+  ["kanto", "gen1"],
+  ["johto", "gen2"],
+  ["hoenn", "gen3"],
+  ["sinnoh", "gen4"],
+  ["unova", "gen5"],
+  ["kalos", "gen6"],
+  ["alola", "gen7"],
+  ["galar", "gen8"],
+]);
+
+function uniqueMiniTinRegionAsset(
+  match: SearchMatch,
+  candidates: readonly PtcgAssetCandidate[],
+  productClass: SealedProductClass,
+): PtcgAssetCandidate | undefined {
+  if (productClass !== "MINI_TIN") return undefined;
+  const regionMatch = match.name.match(/\[([^\]]+)\]\s*$/);
+  if (!regionMatch) return undefined;
+  const generation = miniTinRegionGeneration.get(normalized(regionMatch[1]));
+  if (!generation) return undefined;
+  const exact = candidates.filter((candidate) => {
+    const filename = candidate.path.split("/").at(-1)?.replace(imageExtension, "").toLowerCase();
+    return filename === generation && /(?:^|\/)mini-tins?(?:\/|$)/i.test(candidate.path);
+  });
+  return exact.length === 1 ? exact[0] : undefined;
+}
+
 function uniqueMixedProductAsset(
   match: SearchMatch,
   assets: readonly PtcgAssetCandidate[],
@@ -279,14 +307,16 @@ export function resolvePtcgAssetsArtwork(
       continue;
     }
     const namedExact = uniqueNamedProductAsset(match, candidates);
-    if (namedExact) {
-      artwork[match.sku] = { small: namedExact.sourceUrl, normal: namedExact.sourceUrl, large: namedExact.sourceUrl };
+    const regionalExact = uniqueMiniTinRegionAsset(match, candidates, productClass);
+    const identityExact = namedExact ?? regionalExact;
+    if (identityExact) {
+      artwork[match.sku] = { small: identityExact.sourceUrl, normal: identityExact.sourceUrl, large: identityExact.sourceUrl };
       accepted.push({
         sku: match.sku,
         name: match.name,
         setName: match.setName,
         productClass,
-        assetPath: namedExact.path,
+        assetPath: identityExact.path,
       });
       continue;
     }

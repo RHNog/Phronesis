@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — TCGplayer Mini Tin Variant Reconciliation
+
+- Assignment: `PHR-POKEMON-MINI-TIN-IDENTITY-20260802`
+- Document ID: `PHR-STRUCT-20260802-004`
+- Feature: `PHR-API-004`
+- Status: `IMPLEMENTED AND APPLIED — PRODUCT REVIEW READY`
+- Objective: reconcile generation-coded Celebrations Mini Tin source artwork to the eight separately priced regional TCGplayer catalogue identities without collapsing them into a generic product or Display.
+- Identity rule: Kanto through Galar remain distinct TCG-derived SKUs inside one Mini Tin family. The family is useful for navigation; SKU-level identity continues to own artwork and price evidence.
+- Safety rule: accept only exact set, Mini Tin class, bracketed canonical region, and one corresponding `gen1`–`gen8` source asset. Display and assortment identities remain unresolved without their own source evidence.
+- Acceptance: eight deterministic regional mappings, no Display substitution, independent market prices preserved, focused/full verification, active-database application, and idempotent rerun evidence.
+- Work order: `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`.
+- Result: the active database maps Kanto–Galar to `gen1`–`gen8` respectively under eight separate TCG-derived SKUs. `Celebrations Mini Tin Display` remains unresolved. Exact sealed community mappings rose from 356 to 364; total visible sealed coverage rose from 483 / 2,894 (16.69%) to 491 / 2,894 (16.97%).
+- Verification: focused 14/14 and full 369/369 tests, TypeScript without incremental output, warning-free lint, diff hygiene, successful active apply, and direct SQLite identity audit pass.
+- Next accountable role: Product Owner review; the Display requires its own exact artwork source and is intentionally still in the exception queue.
+
 ## Active Revision — Assisted Sealed Artwork Recovery
 
 - Assignment: `PHR-SEALED-ARTWORK-REVIEW-20260802`

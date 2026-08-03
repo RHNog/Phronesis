@@ -1,5 +1,12 @@
 # PHR-API-004 — Product Artwork Coverage
 
+## 2026-08-02 Celebrations Mini Tin Identity Revision
+
+- Preserved eight regional Mini Tins as separate TCG-derived market identities rather than treating their artwork as one Display gallery.
+- Added deterministic Kanto–Galar to `gen1`–`gen8` artwork reconciliation within the exact Celebrations/Mini Tin boundary.
+- Left `Celebrations Mini Tin Display` unresolved because individual tin artwork is not valid display-product evidence.
+- Applied eight exact mappings to the active database, raising total visible sealed coverage from 483 to 491 of 2,894 products.
+
 ## 2026-08-02 Community Pokémon Gap-Fill Revision
 
 - Added a bounded PokéFiles catalogue importer that validates the public project client and resolves exact English set, collector, and material-name identity.

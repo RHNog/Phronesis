@@ -53,6 +53,7 @@ The 2026-08-02 community gap-fill revision adds two explicitly lower-authority s
 - Recognize deterministic repository packaging conventions, including plural `mini-tins`, `tins`, `decks`, and `collections` folders, without treating work folders or loose promotional scans as sealed products.
 - Normalize only documented exact catalogue labels such as Scarlet & Violet 151, Scarlet & Violet Base Set, Sword & Shield Base Set, and Ascended Heroes to their unique English set identities.
 - Permit promo-card identifiers embedded in sealed asset filenames to contribute descriptor evidence only when an exact public card record proves the enclosed Pokémon/card name; never use a promo identifier alone across multiple products.
+- Reconcile generation-coded Mini Tin assets (`gen1` through `gen8`) only to exact bracketed regional catalogue identities (Kanto through Galar) within an exact set and Mini Tin class. Preserve each TCG-derived SKU and its independent pricing; never attach an individual tin asset to a Display or assortment identity.
 
 ## Non-Functional Requirements
 
@@ -79,6 +80,7 @@ The 2026-08-02 community gap-fill revision adds two explicitly lower-authority s
 - A generic booster pack with multiple packshot candidates remains unresolved.
 - A stamped or staff promo without matching material artwork descriptors remains unresolved.
 - A unique exact sealed product-class and descriptor match may be persisted and served through the durable local cache.
+- Celebrations regional Mini Tins receive their corresponding generation artwork as eight distinct market identities; the Mini Tin Display remains unresolved without display-specific evidence.
 - One operator run reports before/after Pokémon singles and sealed coverage percentages.
 
 ## Dependencies
@@ -110,5 +112,6 @@ The 2026-08-02 community gap-fill revision adds two explicitly lower-authority s
 - Residual evidence: 1,019 sealed rows have possible but non-exact source candidates and 1,517 are unmatched or unsupported; no arbitrary booster wrapper, case, edition, Pokémon Center/retail variant, year, or package form was adopted.
 - Runtime remediation: a dead PokémonTCG URL was replaced through an exact TCGdex card identity, while a verified 13.86 MB GitHub PNG was cached through a command-scoped 16 MiB ceiling and signature-sniffed only for allowlisted community binary responses.
 - Sealed recovery revision: Product Owner challenged the initial 6.60% result. Audit proved that 205 known-set image files were omitted by singular-only package classification, 664 mixed-root files had not been evaluated, and several exact TCGplayer set labels were not normalized. Plural package paths, exact set aliases, promo-ID/card-name evidence, exact mixed filenames, component suffixes, and explicit half-display classification raise exact sealed coverage to 12.31% while retaining the same fail-closed identity boundary.
+- Mini Tin identity revision: eight separately priced Celebrations regional catalogue identities now resolve deterministically from Kanto–Galar to the source repository's `gen1`–`gen8` assets. The TCG-derived SKUs and pricing remain separate; `Celebrations Mini Tin Display` remains unresolved because no display-specific asset was proven. Exact community sealed mappings are now 364 and total visible sealed coverage is 491 / 2,894 (16.97%).
 - Remediation: Magic provider queries now use exact visible card names, and unique name/collector identity may bridge provider set-label drift without weakening Pokémon or ambiguous-printing safeguards.
 - Event-readiness revision: Product Owner requested a single-pass Pokémon and One Piece coverage hardening for the 2026-08-02 event. The revision authorizes authoritative metadata enumeration, persistent exact resolution indexing, and explicitly bounded high-priority image prefetch while preserving fail-closed identity matching.

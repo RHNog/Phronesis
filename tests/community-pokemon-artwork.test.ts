@@ -114,6 +114,42 @@ test("ptcg-assets resolves a unique set and class but quarantines multiple boost
   assert.equal(result.ambiguous.some((item) => item.sku === "pack"), true);
 });
 
+test("ptcg-assets maps generation-coded Celebrations mini tins to distinct regional catalogue identities", () => {
+  const sha = "a".repeat(40);
+  const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos", "Alola", "Galar"];
+  const products = regions.map((region) => match({
+    sku: region.toLowerCase(),
+    productType: "SEALED",
+    name: `Celebrations Mini Tin [${region}]`,
+    setName: "Celebrations",
+    collectorNumber: null,
+  }));
+  const display = match({
+    sku: "display",
+    productType: "SEALED",
+    name: "Celebrations Mini Tin Display",
+    setName: "Celebrations",
+    collectorNumber: null,
+  });
+  const assets: PtcgAssetCandidate[] = regions.map((_, index) => ({
+    bytes: 10,
+    descriptors: [`gen${index + 1}`],
+    path: `cel25/mini-tins/gen${index + 1}.png`,
+    productClass: "MINI_TIN",
+    setId: "cel25",
+    sourceUrl: `https://raw.githubusercontent.com/1niceroli/ptcg-assets/${sha}/cel25/mini-tins/gen${index + 1}.png`,
+  }));
+  const result = resolvePtcgAssetsArtwork([...products, display], {
+    assets,
+    sets: [{ id: "cel25", name: "Celebrations", ptcgoCode: "CEL", series: "Sword & Shield" }],
+  });
+  regions.forEach((region, index) => {
+    assert.match(result.artwork[region.toLowerCase()].small ?? "", new RegExp(`/gen${index + 1}\\.png$`));
+  });
+  assert.equal(result.artwork.display, undefined);
+  assert.equal(result.ambiguous.some((item) => item.sku === "display"), true);
+});
+
 test("ptcg-assets keeps era-specific base sets separate from the original Base Set", () => {
   const sha = "a".repeat(40);
   const result = resolvePtcgAssetsArtwork([

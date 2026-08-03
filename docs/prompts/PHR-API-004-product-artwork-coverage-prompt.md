@@ -29,6 +29,7 @@ Resolve Pokémon and One Piece artwork identities independently, persist exact m
 - Add a `ptcg-assets` manifest client pinned to a commit SHA; do not clone the full repository.
 - Resolve PokéFiles singles by exact set, collector number, and material artwork name, with explicit protection for stamped/staff/prize/event variants.
 - Resolve `ptcg-assets` sealed images by exact set, compatible product class, and unique descriptor evidence; quarantine multi-packshot, case, bundle, and same-class ambiguity.
+- Map generation-coded Mini Tin assets to exact bracketed regional identities only (`gen1`/Kanto through `gen8`/Galar), retaining separate TCG-derived SKUs and prices and excluding Display/assortment products.
 - Add insert-if-missing-or-identity-stale persistence so community sources cannot overwrite a valid same-identity resolution.
 - Extend durable-cache source policy only for the exact upstream hosts and path shapes used by accepted community records.
 - Add an idempotent operator command that runs both sources, saves exact mappings, emits a local audit report, reports before/after coverage, and prefetches only an explicit bounded high-value subset.
@@ -69,4 +70,4 @@ Resolve Pokémon and One Piece artwork identities independently, persist exact m
 - Do not map a regular ETB to a Pokémon Center ETB, a full display to a half display, one wrapper to a generic multi-art pack, or one edition image to another edition.
 - Apply only newly exact mappings, retain a complete accepted/ambiguous audit, and re-run idempotency and full repository gates.
 
-Recovery result: 165 additional exact mappings were added, raising sealed coverage from 191 (6.60%) to 356 (12.31%). The final rerun stored zero mappings and cached 1,500 / 1,500 priority sources.
+Recovery result: 165 additional exact mappings were added, raising sealed coverage from 191 (6.60%) to 356 (12.31%). The Mini Tin identity revision then added eight exact regional mappings for 364 community sealed mappings, without resolving the Display. The prior recovery rerun stored zero mappings and cached 1,500 / 1,500 priority sources.

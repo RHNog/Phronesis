@@ -632,3 +632,20 @@ Current CTO chat: explicit command `Implement PHR-API-011`.
 - Focused 21/21 and full 338/338 tests, TypeScript, warning-free lint, production build, and diff hygiene passed after the coverage increase.
 - Same-session conformance verdict: product-review ready. This is not independent approval.
 - Active PriceCharting bulk receipt remains `NULL`; owner activation, recurrence, One Piece, and Magic remain unresolved follow-ups.
+
+## 2026-08-02 — Celebrations Mini Tin Variant Identity
+
+### User Intent
+
+- Treat Celebrations regional Mini Tins as separately priced TCGplayer identities rather than alternate images of one Display product.
+- Reuse the TCG-derived catalogue to reconcile each tin image precisely.
+
+### Decision And Result
+
+- Phronesis preserves the existing distinct TCG-derived SKUs for Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, and Galar while grouping them conceptually as one Mini Tin family.
+- A deterministic exact-set/Mini-Tin rule maps those regions to source assets `gen1` through `gen8`; the Display is explicitly excluded without display-specific evidence.
+- Eight mappings were applied to the active database. Exact community sealed mappings rose from 356 to 364 and visible sealed coverage rose from 483 to 491 of 2,894.
+
+### Acceptance State
+
+Implementation and active application are product-review ready. Focused 14/14 and full 369/369 tests, TypeScript, warning-free lint, diff hygiene, and direct SQLite mapping verification passed. No commit or push was requested.
