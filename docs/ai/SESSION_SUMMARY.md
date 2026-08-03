@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-03T19:11:38Z","generation_id":"0282c2727af1587175db","head":"be12e29608e3f43e73189eaa6c73f00291b005a9","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-03T19:14:56Z","generation_id":"fc4b039256ce65f5bbcc","head":"467ed7fa76e4b7ee9cae48774a73af1e9c56fda7","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -13,16 +13,16 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
 - Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
 - Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
+- Hosted replacement run `30844716647` passed continuity and project validation. The local and remote seal SHA matched, and no duplicate feature-branch push run was created.
 
 ## State left behind
 
-- Branch `codex/phr-price-monitoring-20260730` at `be12e29608e3f43e73189eaa6c73f00291b005a9`.
+- Branch `codex/phr-price-monitoring-20260730` at `467ed7fa76e4b7ee9cae48774a73af1e9c56fda7`.
 - Implementation worktree is clean.
-- Continuity generation `0282c2727af1587175db` was prepared successfully.
+- Continuity generation `fc4b039256ce65f5bbcc` was prepared successfully.
 
 ## Remaining work
 
-- Commit and seal the hosted branch-identity remediation, push, and verify both pull-request jobs.
 - Present public event-worker activation as a separate Product Owner decision after the repair is green.
 
 ## Blockers
@@ -32,4 +32,4 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Next action
 
-Commit the detached-runner remediation, create a replacement Handoff seal, and verify the next hosted pull-request run.
+Product Owner review: decide whether and when to activate the public event-worker Funnel for a bounded event window; no activation is automatic.
