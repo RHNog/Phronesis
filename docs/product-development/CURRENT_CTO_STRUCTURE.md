@@ -13,6 +13,7 @@
 - Exposure boundary: do not activate Tailscale Funnel or alter the private 9443 mapping as part of this repair.
 - Work order: `docs/prompts/PHR-TECH-011-github-handoff-continuity-prompt.md`.
 - Local result: 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene pass.
+- First hosted result: run `30844457778` created one pull-request execution and passed `project-validation`. `continuity` reported only that exact-SHA checkout was `DETACHED`; the workflow now restores the event branch locally at that unchanged SHA and upgrades checkout to the Node 24 runtime.
 - Next accountable role: Engineer closeout through implementation commit, local Handoff seal, ordinary push, and hosted PR verification.
 
 ## Active Revision — Isolated Public Event Worker Gateway

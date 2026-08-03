@@ -24,10 +24,12 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Replaced CI-side Handoff preparation with separate dependency-backed project validation and committed-state continuity verification.
 - Added the governed specification, work order, release notes, architecture decision, roadmap, atlas, and continuity records for `PHR-TECH-011`.
 - Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
+- Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
+- Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
 
 ## Remaining work
 
-- Commit the implementation, create the Handoff seal, push, and verify the hosted pull-request checks.
+- Commit and seal the hosted branch-identity remediation, push, and verify both pull-request jobs.
 - Present public event-worker activation as a separate Product Owner decision after the repair is green.
 
 ## Blockers
@@ -37,4 +39,4 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Exact next action
 
-Commit the verified implementation and canonical documentation, then run bare `./handoff` from the clean implementation commit.
+Commit the detached-runner remediation, create a replacement Handoff seal, and verify the next hosted pull-request run.

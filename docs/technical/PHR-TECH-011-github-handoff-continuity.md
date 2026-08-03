@@ -37,7 +37,7 @@ The existing check combines project verification with continuity preparation, om
 Split GitHub verification into two jobs:
 
 1. `project-validation` checks out the GitHub event revision, installs pinned Node 24 with npm caching, runs `npm ci`, then executes the configured test, lint, build, and diff-hygiene commands.
-2. `continuity` checks out the exact pull-request head or push SHA with full history and runs only `./handoff validate-continuity --json` against committed artifacts.
+2. `continuity` checks out the exact pull-request head or push SHA with full history, restores the event branch name over that exact detached SHA, and runs only `./handoff validate-continuity --json` against committed artifacts.
 
 Feature branches run through `pull_request`; `push` is restricted to `main`. Local implementation closes from a clean implementation commit with bare `./handoff`, which performs validation and creates the generated seal commit.
 
@@ -48,6 +48,7 @@ Feature branches run through `pull_request`; `push` is restricted to `main`. Loc
 - Run tests, lint, production build, and `git diff --check` in GitHub.
 - Validate, but never regenerate, committed Handoff artifacts in GitHub.
 - Validate the exact pull-request head rather than GitHub's detached merge ref.
+- Restore the GitHub event branch identity after exact-SHA checkout because Handoff verifies both branch and commit identity.
 - Fetch sufficient history for generated-only seal ancestry checks.
 - Produce one feature-branch workflow execution per revision.
 - Continue verifying the merged repository on pushes to `main`.
@@ -108,6 +109,7 @@ Not applicable.
 - A stale or expired validation report fails continuity even if application tests pass.
 - A dirty local tree cannot be sealed; implementation and human-owned documentation must be committed first.
 - A pull-request check uses the exact head SHA so GitHub's synthetic merge commit cannot manufacture a branch mismatch.
+- GitHub's exact-SHA checkout is detached by design; the job creates only a runner-local branch at that unchanged SHA before validation.
 - A later `main` merge that changes non-generated state may require a new mainline Handoff seal rather than ephemeral preparation.
 - A dependency or lockfile failure is reported by `npm ci` before project validation.
 

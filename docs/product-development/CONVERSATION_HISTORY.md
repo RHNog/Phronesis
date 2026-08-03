@@ -8,6 +8,8 @@ The Product Owner reported repeated GitHub errors after implementing the Handoff
 
 The repair deliberately preserves the current `PHR-ARCH-014` public-gateway and Artwork Review authorization implementation. It must pass the full local gate, be committed as implementation truth, receive a fresh local Handoff seal, and pass both hosted jobs. Public Tailscale Funnel activation remains a separate Product Owner gate and is not part of this repair.
 
+The first repaired hosted run passed the complete dependency-backed project job and produced only one pull-request run. Continuity then identified a CI-specific identity edge: checking out the exact head SHA leaves Git detached, while the seal records the branch name. The remediation keeps the exact SHA and creates a runner-local event branch before validation; it does not regenerate Handoff or weaken branch matching. Checkout v5 also removes the runner's Node 20 action warning.
+
 ## 2026-08-02 — Assisted Sealed Artwork Recovery And Exception Queue
 
 The Product Owner challenged the remaining sealed coverage, asked for the compute cost of approaching the reviewable 47.5% tier, and first directed Phronesis to build a simple manual verification tool. After seeing where it lived, the Product Owner explicitly redirected Phronesis to perform the defensible review work automatically and let operations move forward. `PHR-UX-024` now combines a versioned assisted policy with an Administration Settings exception queue. Exact, `ASSISTED_REPRESENTATIVE`, and `OWNER_APPROVED_REPRESENTATIVE` coverage remain separate; all representative decisions are audited, reversible, and labelled as packaging-variable in Vendor Workspace.

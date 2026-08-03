@@ -10,7 +10,7 @@ jobs:
   project-validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -27,9 +27,13 @@ jobs:
   continuity:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Restore Handoff branch identity
+        env:
+          HANDOFF_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: git switch --force-create "$HANDOFF_BRANCH"
       - name: Validate committed Handoff
         run: ./handoff validate-continuity --json

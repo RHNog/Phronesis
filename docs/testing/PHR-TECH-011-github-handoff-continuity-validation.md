@@ -22,6 +22,7 @@ Local application gate passed; seal and hosted verification pending.
 - The last validation described `33bac5b617fab21c714f0071517e193f90aedc14` and had exceeded the configured 24-hour age.
 - Local acquisition reported 15 errors because both the branch head and dirty worktree fingerprint differed from the last seal.
 - Feature-branch commits produced duplicate push and pull-request workflow runs.
+- The first repaired hosted run proved project validation green but exposed a second CI-only boundary: exact-SHA checkout reports branch `DETACHED`, while sealed Handoff correctly records the feature branch.
 
 ## Result
 
@@ -33,3 +34,4 @@ Local application gate passed; seal and hosted verification pending.
 - Secret-pattern scan over the workflow, gateway, authorization boundary, launch definition, and `PHR-TECH-011` artifacts: no credential material found.
 - `plutil -lint ops/launchd/com.phronesis.public-event-gateway.plist`: pass; the configured `/usr/local/bin/node` resolves to Node 24.18.0 on the target host.
 - Local seal, remote SHA equality, and hosted job results: pending publication closeout.
+- Hosted run `30844457778`: `project-validation` passed; `continuity` correctly rejected the detached runner branch with seven branch-identity errors. The workflow now restores the runner-local event branch at the unchanged exact head SHA and uses `actions/checkout@v5` to remove the Node 20 action warning. Final hosted verification is pending the replacement seal.
