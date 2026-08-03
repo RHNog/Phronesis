@@ -20,6 +20,18 @@ export async function POST(request: Request) {
   } catch (error) { return Response.json({ error: error instanceof Error ? error.message : "Temporary access could not be created." }, { status: 400 }); }
 }
 
+export async function PATCH(request: Request) {
+  const auth = await authorizeIdentityRequired(request, "ADMINISTRATION", "ADMIN");
+  if (!auth.allowed || !auth.workspaceId || !auth.userId) return authorizationErrorResponse(auth);
+  const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+  if (!body || typeof body.grantId !== "string") return Response.json({ error: "Grant id is required." }, { status: 400 });
+  try {
+    return Response.json(getEventAccessRepository().rotateGrantCode(auth.workspaceId, body.grantId, auth.userId));
+  } catch (error) {
+    return Response.json({ error: error instanceof Error ? error.message : "Worker code could not be replaced." }, { status: 400 });
+  }
+}
+
 export async function DELETE(request: Request) {
   const auth = await authorizeIdentityRequired(request, "ADMINISTRATION", "ADMIN");
   if (!auth.allowed || !auth.workspaceId || !auth.userId) return authorizationErrorResponse(auth);

@@ -771,3 +771,20 @@ Implemented and live for Product Owner phone review. Focused 11/11 and full 378/
 ### Acceptance State
 
 Implemented and live for Product Owner phone review. Focused 4/4 and full 382/382 tests, TypeScript, warning-free lint, production build, shared-control adoption, private/public route probes, public Settings denial, loopback supervision, and 390×844 no-overflow validation pass. Commit and push remain pending.
+
+## 2026-08-03 — Timed Worker Issued-Code Continuity
+
+### User Intent
+
+- Preserve access to generated worker information after navigating away from Settings.
+- Avoid forcing the owner to recreate an entire grant when an unused code was lost.
+
+### Decision And Implementation
+
+- The server remains hash-only and cannot reveal old plaintext. The authenticated owner tab retains only the latest unused code in ephemeral session storage and restores it after owner-only server reconciliation.
+- Active and redeemed history rows always expose the stable public login link.
+- Active unused grants support two-step code replacement. Rotation immediately invalidates the prior code, preserves scope/expiry/entitlements, returns the new code once, and emits a secret-free audit record.
+
+### Acceptance State
+
+Implemented and live for Product Owner phone review. Focused 16/16 and full 386/386 tests, TypeScript, warning-free lint, production build, code-rotation invalidation/audit proof, browser-session reconciliation/cleanup proof, diff hygiene, 390×844 no-overflow review, final private/public health checks, loopback supervision, and public Settings denial pass. Commit and push remain pending.

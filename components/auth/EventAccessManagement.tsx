@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ModuleEntitlement } from "@/lib/auth/domain";
 import CopyTextButton from "@/components/ui/CopyTextButton";
+import { forgetIssuedCode, rememberIssuedCode, restoreIssuedCode } from "@/lib/auth/EventAccessIssuedCodeStorage";
 
 type EventSummary = { id: string; name: string; event_date: string };
 type Grant = {
@@ -33,6 +34,7 @@ export default function EventAccessManagement({
   const [inventory, setInventory] = useState(false);
   const [artworkReview, setArtworkReview] = useState(true);
   const [issued, setIssued] = useState<Grant | null>(null);
+  const [replaceConfirmId, setReplaceConfirmId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const eventBound = vendor || ledger || flip || inventory;
 
@@ -46,6 +48,8 @@ export default function EventAccessManagement({
     const body = (await response.json()) as { event: EventSummary | null; grants: Grant[] };
     setEvent(body.event);
     setGrants(body.grants);
+    const restored = restoreIssuedCode(window.sessionStorage, new Set(body.grants.filter((grant) => grant.status === "ACTIVE").map((grant) => grant.id)));
+    setIssued(restored);
   }, [active]);
 
   useEffect(() => {
@@ -60,10 +64,16 @@ export default function EventAccessManagement({
         if (!cancelled) {
           setEvent(body.event);
           setGrants(body.grants);
+          const restored = restoreIssuedCode(window.sessionStorage, new Set(body.grants.filter((grant) => grant.status === "ACTIVE").map((grant) => grant.id)));
+          setIssued(restored);
         }
       })
       .catch(() => {
-        if (!cancelled) setMessage("Temporary access could not be loaded. Confirm that this phone is signed in as the owner.");
+        if (!cancelled) {
+          forgetIssuedCode(window.sessionStorage);
+          setIssued(null);
+          setMessage("Temporary access could not be loaded. Confirm that this phone is signed in as the owner.");
+        }
       });
     return () => {
       cancelled = true;
@@ -104,6 +114,7 @@ export default function EventAccessManagement({
       return;
     }
     setIssued(body);
+    rememberIssuedCode(window.sessionStorage, { ...body, status: "ACTIVE", code: body.code! });
     setName("");
     setMessage(
       body.scopeType === "TASK"
@@ -116,6 +127,29 @@ export default function EventAccessManagement({
   async function revoke(id: string) {
     const response = await fetch(`/api/administration/event-access?id=${encodeURIComponent(id)}`, { method: "DELETE" });
     setMessage(response.ok ? "Worker access revoked." : "Access could not be revoked.");
+    if (response.ok) {
+      forgetIssuedCode(window.sessionStorage, id);
+      if (issued?.id === id) setIssued(null);
+    }
+    await load();
+  }
+
+  async function replaceCode(id: string): Promise<void> {
+    setMessage("Replacing the unused worker code…");
+    const response = await fetch("/api/administration/event-access", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ grantId: id }),
+    });
+    const body = (await response.json().catch(() => ({}))) as Grant & { error?: string };
+    if (!response.ok || !body.code) {
+      setMessage(body.error ?? "Worker code could not be replaced.");
+      return;
+    }
+    rememberIssuedCode(window.sessionStorage, { ...body, status: "ACTIVE", code: body.code });
+    setIssued(body);
+    setReplaceConfirmId(null);
+    setMessage("New worker code generated. The previous code no longer works.");
     await load();
   }
 
@@ -184,7 +218,7 @@ export default function EventAccessManagement({
       {message ? <p role="status" className="mt-3 text-sm text-zinc-400">{message}</p> : null}
       {issued?.code ? (
         <div className="mt-4 rounded-lg border border-cyan-700 bg-cyan-950/30 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-cyan-300">Single-use worker code</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-cyan-300">Single-use worker code · saved in this browser session</p>
           <p className="mt-2 font-mono text-xl tracking-widest text-white">{issued.code}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <CopyTextButton value={issued.code} label="Copy code" copiedLabel="Code copied" manualLabel="Worker code" className="min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-100" />
@@ -198,13 +232,33 @@ export default function EventAccessManagement({
         <div className="mt-6 space-y-3">
           <h4 className="text-sm font-semibold text-zinc-200">Issued temporary access</h4>
           {grants.map((grant) => (
-            <article key={grant.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950/70 p-4">
+            <article key={grant.id} className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-medium text-white">{grant.workerLabel}</p>
                 <p className="mt-1 text-xs text-zinc-400">{grant.scopeType === "TASK" ? "Timed task" : grant.eventName ?? "Event access"} · {grant.status.replaceAll("_", " ")} · until {new Date(grant.expiresAt).toLocaleString()}</p>
                 <p className="mt-1 text-xs text-zinc-500">{grant.entitlements.map((entitlement) => entitlement.module.replaceAll("_", " ")).join(" · ")}</p>
               </div>
               {grant.status === "ACTIVE" || grant.status === "REDEEMED" ? <button type="button" onClick={() => void revoke(grant.id)} className="min-h-11 rounded-lg border border-red-900 px-4 text-sm text-red-200">Revoke</button> : null}
+              </div>
+              {grant.status === "ACTIVE" || grant.status === "REDEEMED" ? (
+                <div className="mt-3 flex flex-wrap items-start gap-2 border-t border-zinc-800 pt-3">
+                  <CopyTextButton value={publicLoginUrl ?? `${window.location.origin}/event-access`} label={`Copy ${publicLoginUrl ? "public " : ""}login link`} copiedLabel="Login link copied" manualLabel="Worker login link" className="min-h-11 rounded-lg border border-zinc-700 px-3 text-sm text-zinc-200" />
+                  {grant.status === "ACTIVE" && issued?.id !== grant.id && replaceConfirmId !== grant.id ? (
+                    <button type="button" onClick={() => setReplaceConfirmId(grant.id)} className="min-h-11 rounded-lg border border-amber-800 px-3 text-sm text-amber-200">Replace lost code</button>
+                  ) : null}
+                  {grant.status === "ACTIVE" && issued?.id === grant.id ? <p className="self-center text-xs text-emerald-300">Code available above in this browser session.</p> : null}
+                </div>
+              ) : null}
+              {replaceConfirmId === grant.id ? (
+                <div className="mt-3 rounded-lg border border-amber-700/60 bg-amber-950/20 p-3 text-sm text-amber-100">
+                  <p>Replacing this code immediately invalidates the previous one. Continue only if it was lost or not delivered.</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button type="button" onClick={() => void replaceCode(grant.id)} className="min-h-11 rounded-lg bg-amber-300 px-3 font-semibold text-zinc-950">Confirm replacement</button>
+                    <button type="button" onClick={() => setReplaceConfirmId(null)} className="min-h-11 rounded-lg border border-zinc-700 px-3 text-zinc-200">Cancel</button>
+                  </div>
+                </div>
+              ) : null}
             </article>
           ))}
         </div>

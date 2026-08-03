@@ -53,7 +53,8 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 
 ### Security
 
-- Store codes using salted scrypt hashes and session tokens using SHA-256 hashes; never persist or log plaintext credentials.
+- Store codes server-side using salted scrypt hashes and session tokens using SHA-256 hashes; never log plaintext credentials. The authenticated owner tab may retain only its latest unused issued code in `sessionStorage` so same-tab navigation does not destroy it; remove it when server truth no longer reports that grant as active.
+- The server must never recover or return an existing plaintext code. If an unused code is lost outside the issuing browser session, owner-confirmed replacement rotates its salt/hash, invalidates the previous code immediately, preserves the grant scope/expiry/entitlements, and appends an audit event.
 - Use constant-time comparisons, one-time redemption, generic invalid-code responses, and per-client attempt throttling.
 - A temporary session must never satisfy identity-required administration endpoints.
 - Prefer permanent authenticated identity when both permanent and temporary cookies exist.
@@ -76,6 +77,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - As an Artwork Review worker, I can enter one code on my phone without an Event Ledger event and work until the timer ends or access is revoked.
 - As an event worker, I can enter one code on my phone and work until the event or timer ends.
 - As an owner, I can revoke a worker immediately.
+- As an owner, I can return to Settings in the same browser tab and retrieve the latest unused code, or securely replace an unused code that was lost.
 
 ## Acceptance Criteria
 
@@ -85,6 +87,8 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Any grant containing a transactional module is rejected unless the referenced event is active, and its session is invalidated when that event closes.
 - Expired, revoked, or event-closed sessions are rejected immediately.
 - Grant management and worker login are usable on mobile.
+- Same-tab navigation preserves the latest unused issued code. Active and redeemed history always exposes the stable public login link; active rows without a locally retained code offer an explicit two-step replacement action.
+- Replacing an active unused code invalidates the old code, returns the new plaintext once, preserves all grant authorization fields, and cannot run after redemption, expiry, revocation, or event closure.
 - Unit/integration tests cover issuance, redemption, permissions, expiry, closure, revocation, and rate limiting.
 
 ## Edge Cases
@@ -93,6 +97,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - An event that closes between issuance and redemption makes the code unusable.
 - Multiple workers may have independent grants for the same event.
 - Existing event-bound grants migrate as `EVENT`; no active or historical grant is broadened into a task grant.
+- Browser-session code data is ignored and removed unless a successful owner-only grant listing confirms the same grant remains `ACTIVE` and unexpired.
 - Logout revokes only the presented temporary session, not the grant or other workers.
 
 ## Dependencies
@@ -123,4 +128,4 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Related implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Related tests: `tests/timed-event-access.test.ts`.
 - Last modified: 2026-08-03.
-- Modification reason: Product Owner required account-free Artwork Review task access without first opening an unrelated Event Ledger event; transactional modules remain event-bound.
+- Modification reason: Product Owner required account-free Artwork Review task access without an event and later required safe recovery after owner page navigation without weakening one-time-code storage.

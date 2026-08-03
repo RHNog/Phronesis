@@ -25,3 +25,9 @@ Both services bind only to loopback. Because the remote Mac had no active deskto
 Added an explicit grant scope discriminator without rebuilding the live grant table. Legacy rows default to `EVENT`; task rows use the backward-compatible empty legacy event storage while application models expose null event identity and treat `scope_type` as authoritative. Repository creation derives scope from entitlements rather than trusting the client: Artwork Review alone becomes `TASK`, while any transactional module becomes `EVENT` and must resolve to an active workspace event.
 
 List, redemption, authorization, status mapping, API validation, Settings, and worker-login copy now understand both scopes. Task authorization rechecks grant/session expiry and revocation but not unrelated events; event authorization retains the active-event check. The live database migration preserved one existing event grant, and a database backup preceded the additive schema change. The rebuilt live runtime passes 378/378 tests and all static/build/runtime gates.
+
+## 2026-08-03 Issued-Code Continuity Amendment
+
+The authenticated owner tab now retains only the latest unused code in ephemeral session storage and restores it after an owner-only grant listing confirms the grant is still active. Active and redeemed rows always expose the public worker login link. Active rows without a locally retained code provide a two-step replacement action backed by server-side salt/hash rotation; the prior code stops working immediately, while scope, event, expiry, and entitlements remain unchanged.
+
+Focused 16/16 and full 386/386 tests, TypeScript, warning-free lint, production build, diff hygiene, mobile no-overflow review, final loopback process verification, private/public 200 probes, and public Settings denial pass.

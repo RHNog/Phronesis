@@ -27,3 +27,9 @@ The gateway is isolated from the existing owner transport, listens only on loopb
 Verdict: `IMPLEMENTATION CONFORMS — PRODUCT REVIEW READY`.
 
 The amendment removes only the unrelated Event Ledger dependency from Artwork Review-only access. Scope is server-derived and immutable; task access cannot contain transactional modules or administration, while event access retains active-event creation and closure checks. The additive migration preserves legacy grants as event-bound. Full 378/378 tests, static/build gates, live migration evidence, loopback runtime, public denial, and private continuity pass. This same-session review is not independent approval.
+
+## 2026-08-03 Issued-Code Continuity Review
+
+Verdict: `IMPLEMENTATION CONFORMS — PRODUCT REVIEW READY`.
+
+Plaintext remains unrecoverable from server storage. Ephemeral browser retention is gated by successful owner-only reconciliation and cleared when server truth is no longer active. Lost-code replacement is owner-confirmed, active-only, race-safe against event closure, immediately invalidates the old hash, and records no secret. The stable public link remains accessible without weakening worker authorization. Full 386/386 tests and all static/build/live gates pass. This same-session review is not independent approval.

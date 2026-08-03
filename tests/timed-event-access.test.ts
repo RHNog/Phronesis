@@ -25,6 +25,20 @@ test("event code is single use and creates scoped authorization", () => {
   assert.throws(()=>repository.redeem(grant.code!,"other"),/invalid or expired/i);
 });
 
+test("an owner can replace only an unused code and the previous code stops working", () => {
+  const { repository, workspaceId, database } = fixture();
+  const now = new Date("2026-08-03T14:00:00Z");
+  const grant = repository.createGrant({ workspaceId,workerLabel:"Artwork desk",durationHours:8,actorUserId:"owner",entitlements:[{module:"ARTWORK_REVIEW",access:"OPERATE"}] }, now);
+  const replacement = repository.rotateGrantCode(workspaceId, grant.id, "owner", now);
+  assert.match(replacement.code!, /^[A-Z2-9]{4}(?:-[A-Z2-9]{4}){3}$/);
+  assert.notEqual(replacement.code, grant.code);
+  assert.throws(() => repository.redeem(grant.code!, "old-code", now), /invalid or expired/i);
+  const session = repository.redeem(replacement.code!, "new-code", now);
+  assert.equal(repository.authorize(session.token, "ARTWORK_REVIEW", "OPERATE", now)?.allowed, true);
+  assert.throws(() => repository.rotateGrantCode(workspaceId, grant.id, "owner", now), /unused, unexpired/i);
+  assert.equal(database.prepare("SELECT COUNT(*) count FROM phronesis_authorization_audit WHERE action='EVENT_ACCESS_CODE_ROTATED' AND resource_id=?").get(grant.id)?.count, 1);
+});
+
 test("Artwork Review can be a timed task without an event or system administration", () => {
   const { repository, workspaceId, database } = fixture();
   database.prepare("DELETE FROM phronesis_purchase_event").run();
@@ -117,5 +131,8 @@ test("employee and timed-worker Settings expose an Artwork Review only preset", 
   assert.match(temporary, /setVendor\(false\)[\s\S]*setArtworkReview\(true\)/);
   assert.match(temporary, /Artwork Review task access is available now/);
   assert.match(temporary, /Generate timed task code/);
+  assert.match(temporary, /saved in this browser session/);
+  assert.match(temporary, /Replace lost code/);
+  assert.match(temporary, /method: "PATCH"/);
   assert.doesNotMatch(temporary, /if\(!event\)return/);
 });

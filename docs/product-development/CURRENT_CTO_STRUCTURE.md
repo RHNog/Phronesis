@@ -1,5 +1,21 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Timed Worker Issued-Code Continuity
+
+- Assignment: `PHR-TIMED-CODE-CONTINUITY-20260803`
+- Document ID: `PHR-STRUCT-20260803-006`
+- Feature: `PHR-ARCH-014`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: preserve access to the latest unused worker code across owner page navigation without making plaintext credentials recoverable from the server.
+- Continuity rule: retain only the latest unused code in the authenticated owner tab's ephemeral session storage and restore it only after owner-authorized server reconciliation.
+- Recovery rule: active rows without a retained code may rotate it through a two-step confirmation; the previous code becomes invalid immediately and scope, expiry, event, and entitlements remain unchanged.
+- History rule: active and redeemed rows always expose the stable public login link.
+- Security rule: no durable browser storage, server plaintext, secret logging, post-redemption rotation, or unauthenticated restore.
+- Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Result: same-tab navigation restores the latest unused code after server reconciliation; every active/redeemed row keeps the public link; active rows without a retained code offer confirmed rotation that invalidates the prior code.
+- Verification: focused 16/16, full 386/386, TypeScript, warning-free lint, production build, diff hygiene, 390×844 no-overflow review, final loopback supervision, private/public 200 probes, and public Settings denial pass.
+- Next accountable role: Product Owner phone review. Commit/push remain separately gated.
+
 ## Active Revision — Resilient Copy Controls
 
 - Assignment: `PHR-RESILIENT-COPY-CONTROLS-20260803`

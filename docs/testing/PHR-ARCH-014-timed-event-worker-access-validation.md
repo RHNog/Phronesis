@@ -48,3 +48,16 @@ Result: Pass — Implemented And Live.
 - Migration proof: a legacy table receives `scope_type='EVENT'` additively and preserves its event identity. The live database reports one `EVENT` grant and the required non-null scope column.
 - `npx tsc --noEmit --incremental false`, warning-free `npm run lint`, Next.js 16.2.12 production build, and `git diff --check`: pass.
 - Live UI/runtime: private Settings contains the no-event task copy; public worker login contains generalized worker copy; private 9443 and public login return 200; public Settings returns 404; uncredentialed Artwork Review redirects; both services bind only to loopback and remain in detached sessions.
+
+## 2026-08-03 Issued-Code Continuity Amendment
+
+Result: Pass — Implemented And Live.
+
+- Focused timed-access, issued-code storage, and copy suites: 16/16 pass.
+- Full supported suite: 386/386 pass.
+- Rotation proof: an active unused code is replaced with a different valid code, the prior code fails immediately, only the replacement redeems, authorization remains unchanged, and one secret-free audit event is recorded. Post-redemption rotation fails.
+- Browser-session proof: an active unexpired code restores only when owner-authorized server truth confirms the same active grant. Expired, redeemed/revoked/missing, malformed, and targeted-cleanup cases are removed correctly.
+- UI contract: same-tab continuity, stable history login links, two-step `Replace lost code` confirmation, and the owner-only `PATCH` route are present.
+- TypeScript, warning-free lint, Next.js 16.2.12 production build, and `git diff --check`: pass.
+- A 390×844 browser review confirms Settings and public login remain free of horizontal overflow. No real credential was created or rotated for visual testing.
+- Final live runtime: private Settings and public login return 200; public Settings remains 404; app and gateway remain loopback-only in detached supervisors.

@@ -28,3 +28,10 @@ Temporary access ends at expiry or event closure and can be revoked immediately.
 - Settings stays usable without an event, defaults to Artwork Review only, disables event-bound choices until an event exists, and labels issued task/event access explicitly.
 - Existing grants migrated additively as `EVENT`; no historical or active access was broadened.
 - Worker-facing login now says temporary worker access instead of implying every code joins an event.
+
+## 2026-08-03 Issued-Code Continuity And Safe Replacement
+
+- The latest unused code now survives page navigation in the same authenticated owner tab through ephemeral session storage and is restored only after the server confirms that grant remains active.
+- Active and redeemed access rows always retain the public worker login-link copy control.
+- An active row whose code is no longer available locally now offers a two-step `Replace lost code` action. Confirmation rotates the server hash, invalidates the old code immediately, preserves access scope and expiry, returns the new code once, and records a secret-free audit event.
+- Redeemed, expired, revoked, event-closed, malformed, or unauthorized browser-session values are removed and can never be recovered from the server.

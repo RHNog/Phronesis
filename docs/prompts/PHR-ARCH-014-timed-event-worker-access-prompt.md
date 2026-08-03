@@ -18,6 +18,8 @@ Public-ingress amendment (2026-08-03): implement and activate a separate loopbac
 
 Timed-task amendment (2026-08-03): allow Artwork Review-only codes without an active Event Ledger event. Classify grants immutably as `TASK` or `EVENT`; any transactional module forces `EVENT` scope and preserves event-closure invalidation.
 
+Issued-code continuity amendment (2026-08-03): preserve the latest unused plaintext code only in the authenticated owner tab's `sessionStorage`, reconcile it against owner-only server grant truth after navigation, keep the public login link available in active/redeemed history, and provide audited owner-confirmed rotation for an active unused code that was lost.
+
 ## Required Reading
 
 - `docs/architecture/PHR-ARCH-014-timed-event-worker-access.md`
@@ -44,10 +46,13 @@ Timed-task amendment (2026-08-03): allow Artwork Review-only codes without an ac
 - Install the gateway as an independent LaunchAgent, configure its public origin for Settings link generation, and expose only the unused Funnel port `10000`; never alter the existing 9443 Serve mapping.
 - Verify public unauthenticated denial, public login availability, owner-only path denial, private owner-path continuity, gateway loopback binding, and Funnel status. Do not create a live test code unless necessary; if created, revoke it after verification.
 - Keep the temporary-access form visible without an event. Default it to Artwork Review-only, disable event-module controls until an event exists, label task versus event behavior clearly, and show the scope in issued-access history.
+- Retain the latest unused issued code across same-tab navigation in browser `sessionStorage`, but restore it only after an owner-authorized listing confirms the grant remains active and unexpired. Clear it on authorization failure, redemption, expiry, revocation, mismatch, or malformed data.
+- Keep the stable public worker login link copy control on active and redeemed history rows.
+- Add a two-step `Replace lost code` action for active unused grants. Rotate the salted code hash atomically, invalidate the old code immediately, preserve expiry/scope/event/entitlements, return the new plaintext once, and audit only non-secret rotation metadata.
 
 ## Constraints
 
-- Never store or log plaintext codes or session tokens.
+- Never store or log plaintext codes or session tokens server-side. The only plaintext continuity exception is the latest unused code in the authenticated owner tab's ephemeral `sessionStorage`; never use durable browser storage.
 - Never insert synthetic workers into Better Auth or permanent membership tables.
 - Never grant `ADMINISTRATION` or any `ADMIN` level through event access.
 - Preserve OPTIONAL-mode compatibility on the private owner path. Public gateway ingress must enforce timed event sessions independently; switching the entire private application to `REQUIRED` remains a separate owner-login rollout.

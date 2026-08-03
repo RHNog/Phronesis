@@ -103,6 +103,28 @@ export class EventAccessRepository {
     return rows.map((row) => this.mapGrant(row, at));
   }
 
+  rotateGrantCode(workspaceId: string, grantId: string, actorUserId: string, at = new Date()): EventAccessGrant {
+    const row = this.database.prepare(`SELECT g.*, e.name event_name, e.status event_status
+      FROM phronesis_event_access_grant g
+      LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id
+      WHERE g.id=? AND g.workspace_id=?`).get(grantId, workspaceId) as SqlRow | undefined;
+    if (!row || this.mapGrant(row, at).status !== "ACTIVE") throw new Error("Only an unused, unexpired worker code can be replaced.");
+
+    const plaintext = code();
+    const salt = randomBytes(16).toString("hex");
+    const codeHash = scryptSync(normalizeCode(plaintext), salt, 32).toString("hex");
+    const updated = this.database.prepare(`UPDATE phronesis_event_access_grant
+      SET code_hash=?, code_salt=?
+      WHERE id=? AND workspace_id=? AND status='ACTIVE' AND expires_at>?
+        AND (scope_type='TASK' OR EXISTS (
+          SELECT 1 FROM phronesis_purchase_event e WHERE e.id=phronesis_event_access_grant.event_id AND e.workspace_id=? AND e.status='ACTIVE'
+        ))`).run(codeHash, salt, grantId, workspaceId, at.toISOString(), workspaceId);
+    if (Number(updated.changes) !== 1) throw new Error("Only an unused, unexpired worker code can be replaced.");
+
+    this.audit(workspaceId, actorUserId, "EVENT_ACCESS_CODE_ROTATED", grantId, { previousCodeInvalidated: true });
+    return { ...this.mapGrant(row, at), code: plaintext };
+  }
+
   redeem(value: string, bucketHash: string, at = new Date()): { token: string; expiresAt: string; grant: EventAccessGrant } {
     this.assertRateLimit(bucketHash, at);
     const candidate = normalizeCode(value);
