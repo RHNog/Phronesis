@@ -37,6 +37,7 @@ export async function GET(request: Request) {
     const pricing = repository.search(categoryId, query);
     const matches = [...pricing.singles, ...pricing.sealed];
     const persistedArtwork = repository.getArtworkResolutions(matches);
+    const artworkProvenance = repository.getArtworkResolutionProvenance(matches);
     const localArtwork: Record<string, { normal: string }> = {};
     await Promise.all(matches.map(async (match) => {
       if (match.imageUrl) localArtwork[match.sku] = { normal: match.imageUrl };
@@ -71,7 +72,7 @@ export async function GET(request: Request) {
     const artwork = { ...providerArtwork, ...localArtwork };
     const providerReachable = providers.some((provider) => !provider.errorMessage);
     return NextResponse.json(
-      { artwork, status: Object.keys(artwork).length ? "OPERATIONAL" : providerReachable || queries.length === 0 ? "NO_MATCH" : "UNAVAILABLE" },
+      { artwork, artworkProvenance, status: Object.keys(artwork).length ? "OPERATIONAL" : providerReachable || queries.length === 0 ? "NO_MATCH" : "UNAVAILABLE" },
       { headers: { "Cache-Control": "private, max-age=300" } },
     );
   } catch {

@@ -5,6 +5,12 @@ import { DatabaseSync } from "node:sqlite";
 
 export const PRICECHARTING_SCHEMA_VERSION = "pricecharting-price-guide-v3";
 export const PRICECHARTING_RESOLVER_VERSION = "pokemon-en-v9";
+export const PRICECHARTING_RESOLVER_VERSIONS = {
+  "pokemon-en": PRICECHARTING_RESOLVER_VERSION,
+  "magic-en": "magic-en-v2",
+  "onepiece-en": "onepiece-en-v3",
+} as const;
+export type PriceChartingGameProfile = keyof typeof PRICECHARTING_RESOLVER_VERSIONS;
 export const PRICECHARTING_HEADERS = [
   "id", "console-name", "product-name", "loose-price", "cib-price", "new-price",
   "graded-price", "box-only-price", "manual-only-price", "bgs-10-price",
@@ -17,6 +23,11 @@ export const PRICECHARTING_HEADERS = [
 export type ResolutionState = "AUTO_ACCEPTED" | "REVIEW_REQUIRED" | "AMBIGUOUS" | "TARGET_COLLISION" | "UNMATCHED" | "QUARANTINED" | "UNSUPPORTED" | "SUPERSEDED";
 type ProductType = "SINGLE" | "SEALED" | "UNSUPPORTED_COLLECTIBLE" | "UNRESOLVED";
 type CsvRow = Record<(typeof PRICECHARTING_HEADERS)[number], string>;
+
+export type PriceChartingCsvInspection = {
+  expectedGameRows: number;
+  rowCount: number;
+};
 
 export type PriceChartingImportReport = {
   receiptId: number;
@@ -73,6 +84,78 @@ function normalizeSet(value: string): string {
   if (/^(scarlet violet|sword shield|black white) base set$/.test(normalized)) normalized = normalized.replace(/ base set$/, "");
   if (normalized === "firered leafgreen") normalized = "fire red leaf green";
   return normalized;
+}
+function compactWords(value: string): string { return value.replace(/\s+/g, " ").trim(); }
+function canonicalMagicSet(value: string): string {
+  let normalized = normalize(value)
+    .replace(/^(?:magic\s+)+/, "")
+    .replace(/^universes beyond\s+/, "")
+    .replace(/\bthe\b/g, " ")
+    .replace(/\bmarvel s\b/g, "marvel")
+    .replace(/\burzas\b/g, "urza s");
+  normalized = compactWords(normalized);
+  normalized = normalized
+    .replace(/^secret lair drop$/, "secret lair drop series")
+    .replace(/^mystery booster$/, "list reprints")
+    .replace(/^brother s war$/, "brothers war")
+    .replace(/^brother s war retro artifacts$/, "brothers war retro frame artifacts")
+    .replace(/^30th anniversary$/, "30th anniversary edition")
+    .replace(/ eternal$/, " eternal legal")
+    .replace(/^ravnica$/, "ravnica city of guilds")
+    .replace(/^multiverse legends$/, "march of machine multiverse legends")
+    .replace(/^dragons maze$/, "dragon s maze")
+    .replace(/^friday night$/, "friday night magic")
+    .replace(/^revised$/, "revised edition")
+    .replace(/^unlimited$/, "unlimited edition")
+    .replace(/^alpha$/, "alpha edition")
+    .replace(/^beta$/, "beta edition")
+    .replace(/^4th edition$/, "fourth edition")
+    .replace(/^5th edition$/, "fifth edition")
+    .replace(/^6th edition$/, "classic sixth edition")
+    .replace(/^time spiral timeshifted$/, "time spiral")
+    .replace(/^masterpiece series /, "")
+    .replace(/^duel decks? /, "")
+    .replace(/^duel deck /, "");
+  const mSet = normalized.match(/^m(10|11|12|13|14|15)$/);
+  if (mSet) normalized = `20${mSet[1]} m${mSet[1]}`;
+  const coreSet = normalized.match(/^core set 20(10|11|12|13|14|15)$/);
+  if (coreSet) normalized = `20${coreSet[1]} m${coreSet[1]}`;
+  if (/ art series$/.test(normalized)) normalized = `art series ${normalized.replace(/ art series$/, "")}`;
+  if (/ commander$/.test(normalized)) normalized = `commander ${normalized.replace(/ commander$/, "")}`;
+  normalized = normalized
+    .replace(/^commander new capenna$/, "commander streets of new capenna")
+    .replace(/^commander midnight hunt$/, "commander innistrad midnight hunt")
+    .replace(/^commander brother s war$/, "commander brothers war")
+    .replace(/lord of rings(?: tales of middle earth)?/g, "lord of rings");
+  return compactWords(normalized);
+}
+function canonicalOnePieceSet(value: string): string {
+  let normalized = normalize(value)
+    .replace(/^(?:one piece (?:japanese )?)+/, "")
+    .replace(/ cards?$/, "")
+    .replace(/^the /, "")
+    .replace(/^a /, "")
+    .replace(/ one piece /g, " ")
+    .replace(/^promo$/, "promotion")
+    .replace(/^premium booster 2$/, "premium booster the best vol 2")
+    .replace(/^premium booster$/, "premium booster the best")
+    .replace(/^extra booster eb04$/, "adventure on kami s island")
+    .replace(/^starter starter deck /, "starter deck ")
+    .replace(/^starter deck 21 gear5$/, "starter deck ex gear 5")
+    .replace(/^starter deck ex 30 /, "starter deck ex ");
+  normalized = compactWords(normalized);
+  if (/^starter deck \d+(?: .*)?$/.test(normalized)) normalized = normalized.match(/^starter deck \d+/)![0];
+  return normalized;
+}
+
+function canonicalProfileName(gameProfile: PriceChartingGameProfile, value: string): string {
+  const normalized = normalize(value);
+  return gameProfile === "onepiece-en" ? normalized.replace(/\s+/g, "") : normalized;
+}
+function canonicalProfileSet(gameProfile: PriceChartingGameProfile, value: string): string {
+  if (gameProfile === "magic-en") return canonicalMagicSet(value);
+  if (gameProfile === "onepiece-en") return canonicalOnePieceSet(value);
+  return normalizeSet(value);
 }
 function setCompatible(sourceValue: string, targetValue: string, sourceCollector: string | null, targetCollector: string | null, targetName: string, qualifiers: string[]): boolean {
   const source = normalizeSet(sourceValue); const target = normalizeSet(targetValue);
@@ -134,6 +217,27 @@ function parseCsv(csv: string): string[][] {
   if (field.length || row.length) { row.push(field.replace(/\r$/, "")); rows.push(row); }
   return rows.filter((candidate) => candidate.some((value) => value !== ""));
 }
+
+export function inspectPriceChartingCsv(source: string, gameProfile: PriceChartingGameProfile): PriceChartingCsvInspection {
+  const rows = parseCsv(source);
+  const headers = rows.shift();
+  if (!headers || headers.length !== PRICECHARTING_HEADERS.length || headers.some((value, index) => value !== PRICECHARTING_HEADERS[index])) {
+    throw new Error(`PriceCharting schema drift: expected the approved ${PRICECHARTING_HEADERS.length}-column contract.`);
+  }
+  let expectedGameRows = 0;
+  for (const values of rows) {
+    if (values.length !== PRICECHARTING_HEADERS.length) throw new Error("PriceCharting CSV contains a shifted column count.");
+    const row = Object.fromEntries(PRICECHARTING_HEADERS.map((header, position) => [header, values[position]])) as CsvRow;
+    const evidence = `${row["console-name"]} ${row.genre}`.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (gameProfile === "magic-en" && hasTerm(evidence, "magic")) expectedGameRows += 1;
+    else if (gameProfile === "onepiece-en" && evidence.includes("one piece")) expectedGameRows += 1;
+    else if (gameProfile === "pokemon-en" && hasTerm(evidence, "pokemon")) expectedGameRows += 1;
+  }
+  if (rows.length === 0 || expectedGameRows / rows.length < 0.95) {
+    throw new Error(`PriceCharting game-profile mismatch: ${gameProfile} evidence was found in only ${expectedGameRows} of ${rows.length} rows.`);
+  }
+  return { expectedGameRows, rowCount: rows.length };
+}
 function cents(value: string): number | null {
   if (!value.trim()) return null;
   const normalized = value.trim().replace(/^\$/, "").replaceAll(",", "");
@@ -148,18 +252,26 @@ function validDate(value: string): string | null {
   const date = new Date(`${value}T00:00:00Z`);
   return Number.isNaN(date.valueOf()) || date.toISOString().slice(0, 10) !== value ? null : value;
 }
-function parseIdentity(row: CsvRow) {
-  const numberMatch = row["product-name"].match(/(?:^|\s)#([A-Za-z]*\d+[A-Za-z]*(?:\/\d+)?)\b/);
+function parseIdentity(row: CsvRow, gameProfile: PriceChartingGameProfile) {
+  const onePiecePattern = /(?:^|\s)#?((?:OP|ST|EB|PRB|PBR|EX|DP)\d{2}-\d{3}|P-\d{3})\b/gi;
+  const onePieceMatches = gameProfile === "onepiece-en" ? [...row["product-name"].matchAll(onePiecePattern)] : [];
+  const numberMatch = gameProfile === "onepiece-en"
+    ? onePieceMatches.at(-1)
+    : row["product-name"].match(/(?:^|\s)#([A-Za-z]*\d+[A-Za-z]*(?:\/\d+)?)\b/);
   const qualifiers = [...row["product-name"].matchAll(/\[([^\]]+)\]|\(([^)]+)\)/g)].map((match) => normalize(match[1] ?? match[2]));
-  const baseName = row["product-name"].replace(/(?:^|\s)#[A-Za-z]*\d+[A-Za-z]*(?:\/\d+)?\b/g, " ").replace(/\[[^\]]+\]|\([^)]+\)/g, " ").trim();
+  const baseName = row["product-name"]
+    .replace(gameProfile === "onepiece-en" ? onePiecePattern : /(?:^|\s)#[A-Za-z]*\d+[A-Za-z]*(?:\/\d+)?\b/g, " ")
+    .replace(/\[[^\]]+\]|\([^)]+\)/g, " ").trim();
   return { baseName, collectorNumber: canonicalCollector(numberMatch?.[1] ?? null), qualifiers };
 }
-function classify(row: CsvRow): ProductType {
+function classify(row: CsvRow, gameProfile: PriceChartingGameProfile): ProductType {
   const genre = row.genre.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const catalogue = row["console-name"].toLowerCase();
   if (/topps|kfc|burger king|marble|sticker|coin|figure/.test(catalogue)) return "UNSUPPORTED_COLLECTIBLE";
   if (!genre || /^\d+$/.test(genre)) return "UNRESOLVED";
   if (/sealed/.test(genre)) return "SEALED";
+  if (gameProfile === "magic-en") return /magic card/.test(genre) ? "SINGLE" : "UNSUPPORTED_COLLECTIBLE";
+  if (gameProfile === "onepiece-en") return /one piece.*card/.test(genre) ? "SINGLE" : "UNSUPPORTED_COLLECTIBLE";
   if (/card|pokemon/.test(genre)) return "SINGLE";
   return "UNSUPPORTED_COLLECTIBLE";
 }
@@ -184,6 +296,151 @@ function variationCompatible(qualifiers: string[], targetVariant: string, target
   if (!distributionQualifiers.every((term) => hasTerm(source, term) === hasTerm(target, term))) return false;
   const collectorDerivedQualifiers = ["alternate", "secret", "full art", "illustration", "rainbow", "gold", "shiny"];
   return collectorDerivedQualifiers.every((term) => !hasTerm(source, term) || hasTerm(target, term));
+}
+type PriceChartingTarget = Record<string, unknown>;
+type ResolutionCandidate = { target: PriceChartingTarget; method: string };
+
+function targetAnnotations(targetName: string): string[] {
+  return [...targetName.matchAll(/\[([^\]]+)\]|\(([^)]+)\)/g)]
+    .map((match) => normalize(match[1] ?? match[2]))
+    .filter((annotation) => annotation && !/^\d+$/.test(annotation) && !/^(?:op|st|eb|prb|pbr|ex|dp)\d{2} \d{3}$/.test(annotation));
+}
+
+function canonicalMagicTreatment(value: string): string {
+  let treatment = normalize(value)
+    .replace(/\bpre release\b/g, "prerelease")
+    .replace(/\bfoil etched\b/g, "etched foil")
+    .replace(/^alternate$/, "alternate art")
+    .replace(/^extended$/, "extended art")
+    .replace(/^retro$/, "retro frame")
+    .replace(/^gold signature$/, "gold stamped signature");
+  const finishQualified = /^(extended art|borderless|showcase|retro frame|promo|alternate art|full art|prerelease) foil$/.exec(treatment);
+  if (finishQualified) treatment = finishQualified[1];
+  return compactWords(treatment);
+}
+
+function magicVariationCompatible(qualifiers: string[], target: PriceChartingTarget, sourceHasCollector: boolean): boolean {
+  const sourceTreatments = qualifiers.map(canonicalMagicTreatment).filter(Boolean);
+  const sourceFoil = sourceTreatments.some((value) => value.includes("foil")) || qualifiers.some((value) => /foil/.test(value));
+  const targetFoil = normalize(String(target.variant)).includes("foil");
+  if (sourceFoil !== targetFoil) return false;
+  const meaningful = sourceTreatments.filter((value) => value !== "foil");
+  const annotations = targetAnnotations(String(target.name)).map(canonicalMagicTreatment);
+  const targetText = normalize(`${annotations.join(" ")} ${target.variant} ${target.set_name}`);
+  if (meaningful.length === 0) return sourceHasCollector || annotations.length === 0;
+  return meaningful.every((treatment) => hasTerm(targetText, treatment) || targetText.includes(treatment));
+}
+
+function canonicalOnePieceQualifier(value: string): string {
+  return compactWords(normalize(value)
+    .replace(/\balt art\b/g, "alternate art")
+    .replace(/\bpre release\b/g, "pre release")
+    .replace(/\balternate art manga\b/g, "manga")
+    .replace(/\bsp foil\b/g, "sp")
+    .replace(/\bparallel foil\b/g, "parallel"));
+}
+
+function onePieceVariationCompatible(qualifiers: string[], target: PriceChartingTarget): boolean {
+  const source = qualifiers.map(canonicalOnePieceQualifier).filter(Boolean);
+  const annotations = targetAnnotations(String(target.name));
+  const targetText = normalize(`${annotations.join(" ")} ${target.variant} ${target.set_name}`);
+  const sourceText = normalize(source.join(" "));
+  const sourceFoil = hasTerm(sourceText, "foil");
+  const targetFoil = normalize(String(target.variant)).includes("foil");
+  if (sourceFoil && !targetFoil) return false;
+
+  const prb2 = /\bprb\s*0?2\b/.test(sourceText);
+  const prb1 = /\bprb\s*0?1\b|\bprb01\b/.test(sourceText);
+  const targetSet = canonicalOnePieceSet(String(target.set_name));
+  if (prb2 && targetSet !== "premium booster the best vol 2") return false;
+  if (prb1 && targetSet !== "premium booster the best") return false;
+
+  const semanticSource = compactWords(sourceText
+    .replace(/\bprb\s*0?[12]\b|\bprb0?[12]\b/g, " ")
+    .replace(/\bholofoil\b|\bholo\b|\bfoil\b/g, " "));
+  const meaningful = semanticSource ? [semanticSource] : [];
+  if (meaningful.length === 0) {
+    if (prb2 && sourceFoil) return hasTerm(targetText, "pirate foil");
+    if ((prb1 || prb2) && annotations.length > 0) return hasTerm(targetText, "reprint");
+    return annotations.length === 0;
+  }
+  return meaningful.every((qualifier) => {
+    if (qualifier === "manga") return hasTerm(targetText, "manga");
+    if (qualifier === "red alternate art") return hasTerm(targetText, "red super alternate art");
+    if (qualifier === "special alternate art") return hasTerm(targetText, "super alternate art") && !hasTerm(targetText, "red");
+    if (qualifier === "alternate art") return (hasTerm(targetText, "alternate art") || hasTerm(targetText, "parallel")) && !/\b(?:manga|super|red|wanted)\b/.test(targetText);
+    if (qualifier === "full art") return hasTerm(targetText, "full art");
+    if (qualifier === "jolly roger") return hasTerm(targetText, "jolly roger");
+    if (qualifier === "textured") return hasTerm(targetText, "textured");
+    if (qualifier === "sp") return hasTerm(targetText, "sp");
+    if (qualifier.includes("pre release")) return hasTerm(targetText, "pre release");
+    if (qualifier === "reprint") return hasTerm(targetText, "reprint");
+    if (qualifier === "winner") return hasTerm(targetText, "winner");
+    return targetText.includes(qualifier);
+  });
+}
+
+function localGameBaseName(value: string): string {
+  return value
+    .replace(/\s+-\s+(?:(?:OP|ST|EB|PRB|PBR|EX|DP)\d{2}-\d{3}|P-\d{3})(?:\s.*)?$/i, " ")
+    .replace(/\[[^\]]+\]|\([^)]+\)/g, " ")
+    .trim();
+}
+
+function pushIndex(index: Map<string, PriceChartingTarget[]>, key: string, target: PriceChartingTarget): void {
+  index.set(key, [...(index.get(key) ?? []), target]);
+}
+
+function buildProfileIndexes(gameProfile: PriceChartingGameProfile, products: PriceChartingTarget[]) {
+  const bySetName = new Map<string, PriceChartingTarget[]>();
+  const bySetNameCollector = new Map<string, PriceChartingTarget[]>();
+  const byNameCollector = new Map<string, PriceChartingTarget[]>();
+  for (const product of products) {
+    const baseName = canonicalProfileName(gameProfile, gameProfile === "pokemon-en" ? localBaseName(String(product.name)) : localGameBaseName(String(product.name)));
+    const setName = canonicalProfileSet(gameProfile, String(product.set_name));
+    const collector = collectorLookupKey(product.collector_number ? String(product.collector_number) : null);
+    pushIndex(bySetName, `${setName}|${baseName}`, product);
+    pushIndex(bySetNameCollector, `${setName}|${baseName}|${collector}`, product);
+    pushIndex(byNameCollector, `${baseName}|${collector}`, product);
+  }
+  return { bySetName, bySetNameCollector, byNameCollector };
+}
+
+function resolveMagicRecord(record: Record<string, unknown>, indexes: ReturnType<typeof buildProfileIndexes>): ResolutionCandidate[] {
+  const setName = canonicalMagicSet(String(record.set_evidence));
+  const baseName = normalize(String(record.base_name));
+  const sourceCollector = record.collector_number ? String(record.collector_number) : null;
+  const qualifiers = JSON.parse(String(record.qualifiers_json)) as string[];
+  let candidates = indexes.bySetName.get(`${setName}|${baseName}`) ?? [];
+  if (sourceCollector) candidates = candidates.filter((target) => collectorCompatible(sourceCollector, target.collector_number ? String(target.collector_number) : null));
+  candidates = candidates.filter((target) => magicVariationCompatible(qualifiers, target, Boolean(sourceCollector)));
+  if (candidates.length === 0 && qualifiers.some((qualifier) => /prerelease|pre release|promo|judge|launch/.test(qualifier))) {
+    const collector = collectorLookupKey(sourceCollector);
+    candidates = (indexes.byNameCollector.get(`${baseName}|${collector}`) ?? []).filter((target) => magicVariationCompatible(qualifiers, target, Boolean(sourceCollector)));
+    return candidates.map((target) => ({ target, method: "DOCUMENTED_CROSS_SET_VARIANT_IDENTITY" }));
+  }
+  const exactSet = normalize(String(record.set_evidence)) === normalize(candidates[0]?.set_name ? String(candidates[0].set_name) : "");
+  return candidates.map((target) => ({ target, method: exactSet ? "EXACT_PHYSICAL_IDENTITY" : "DOCUMENTED_SET_ALIAS_IDENTITY" }));
+}
+
+function resolveOnePieceRecord(record: Record<string, unknown>, indexes: ReturnType<typeof buildProfileIndexes>): ResolutionCandidate[] {
+  const setName = canonicalOnePieceSet(String(record.set_evidence));
+  const baseName = canonicalProfileName("onepiece-en", String(record.base_name));
+  const sourceCollector = record.collector_number ? String(record.collector_number) : null;
+  const collector = collectorLookupKey(sourceCollector);
+  const qualifiers = JSON.parse(String(record.qualifiers_json)) as string[];
+  const crossSetQualifier = qualifiers.some((qualifier) => /pre release|prerelease|promo|winner|judge|anniversary|championship|treasure|regionals|serial|sp(?: |$)|prb|reprint|best selection|event/.test(qualifier));
+  const exactKey = `${setName}|${baseName}|${collector}`;
+  let candidates = crossSetQualifier ? [] : indexes.bySetNameCollector.get(exactKey) ?? [];
+  candidates = candidates.filter((target) => collectorCompatible(sourceCollector, target.collector_number ? String(target.collector_number) : null)).filter((target) => onePieceVariationCompatible(qualifiers, target));
+  let method = normalize(String(record.set_evidence)) === normalize(candidates[0]?.set_name ? String(candidates[0].set_name) : "") ? "EXACT_PHYSICAL_IDENTITY" : "DOCUMENTED_SET_ALIAS_IDENTITY";
+  if (candidates.length === 0 && sourceCollector) {
+    candidates = (indexes.byNameCollector.get(`${baseName}|${collector}`) ?? [])
+      .filter((target) => collectorCompatible(sourceCollector, target.collector_number ? String(target.collector_number) : null))
+      .filter((target) => onePieceVariationCompatible(qualifiers, target));
+    method = "DOCUMENTED_CROSS_SET_VARIANT_IDENTITY";
+  }
+  return candidates.map((target) => ({ target, method }));
 }
 function targetFingerprint(target: Record<string, unknown>): string {
   return hash(JSON.stringify([target.category_id, target.sku, target.name, target.set_name, target.collector_number, target.variant, target.language]));
@@ -246,13 +503,15 @@ export class PriceChartingBulkRepository {
     `);
   }
 
-  getSummary() {
-    const state = this.database.prepare(`SELECT r.id,r.outcome,r.completed_at,r.source_row_count FROM provider_import_active_state a JOIN provider_import_receipt r ON r.id=a.active_receipt_id WHERE a.provider_id='pricecharting' AND a.dataset_kind='price-guide' AND a.game_profile='pokemon-en'`).get() as Record<string, unknown> | undefined;
-    const latest = this.database.prepare(`SELECT id,outcome,completed_at,source_row_count FROM provider_import_receipt WHERE provider_id='pricecharting' AND dataset_kind='price-guide' AND game_profile='pokemon-en' ORDER BY id DESC LIMIT 1`).get() as Record<string, unknown> | undefined;
+  getSummary(gameProfile: PriceChartingGameProfile = "pokemon-en") {
+    const state = this.database.prepare(`SELECT r.id,r.outcome,r.completed_at,r.source_row_count FROM provider_import_active_state a JOIN provider_import_receipt r ON r.id=a.active_receipt_id WHERE a.provider_id='pricecharting' AND a.dataset_kind='price-guide' AND a.game_profile=?`).get(gameProfile) as Record<string, unknown> | undefined;
+    const latest = this.database.prepare(`SELECT id,outcome,completed_at,source_row_count FROM provider_import_receipt WHERE provider_id='pricecharting' AND dataset_kind='price-guide' AND game_profile=? ORDER BY id DESC LIMIT 1`).get(gameProfile) as Record<string, unknown> | undefined;
     const reviewReceipt = state ?? latest;
     const review = reviewReceipt ? this.database.prepare(`SELECT COUNT(*) count FROM provider_identity_candidate WHERE receipt_id=? AND state IN ('REVIEW_REQUIRED','AMBIGUOUS','TARGET_COLLISION')`).get(Number(reviewReceipt.id)) as { count: number } : { count: 0 };
-    return { activeReceiptId: state ? Number(state.id) : null, latestReceiptId: latest ? Number(latest.id) : null, importedAt: reviewReceipt?.completed_at ? String(reviewReceipt.completed_at) : null, sourceRows: reviewReceipt ? Number(reviewReceipt.source_row_count) : 0, reviewRequired: Number(review.count), status: state ? "CURRENT" : latest?.outcome === "DRY_RUN" ? "DRY_RUN" : latest?.outcome === "FAILED" ? "FAILED" : "NOT_IMPORTED" };
+    return { gameProfile, activeReceiptId: state ? Number(state.id) : null, latestReceiptId: latest ? Number(latest.id) : null, importedAt: reviewReceipt?.completed_at ? String(reviewReceipt.completed_at) : null, sourceRows: reviewReceipt ? Number(reviewReceipt.source_row_count) : 0, reviewRequired: Number(review.count), status: state ? "CURRENT" : latest?.outcome === "DRY_RUN" ? "DRY_RUN" : latest?.outcome === "FAILED" ? "FAILED" : "NOT_IMPORTED" };
   }
+
+  getSummaries() { return (Object.keys(PRICECHARTING_RESOLVER_VERSIONS) as PriceChartingGameProfile[]).map((gameProfile) => this.getSummary(gameProfile)); }
 
   getEvidence(categoryId: string, sku: string): ImportedPriceChartingEvidence[] {
     const rows = this.database.prepare(`
@@ -261,9 +520,9 @@ export class PriceChartingBulkRepository {
       JOIN provider_identity_mapping m ON m.receipt_id=active.active_receipt_id
       JOIN provider_import_record r ON r.receipt_id=m.receipt_id AND r.provider_product_id=m.provider_product_id AND r.provider_id=m.provider_id
       JOIN provider_import_receipt receipt ON receipt.id=active.active_receipt_id
-      WHERE active.provider_id='pricecharting' AND active.dataset_kind='price-guide' AND active.game_profile='pokemon-en'
+      WHERE active.provider_id='pricecharting' AND active.dataset_kind='price-guide' AND active.game_profile=?
         AND m.target_category_id=? AND m.target_sku=?
-    `).all(categoryId, sku) as Array<Record<string, unknown>>;
+    `).all(categoryId, categoryId, sku) as Array<Record<string, unknown>>;
     return rows.map((row) => ({
       id: String(row.provider_product_id), productName: String(row.product_name), catalogueName: String(row.catalogue_name),
       prices: JSON.parse(String(row.values_json)) as Record<string, number | null>, observedAt: String(row.completed_at), source: "IMPORTED" as const,
@@ -273,11 +532,13 @@ export class PriceChartingBulkRepository {
 }
 
 export function importPriceChartingCsv(options: { file: string; databasePath: string; receiptDirectory: string; gameProfile?: string; apply?: boolean; applicationVersion?: string }): PriceChartingImportReport {
-  const gameProfile = options.gameProfile ?? "pokemon-en";
-  if (gameProfile !== "pokemon-en") throw new Error(`Unsupported PriceCharting game profile: ${gameProfile}`);
+  const requestedProfile = options.gameProfile ?? "pokemon-en";
+  if (!(requestedProfile in PRICECHARTING_RESOLVER_VERSIONS)) throw new Error(`Unsupported PriceCharting game profile: ${requestedProfile}`);
+  const gameProfile = requestedProfile as PriceChartingGameProfile;
+  const resolverVersion = PRICECHARTING_RESOLVER_VERSIONS[gameProfile];
   const source = readFileSync(options.file, "utf8"); const sourceHash = hash(source); const metadata = statSync(options.file);
-  const rows = parseCsv(source); const headers = rows.shift();
-  if (!headers || headers.length !== PRICECHARTING_HEADERS.length || headers.some((value, index) => value !== PRICECHARTING_HEADERS[index])) throw new Error(`PriceCharting schema drift: expected the approved ${PRICECHARTING_HEADERS.length}-column contract.`);
+  inspectPriceChartingCsv(source, gameProfile);
+  const rows = parseCsv(source); rows.shift();
   mkdirSync(options.receiptDirectory, { recursive: true });
   const immutablePath = join(options.receiptDirectory, `${sourceHash}-${basename(options.file)}`);
   if (immutablePath !== options.file) copyFileSync(options.file, immutablePath);
@@ -287,11 +548,11 @@ export function importPriceChartingCsv(options: { file: string; databasePath: st
   let receiptId: number;
   if (existing) receiptId = Number(existing.id);
   else {
-    const result = database.prepare(`INSERT INTO provider_import_receipt(provider_id,dataset_kind,game_profile,schema_contract_version,resolver_version,source_hash,byte_count,source_modified_at,started_at,application_version,outcome,immutable_path) VALUES('pricecharting','price-guide',?,?,?,?,?,?,?,?,'PROCESSING',?)`).run(gameProfile, PRICECHARTING_SCHEMA_VERSION, PRICECHARTING_RESOLVER_VERSION, sourceHash, metadata.size, metadata.mtime.toISOString(), now, options.applicationVersion ?? "0.1.0", immutablePath);
+    const result = database.prepare(`INSERT INTO provider_import_receipt(provider_id,dataset_kind,game_profile,schema_contract_version,resolver_version,source_hash,byte_count,source_modified_at,started_at,application_version,outcome,immutable_path) VALUES('pricecharting','price-guide',?,?,?,?,?,?,?,?,'PROCESSING',?)`).run(gameProfile, PRICECHARTING_SCHEMA_VERSION, resolverVersion, sourceHash, metadata.size, metadata.mtime.toISOString(), now, options.applicationVersion ?? "0.1.0", immutablePath);
     receiptId = Number(result.lastInsertRowid);
   }
   const priorActive = database.prepare(`SELECT active_receipt_id FROM provider_import_active_state WHERE provider_id='pricecharting' AND dataset_kind='price-guide' AND game_profile=?`).get(gameProfile) as { active_receipt_id: number } | undefined;
-  if (existing && existing.resolver_version === PRICECHARTING_RESOLVER_VERSION && (!options.apply || existing.outcome === "APPLIED")) {
+  if (existing && existing.resolver_version === resolverVersion && (!options.apply || existing.outcome === "APPLIED")) {
     const report = existing.report_path ? JSON.parse(readFileSync(String(existing.report_path), "utf8")) as PriceChartingImportReport : null;
     database.close();
     if (report) return { ...report, outcome: "ALREADY_IMPORTED" };
@@ -304,11 +565,11 @@ export function importPriceChartingCsv(options: { file: string; databasePath: st
         if (values.length !== PRICECHARTING_HEADERS.length) throw new Error(`Shifted column count at source row ${index + 2}.`);
         const row = Object.fromEntries(PRICECHARTING_HEADERS.map((header, position) => [header, values[position]])) as CsvRow;
         if (!/^\d+$/.test(row.id)) throw new Error(`Invalid PriceCharting ID at source row ${index + 2}.`);
-        const identity = parseIdentity(row); const productType = classify(row);
+        const identity = parseIdentity(row, gameProfile); const productType = classify(row, gameProfile);
         const language = /japanese|korean|chinese|german|french|spanish|italian|portuguese/.test(normalize(row["console-name"])) ? "NON_ENGLISH" : "ENGLISH";
         const priceMap = { Ungraded: cents(row["loose-price"]), "Grade 7/7.5": cents(row["cib-price"]), "Grade 8/8.5": cents(row["new-price"]), "Grade 9": cents(row["graded-price"]), "Grade 9.5": cents(row["box-only-price"]), "PSA 10": cents(row["manual-only-price"]), "BGS 10": cents(row["bgs-10-price"]), "CGC 10": cents(row["condition-17-price"]), "SGC 10": cents(row["condition-18-price"]), "Retail Loose Buy": cents(row["retail-loose-buy"]), "Retail Loose Sell": cents(row["retail-loose-sell"]), "Retail CIB Buy": cents(row["retail-cib-buy"]), "Retail CIB Sell": cents(row["retail-cib-sell"]), "Retail New Buy": cents(row["retail-new-buy"]), "Retail New Sell": cents(row["retail-new-sell"]) };
         const releaseDate = validDate(row["release-date"]); const validationReason = row["release-date"] && !releaseDate ? "INVALID_RELEASE_DATE" : productType === "UNRESOLVED" ? "UNKNOWN_GENRE" : null;
-        const identityFingerprint = hash(JSON.stringify([normalize(identity.baseName), normalizeSet(row["console-name"]), identity.collectorNumber, identity.qualifiers, language, productType]));
+        const identityFingerprint = hash(JSON.stringify([normalize(identity.baseName), canonicalProfileSet(gameProfile, row["console-name"]), identity.collectorNumber, identity.qualifiers, language, productType]));
         insertRecord.run(receiptId, row.id, index + 2, gameProfile, language, productType, row["console-name"], row["product-name"], identity.baseName, row["console-name"], identity.collectorNumber, JSON.stringify(identity.qualifiers), row["tcg-id"] || null, row.upc || null, row.asin || null, row.epid || null, releaseDate, /^\d+$/.test(row["sales-volume"]) ? Number(row["sales-volume"]) : null, identityFingerprint, hash(JSON.stringify(priceMap)), JSON.stringify(priceMap), validationReason);
       });
       database.exec("COMMIT");
@@ -316,7 +577,8 @@ export function importPriceChartingCsv(options: { file: string; databasePath: st
   }
   database.prepare("DELETE FROM provider_identity_candidate WHERE receipt_id=?").run(receiptId);
   const records = database.prepare("SELECT * FROM provider_import_record WHERE receipt_id=? ORDER BY source_row_number").all(receiptId) as Array<Record<string, unknown>>;
-  const products = database.prepare("SELECT category_id,sku,name,set_name,collector_number,variant,language,product_type FROM pricing_products WHERE category_id='pokemon-en'").all() as Array<Record<string, unknown>>;
+  const products = database.prepare("SELECT category_id,sku,name,set_name,collector_number,variant,language,product_type FROM pricing_products WHERE category_id=?").all(gameProfile) as Array<Record<string, unknown>>;
+  const profileIndexes = buildProfileIndexes(gameProfile, products);
   const indexes = new Map<string, Array<Record<string, unknown>>>();
   const setCollectorIndexes = new Map<string, Array<Record<string, unknown>>>();
   for (const product of products) {
@@ -346,6 +608,13 @@ export function importPriceChartingCsv(options: { file: string; databasePath: st
     const priorMapping = priorMappings.get(String(record.provider_product_id));
     if (priorMapping && priorMapping.source_identity_fingerprint === record.identity_fingerprint && priorMapping.target_identity_fingerprint === targetFingerprint(priorMapping)) {
       resolutions.push({ record, state: "AUTO_ACCEPTED", target: priorMapping, method: "EXISTING_ACCEPTED_PROVIDER_MAPPING", reason: "UNCHANGED_ACCEPTED_MAPPING" }); continue;
+    }
+    if (gameProfile !== "pokemon-en") {
+      const candidates = gameProfile === "magic-en" ? resolveMagicRecord(record, profileIndexes) : resolveOnePieceRecord(record, profileIndexes);
+      if (candidates.length === 1) resolutions.push({ record, state: "AUTO_ACCEPTED", target: candidates[0].target, method: candidates[0].method, reason: "UNIQUE_PHYSICAL_IDENTITY" });
+      else if (candidates.length > 1) resolutions.push({ record, state: "AMBIGUOUS", reason: "MULTIPLE_TARGETS" });
+      else resolutions.push({ record, state: "UNMATCHED", reason: "NO_EXACT_PHYSICAL_IDENTITY" });
+      continue;
     }
     const key = `${normalize(String(record.base_name))}|${collectorLookupKey(record.collector_number ? String(record.collector_number) : null)}`;
     const sourceCollector = record.collector_number ? String(record.collector_number) : null; const sourceSet = String(record.set_evidence); const qualifiers = JSON.parse(String(record.qualifiers_json)) as string[];
@@ -415,8 +684,8 @@ export function importPriceChartingCsv(options: { file: string; databasePath: st
   for (const [productType, metricValue] of Object.entries(countsByProductType)) insertMetric.run(receiptId, "product_type", productType, metricValue);
   for (const [method, metricValue] of Object.entries(countsByMethod)) insertMetric.run(receiptId, "method", method, metricValue);
   for (const [lane, metricValue] of Object.entries(countsByPriceField)) insertMetric.run(receiptId, "price_field", lane, metricValue);
-  const reportPath = join(options.receiptDirectory, `${sourceHash}-${PRICECHARTING_SCHEMA_VERSION}-${PRICECHARTING_RESOLVER_VERSION}-report.json`); writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-  database.prepare("UPDATE provider_import_receipt SET resolver_version=?,source_row_count=?,completed_at=?,outcome=?,normalized_record_hash=?,crosswalk_fingerprint=?,observation_fingerprint=?,report_path=? WHERE id=?").run(PRICECHARTING_RESOLVER_VERSION, rows.length, now, report.outcome, normalizedRecordHash, crosswalkFingerprint, observationFingerprint, reportPath, receiptId);
+  const reportPath = join(options.receiptDirectory, `${sourceHash}-${PRICECHARTING_SCHEMA_VERSION}-${resolverVersion}-report.json`); writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+  database.prepare("UPDATE provider_import_receipt SET resolver_version=?,source_row_count=?,completed_at=?,outcome=?,normalized_record_hash=?,crosswalk_fingerprint=?,observation_fingerprint=?,report_path=? WHERE id=?").run(resolverVersion, rows.length, now, report.outcome, normalizedRecordHash, crosswalkFingerprint, observationFingerprint, reportPath, receiptId);
   database.close(); return report;
 }
 

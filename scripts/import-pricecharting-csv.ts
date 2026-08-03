@@ -4,7 +4,7 @@ import { importPriceChartingCsv } from "../lib/providers/pricecharting/PriceChar
 const argumentsList = process.argv.slice(2);
 function value(flag: string): string | undefined { const index = argumentsList.indexOf(flag); return index >= 0 ? argumentsList[index + 1] : undefined; }
 const file = value("--file");
-if (!file) throw new Error("Usage: npm run pricecharting:import -- --file <absolute-csv-path> --game pokemon-en [--apply]");
+if (!file) throw new Error("Usage: npm run pricecharting:import -- --file <absolute-csv-path> --game <pokemon-en|magic-en|onepiece-en> [--apply]");
 const report = importPriceChartingCsv({
   file: resolve(file),
   gameProfile: value("--game") ?? "pokemon-en",

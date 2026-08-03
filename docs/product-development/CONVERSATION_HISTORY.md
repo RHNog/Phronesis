@@ -1,5 +1,31 @@
 # CTO Product Development Conversation History
 
+## 2026-08-02 — Assisted Sealed Artwork Recovery And Exception Queue
+
+The Product Owner challenged the remaining sealed coverage, asked for the compute cost of approaching the reviewable 47.5% tier, and first directed Phronesis to build a simple manual verification tool. After seeing where it lived, the Product Owner explicitly redirected Phronesis to perform the defensible review work automatically and let operations move forward. `PHR-UX-024` now combines a versioned assisted policy with an Administration Settings exception queue. Exact, `ASSISTED_REPRESENTATIVE`, and `OWNER_APPROVED_REPRESENTATIVE` coverage remain separate; all representative decisions are audited, reversible, and labelled as packaging-variable in Vendor Workspace.
+
+The 47.51% value was corrected from an implied achievable match rate to a theoretical queue ceiling: 598 products had exact-set/class candidates, while 421 had only broad mixed-product guesses. Conservative v1 refuses mixed guesses, value-sensitive/composite variants, explicit wrapper/edition claims, and non-generic package ambiguity. It applied 118 representatives to the active 2,894-product catalogue, raising visible coverage from 356 (12.30%) to 474 (16.38%) and reducing the manual exception queue from 1,019 to 901. A second apply wrote zero rows and recognized all 118 as current.
+
+Focused 6/6 and full 368/368 tests, TypeScript, warning-free lint, production build, diff hygiene, exact SQLite provenance/event reconciliation, private Settings HTTP 200, and accepted-state API checks pass. No paid request, scraping, broad confidence-only acceptance, public deployment, commit, or push occurred. The Product Owner may move forward; Settings remains available for exceptions and reversal.
+
+## 2026-08-02 — Free Community Pokémon Artwork Gap Fill
+
+The Product Owner declined paid Scrydex access and directed Phronesis to use PokéFiles and `1niceroli/ptcg-assets` immediately at the highest safe matching percentage. The accepted `PHR-API-004` revision treats PokéFiles as public catalogue metadata rather than image ownership, validates its public Supabase project without retaining the anonymous client credential, and resolves English singles only through exact set, collector number, and material artwork evidence.
+
+For sealed products, Phronesis reads the public repository's recursive tree at immutable commit `3744b0ab766cb6fcea9ac6f353913b64b40bf9a0` instead of cloning its approximately 2 GB history. Exact set, compatible package class, and unique descriptor evidence are mandatory; cases, edition variants, multi-art booster wrappers, and same-class uncertainty remain quarantined.
+
+The active pricing database moved from zero community mappings to 31,286 / 43,732 Pokémon single rows (71.54%) and, after a sealed recovery pass, 356 / 2,892 sealed rows (12.31%). The recovery added 165 exact sealed mappings by recognizing plural package folders, modern set aliases, promo IDs, half displays, and strict mixed/same-set filenames—an 86.4% relative increase over the initial 191 mappings. The 1,500 highest-priority unique images are cached with zero final failures. One dead PokémonTCG image was replaced through exact TCGdex identity; a trusted 13.86 MB repository PNG was signature-validated under an import-only 16 MiB ceiling. A final repeat stored zero mappings. The audit retains 1,019 possible-but-non-exact and 1,517 unmatched/unsupported sealed rows as explicit residual work.
+
+Targeted 13/13 and full 362/362 tests, TypeScript, warning-free lint, production build, and diff hygiene pass. No paid Scrydex request, price/offer/inventory mutation, public deployment, commit, or push occurred.
+
+## 2026-08-01 — PriceCharting Magic And One Piece Daily Snapshots
+
+The Product Owner supplied a 130,186-row Magic PriceCharting export and an 11,854-row One Piece export, directed Phronesis to reuse everything learned from the Pokémon importer, maximize compatibility in one safe pass, and structure a once-daily download routine. `PHR-API-012` owns the implementation.
+
+Repository analysis proved that PriceCharting `tcg-id` values do not share the current Phronesis source-SKU identity namespace for these games, so the implementation never uses them as a join. Magic v2 resolves through explicit set aliases, exact name, collector when present, finish/treatment, and unique target evidence. One Piece v3 adds prefixed collectors, punctuation/spacing normalization, PRB01/PRB02 routing, base/parallel/manga/SP/distribution distinctions, exact English-language boundaries, and unique target evidence. The owner dry runs accepted 109,841 of 129,485 eligible Magic singles (84.83%) and 4,731 of 6,122 eligible English One Piece singles (77.28%); all residual ambiguity, collisions, sealed products, absent sets, and Japanese rows remain inactive. Active pointers remain null.
+
+Settings now accepts the API token plus encrypted Magic and One Piece subscription CSV URLs. The daily routine accepts only HTTPS PriceCharting hosts, validates redirects, content, exact schema, and expected game, spaces CSV calls by ten minutes, stores immutable downloads, promotes each game atomically, and persists same-UTC-day success/failure state. One-shot and 06:15 UTC watch modes are ready. No URL was invented, no external download occurred, and no host scheduler was installed. Owner URL entry, supervised activation, Product Review, commit, push, and scheduler approval remain pending.
+
 ## 2026-08-01 — PriceCharting Bulk Evidence Import Architecture
 
 The Product Owner directed Phronesis to devise the PriceCharting importing system before implementing a recurring routine, with One Piece and Magic intended as the next datasets after Pokémon. `PHR-STRUCT-20260801-007` assigns the architecture to `PHR-API-011`; implementation, recurrence, and additional games are not yet started.

@@ -26,3 +26,15 @@ The active event database was reconciled to 32,566 exact Pokémon and 3,224 exac
 ## Boundaries
 
 No price, inventory, buying decision, credential, external account, public deployment, or upstream catalogue state changed. Provider metadata was read only. Image bytes were limited to the explicit 1,000-asset readiness boundary.
+
+## 2026-08-02 Community Gap-Fill Implementation
+
+Phronesis now discovers PokéFiles' public catalogue client without persisting its anonymous key, validates the matching Supabase project, paginates sets/cards within hard ceilings, and normalizes upstream URLs into strict Pokémon identities. Material descriptors such as staff, stamped, prize, event, and championship never collapse onto generic artwork.
+
+The sealed path reads the `1niceroli/ptcg-assets` recursive Git tree at one immutable commit rather than cloning its approximately 2 GB history. It excludes non-product media and `_to_sort`, identifies English Pokémon sets through the canonical set manifest, classifies package forms, and accepts only exact set/class matches with unique descriptor proof. Every accepted mapping, ambiguity, and bounded unmatched sample is written to an ignored audit report.
+
+The initial active apply stored 31,286 exact single mappings and 191 exact sealed mappings. The Product Owner challenged the sealed result, and a second audit found under-classified plural package directories, exact set-label gaps, unused mixed-product assets, and promo identifiers embedded in filenames. Deterministic recovery added 165 mappings through explicit product classes, promo-card name corroboration, exact filename/package/year preservation, and explicit half-display separation.
+
+Final coverage is 71.54% for current Pokémon single rows and 12.31% for sealed rows (356 / 2,892). The final idempotency run stored no additional mappings and cached all 1,500 priority sources. A dead PokémonTCG image was replaced by its exact TCGdex identity; allowlisted GitHub community files sent as `application/octet-stream` are accepted only after raster-signature validation, with a command-local 16 MiB prewarm ceiling.
+
+No paid Scrydex API was called, public client credential was persisted, price/offer/inventory evidence was changed, valid same-identity mapping was overwritten by a community source, or ambiguous sealed image was guessed.

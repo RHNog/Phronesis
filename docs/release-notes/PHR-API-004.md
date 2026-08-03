@@ -1,5 +1,15 @@
 # PHR-API-004 — Product Artwork Coverage
 
+## 2026-08-02 Community Pokémon Gap-Fill Revision
+
+- Added a bounded PokéFiles catalogue importer that validates the public project client and resolves exact English set, collector, and material-name identity.
+- Added an immutable-commit `ptcg-assets` manifest importer for exact Pokémon sealed set/product-class/descriptor matches without cloning the repository.
+- Populated 31,286 Pokémon single mappings (71.54% of the current local single rows) and 356 sealed mappings (12.31%). The sealed recovery pass added 165 mappings over the initial result.
+- Cached the 1,500 highest-priority unique sources locally with zero final failures and exact TCGdex repair for one dead upstream URL.
+- Recovered plural mini-tin/tin/deck/collection paths, exact modern set labels, promo-ID/card-name matches, mixed-product exact filenames, and component-suffixed product assets.
+- Preserved 1,019 possible-but-non-exact and 1,517 unmatched/unsupported sealed rows as placeholders with audit reasons.
+- Added deterministic reruns, insert-if-missing-or-stale persistence, strict source allowlists, pinned provenance, and local ignored run reports.
+
 ## 2026-08-01 Event-Readiness Revision
 
 - Fixed Pokémon thumbnails missing when TCGplayer product titles include collector-number suffixes.

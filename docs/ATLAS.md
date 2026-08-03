@@ -1,5 +1,28 @@
 # Project Atlas
 
+## Assisted Sealed Artwork Recovery
+
+- `PHR-UX-024` stages uncertain Pokémon sealed community-image metadata and runs a conservative versioned representative policy before exposing the genuine exceptions in Administration Settings.
+- Active private coverage is 356 / 2,894 exact (12.30%) plus 118 assisted representatives, for 474 / 2,894 visible (16.38%). The manual exception queue now contains 901 products.
+- `OWNER_APPROVED_REPRESENTATIVE` and `ASSISTED_REPRESENTATIVE` provenance remain separate from exact. Every representative is audited, reversible, and blocked by any current exact mapping.
+- The earlier 47.51% figure is a theoretical queue ceiling, not a verified match rate. The v1 pass refuses 421 broad mixed-product guesses, 504 value-sensitive/composite variants, and 41 package variants; 1,519 unsupported/unmatched products still require another source or curated uploads.
+
+## Community Pokémon Artwork Gap Fill
+
+- `PHR-API-004` now consumes PokéFiles as a validated public catalogue snapshot and `1niceroli/ptcg-assets` as an immutable Git-tree manifest; no paid Scrydex API is required.
+- PokéFiles resolves only exact English set, collector, and material artwork identity. `ptcg-assets` resolves only exact set, compatible sealed-product class, and unique descriptor evidence.
+- The active database contains 31,286 / 43,732 mapped Pokémon single rows (71.54%) and 356 / 2,892 mapped sealed rows (12.31%). The sealed recovery pass added 165 exact mappings, an 86.4% relative increase.
+- The 1,500 highest-priority unique sources are cached locally. One dead PokémonTCG source was replaced by exact TCGdex identity evidence; all final cache requests pass.
+- Residual sealed uncertainty is explicit: 1,019 possible-but-non-exact and 1,517 unmatched/unsupported rows remain placeholders rather than receiving guessed product art.
+
+## PriceCharting Multi-Game Daily Snapshots
+
+- `PHR-API-012` extends the receipt/promotion architecture to versioned `magic-en` and `onepiece-en` profiles without altering Pokémon v9 or creating a second catalogue.
+- PriceCharting `tcg-id` is not semantically compatible with the current Phronesis source-SKU namespace for the supplied Magic and One Piece files. It remains stored corroboration and is never a join or tie-breaker.
+- Magic v2 accepts 109,841 of 129,485 eligible source singles (84.83%); One Piece v3 accepts 4,731 of 6,122 eligible English source singles (77.28%). The dry-run residual stays explicit: absent catalogues, sealed products, non-English records, ambiguous distributions, and source/target collisions are inactive.
+- Daily acquisition reads encrypted owner-provided subscription download URLs, permits only HTTPS PriceCharting hosts, checks same-host redirects/content/schema/game, spaces CSV calls by ten minutes, stores immutable downloads, and activates each game independently only after a complete import.
+- Per-game UTC-day state makes one-shot/watch operation restart-idempotent. No host scheduler is installed and no game is active until the owner supplies URLs and approves a supervised apply.
+
 ## PriceCharting Bulk Evidence
 
 - `PHR-API-011` extends the live `PHR-API-010` verifier with an immutable local bulk-evidence path; it does not create a parallel canonical catalogue.

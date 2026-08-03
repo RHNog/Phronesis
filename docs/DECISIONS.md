@@ -1,6 +1,27 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-02 — Assisted sealed imagery remains representative, not exact
+
+- **Status:** Implemented and applied; Product Review ready (`PHR-UX-024`).
+- **Context:** 1,019 sealed products have plausible community artwork but lack enough machine-readable evidence to prove packaging identity.
+- **Decision:** Stage candidate metadata locally, automatically adopt only exact-set/class candidates that pass a versioned representative safety policy, and require an explicit authorized human decision for every remaining ambiguity. Automated and human decisions use separate provenance, remain reversible, and never overwrite or inflate the exact tier.
+- **Consequences:** v1 added 118 assisted representatives and raised visible coverage to 16.38% while exact coverage remains 12.30%. The former 47.51% number is a theoretical ceiling, not a verified match rate; unsafe percentage chasing is prohibited.
+
+## 2026-08-02 — Community artwork may fill exact gaps but cannot weaken product identity
+
+- **Status:** Implemented and CTO accepted (`PHR-API-004`).
+- **Context:** Paid Scrydex access was declined, while PokéFiles and `ptcg-assets` expose useful Pokémon card and sealed-product artwork with uneven completeness and authority.
+- **Decision:** Treat PokéFiles as a public metadata catalogue pointing to upstream images and consume `ptcg-assets` only at a pinned commit. Preserve valid same-identity mappings, require exact card material identity or exact sealed set/class/unique descriptor proof, bound byte prefetch, and retain every ambiguity as a placeholder with an audit reason.
+- **Consequences:** Current local coverage is 71.54% for Pokémon single rows and 12.31% for sealed rows; 1,500 priority sources are cached. The sealed recovery pass added 165 exact products without guessing booster art, editions, cases, promos, or same-class variants. Residual gaps remain visible work rather than false confidence.
+
+## 2026-08-01 — Multi-game PriceCharting identity is profile-specific and daily acquisition is owner-URL driven
+
+- **Status:** Implemented and product-review ready; activation and host scheduling pending (`PHR-API-012`).
+- **Context:** Magic and One Piece reuse PriceCharting’s CSV schema but not Pokémon’s physical-identity grammar. The owner’s subscription can supply fresh daily CSVs, while the public API documentation defines pacing and freshness but does not publish a stable generic bulk-download endpoint contract.
+- **Decision:** Maintain deterministic versioned game profiles, require independent set/name/collector/treatment/language proof, and never join on bare `tcg-id`. Store the owner’s actual Magic and One Piece download URLs encrypted. The server accepts only allow-listed HTTPS PriceCharting destinations, spaces CSV calls by ten minutes, validates the full game-specific file, and atomically promotes each game through persistent daily state.
+- **Consequences:** Demonstrated source coverage is 84.83% for eligible Magic singles and 77.28% for eligible English One Piece singles, with uncertainty left inactive. Automation is structurally ready without inventing an undocumented URL, exposing secrets, or installing a host scheduler. A supervised one-shot activation must precede recurrence.
+
 ## 2026-08-01 — PriceCharting bulk data remains independent, collision-free evidence
 
 - **Status:** Implemented and product-review ready; owner-file dry run complete and activation pending (`PHR-API-011`).

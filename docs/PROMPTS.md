@@ -1,5 +1,27 @@
 # Prompt History
 
+## Sealed Artwork Review Queue — 2026-08-02
+
+The Product Owner first requested a compute estimate and a manual sealed-image review tool, then directed Phronesis to perform the defensible review work automatically. `PHR-UX-024` now specifies local candidate staging, a conservative versioned assisted policy, separately typed representative provenance, append-only decisions, exact-artwork protection, reversible controls, and truthful Vendor Workspace labelling.
+
+Implementation prompt: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`. Result: 118 assisted representatives applied, visible sealed coverage increased to 474 / 2,894 (16.38%), and 901 genuine exceptions remain. Focused 6/6 and full 368/368 verification pass.
+
+## Community Pokémon Artwork Gap Fill — 2026-08-02
+
+The Product Owner declined paid Scrydex access and authorized immediate maximum-safe use of PokéFiles and `1niceroli/ptcg-assets`. The revised `PHR-API-004` work order requires public-client validation, exact material-aware single matching, immutable-commit sealed matching, no full repository clone, insert-if-missing-or-stale persistence, bounded cache warming, and explicit ambiguity reports.
+
+Implementation prompt: `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`.
+
+Implementation and active ingestion completed in the same session: 31,286 single mappings, 356 sealed mappings, and 1,500 cached priority sources. A second exact recovery pass added 165 sealed products by repairing source classification and deterministic identity gaps. The final repeat run inserted zero mappings and had zero cache failures.
+
+## PriceCharting Multi-Game Daily Snapshots — 2026-08-01
+
+The Product Owner supplied Magic and One Piece PriceCharting exports, directed Phronesis to reuse the Pokémon import lessons at maximum safe compatibility, and requested a once-daily automated snapshot routine. `PHR-API-012` specifies versioned exact-identity profiles, encrypted subscription download URLs, allow-listed/paced acquisition, immutable receipts, and per-game atomic activation.
+
+Implementation prompt: `docs/prompts/PHR-API-012-pricecharting-multigame-daily-snapshots-prompt.md`.
+
+Implementation completed in the same session. Magic accepted 109,841 eligible singles and English One Piece accepted 4,731 as non-active dry-run receipts. Daily one-shot/watch code and Settings registration are ready; owner URL entry, supervised activation, Product Review, and host scheduler approval remain pending.
+
 ## PriceCharting Bulk Evidence Import — 2026-08-01
 
 `PHR-STRUCT-20260801-007` specifies `PHR-API-011`: immutable PriceCharting CSV receipts, strict provider staging, versioned Pokémon identity reconciliation, one-to-one collision quarantine, atomic last-good promotion, independent observations, and deterministic coverage reporting. The first work order is local dry-run/apply only; recurrence, One Piece, and Magic remain later objectives.

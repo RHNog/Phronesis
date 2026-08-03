@@ -16,7 +16,10 @@ export async function GET(request: Request) {
   const ebay = new EbayBrowseListingProvider({ clientId: getProviderCredential("ebay-browse", "EBAY_CLIENT_ID"), clientSecret: getProviderCredential("ebay-browse", "EBAY_CLIENT_SECRET") }).getStatus();
   const cardTrader = new CardTraderListingProvider({ token: getProviderCredential("cardtrader", "CARDTRADER_API_TOKEN") }).getStatus();
   const sealed = getPkmnPricesSealedSummary();
-  const priceChartingBulk = getPriceChartingBulkRepository().getSummary();
+  const priceChartingBulk = getPriceChartingBulkRepository().getSummaries();
+  const priceChartingConfigured = ["PRICECHARTING_API_TOKEN", "PRICECHARTING_MAGIC_CSV_URL", "PRICECHARTING_ONEPIECE_CSV_URL"].some((field) => Boolean(getProviderCredential("pricecharting", field)));
+  const priceChartingCurrent = priceChartingBulk.some((summary) => summary.status === "CURRENT");
+  const priceChartingImported = priceChartingBulk.some((summary) => summary.status !== "NOT_IMPORTED");
   return Response.json({
     providers: [
       {
@@ -44,7 +47,7 @@ export async function GET(request: Request) {
         providerId: "psa-certificates",
         status: getProviderCredential("psa-certificates", "PSA_API_TOKEN") ? "READY" : "NOT_CONFIGURED",
       },
-      { configured: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")) || priceChartingBulk.status !== "NOT_IMPORTED", enabled: Boolean(getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN")) || priceChartingBulk.status === "CURRENT", providerId: "pricecharting", status: priceChartingBulk.status !== "NOT_IMPORTED" ? priceChartingBulk.status : getProviderCredential("pricecharting", "PRICECHARTING_API_TOKEN") ? "READY" : "NOT_CONFIGURED", bulkImport: priceChartingBulk },
+      { configured: priceChartingConfigured || priceChartingImported, enabled: priceChartingConfigured || priceChartingCurrent, providerId: "pricecharting", status: priceChartingCurrent ? "CURRENT" : priceChartingImported ? "STAGED" : priceChartingConfigured ? "READY" : "NOT_CONFIGURED", bulkImports: priceChartingBulk },
     ],
     note: "Configuration health only. Upstream quota is not inferred.",
   });

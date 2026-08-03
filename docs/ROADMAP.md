@@ -1,5 +1,27 @@
 # Roadmap
 
+## Product Review Candidate: Assisted Sealed Artwork Recovery
+
+- Implemented: conservative v1 assisted recovery plus an Administration Settings exception queue with lazy candidate images, search, pagination, and reversible approve/reject/restore/undo controls (`PHR-UX-024`).
+- Active private state: 356 / 2,894 exact plus 118 assisted representatives, for 474 / 2,894 visible (16.38%); 901 candidate-backed products remain pending.
+- Preserved: assisted and owner representatives never overwrite or reclassify exact artwork and remain visibly labelled in Vendor Workspace.
+- Next: improve the 901 pending and 1,519 unmatched products only through stronger package evidence, another sealed source, image understanding, or curated owner uploads.
+
+## Completed: Community Pokémon Artwork Gap Fill
+
+- Implemented: validated PokéFiles public-catalogue ingestion and pinned-commit `ptcg-assets` sealed manifest ingestion under `PHR-API-004`.
+- Applied: 31,286 / 43,732 Pokémon single rows (71.54%) and 356 / 2,892 sealed rows (12.31%) now have exact persisted artwork mappings; the sealed recovery added 165 exact products.
+- Retained: 1,500 / 1,500 priority sources in the durable cache; repeat execution is idempotent.
+- Preserved: 1,019 possible-but-non-exact and 1,517 unmatched/unsupported sealed rows remain honest placeholders.
+- Future gap work: add only sources or curated owner evidence that can prove the remaining exact product identities; do not lower the current match boundary to chase percentage.
+
+## Product Review Candidate: PriceCharting Multi-Game Daily Snapshots
+
+- Implemented: versioned Magic v2 and English One Piece v3 identity profiles over the immutable PriceCharting receipt model (`PHR-API-012`).
+- Measured: Magic accepted 109,841 / 129,485 eligible singles (84.83%) and One Piece accepted 4,731 / 6,122 eligible English singles (77.28%). Unmatched, ambiguous, colliding, sealed, non-English, and malformed rows remain inactive.
+- Implemented: encrypted Settings registration for both subscription CSV URLs, PriceCharting-only HTTPS acquisition, same-host redirect/content/schema/game checks, immutable downloads, ten-minute request pacing, per-game atomic promotion, same-day skip, retry, and one-shot/watch operation.
+- Activation gate: enter the two owner subscription URLs, run a supervised `npm run pricecharting:sync`, validate representative active Graded Area evidence, then separately approve host recurrence. No scheduler is installed in this release.
+
 ## Product Review Candidate: PriceCharting Bulk Evidence Import
 
 - Product review ready: `PHR-API-011` implements immutable PriceCharting receipts, strict schema validation, provider-neutral staging, versioned Pokémon resolution, one-to-one collision quarantine, atomic promotion, last-good rollback, active Graded Area consumption, and deterministic coverage reporting. The 91,572-row owner file completed dry-run only; activation, recurrence, One Piece, and Magic remain pending.

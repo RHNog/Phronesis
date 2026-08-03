@@ -37,3 +37,21 @@ The product-row denominator includes finish rows, code cards, World Championship
 - `/api/pricing/artwork?category=pokemon-en&q=Mega%20Dragonite` returned four exact same-origin image URL sets and `OPERATIONAL`.
 - At a 390×844 viewport, the four exact `ME: Ascended Heroes` Dragonite thumbnails completed with natural width 245; Prize Pack and sealed rows retained placeholders; horizontal overflow was 0.
 - The `Luffy` phone search rendered official Bandai images at natural width 600, retained special-product placeholders, produced 0 horizontal overflow, and logged no browser errors. Remaining below-viewport images were lazy, not failed.
+
+## 2026-08-02 Community Pokémon Gap-Fill Validation
+
+- Focused community sealed recovery suite: 13/13 passed.
+- Full repository test run: 362/362 passed.
+- `npx tsc --noEmit`: passed.
+- `npm run lint`: passed without warnings.
+- `npm run build`: Next.js 16.2.12 production build passed.
+- `git diff --check`: passed.
+- Active pricing database before the first apply: 0 / 43,732 mapped Pokémon single rows and 0 / 2,892 mapped sealed rows.
+- Active pricing database after recovery apply: 31,286 / 43,732 singles (71.54%) and 356 / 2,892 sealed (12.31%). The recovery added 165 mappings over the initial 191.
+- PokéFiles snapshot: 20,009 source cards, 20,008 usable records, 173 sets, 19,467 PokémonTCG-hosted records, and 541 Scrydex-hosted records.
+- `ptcg-assets`: immutable commit `3744b0ab766cb6fcea9ac6f353913b64b40bf9a0`, 4,326 source files, 949 eligible sealed assets, and 174 source sets.
+- Final priority cache: 1,500 requested, 1,500 cached, 0 failures. One dead PokémonTCG source was repaired by exact TCGdex ID; one 13.86 MB trusted GitHub PNG was validated by raster signature under the import-only 16 MiB ceiling.
+- Idempotency: the verification rerun stored 0 new PokéFiles mappings and 0 new `ptcg-assets` mappings.
+- Recovery source audit: 1,468 eligible assets across 176 source identities; deterministic package and filename rules accepted 356 exact catalogue mappings.
+- Quarantine: 1,019 sealed identities retain possible but non-exact candidates and 1,517 remain unmatched/unsupported. Multi-art packs, cases, edition-specific products, regular-versus-Pokémon-Center ETBs, half/full displays, years, and distribution variants retain placeholders without proof.
+- Full accepted, ambiguous, and bounded unmatched evidence is retained under ignored `.data/community-artwork/`; the final report is `.data/community-artwork/runs/2026-08-02T19-21-03-113Z.json`.

@@ -60,6 +60,12 @@ import type { PrintingVariant } from "@/types/printingVariant";
 
 const pendingTrackStorageKey = "phronesis.pending-price-track.v1";
 
+type ArtworkProvenance = {
+  kind: "OWNER_APPROVED_REPRESENTATIVE" | "ASSISTED_REPRESENTATIVE";
+  label: string;
+  reviewedAt: string;
+};
+
 const conditionCodes: Record<PricingCondition, CardConditionCode> = {
   NEAR_MINT: "NM",
   LIGHTLY_PLAYED: "LP",
@@ -319,6 +325,7 @@ export default function SnapshotVendorWorkspace({
     useState("convention-buying");
   const [strategyId, setStrategyId] = useState(defaultStrategyId);
   const [artwork, setArtwork] = useState<Record<string, CardImageUrls>>({});
+  const [artworkProvenance, setArtworkProvenance] = useState<Record<string, ArtworkProvenance>>({});
   const [artworkUploadMessage, setArtworkUploadMessage] = useState<
     string | null
   >(null);
@@ -416,7 +423,7 @@ export default function SnapshotVendorWorkspace({
     const controller = new AbortController();
     const normalizedQuery = query.trim();
     const categories = [
-      ...new Set((response?.singles ?? []).map((match) => match.categoryId)),
+      ...new Set([...(response?.singles ?? []), ...(response?.sealed ?? [])].map((match) => match.categoryId)),
     ].sort();
     if (
       !categories.length ||
@@ -432,14 +439,16 @@ export default function SnapshotVendorWorkspace({
               `/api/pricing/artwork?category=${encodeURIComponent(categoryId)}&q=${encodeURIComponent(normalizedQuery)}`,
               { signal: controller.signal },
             );
-            if (!result.ok) return {};
+            if (!result.ok) return { artwork: {}, provenance: {} };
             const body = (await result.json()) as {
               artwork?: Record<string, CardImageUrls>;
+              artworkProvenance?: Record<string, ArtworkProvenance>;
             };
-            return body.artwork ?? {};
+            return { artwork: body.artwork ?? {}, provenance: body.artworkProvenance ?? {} };
           }),
         );
-        setArtwork(Object.assign({}, ...responses));
+        setArtwork(Object.assign({}, ...responses.map((item) => item.artwork)));
+        setArtworkProvenance(Object.assign({}, ...responses.map((item) => item.provenance)));
       } catch (caught) {
         if (caught instanceof DOMException && caught.name === "AbortError")
           return;
@@ -467,6 +476,9 @@ export default function SnapshotVendorWorkspace({
     null;
   const selectedArtwork = selectedGroup?.variants
     .map((variant) => artwork[variant.sku])
+    .find(Boolean);
+  const selectedArtworkProvenance = selectedGroup?.variants
+    .map((variant) => artworkProvenance[variant.sku])
     .find(Boolean);
   const price = selectedMatch ? selectedPrice(selectedMatch, condition) : null;
   const reference = bestReference(price);
@@ -867,6 +879,11 @@ export default function SnapshotVendorWorkspace({
                       ? `Catalogue ${timestamp(selectedFreshness.snapshotDate)}`
                       : "Catalogue freshness unavailable"}
                   </p>
+                  {selectedArtworkProvenance ? (
+                    <p className="mt-2 inline-flex rounded-full border border-amber-700 bg-amber-950/30 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
+                      {selectedArtworkProvenance.label} · packaging may vary
+                    </p>
+                  ) : null}
                   <a
                     aria-label={`Verify ${selectedGroup?.name ?? selectedMatch.name} on TCGplayer (opens in a new tab)`}
                     className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-cyan-700 bg-cyan-950/40 px-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400 hover:bg-cyan-950/70 focus:outline-none focus:ring-2 focus:ring-cyan-300"

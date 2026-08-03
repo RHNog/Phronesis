@@ -1,5 +1,70 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Assisted Sealed Artwork Recovery
+
+- Assignment: `PHR-SEALED-ARTWORK-REVIEW-20260802`
+- Document ID: `PHR-STRUCT-20260802-003`
+- Feature: `PHR-UX-024`
+- Status: `IMPLEMENTED AND APPLIED — PRODUCT REVIEW READY`
+- Priority: High
+- Objective: let Phronesis automatically adopt only the defensible exact-set/product-class representative subset, leaving genuine ambiguity for owner review without weakening the 356 exact mappings.
+- Product rule: exact, Phronesis-assisted representative, and owner-approved representative coverage remain separate. Mixed-product guesses and value-sensitive variants never auto-apply; every decision is reversible and audited.
+- Architecture: versioned pure selection policy, local metadata staging, idempotent assisted application, append-only review events, typed active representative provenance, Administration API, responsive Settings exception queue, and truthful Vendor Workspace labelling.
+- Constraints: no paid requests, scraping, broad confidence-only approval, exact overwrite, new dependency, public deployment, commit, or push.
+- Acceptance: deterministic assisted dry-run/apply; safe idempotency and exact/owner preservation; reversible provenance-aware artwork; truthful separate coverage; desktop/mobile usability; full verification gates.
+- Work order: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`.
+- Result: the active private database retains 356 / 2,894 exact sealed images (12.30%) and adds 118 assisted representatives, producing 474 / 2,894 visible (16.38%). The pending queue fell from 1,019 to 901. The earlier 47.51% figure is a theoretical queue ceiling, not a verified match rate.
+- Compute evidence: metadata staging completed in 5.141 seconds on the active 1.2 GB database with no paid call or image prefetch.
+- Verification: focused 17/17, full 366/366, TypeScript, warning-free lint, production build, diff hygiene, live desktop search/images, and 390×844 zero-overflow pass.
+- Verification: v1 dry run selected 118 and refused 966 unsafe ambiguities; apply wrote 118; repeat apply wrote zero and recognized all 118. Focused 6/6, full 368/368, TypeScript, lint, build, diff hygiene, active SQLite audit, private Settings HTTP 200, and accepted-state API checks pass.
+- Next accountable role: Product Owner may move forward; Settings remains an exception/undo surface. Commit, push, or public deployment remains separately gated.
+
+## Active Revision — Community Pokémon Sealed Recovery Pass
+
+- Assignment: `PHR-COMMUNITY-POKEMON-SEALED-RECOVERY-20260802`
+- Document ID: `PHR-STRUCT-20260802-002`
+- Feature: `PHR-API-004`
+- Status: `COMPLETED — EXACT RECOVERY APPLIED AND VERIFIED`
+- Objective: improve the initial 191 / 2,892 sealed result by recovering deterministic source files omitted through package-class and exact-set normalization gaps.
+- Evidence: plural package paths, modern set aliases, promo-ID evidence, half-display distinction, and strict mixed/same-set filename identity recovered 165 additional exact products. Sealed coverage is now 356 / 2,892 (12.31%), an 86.4% relative increase over the initial 191 mappings.
+- Boundary: recover exact products only. Representative pack art, regular-versus-Pokémon-Center ETB substitution, half-display substitution, case imagery, edition collapse, and loose promo scans remain prohibited.
+- Required artifacts: revised specification/work order, classifier/alias tests, measured dry run, exact apply, cache/idempotency evidence, validation/report/review/memory updates.
+- Verification: focused 13/13 and full 362/362 tests, TypeScript, lint, production build, diff hygiene, and a zero-write/zero-failure idempotent rerun pass.
+- Residual: 1,019 rows have possible but non-unique or non-exact source candidates; 1,517 are unmatched or unsupported. They remain placeholders rather than receiving incorrect packaging art.
+- Next accountable role: CTO may separately approve a provenance-labelled representative-image tier or another exact source; no further exact recovery is available from this source under the current identity contract.
+
+## Active Revision — Community Pokémon Artwork Gap Fill
+
+- Assignment: `PHR-COMMUNITY-POKEMON-ARTWORK-20260802`
+- Document ID: `PHR-STRUCT-20260802-001`
+- Feature: `PHR-API-004`
+- Status: `COMPLETED — CTO ACCEPTED; ACTIVE DATABASE POPULATED`
+- Priority: Critical Event Readiness
+- Objective: fill the maximum defensible Pokémon singles and sealed artwork gaps from PokéFiles and `1niceroli/ptcg-assets` without paid Scrydex API access or weakened identity safeguards.
+- Singles rule: read PokéFiles' public catalogue snapshot, retain its declared upstream image URL, and attach only by exact English set, collector number, and material artwork name. Existing valid resolutions take precedence; stamped, staff, prize, and other material variants require matching artwork evidence.
+- Sealed rule: pin one immutable `ptcg-assets` commit, map only English set directories, require compatible product class plus a unique descriptor match, and quarantine booster-art, case, bundle, regional, or same-class ambiguity.
+- Storage rule: store exact SKU mappings in `pricing_artwork_resolutions`, cache only approved raster hosts through `PHR-TECH-007`, and write a local ignored run report with source revisions, accepted counts, residual gaps, and ambiguity samples.
+- Constraints: no paid Scrydex API call, overwrite of a valid same-identity mapping, fuzzy set adoption, guessed promo/stamp artwork, full repository clone, Git publication, or provider-wide unbounded byte crawl.
+- Required artifacts: revised `PHR-API-004` specification and prompt, implementation, focused tests, local coverage run, validation, release note, implementation report, conformance review, and memory updates.
+- Measured result: 31,286 / 43,732 Pokémon single rows (71.54%), 356 / 2,892 sealed rows (12.31%), and 1,500 / 1,500 priority images cached. Residual 1,019 possible-but-non-exact and 1,517 unmatched/unsupported sealed rows remain placeholders.
+- Verification: targeted 13/13, full 362/362, TypeScript, lint, production build, diff hygiene, and zero-failure idempotent rerun pass.
+- Next accountable role: CTO may prioritize another source or curated residual workflow later; no action is required for this completed revision.
+
+## Active Revision — PriceCharting Multi-Game Daily Snapshots
+
+- Assignment: `PHR-PRICECHARTING-MULTIGAME-DAILY-20260801`
+- Document ID: `PHR-STRUCT-20260801-008`
+- Feature: `PHR-API-012`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY; ACTIVATION AND SCHEDULER GATED`
+- Priority: Critical
+- Objective: extend receipt-backed PriceCharting evidence to Magic and English One Piece at the highest defensible deterministic compatibility, then acquire and atomically activate both subscription snapshots once per day.
+- Identity rule: every game has a versioned exact resolver. PriceCharting `tcg-id`, price, popularity, and row order cannot identify or break a tie. Magic uses set/name/collector/finish/treatment proof; One Piece uses set/name/prefixed collector/language/distribution proof.
+- Measured result: Magic receipt 4 accepted 109,841 / 129,485 eligible singles (84.83%); One Piece receipt 5 accepted 4,731 / 6,122 eligible English singles (77.28%). Both are dry runs and active pointers remain null.
+- Daily rule: encrypted owner-provided URLs only; HTTPS PriceCharting allow-list; same-host redirects; exact schema/game validation; immutable hash; ten-minute request spacing; independent atomic promotion; persistent same-day skip/retry state.
+- Constraints: no fuzzy adoption, bare `tcg-id` join, Japanese-to-English collapse, sealed auto-map, TCGplayer-lane mutation, URL disclosure, invented endpoint, host scheduler installation, public deployment, commit, or push.
+- Artifacts: spec, implementation prompt, validation, release notes, implementation report, and conformance review under `docs/` for `PHR-API-012`.
+- Next accountable role: CTO Product Review, encrypted URL entry, and supervised one-shot activation. Host recurrence requires separate operational approval.
+
 ## Active Revision — PriceCharting Bulk Evidence Import
 
 - Assignment: `PHR-PRICECHARTING-BULK-IMPORT-20260801`

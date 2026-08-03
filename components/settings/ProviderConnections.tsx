@@ -12,7 +12,7 @@ type ProviderState = {
   productsStored?: number;
   providerId: string;
   status: string;
-  bulkImport?: { activeReceiptId: number | null; latestReceiptId: number | null; importedAt: string | null; sourceRows: number; reviewRequired: number; status: string };
+  bulkImports?: Array<{ activeReceiptId: number | null; gameProfile: string; latestReceiptId: number | null; importedAt: string | null; sourceRows: number; reviewRequired: number; status: string }>;
 };
 
 type CredentialState = { providerId: string; fields: Array<{ field: string; configured: boolean }> };
@@ -56,9 +56,9 @@ const PROVIDERS = [
   {
     id: "pricecharting",
     label: "PriceCharting",
-    purpose: "Ungraded and graded card price guide evidence",
-    keys: "PRICECHARTING_API_TOKEN",
-    enable: "Paid PriceCharting API subscription required · one request per second maximum",
+    purpose: "Daily Magic and One Piece ungraded/graded snapshot evidence",
+    keys: "PRICECHARTING_API_TOKEN + PRICECHARTING_MAGIC_CSV_URL + PRICECHARTING_ONEPIECE_CSV_URL",
+    enable: "Encrypted subscription download URLs · daily snapshot sync · CSV requests spaced by 10 minutes",
   },
 ] as const;
 
@@ -152,11 +152,9 @@ export default function ProviderConnections({ secureRegistrationReady }: { secur
                     {state?.nextRelease ? <div><dt className="text-zinc-500">Next release</dt><dd className="mt-1 text-zinc-300">{state.nextRelease}</dd></div> : null}
                   </>
                 ) : null}
-                {provider.id === "pricecharting" && state?.bulkImport ? (
+                {provider.id === "pricecharting" && state?.bulkImports?.length ? (
                   <>
-                    <div><dt className="text-zinc-500">Bulk evidence</dt><dd className="mt-1 text-zinc-300">{state.bulkImport.status.replaceAll("_", " ")} · {state.bulkImport.sourceRows.toLocaleString()} source rows</dd></div>
-                    <div><dt className="text-zinc-500">Identity review</dt><dd className="mt-1 text-zinc-300">{state.bulkImport.reviewRequired.toLocaleString()} records require review</dd></div>
-                    {state.bulkImport.importedAt ? <div><dt className="text-zinc-500">Last activated</dt><dd className="mt-1 text-zinc-300">{new Date(state.bulkImport.importedAt).toLocaleString()}</dd></div> : null}
+                    {state.bulkImports.map((bulkImport) => <div key={bulkImport.gameProfile}><dt className="text-zinc-500">{bulkImport.gameProfile === "magic-en" ? "Magic" : bulkImport.gameProfile === "onepiece-en" ? "One Piece" : "Pokémon"} snapshot</dt><dd className="mt-1 text-zinc-300">{bulkImport.status.replaceAll("_", " ")} · {bulkImport.sourceRows.toLocaleString()} rows · {bulkImport.reviewRequired.toLocaleString()} review</dd></div>)}
                   </>
                 ) : null}
               </dl>

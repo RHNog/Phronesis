@@ -6,7 +6,7 @@
 
 ## Status
 
-Completed — CTO Accepted
+Completed — CTO Accepted; Community Pokémon Sealed Recovery Applied
 
 ## Priority
 
@@ -26,6 +26,8 @@ Separate card-art resolution from product-art resolution. Normalize commerce-onl
 
 An operator-invoked readiness command may enumerate authoritative provider metadata and compare it with locally loaded Pokémon and One Piece singles. It may persist exact resolutions for the full local catalogue while prefetching image bytes only for a configurable, bounded, high-priority subset. This metadata index and bounded byte prewarm are not permission for speculative matching, an unbounded image crawl, or provider redistribution.
 
+The 2026-08-02 community gap-fill revision adds two explicitly lower-authority sources without weakening that model. PokéFiles is consumed as a public catalogue snapshot rather than as image ownership: Phronesis retains the upstream URL declared for each exact English card record. `1niceroli/ptcg-assets` is consumed at an immutable Git commit without cloning its approximately 2 GB repository; the recursive tree supplies candidate sealed assets and raw commit URLs. Community mappings fill only missing or identity-stale rows and never replace a valid resolution for the same complete identity.
+
 ## Functional Requirements
 
 - Preserve existing strict Magic, Pokémon, Lorcana, and One Piece card-art paths.
@@ -41,6 +43,16 @@ An operator-invoked readiness command may enumerate authoritative provider metad
 - Serve curated files through the existing same-origin durable cache safeguards.
 - Never infer TCGplayer CDN URLs from SKU.
 - Keep Riftbound deferred.
+- Discover PokéFiles' public client catalogue without persisting its anonymous client credential, validate the Supabase project identity, and fetch sets/cards with bounded deterministic pagination.
+- Normalize PokéFiles records into Pokémon card identities and resolve only exact set, collector-number, and material-name matches.
+- Treat staff, stamped, prize, prerelease, winner, league, event, championship, and similar descriptors as material artwork evidence that cannot fall back to a generic card scan.
+- Pin the `ptcg-assets` source to one commit SHA and derive sealed candidates from image blobs only; exclude `_to_sort`, logos, symbols, banners, and unrelated media.
+- Match community sealed artwork only when set identity is exact, product class is compatible, and one candidate has unique descriptor proof. Generic products may use a generic source asset only when that class has exactly one candidate in the set.
+- Persist an ignored local run report with source revisions, input counts, accepted mappings, already-covered identities, ambiguous/unmatched counts, and bounded samples for human review.
+- Prefetch only an explicit bounded number of highest-value accepted or persisted community image URLs.
+- Recognize deterministic repository packaging conventions, including plural `mini-tins`, `tins`, `decks`, and `collections` folders, without treating work folders or loose promotional scans as sealed products.
+- Normalize only documented exact catalogue labels such as Scarlet & Violet 151, Scarlet & Violet Base Set, Sword & Shield Base Set, and Ascended Heroes to their unique English set identities.
+- Permit promo-card identifiers embedded in sealed asset filenames to contribute descriptor evidence only when an exact public card record proves the enclosed Pokémon/card name; never use a promo identifier alone across multiple products.
 
 ## Non-Functional Requirements
 
@@ -49,6 +61,8 @@ An operator-invoked readiness command may enumerate authoritative provider metad
 - File type, size, and exact SKU ownership are validated.
 - Provider metadata enumeration and image prefetch use bounded pagination/concurrency, emit auditable counts, and continue safely when an individual query or asset fails.
 - The readiness command can be rerun without duplicating resolution rows or cache assets.
+- Public-client discovery, pagination, source manifests, and matching are deterministic and independently testable with injected fetch implementations.
+- Source URLs are pinned or recorded with enough provenance to reproduce an accepted mapping.
 
 ## Acceptance Criteria
 
@@ -61,25 +75,40 @@ An operator-invoked readiness command may enumerate authoritative provider metad
 - Sealed catalogue URLs render where supplied.
 - An owner can bind a validated local image to an exact sealed or special-product SKU.
 - First Partner results remain placeholders unless exact artwork is verified or curated.
+- A valid existing same-identity mapping is never replaced by PokéFiles or `ptcg-assets`; an identity-stale row may be repaired.
+- A generic booster pack with multiple packshot candidates remains unresolved.
+- A stamped or staff promo without matching material artwork descriptors remains unresolved.
+- A unique exact sealed product-class and descriptor match may be persisted and served through the durable local cache.
+- One operator run reports before/after Pokémon singles and sealed coverage percentages.
 
 ## Dependencies
 
 - `PHR-API-002`
 - `PHR-TECH-007`
 - `PHR-TECH-008`
+- PokéFiles public web catalogue.
+- `1niceroli/ptcg-assets` public Git repository.
+- Pokémon TCG set metadata already used by the sealed pipeline.
 
 ## Non-Goals
 
 - Guessing artwork from similarly named cards.
-- Unbounded or recurring provider-wide image downloads. Full authoritative card-metadata enumeration is allowed for exact local identity indexing; image-byte prefetch remains explicitly bounded.
+- Unbounded or recurring provider-wide image downloads. Full source metadata enumeration is allowed for exact local identity indexing; image-byte prefetch remains explicitly bounded.
 - Guessing a sealed-product image from a condition SKU or card artwork.
 - Riftbound artwork.
+- Treating PokéFiles as the copyright owner or using the paid Scrydex API.
+- Automatically adopting assets from `_to_sort` or attaching one arbitrary booster wrapper from several artworks.
 
 ## Traceability
 
 - Origin: Product Owner artwork request, 2026-07-30.
 - Related implementation prompt: `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`.
 - Related tests: `docs/testing/PHR-CARD-SHOW-OPERATIONS-20260730-validation.md`.
-- Last modified: 2026-08-01.
+- Last modified: 2026-08-02.
+- Community revision: Product Owner authorized immediate maximum-safe use of PokéFiles and `ptcg-assets` after declining paid Scrydex access. Existing exact mappings retain priority; ambiguous source evidence remains quarantined.
+- Community execution evidence: 31,286 / 43,732 Pokémon single-product rows (71.54%) and 356 / 2,892 sealed-product rows (12.31%) now have exact community-backed artwork mappings in the active pricing database. The 1,500 highest-priority sources are locally cached with zero final failures.
+- Residual evidence: 1,019 sealed rows have possible but non-exact source candidates and 1,517 are unmatched or unsupported; no arbitrary booster wrapper, case, edition, Pokémon Center/retail variant, year, or package form was adopted.
+- Runtime remediation: a dead PokémonTCG URL was replaced through an exact TCGdex card identity, while a verified 13.86 MB GitHub PNG was cached through a command-scoped 16 MiB ceiling and signature-sniffed only for allowlisted community binary responses.
+- Sealed recovery revision: Product Owner challenged the initial 6.60% result. Audit proved that 205 known-set image files were omitted by singular-only package classification, 664 mixed-root files had not been evaluated, and several exact TCGplayer set labels were not normalized. Plural package paths, exact set aliases, promo-ID/card-name evidence, exact mixed filenames, component suffixes, and explicit half-display classification raise exact sealed coverage to 12.31% while retaining the same fail-closed identity boundary.
 - Remediation: Magic provider queries now use exact visible card names, and unique name/collector identity may bridge provider set-label drift without weakening Pokémon or ambiguous-printing safeguards.
 - Event-readiness revision: Product Owner requested a single-pass Pokémon and One Piece coverage hardening for the 2026-08-02 event. The revision authorizes authoritative metadata enumeration, persistent exact resolution indexing, and explicitly bounded high-priority image prefetch while preserving fail-closed identity matching.

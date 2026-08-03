@@ -8,7 +8,7 @@ export const providerCredentialFields = {
   cardtrader: ["CARDTRADER_API_TOKEN"],
   "pkmnprices-sealed": ["PKMNPRICES_API_KEY"],
   "psa-certificates": ["PSA_API_TOKEN"],
-  pricecharting: ["PRICECHARTING_API_TOKEN"],
+  pricecharting: ["PRICECHARTING_API_TOKEN", "PRICECHARTING_MAGIC_CSV_URL", "PRICECHARTING_ONEPIECE_CSV_URL"],
 } as const;
 
 export type ProviderCredentialId = keyof typeof providerCredentialFields;

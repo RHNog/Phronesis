@@ -5,6 +5,8 @@
 
 ### Added
 
+- Phronesis-assisted Pokémon sealed artwork recovery with conservative versioned selection, reversible owner exceptions, separate exact/assisted/owner coverage, and truthful Vendor Workspace provenance; v1 added 118 visible representatives (`PHR-UX-024`).
+
 - Exact TCG Direct Low ingestion, persistence, prominent evidence, and first-priority buying valuation (`PHR-BR-001`).
 
 - Persistent right-side Purchase Cart rail with direct intake movement, plus the owner-authorized, globally throttled PriceCharting graded-evidence adapter (`PHR-UX-023`, `PHR-API-010`).
