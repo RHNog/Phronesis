@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-07-31T01:32:52Z","generation_id":"cb808ad1679d3a2b2140","head":"33bac5b617fab21c714f0071517e193f90aedc14","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-03T19:08:17Z","generation_id":"826b8dac8451e5b915f2","head":"747479031eb828bbaf17dd095c2f27f4c9efb66c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,24 +6,26 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-price-monitoring-20260730`
-- **HEAD:** `33bac5b617fab21c714f0071517e193f90aedc14`
+- **HEAD:** `747479031eb828bbaf17dd095c2f27f4c9efb66c`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-07-31T01:32:52Z
+- **Generated:** 2026-08-03T19:08:17Z
 
 ## Current objective
 
-Advance the verified LigaMagic/TCGplayer bridge from identity-verified gross comparison to truthfully costed and availability-verified arbitrage decisions.
+Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal without activating public ingress.
 
 ## Acceptance criteria
 
-- [x] Reconcile the canonical repository root, active branch, implementation commit, and upstream tracking ref from Git.
-- [x] Validate 86,392 exact cross-market identities and 86,032 two-sided price pairs without fuzzy, ambiguous, language-collapsed, treatment-collapsed, or Textless adoption.
-- [x] Use direction-correct TCGplayer evidence: delivered/listing for US acquisition and market/listing for US resale.
-- [x] Keep candidates non-actionable while direction costs or executable availability are missing.
-- [x] Populate canonical Handoff inputs from verified repository state.
-- [ ] Record Product Owner-approved direction-specific costs.
-- [ ] Record and verify one real executable opportunity and confirm the resulting state and economics in the application.
+- [x] Diagnose the hosted GitHub failure from Actions logs and reproduce the missing-dependency boundary in a clean checkout.
+- [x] Preserve the existing Artwork Review authorization and public event-gateway implementation in the canonical worktree.
+- [x] Make project validation install locked dependencies before test, lint, build, and diff gates.
+- [x] Make continuity validation read-only against the exact committed PR head with full Git history.
+- [x] Avoid duplicate feature-branch runs by reserving push validation for `main` and pull-request validation for feature work.
+- [x] Pass the full local test, TypeScript, lint, build, and diff-hygiene gate.
+- [ ] Commit the implementation and canonical documentation with no secret-bearing runtime data.
+- [ ] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
+- [ ] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
 
 ## Constraints
 
@@ -34,4 +36,4 @@ Advance the verified LigaMagic/TCGplayer bridge from identity-verified gross com
 
 ## Exact next action
 
-Collect the four direction-specific cost values from the Product Owner, enter them through Settings, then verify one real opportunity from the regional arbitrage queue.
+Commit the verified implementation and canonical documentation, then run bare `./handoff` from the clean implementation commit.

@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-07-31T01:32:52Z","generation_id":"cb808ad1679d3a2b2140","head":"33bac5b617fab21c714f0071517e193f90aedc14","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-03T19:08:17Z","generation_id":"826b8dac8451e5b915f2","head":"747479031eb828bbaf17dd095c2f27f4c9efb66c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Bootstrap Package
 
 Use this instruction in a new AI session:
@@ -9,29 +9,30 @@ Use this instruction in a new AI session:
 
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-price-monitoring-20260730`
-- **Commit:** `33bac5b617fab21c714f0071517e193f90aedc14`
-- **Generation ID:** `cb808ad1679d3a2b2140`
+- **Commit:** `747479031eb828bbaf17dd095c2f27f4c9efb66c`
+- **Generation ID:** `826b8dac8451e5b915f2`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 ## Objective
 
-Advance the verified LigaMagic/TCGplayer bridge from identity-verified gross comparison to truthfully costed and availability-verified arbitrage decisions.
+Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal without activating public ingress.
 
 ## Completed work
 
-- Reconciled the canonical branch and commits from Git rather than conversation state.
-- Replaced seed Handoff documents with current project state, prioritized backlog, durable continuity decision, and this exact task boundary.
-- Preserved the verified arbitrage implementation at commit `66e0500d295d079e96e54e6e821b95e6ca46b70d` and the Handoff adoption baseline at `885b645c7266e52963509774c35e181c06bec9be`.
+- Confirmed the canonical repository, branch, pull request, hosted failure, and stale seal from Git and GitHub evidence.
+- Replaced CI-side Handoff preparation with separate dependency-backed project validation and committed-state continuity verification.
+- Added the governed specification, work order, release notes, architecture decision, roadmap, atlas, and continuity records for `PHR-TECH-011`.
+- Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
 
 ## Remaining work
 
-- Obtain the four owner-controlled cost inputs: US-to-Brazil fixed BRL, US-to-Brazil percentage, Brazil-to-US fixed USD, and Brazil-to-US percentage.
-- After costs are stored, verify one current listing or dealer offer and confirm that only positive, fresh, fully evidenced economics become `ACTIONABLE`.
+- Commit the implementation, create the Handoff seal, push, and verify the hosted pull-request checks.
+- Present public event-worker activation as a separate Product Owner decision after the repair is green.
 
 ## Blockers
 
-- Product Owner cost policy is not present in repository evidence and must not be invented.
-- No executable-availability record currently exists.
+- No implementation blocker is currently known.
+- Public Funnel activation remains intentionally blocked on explicit Product Owner approval and a bounded event window.
 
 ## Validation
 
@@ -44,7 +45,7 @@ Read [DECISIONS.md](../DECISIONS.md) before implementation.
 
 ## Exact next action
 
-Collect the four direction-specific cost values from the Product Owner, enter them through Settings, then verify one real opportunity from the regional arbitrage queue.
+Commit the verified implementation and canonical documentation, then run bare `./handoff` from the clean implementation commit.
 
 ## Resume protocol
 
