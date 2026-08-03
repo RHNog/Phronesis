@@ -18,6 +18,6 @@ The dedicated module conforms to least privilege: permanent employees may receiv
 
 ## 2026-08-03 Isolated Public Gateway Amendment
 
-Verdict: `IMPLEMENTATION CONFORMS — PUBLIC ACTIVATION GATED`.
+Verdict: `IMPLEMENTATION CONFORMS — PUBLIC ACTIVATION VERIFIED`.
 
-The gateway is isolated from the existing owner transport, listens only on loopback, overwrites rather than trusts its ingress marker, blocks owner/permanent-auth paths before application routing, and makes public ingress ignore anonymous compatibility and permanent identity. The application still enforces the exact timed-session module as a second boundary. All 376 tests and static/build gates pass. This same-session review does not authorize Tailscale Funnel activation.
+The gateway is isolated from the existing owner transport, listens only on loopback, overwrites rather than trusts its ingress marker, blocks owner/permanent-auth paths before application routing, and makes public ingress ignore anonymous compatibility and permanent identity. The application still enforces the exact timed-session module as a second boundary. The Product Owner explicitly authorized activation; Funnel port 10000, public denial probes, loopback bindings, and private 9443 continuity were verified live. All 376 tests and static/build gates pass. This same-session review is not independent approval.

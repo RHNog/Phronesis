@@ -10,4 +10,6 @@ The existing Artwork Review and isolated public event-worker gateway changes wer
 
 Hosted replacement run `30844716647` passed both jobs: continuity in 5 seconds and clean-runner project validation in 1 minute 19 seconds. The remote seal SHA matched local Git, and only one pull-request workflow execution was created.
 
+After that hosted success, a separate process activated the already implemented public worker gateway and updated its canonical records. The live state was independently verified read-only and those user-owned edits were preserved in a subsequent clean commit and Handoff seal rather than discarded or left as a new stale worktree.
+
 Verification: `docs/testing/PHR-TECH-011-github-handoff-continuity-validation.md`.

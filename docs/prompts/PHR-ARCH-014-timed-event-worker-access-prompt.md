@@ -45,7 +45,7 @@ Public-ingress amendment (2026-08-03): implement and activate a separate loopbac
 - Never store or log plaintext codes or session tokens.
 - Never insert synthetic workers into Better Auth or permanent membership tables.
 - Never grant `ADMINISTRATION` or any `ADMIN` level through event access.
-- Preserve OPTIONAL-mode compatibility behavior while making temporary access testable; production enforcement still requires REQUIRED mode.
+- Preserve OPTIONAL-mode compatibility on the private owner path. Public gateway ingress must enforce timed event sessions independently; switching the entire private application to `REQUIRED` remains a separate owner-login rollout.
 
 ## Expected Architecture
 

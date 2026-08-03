@@ -12,4 +12,4 @@ Phronesis now separates clean-runner project validation from committed Handoff c
 
 ## Boundaries
 
-This release does not merge PR #5, deploy the application, activate public Funnel access, alter credentials, or weaken the 24-hour validation policy.
+This release does not merge PR #5, deploy the application, activate public Funnel access, alter credentials, or weaken the 24-hour validation policy. A separately authorized concurrent operation later activated the already implemented Funnel boundary and is documented under `PHR-ARCH-014`.

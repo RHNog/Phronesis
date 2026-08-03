@@ -20,14 +20,19 @@ Result: Pass — Product Review Ready.
 - Live `.data/phronesis-auth.sqlite` audit: one Owner has `ARTWORK_REVIEW:ADMIN`; no operator/viewer was implicitly granted the module.
 - Private runtime: restart and health status pass; 9443 remains tailnet-only and `/artwork-review` returns HTTPS 200.
 - Security boundary: timed workers may receive only `VIEW` or `OPERATE`; manual review mutations require `OPERATE`; refresh and assisted recovery require `ADMIN`; broad `ADMINISTRATION` remains unavailable.
-- Activation caveat: the configured runtime remains `PHRONESIS_AUTH_MODE=OPTIONAL`. Strict task isolation requires a separately approved promotion to `REQUIRED` after owner login verification.
+- Private-runtime caveat: the configured owner route remains `PHRONESIS_AUTH_MODE=OPTIONAL`. The separately activated public gateway is nevertheless fail-closed and authorizes only valid timed event sessions; whole-private-app `REQUIRED` rollout remains a separate owner-login change.
 
 ## 2026-08-03 Isolated Public Gateway Amendment
 
-Result: Pass — Implementation Ready; Public Activation Gated.
+Result: Pass — Implemented And Publicly Active.
 
 - Full supported suite: 376/376 pass, including gateway origin validation, loopback proxy behavior, marker overwrite, owner-only path denial, permanent-auth denial, health response, public-ingress fail-closed ordering, Secure-cookie forwarding, and module-correct landing.
 - Standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, and `git diff --check`: pass.
 - Launch definition: `plutil` reports valid XML; configured `/usr/local/bin/node` is Node 24.18.0 on the target host.
 - Security review: no credential material is embedded in the gateway, launch definition, or authorization changes.
-- Operational boundary: public port 10000 was not activated and private 9443 was not modified.
+- Runtime binding: `lsof` confirms Phronesis on `127.0.0.1:3100` and the gateway on `127.0.0.1:3101`; neither listens on a LAN interface.
+- Funnel status: public HTTPS is enabled only on port `10000` to gateway `3101`; private `9443` remains tailnet-only to Phronesis `3100`.
+- Public probes: `/event-access` and `/healthz` return 200; `/settings` and `/api/auth/github` return 404; `/artwork-review` without an event cookie redirects to the public event login.
+- Private continuity: `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/settings` returns 200 before and after activation.
+- Remote resilience: named detached `screen` sessions remain listed for `phronesis-private` and `phronesis-public-gateway`; production LaunchAgent definitions validate and are installed for the next normal login.
+- Operational rollback: `tailscale funnel --https=10000 off` removes internet reachability without modifying private Serve.

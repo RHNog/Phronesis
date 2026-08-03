@@ -5,7 +5,7 @@
 - Completed: install locked dependencies before project validation and validate the exact committed PR head with full Git history and restored branch identity (`PHR-TECH-011`).
 - Preserved: GitHub reads committed Handoff truth; only a successful local `./handoff` may prepare and seal continuity state.
 - Verified: 376/376 local tests, TypeScript, lint, production build, clean Handoff seal, remote SHA equality, and both hosted pull-request jobs pass.
-- Public exposure remains separate: this repair does not activate Tailscale Funnel or change the existing private 9443 service.
+- Deployment remained separate from the repair: a concurrently authorized operation subsequently activated Funnel port 10000, while the existing private 9443 service remained unchanged.
 
 ## Product Review Candidate: Assisted Sealed Artwork Recovery
 

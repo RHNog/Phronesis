@@ -2,7 +2,7 @@
 
 Phronesis now supports account-free, event-bound worker login. An owner can generate a single-use code from Settings for an active event, choose a one-to-24-hour duration, and assign Vendor Workspace and/or Inventory operations. The worker receives a scoped HttpOnly session.
 
-Temporary access ends at expiry or event closure and can be revoked immediately. Codes and session tokens are stored only as hashes, redemption is throttled, and this path can never access Administration or create permanent membership. Production enforcement still requires `PHRONESIS_AUTH_MODE=REQUIRED`.
+Temporary access ends at expiry or event closure and can be revoked immediately. Codes and session tokens are stored only as hashes, redemption is throttled, and this path can never access Administration or create permanent membership. The isolated public gateway enforces event sessions even while the separate private owner path retains `PHRONESIS_AUTH_MODE=OPTIONAL` compatibility.
 
 ## 2026-08-03 Artwork Review Assignment
 
@@ -11,3 +11,11 @@ Temporary access ends at expiry or event closure and can be revoked immediately.
 - Changed the Artwork Review page, navigation, queue/image reads, and manual mutations to use the dedicated module instead of broad Administration.
 - Migrated existing membership schemas additively and backfilled the new module only for Owner/Admin memberships.
 - Preserved the existing tailnet-only service. Browser-only public delivery through Tailscale Funnel is available as a separately approved operational action; it was not enabled by this release.
+
+## 2026-08-03 Public Worker Gateway
+
+- Activated a separate public login at `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access`; workers need only a browser and an owner-generated event code.
+- Public traffic reaches a loopback-only gateway that blocks Settings, permanent authentication, developer paths, and grant/employee/provider administration before forwarding.
+- Public authorization ignores anonymous `OPTIONAL` compatibility and permanent owner identity. It accepts only a valid, current event-access cookie and still enforces assigned modules at the application boundary.
+- Preserved the owner route on tailnet-only port `9443`; no public request is routed directly to Phronesis on port `3100`.
+- Added module-correct post-login landing, Secure cookies behind Funnel TLS, a Settings copyable public link, validated unattended runtime definitions, and an explicit one-command Funnel shutdown.

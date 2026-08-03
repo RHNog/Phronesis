@@ -6,7 +6,8 @@ Use `- [ ] [P0]`, `[P1]`, `[P2]`, or `[P3]` for machine ordering.
 ## Active gates
 
 - [x] [P0] Complete local validation, commit the event-worker gateway implementation, create a fresh Handoff seal, and confirm both GitHub pull-request jobs pass.
-- [ ] [P0] Activate the public event-worker Funnel only during an explicitly approved event window after Product Owner review; keep private port 9443 unchanged.
+- [x] [P0] Activate the public event-worker Funnel only during an explicitly approved event window after Product Owner review; keep private port 9443 unchanged.
+- [ ] [P0] Disable Funnel port 10000 with `tailscale funnel --https=10000 off` when the approved public worker window ends; do not alter private port 9443.
 - [ ] [P0] Configure Product Owner-approved US-to-Brazil fixed BRL and percentage costs and Brazil-to-US fixed USD and percentage costs; never infer unknown costs as zero.
 - [ ] [P0] Verify one real executable listing or dealer offer with price, quantity, counterparty, timestamp, and notes before promoting any arbitrage candidate to `ACTIONABLE`.
 - [ ] [P1] Reconcile the highest-value remaining LigaMagic edition gaps using exact evidence only; preserve the fuzzy-match and Textless prohibitions.

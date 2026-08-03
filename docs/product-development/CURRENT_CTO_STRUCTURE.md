@@ -10,19 +10,20 @@
 - Failure evidence: the hosted job invoked `./handoff prepare-handoff` before installing Node dependencies, so required validators were unavailable; committed continuity also still pointed at the implementation preceding the current dirty worktree.
 - Workflow rule: install with `npm ci`, run test/lint/build/diff validation separately, and run `./handoff validate-continuity --json` against the exact PR head with full Git history. GitHub must never prepare or commit Handoff state.
 - Publication rule: validate and commit the current implementation first, create the generated seal with local bare `./handoff`, then push and verify both pull-request jobs.
-- Exposure boundary: do not activate Tailscale Funnel or alter the private 9443 mapping as part of this repair.
+- Exposure boundary: the CI repair did not activate infrastructure. A separate concurrent operation subsequently activated Funnel port 10000; live probes confirm its timed-session boundary and the unchanged private 9443 mapping.
 - Work order: `docs/prompts/PHR-TECH-011-github-handoff-continuity-prompt.md`.
 - Local result: 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene pass.
 - First hosted result: run `30844457778` created one pull-request execution and passed `project-validation`. `continuity` reported only that exact-SHA checkout was `DETACHED`; the workflow now restores the event branch locally at that unchanged SHA and upgrades checkout to the Node 24 runtime.
 - Final hosted result: replacement run `30844716647` passed `continuity` in 5 seconds and `project-validation` in 1 minute 19 seconds. Local and remote seal SHA equality passed, and no duplicate feature-branch push run was created.
-- Next accountable role: Product Owner review of the separately gated public event-worker Funnel; no public activation is implied by this repair.
+- Concurrent deployment result: a separately authorized operation activated the public event-worker Funnel after the hosted repair passed. Public login/denial probes, loopback bindings, and private 9443 continuity were independently reverified before the activation documentation was sealed.
+- Next accountable role: Event operator monitoring and explicit Funnel shutdown when the approved public window ends.
 
 ## Active Revision — Isolated Public Event Worker Gateway
 
 - Assignment: `PHR-PUBLIC-EVENT-WORKER-GATEWAY-20260803`
 - Document ID: `PHR-STRUCT-20260803-002`
 - Feature: `PHR-ARCH-014`
-- Status: `IMPLEMENTATION IN PROGRESS`
+- Status: `IMPLEMENTED AND LIVE — PUBLIC WORKER LOGIN READY`
 - Objective: provide browser-only worker access without a Tailscale installation while preserving the Product Owner's current remote phone connection and the existing tailnet-only 9443 service.
 - Architecture: dedicated loopback gateway on 3101 -> existing Phronesis on 3100; Tailscale Funnel public HTTPS on unused port 10000 -> gateway; 9443 Serve remains untouched.
 - Authorization rule: the gateway overwrites a public-ingress header. Phronesis detects that header before OPTIONAL-mode compatibility and accepts only a valid timed event session. Permanent identity and anonymous compatibility never authorize the public ingress.
@@ -30,6 +31,9 @@
 - Remote-safety rule: build, validate, install, and health-check the gateway before Funnel activation. Any failure leaves 9443 operational. Do not switch the global auth mode while the owner is remote.
 - Acceptance: module-correct worker landing, Secure cookie behind TLS termination, public no-cookie fail-closed behavior, owner-only path blocking, private-path continuity, durable launch service, Funnel verification, full gates, and explicit shutdown instructions.
 - Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Live result: `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access` is public through Funnel and requires a valid single-use event code. Settings, permanent authentication, and unassigned modules remain denied. The owner-only `:9443` route remains tailnet-only and returns HTTP 200.
+- Runtime result: Phronesis and its gateway listen only on `127.0.0.1:3100` and `127.0.0.1:3101`. Named detached `screen` sessions supervise the locked/remote Mac runtime; validated LaunchAgent definitions are installed for the next normal login.
+- Verification: public login 200; public Settings and permanent auth 404; uncredentialed Artwork Review redirects to event login; private Settings 200; full 376/376 tests pass. Public shutdown is `tailscale funnel --https=10000 off`.
 
 ## Active Revision — Assignable Artwork Review Worker Access
 
@@ -40,14 +44,14 @@
 - Objective: make Artwork Review independently assignable to permanent employees and account-free timed workers without exposing Settings or broad Administration.
 - Access rule: `ARTWORK_REVIEW:VIEW` reads the queue and candidate images; `OPERATE` records manual candidate and packaging-gallery decisions; `ADMIN` alone runs source refresh and assisted recovery. Timed grants can receive at most `OPERATE`.
 - Migration rule: preserve every existing entitlement, backfill the new module only for Owner/Admin memberships, and leave existing operators, viewers, invitations, and timed sessions unchanged.
-- Delivery rule: existing tailnet Serve remains private. Browser-only public access through Tailscale Funnel is feasible but requires a separate explicit activation because it makes the service internet-reachable.
+- Delivery rule: existing tailnet Serve remains private. Browser-only public access is delivered by the separately authorized isolated gateway revision below; public traffic never reaches this module through anonymous compatibility.
 - Acceptance: employee and temporary-worker Settings selectors, one-module worker navigation, page/API enforcement, admin-only bulk controls, migration tests, focused/full gates, and private runtime verification.
 - Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Result: `ARTWORK_REVIEW` is now a first-class module in permanent employee assignments and timed worker codes. An artwork-only worker sees only Artwork Review, can perform manual candidate/gallery decisions at `OPERATE`, and cannot run refresh/assisted recovery or reach Administration.
 - Migration result: the live authorization database added the module without removing existing entitlements and backfilled one Owner with `ARTWORK_REVIEW:ADMIN`; no operator, viewer, invitation, or timed session received implicit access.
-- Runtime boundary: the existing 9443 Tailscale Serve mapping remains tailnet-only and healthy. Tailscale Funnel is supported by the installed client and would remove the worker-install requirement, but no public Funnel was activated. Authentication remains `OPTIONAL`; strict worker isolation requires the separately gated switch to `REQUIRED`.
+- Runtime boundary: the existing 9443 Tailscale Serve mapping remains tailnet-only and healthy. The later isolated public-gateway revision activated browser-only Funnel access on port 10000 with timed-session-only authorization while private authentication remains `OPTIONAL`.
 - Verification: full 373/373 tests, TypeScript, warning-free lint, production build, diff hygiene, live migration audit, private service restart/status, and `/artwork-review` HTTPS 200 pass.
-- Next accountable role: Product Owner review and decision on `REQUIRED` auth plus an event-only public Funnel window. Commit/push and public exposure remain separately gated.
+- Next accountable role: Product Owner may issue scoped event codes and review the live public worker workflow. Whole-private-app `REQUIRED` rollout and commit/push remain separately gated.
 
 ## Active Revision — Shared-SKU Packaging Galleries
 

@@ -10,7 +10,9 @@ The repair deliberately preserves the current `PHR-ARCH-014` public-gateway and 
 
 The first repaired hosted run passed the complete dependency-backed project job and produced only one pull-request run. Continuity then identified a CI-specific identity edge: checking out the exact head SHA leaves Git detached, while the seal records the branch name. The remediation keeps the exact SHA and creates a runner-local event branch before validation; it does not regenerate Handoff or weaken branch matching. Checkout v5 also removes the runner's Node 20 action warning.
 
-Replacement hosted run `30844716647` passed continuity in 5 seconds and dependency-backed project validation in 1 minute 19 seconds. The remote branch matched the local seal, and no duplicate feature-branch push run appeared. The GitHub/Handoff repair is complete; public Funnel activation remains an explicit later Product Owner decision.
+Replacement hosted run `30844716647` passed continuity in 5 seconds and dependency-backed project validation in 1 minute 19 seconds. The remote branch matched the local seal, and no duplicate feature-branch push run appeared. The GitHub/Handoff repair is complete.
+
+While the final hosted bookkeeping seal was running, a separate process recorded and performed a Product Owner-authorized Funnel activation. Read-only reconciliation confirmed public port 10000 forwards to loopback gateway 3101, public login returns 200, public Settings returns 404, both Node services bind only to loopback, and private tailnet-only 9443 remains healthy. Those independently created records were preserved and incorporated into the next seal; the CI repair itself did not activate infrastructure.
 
 ## 2026-08-02 — Assisted Sealed Artwork Recovery And Exception Queue
 
@@ -713,3 +715,23 @@ Implemented and live for Product Owner review. Focused 16/16 and full 370/370 te
 ### Acceptance State
 
 Implemented and live for Product Owner review. Full 373/373 tests, TypeScript, warning-free lint, production build, diff hygiene, live migration audit, private service health, and HTTPS page verification pass. Authentication remains `OPTIONAL`; strict task isolation requires a separately approved change to `REQUIRED`. Commit, push, and Funnel activation were not requested or performed.
+
+## 2026-08-03 — Isolated Public Event Worker Gateway
+
+### User Intent
+
+- Safely make temporary worker access public while the Product Owner is remote on a phone.
+- Avoid requiring workers to install Tailscale and do not interrupt the Product Owner's existing private route.
+
+### Decision And Result
+
+- Preserved tailnet-only owner Serve on port `9443` and left global authentication compatibility unchanged.
+- Added a separate loopback gateway on `127.0.0.1:3101`, public through Tailscale Funnel only on port `10000`; Phronesis remains loopback-only on `127.0.0.1:3100`.
+- Public ingress blocks Settings, permanent authentication, activation, developer routes, and owner administration at the gateway. Application authorization detects public ingress before `OPTIONAL` compatibility and accepts only a valid timed event session with its assigned modules.
+- Added Secure event cookies behind Funnel TLS, module-derived landing after code redemption, and a copyable public login link in Settings.
+- When the inactive remote desktop deferred GUI LaunchAgents, restored private access first, removed stale development children, and placed both verified production processes into named detached `screen` sessions. Validated LaunchAgent definitions remain installed for the next normal login.
+- Activated `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access`. Disable only this public ingress with `tailscale funnel --https=10000 off`.
+
+### Acceptance State
+
+Implemented and publicly live. Public login and health return 200; public Settings and permanent GitHub auth return 404; uncredentialed Artwork Review redirects to event login; private 9443 Settings remains 200. Loopback binding, Funnel topology, detached runtime supervision, 376/376 tests, TypeScript, warning-free lint, production build, plist validation, and diff hygiene pass. No commit or push was requested.

@@ -39,7 +39,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 
 ## Current constraints
 
-- The public event-worker gateway is not internet-exposed. Tailscale Funnel activation on port 10000 requires explicit Product Owner approval for a bounded event window; the existing private 9443 mapping must remain unchanged.
+- The public event-worker gateway is active through Tailscale Funnel on port 10000 following a separately authorized activation. It accepts only timed event sessions; the existing private 9443 mapping remains tailnet-only and unchanged. Disable the public path with `tailscale funnel --https=10000 off` when the bounded event window ends.
 - Handoff continuity is publishable only after a clean implementation commit and a successful local bare `./handoff` seal; hosted GitHub checks verify that committed result.
 - The active private runtime has no `PKMNPRICES_API_KEY` or `PSA_API_TOKEN`. Sealed ingestion and live PSA lookup remain dormant until server-side registration and service restart; PkmnPrices sealed access must be enabled by the provider plan.
 - Beckett/BCCG, TAG, CGC, and SGC expose official public lookup pages but no documented machine API found in the 2026-08-01 research, so Phronesis does not automate them.
