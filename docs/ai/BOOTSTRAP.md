@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-03T19:18:36Z","generation_id":"7e375683e087884acf2b","head":"5ac3d5eba48ca12adbb3378941fd17d5cc222323","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-03T20:11:54Z","generation_id":"3161f8ad1a9877c0c839","head":"b35c5959595abc2143e5f21bc6b0ef421b8e113f","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Bootstrap Package
 
 Use this instruction in a new AI session:
@@ -9,8 +9,8 @@ Use this instruction in a new AI session:
 
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-price-monitoring-20260730`
-- **Commit:** `5ac3d5eba48ca12adbb3378941fd17d5cc222323`
-- **Generation ID:** `7e375683e087884acf2b`
+- **Commit:** `b35c5959595abc2143e5f21bc6b0ef421b8e113f`
+- **Generation ID:** `3161f8ad1a9877c0c839`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 ## Objective
