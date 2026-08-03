@@ -1,19 +1,19 @@
 {
   "artifacts": {
-    "docs/ai/BOOTSTRAP.md": "05df1799c28e38035c5dac3f2f1a3566312acc511811091ae6e6f78f0935dc12",
-    "docs/ai/CURRENT_CONTEXT.md": "2a98a652781247e583644a85519f7e1a74974e90f564173e18b92a1e985c69c0",
-    "docs/ai/HANDOFF.md": "df17b31cf1672319fbe8392a44735ed2c8f93e821d1a61af63f1c74272f4334c",
-    "docs/ai/SESSION_SUMMARY.md": "c1e3c7e9004427d7a4a8d320adce6acfcf1d7967cf8c401f263149aa03e71ec6",
-    "docs/ai/WORK_QUEUE.md": "0c063699b20db0381fff3c08288a2bbdaaea7a32460128b7ea92f834cf07ae50",
-    "docs/ai/reports/bootstrap-latest.json": "9a093fa9ebf11aef51e0feecad560bb8b20a9dada7835dd18ee2fdda39520e17",
-    "docs/ai/reports/validation-latest.json": "752e0ff515bff788005ed887cf95aa5ba6f7a94588fed81fb3c60fc0249508bb",
-    "docs/ai/reports/validation-latest.md": "20f19aaaa2ff1f9524a195e603f00fe4cfa73b2d7a3f26ec9dc0bae6c757654b"
+    "docs/ai/BOOTSTRAP.md": "c3a3991ca4c275c08ea072e931ebc73c796bce09cc0681b1250f5383eb0e646c",
+    "docs/ai/CURRENT_CONTEXT.md": "0a2e9b870dc97a5a0791c04301762494391a60d72e3ceae9abb802162360f9da",
+    "docs/ai/HANDOFF.md": "d6cdec78f8baca2295ea5ad8585717a855ccfbd27a568e0e5017016f22f3cba6",
+    "docs/ai/SESSION_SUMMARY.md": "4432589ccd5fff167187bc51d31719ddac2eb563c0a552b49f191b97297b3e68",
+    "docs/ai/WORK_QUEUE.md": "ddb04ec88d55f4b41d6ba3f3c491040a0e77f5202c37db4c288cb515f624ef96",
+    "docs/ai/reports/bootstrap-latest.json": "8d8de9610d513ea0f12b3b565458224f95c1a25938079ed8ed974a67aac13166",
+    "docs/ai/reports/validation-latest.json": "0f3c206f55a181be5b6964f7e9bb274958ece301800088a8be5235c205f27ff4",
+    "docs/ai/reports/validation-latest.md": "1449962121514d7a7175b37ae39624d4ffc832b47ff42a785d2478da3ca7d918"
   },
   "branch": "codex/phr-price-monitoring-20260730",
   "config_digest": "24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af",
-  "generated_at": "2026-08-03T19:14:56Z",
-  "generation_id": "fc4b039256ce65f5bbcc",
-  "head": "467ed7fa76e4b7ee9cae48774a73af1e9c56fda7",
+  "generated_at": "2026-08-03T19:18:36Z",
+  "generation_id": "7e375683e087884acf2b",
+  "head": "5ac3d5eba48ca12adbb3378941fd17d5cc222323",
   "schema_version": "1",
   "worktree_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 }

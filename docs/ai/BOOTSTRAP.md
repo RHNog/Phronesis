@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-03T19:14:56Z","generation_id":"fc4b039256ce65f5bbcc","head":"467ed7fa76e4b7ee9cae48774a73af1e9c56fda7","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-03T19:18:36Z","generation_id":"7e375683e087884acf2b","head":"5ac3d5eba48ca12adbb3378941fd17d5cc222323","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Bootstrap Package
 
 Use this instruction in a new AI session:
@@ -9,13 +9,13 @@ Use this instruction in a new AI session:
 
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-price-monitoring-20260730`
-- **Commit:** `467ed7fa76e4b7ee9cae48774a73af1e9c56fda7`
-- **Generation ID:** `fc4b039256ce65f5bbcc`
+- **Commit:** `5ac3d5eba48ca12adbb3378941fd17d5cc222323`
+- **Generation ID:** `7e375683e087884acf2b`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 ## Objective
 
-Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal without activating public ingress.
+Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal that records the separately authorized live public ingress without conflating it with the CI repair.
 
 ## Completed work
 
@@ -29,12 +29,12 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Remaining work
 
-- Present public event-worker activation as a separate Product Owner decision after the repair is green.
+- Monitor the separately activated public event-worker window and disable Funnel port 10000 when that approved window ends.
 
 ## Blockers
 
 - No implementation blocker is currently known.
-- Public Funnel activation remains intentionally blocked on explicit Product Owner approval and a bounded event window.
+- No repair blocker remains. Public Funnel is active under a separately authorized window and must be shut down explicitly when that window ends.
 
 ## Validation
 
@@ -47,7 +47,7 @@ Read [DECISIONS.md](../DECISIONS.md) before implementation.
 
 ## Exact next action
 
-Product Owner review: decide whether and when to activate the public event-worker Funnel for a bounded event window; no activation is automatic.
+Operate only with owner-issued timed event codes, then run `tailscale funnel --https=10000 off` when the approved public worker window ends; private port 9443 must remain unchanged.
 
 ## Resume protocol
 

@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-03T19:14:56Z","generation_id":"fc4b039256ce65f5bbcc","head":"467ed7fa76e4b7ee9cae48774a73af1e9c56fda7","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-03T19:18:36Z","generation_id":"7e375683e087884acf2b","head":"5ac3d5eba48ca12adbb3378941fd17d5cc222323","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Work Queue
 
 > Machine-generated from `docs/ai/ACTIVE_TASK.md` and `docs/BACKLOG.md`. Edit the sources, then
@@ -6,8 +6,8 @@
 
 | Rank | Priority | Source ID | Work |
 |---:|---:|---|---|
-| 1 | P0 | `ACTIVE-001` | Present public event-worker activation as a separate Product Owner decision after the repair is green. |
-| 2 | P0 | `BACKLOG-001` | Activate the public event-worker Funnel only during an explicitly approved event window after Product Owner review; keep private port 9443 unchanged. |
+| 1 | P0 | `ACTIVE-001` | Monitor the separately activated public event-worker window and disable Funnel port 10000 when that approved window ends. |
+| 2 | P0 | `BACKLOG-001` | Disable Funnel port 10000 with `tailscale funnel --https=10000 off` when the approved public worker window ends; do not alter private port 9443. |
 | 3 | P0 | `BACKLOG-002` | Configure Product Owner-approved US-to-Brazil fixed BRL and percentage costs and Brazil-to-US fixed USD and percentage costs; never infer unknown costs as zero. |
 | 4 | P0 | `BACKLOG-003` | Verify one real executable listing or dealer offer with price, quantity, counterparty, timestamp, and notes before promoting any arbitrage candidate to `ACTIONABLE`. |
 | 5 | P1 | `BACKLOG-004` | Reconcile the highest-value remaining LigaMagic edition gaps using exact evidence only; preserve the fuzzy-match and Textless prohibitions. |
