@@ -2,7 +2,7 @@
 
 ## Status
 
-Local application gate passed; seal and hosted verification pending.
+Passed.
 
 ## Required checks
 
@@ -33,5 +33,8 @@ Local application gate passed; seal and hosted verification pending.
 - `git diff --check`: pass.
 - Secret-pattern scan over the workflow, gateway, authorization boundary, launch definition, and `PHR-TECH-011` artifacts: no credential material found.
 - `plutil -lint ops/launchd/com.phronesis.public-event-gateway.plist`: pass; the configured `/usr/local/bin/node` resolves to Node 24.18.0 on the target host.
-- Local seal, remote SHA equality, and hosted job results: pending publication closeout.
-- Hosted run `30844457778`: `project-validation` passed; `continuity` correctly rejected the detached runner branch with seven branch-identity errors. The workflow now restores the runner-local event branch at the unchanged exact head SHA and uses `actions/checkout@v5` to remove the Node 20 action warning. Final hosted verification is pending the replacement seal.
+- Local Handoff seal and validation: pass with zero errors and zero warnings.
+- Remote branch SHA equality: pass.
+- Hosted run `30844457778`: `project-validation` passed; `continuity` correctly rejected the detached runner branch with seven branch-identity errors. The workflow now restores the runner-local event branch at the unchanged exact head SHA and uses `actions/checkout@v5` to remove the Node 20 action warning.
+- Detached-runner emulation: the exact seal correctly fails as `DETACHED`, then passes with zero errors/warnings after the event branch is restored at the unchanged SHA.
+- Hosted replacement run `30844716647`: `continuity` passed in 5 seconds and `project-validation` passed in 1 minute 19 seconds. Only one pull-request run was created and no feature-branch push run was created.

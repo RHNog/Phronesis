@@ -10,6 +10,8 @@ The repair deliberately preserves the current `PHR-ARCH-014` public-gateway and 
 
 The first repaired hosted run passed the complete dependency-backed project job and produced only one pull-request run. Continuity then identified a CI-specific identity edge: checking out the exact head SHA leaves Git detached, while the seal records the branch name. The remediation keeps the exact SHA and creates a runner-local event branch before validation; it does not regenerate Handoff or weaken branch matching. Checkout v5 also removes the runner's Node 20 action warning.
 
+Replacement hosted run `30844716647` passed continuity in 5 seconds and dependency-backed project validation in 1 minute 19 seconds. The remote branch matched the local seal, and no duplicate feature-branch push run appeared. The GitHub/Handoff repair is complete; public Funnel activation remains an explicit later Product Owner decision.
+
 ## 2026-08-02 — Assisted Sealed Artwork Recovery And Exception Queue
 
 The Product Owner challenged the remaining sealed coverage, asked for the compute cost of approaching the reviewable 47.5% tier, and first directed Phronesis to build a simple manual verification tool. After seeing where it lived, the Product Owner explicitly redirected Phronesis to perform the defensible review work automatically and let operations move forward. `PHR-UX-024` now combines a versioned assisted policy with an Administration Settings exception queue. Exact, `ASSISTED_REPRESENTATIVE`, and `OWNER_APPROVED_REPRESENTATIVE` coverage remain separate; all representative decisions are audited, reversible, and labelled as packaging-variable in Vendor Workspace.

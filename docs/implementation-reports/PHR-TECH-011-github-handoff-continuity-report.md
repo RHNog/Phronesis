@@ -6,6 +6,8 @@ Feature branches are validated through pull requests, while direct push executio
 
 The first hosted repair run proved dependency-backed `project-validation` green and exposed the exact remaining mismatch: Actions leaves exact-SHA checkouts detached, while Handoff verifies the recorded branch as well as the commit. The workflow now creates only a runner-local branch at the already checked-out SHA before continuity validation and uses Node 24-compatible checkout v5.
 
-The existing Artwork Review and isolated public event-worker gateway changes were preserved rather than discarded. They pass 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene. Replacement seal and final hosted verification remain.
+The existing Artwork Review and isolated public event-worker gateway changes were preserved rather than discarded. They pass 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
+
+Hosted replacement run `30844716647` passed both jobs: continuity in 5 seconds and clean-runner project validation in 1 minute 19 seconds. The remote seal SHA matched local Git, and only one pull-request workflow execution was created.
 
 Verification: `docs/testing/PHR-TECH-011-github-handoff-continuity-validation.md`.

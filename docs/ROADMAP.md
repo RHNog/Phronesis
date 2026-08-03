@@ -1,10 +1,10 @@
 # Roadmap
 
-## Active Repair: GitHub Handoff Continuity
+## Completed Repair: GitHub Handoff Continuity
 
-- Repairing: install locked dependencies before project validation and validate the exact committed PR head with full Git history (`PHR-TECH-011`).
+- Completed: install locked dependencies before project validation and validate the exact committed PR head with full Git history and restored branch identity (`PHR-TECH-011`).
 - Preserved: GitHub reads committed Handoff truth; only a successful local `./handoff` may prepare and seal continuity state.
-- Publication gate: the current event-worker gateway and authorization changes must pass the complete local project gate, be committed, and receive a fresh Handoff seal before push.
+- Verified: 376/376 local tests, TypeScript, lint, production build, clean Handoff seal, remote SHA equality, and both hosted pull-request jobs pass.
 - Public exposure remains separate: this repair does not activate Tailscale Funnel or change the existing private 9443 service.
 
 ## Product Review Candidate: Assisted Sealed Artwork Recovery

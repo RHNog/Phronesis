@@ -14,9 +14,9 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - [x] Make continuity validation read-only against the exact committed PR head with full Git history.
 - [x] Avoid duplicate feature-branch runs by reserving push validation for `main` and pull-request validation for feature work.
 - [x] Pass the full local test, TypeScript, lint, build, and diff-hygiene gate.
-- [ ] Commit the implementation and canonical documentation with no secret-bearing runtime data.
-- [ ] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
-- [ ] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
+- [x] Commit the implementation and canonical documentation with no secret-bearing runtime data.
+- [x] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
+- [x] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
 
 ## Completed this session
 
@@ -26,10 +26,10 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
 - Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
 - Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
+- Hosted replacement run `30844716647` passed continuity and project validation. The local and remote seal SHA matched, and no duplicate feature-branch push run was created.
 
 ## Remaining work
 
-- Commit and seal the hosted branch-identity remediation, push, and verify both pull-request jobs.
 - Present public event-worker activation as a separate Product Owner decision after the repair is green.
 
 ## Blockers
@@ -39,4 +39,4 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Exact next action
 
-Commit the detached-runner remediation, create a replacement Handoff seal, and verify the next hosted pull-request run.
+Product Owner review: decide whether and when to activate the public event-worker Funnel for a bounded event window; no activation is automatic.
