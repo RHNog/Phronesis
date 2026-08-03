@@ -15,6 +15,11 @@ import {
   sha256File,
   type LigaMagicSourceReceipt,
 } from "../lib/providers/ligamagic/Snapshot.ts";
+import {
+  LIGAPOKEMON_CSV_HEADERS,
+  readLigaPokemonCsv,
+} from "../lib/providers/ligapokemon/Csv.ts";
+import { buildLigaPokemonSnapshot } from "../lib/providers/ligapokemon/Snapshot.ts";
 
 function quote(value: string): string {
   return `"${value.replace(/"/g, '""')}"`;
@@ -61,10 +66,38 @@ function hybridBytes(): Buffer {
   ]);
 }
 
+function pokemonCsv(input: { card?: string } = {}): string {
+  const values = [
+    "Edição Teste",
+    "Test Edition",
+    "tst",
+    "Pikachu de Teste",
+    input.card ?? "Test Pikachu",
+    "1",
+    "NM",
+    "EN",
+    "R",
+    "Y",
+    "Foil",
+    "1",
+    "",
+    "102",
+    "12.34",
+    "13.00",
+    "14.00",
+    "7.00",
+    "8.00",
+    "9.00",
+  ];
+  return `${LIGAPOKEMON_CSV_HEADERS.map(quote).join(",")}\r\n${values.map(quote).join(",")}\r\n`;
+}
+
 function receipt(path: string, collectionLabel: string): LigaMagicSourceReceipt {
   return {
     collectionLabel,
+    sourceAdvertisedCards: 1,
     advertisedCards: 1,
+    quantityAuthority: "SOURCE_LABEL",
     actualRows: 1,
     actualQuantity: 1,
     exportedAt: "2026-07-30T20:00:00.000Z",
@@ -150,6 +183,20 @@ test("LigaMagic snapshot retains provenance and classifies duplicate price evide
       ),
       2,
     );
+    assert.deepEqual(
+      {
+        ...database
+          .prepare(
+            "SELECT source_advertised_cards, advertised_cards, quantity_authority FROM ligamagic_source ORDER BY id LIMIT 1",
+          )
+          .get(),
+      },
+      {
+        source_advertised_cards: 1,
+        advertised_cards: 1,
+        quantity_authority: "SOURCE_LABEL",
+      },
+    );
     database.close();
 
     const conflicting = join(directory, "conflicting.csv");
@@ -164,6 +211,47 @@ test("LigaMagic snapshot retains provenance and classifies duplicate price evide
     assert.equal(review.status, "DRY_RUN_REVIEW_REQUIRED");
     assert.equal(review.conflictingDuplicates, 1);
     assert.match(readFileSync(join(directory, "review", "manifest.json"), "utf8"), /DRY_RUN_REVIEW_REQUIRED/);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("LigaPokemon uses an isolated fail-closed parser and snapshot namespace", () => {
+  const directory = mkdtempSync(join(tmpdir(), "phronesis-ligapokemon-snapshot-"));
+  try {
+    const sourcePath = join(directory, "pokemon.csv");
+    writeFileSync(sourcePath, pokemonCsv({ card: "Pikachu" }));
+    assert.equal(readLigaPokemonCsv(readFileSync(sourcePath)).length, 1);
+    assert.throws(
+      () =>
+        readLigaPokemonCsv(
+          Buffer.from(pokemonCsv().replace("Card (EN)", "Card English")),
+        ),
+      /LigaPokemon CSV schema drift/i,
+    );
+    const output = join(directory, "complete");
+    const manifest = buildLigaPokemonSnapshot({
+      runId: "pokemon-pilot",
+      outputDirectory: output,
+      startedAt: "2026-08-03T12:00:00.000Z",
+      completedAt: "2026-08-03T12:01:00.000Z",
+      sources: [receipt(sourcePath, "Pokemon Test (1 cards)")],
+    });
+    assert.equal(manifest.featureId, "PHR-API-013");
+    assert.equal(manifest.databaseFile, "ligapokemon-dry-run.sqlite");
+    const database = new DatabaseSync(join(output, manifest.databaseFile));
+    assert.equal(
+      Number(
+        (
+          database.prepare("SELECT COUNT(*) AS count FROM ligapokemon_price").get() as {
+            count: number;
+          }
+        ).count,
+      ),
+      1,
+    );
+    assert.throws(() => database.prepare("SELECT * FROM ligamagic_price").all());
+    database.close();
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }

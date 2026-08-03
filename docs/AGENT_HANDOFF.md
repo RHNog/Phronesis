@@ -1,5 +1,17 @@
 # Agent Handoff
 
+## Product Review Candidate — Arbitrage And Regional Acquisition Recovery — 2026-08-03
+
+- `PHR-TECH-012` resolves the zero Arbitrage queue to a private runtime selecting `.data/pricing-lookup.sqlite` rather than the verified `.data/mobile-review.sqlite`; the former has zero matches and the latter has 131,869.
+- All supported runtime and maintenance paths now share the operational resolver. Private launch supervises the catalogue observer, and new Magic imports or complete LigaMagic runs rebuild regional reconciliation.
+- `PHR-API-013` adds a daily 03:00 LigaMagic LaunchAgent, overlap lock, same-day idempotency, atomic status, complete-receipt gate, and independent provider results.
+- LigaPokemon has isolated profile/pilot/full commands, an authenticated 20-column parser, and isolated snapshots. Its Lote 1 pilot passed at 9,772/9,772. The Product Owner authorized Lote 10's repeat-identical 9,700-card export over its 9,704 label through an exact provenance-bearing exception. Full acquisition then reached Lote 4 and failed closed at 9,868 exported versus 9,870 advertised; regional Pokémon promotion is not implemented.
+- The five TCG catalogue checkpoints remain at 2026-08-01. The sibling acquisition dashboard is down and its four-daily schedule is stale; do not represent Phronesis catalogue data as up to date.
+- Focused checks and full 392/392 tests, TypeScript, warning-free lint, production build, plist validation, and diff hygiene pass. Same-session conformance passes but is not independent approval.
+- Live recovery passed: the supervisor owns observer plus Next.js, and the API returns 50 ranked identity-verified candidates instead of zero. They remain blocked by incomplete route costs and zero availability verifications.
+- The remote-session shutdown edge was repaired and the runtime was consolidated to exactly one private screen, wrapper, observer, and Next.js listener. The separate public-gateway screen was untouched.
+- The 03:00 agent is loaded. LigaMagic remains `REAUTHENTICATION_REQUIRED`; LigaPokemon is authenticated and pilot-verified but full snapshot creation remains `SOURCE_COUNT_MISMATCH` on the separately unauthorized two-card Lote 4 discrepancy. The external TCG scheduler also remains.
+
 ## Product Review Candidate — Editable Purchase Cart — 2026-08-01
 
 - `PHR-UX-020` is implemented under `PHR-STRUCT-20260801-006`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.

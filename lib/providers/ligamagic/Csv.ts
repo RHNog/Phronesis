@@ -53,6 +53,13 @@ export type LigaMagicRow = LigaMagicPriceSummary & {
   sourceRowHash: string;
 };
 
+export type LigaCsvContract = {
+  providerLabel: string;
+  headers: readonly string[];
+  rarityHeader: string;
+  colorHeader: string;
+};
+
 const windows1252 = new TextDecoder("windows-1252");
 
 function utf8SequenceLength(bytes: Uint8Array, index: number): number {
@@ -112,7 +119,10 @@ function utf8SequenceLength(bytes: Uint8Array, index: number): number {
   return 0;
 }
 
-export function decodeLigaMagicCsv(bytes: Uint8Array): string {
+export function decodeLigaCsv(
+  bytes: Uint8Array,
+  providerLabel = "LigaMagic",
+): string {
   const chunks: string[] = [];
   let validStart = 0;
   let index = 0;
@@ -134,7 +144,7 @@ export function decodeLigaMagicCsv(bytes: Uint8Array): string {
   }
   const decoded = chunks.join("").replace(/^\uFEFF/, "");
   if (decoded.includes("\uFFFD")) {
-    throw new Error("LigaMagic CSV contains undecodable bytes.");
+    throw new Error(`${providerLabel} CSV contains undecodable bytes.`);
   }
   return decoded;
 }
@@ -254,27 +264,43 @@ function rowHash(values: readonly string[]): string {
   return createHash("sha256").update(JSON.stringify(values)).digest("hex");
 }
 
-export function readLigaMagicCsv(bytes: Uint8Array): LigaMagicRow[] {
-  const records = parseCsvRecords(decodeLigaMagicCsv(bytes));
-  if (records.length === 0) throw new Error("LigaMagic CSV is empty.");
+export function readLigaCsv(
+  bytes: Uint8Array,
+  providerLabel = "LigaMagic",
+): LigaMagicRow[] {
+  return readLigaCsvWithContract(bytes, {
+    providerLabel,
+    headers: LIGAMAGIC_CSV_HEADERS,
+    rarityHeader: "Raridade (M R U C)",
+    colorHeader: "Cor (W U B R G M A L)",
+  });
+}
+
+export function readLigaCsvWithContract(
+  bytes: Uint8Array,
+  contract: LigaCsvContract,
+): LigaMagicRow[] {
+  const { providerLabel } = contract;
+  const records = parseCsvRecords(decodeLigaCsv(bytes, providerLabel));
+  if (records.length === 0) throw new Error(`${providerLabel} CSV is empty.`);
   const headers = records[0].map(normalizeHeader);
   if (
-    headers.length !== LIGAMAGIC_CSV_HEADERS.length ||
-    headers.some((header, index) => header !== LIGAMAGIC_CSV_HEADERS[index])
+    headers.length !== contract.headers.length ||
+    headers.some((header, index) => header !== contract.headers[index])
   ) {
     throw new Error(
-      `LigaMagic CSV schema drift: expected ${LIGAMAGIC_CSV_HEADERS.length} canonical columns.`,
+      `${providerLabel} CSV schema drift: expected ${contract.headers.length} canonical columns.`,
     );
   }
   return records.slice(1).map((values, rowIndex) => {
     if (values.length !== headers.length) {
       throw new Error(
-        `LigaMagic CSV row ${rowIndex + 2} has ${values.length} columns instead of ${headers.length}.`,
+        `${providerLabel} CSV row ${rowIndex + 2} has ${values.length} columns instead of ${headers.length}.`,
       );
     }
     const data = Object.fromEntries(
       headers.map((header, index) => [header, values[index].trim()]),
-    ) as Record<LigaMagicHeader, string>;
+    ) as Record<string, string>;
     for (const required of [
       "Edicao (EN)",
       "Edicao (Sigla)",
@@ -284,7 +310,7 @@ export function readLigaMagicCsv(bytes: Uint8Array): LigaMagicRow[] {
       "Idioma (BR EN DE ES FR IT JP KO RU TW)",
     ] as const) {
       if (!data[required]) {
-        throw new Error(`LigaMagic CSV row ${rowIndex + 2} is missing ${required}.`);
+        throw new Error(`${providerLabel} CSV row ${rowIndex + 2} is missing ${required}.`);
       }
     }
     const identity = {
@@ -302,8 +328,8 @@ export function readLigaMagicCsv(bytes: Uint8Array): LigaMagicRow[] {
       editionPtBr: data["Edicao (PTBR)"],
       cardPt: data["Card (PT)"],
       quantity: parseNonNegativeInteger(data.Quantidade, "quantity"),
-      rarity: data["Raridade (M R U C)"],
-      color: data["Cor (W U B R G M A L)"],
+      rarity: data[contract.rarityHeader],
+      color: data[contract.colorHeader],
       comment: data.Comentario,
       consumerLowCentavos: parseBrlCentavos(
         data["Compra - Menor Preco"],
@@ -332,4 +358,12 @@ export function readLigaMagicCsv(bytes: Uint8Array): LigaMagicRow[] {
       sourceRowHash: rowHash(values),
     };
   });
+}
+
+export function decodeLigaMagicCsv(bytes: Uint8Array): string {
+  return decodeLigaCsv(bytes, "LigaMagic");
+}
+
+export function readLigaMagicCsv(bytes: Uint8Array): LigaMagicRow[] {
+  return readLigaCsv(bytes, "LigaMagic");
 }

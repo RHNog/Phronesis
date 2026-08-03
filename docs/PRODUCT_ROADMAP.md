@@ -1,5 +1,12 @@
 # Product Roadmap
 
+## Current Delivery — Arbitrage Evidence Continuity
+
+- Restore the existing Cross-market decision queue from the verified 131,869-match LigaMagic/TCGplayer crosswalk by keeping runtime and acquisition on one operational database (`PHR-TECH-012`).
+- Refresh LigaMagic daily at 03:00 with complete-snapshot promotion and separately visible provider health (`PHR-API-013`).
+- Add LigaPokemon through an isolated authenticated pilot; Pokémon cross-market promotion is a later evidence decision, not part of this delivery.
+- Upstream TCG catalogue currency remains dependent on the separately operated acquisition tool's four-daily scheduler.
+
 ## Current Delivery — Event Inventory Lanes
 
 - Product Review pending: Purchase-fed Event Flip with multi-card selection, quantity validation, intended Sale pricing, and one retry-safe Add-to-Case action (`PHR-WORKFLOW-013`).

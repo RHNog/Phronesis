@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import { pricingLookupConfig } from "../config/pricingLookup";
+import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import {
   defaultPricingToolRoot,
   syncCompletedCatalogues,
@@ -10,11 +11,10 @@ import {
   getMarketEvidenceRepository,
   getWatchlistRepository,
 } from "../lib/watchlist/repositories";
+import { rebuildRegionalCrosswalk } from "../lib/regional/reconciliation";
 
 const once = process.argv.includes("--once");
-const databasePath =
-  process.env.PHRONESIS_PRICING_DB_PATH ??
-  resolve(".data/pricing-lookup.sqlite");
+const databasePath = operationalPricingDatabasePath();
 const toolRoot =
   process.env.PHRONESIS_PRICING_TOOL_ROOT ?? defaultPricingToolRoot();
 const archiveRoot =
@@ -50,6 +50,12 @@ async function synchronize() {
     });
     for (const attempt of attempts)
       process.stdout.write(`${JSON.stringify(attempt)}\n`);
+    if (verifiedCategories.has("magic-en")) {
+      const report = rebuildRegionalCrosswalk({ databasePath });
+      process.stdout.write(
+        `${JSON.stringify({ event: "regional-crosswalk-reconciled", sourceRunId: report.sourceRunId, matched: report.matched, comparableBoth: report.comparableBoth, fingerprint: report.crosswalkFingerprint })}\n`,
+      );
+    }
     for (const categoryId of verifiedCategories) {
       const enrichment = await enrichWatchedCategoryWithJustTCG({
         categoryId,

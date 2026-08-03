@@ -1,6 +1,17 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-03 — Preserve One Operational Pricing Database And Pilot-Gate LigaPokemon
+
+- Decision: retain the verified `.data/mobile-review.sqlite` file as the operational default rather than rename 1.2 GB of live data during recovery.
+- Decision: all supported database consumers use one resolver; explicit environment overrides remain available for tests and deliberate operations.
+- Decision: recurring Liga acquisition is provider-contract based but profiles and evidence never cross providers.
+- Decision: install a 03:00 local LigaMagic recurrence with overlap locking, atomic status, exact completeness checks, and automatic Magic reconciliation.
+- Decision: add LigaPokemon profile/pilot/snapshot capability now, but require the authenticated pilot marker before any full run and prohibit regional promotion until a separate exact Pokémon crosswalk is approved.
+- Decision: use ordinary Chrome plus post-startup loopback CDP attachment for Liga providers. LigaPokemon removes authenticated controls from Playwright-launched contexts, while the owner-authenticated ordinary-Chrome path exposes the exact export contract without credential or storage inspection.
+- Decision: preserve exact advertised-versus-exported quantity equality by default. The Product Owner explicitly authorizes the repeat-identical 9,700-card CSV as authoritative only for LigaPokemon `Lote 10 (9.704 cards)`; receipts and snapshots retain both numbers and `PRODUCT_OWNER_EXPORT` provenance. Every other mismatch remains `SOURCE_COUNT_MISMATCH`.
+- Rationale: the zero queue was a data-plane selection defect, while LigaPokemon required owner authentication to establish its real 20-column contract. The verified Lote 1 pilot passed and Lote 10 reproducibly exports 9,700 despite advertising 9,704. A narrow evidence-bearing exception honors the Product Owner's decision without creating a general tolerance or erasing upstream provenance.
+
 ## 2026-08-03 — GitHub verifies committed Handoff state instead of preparing it
 
 - **Status:** Implementing (`PHR-TECH-011`).

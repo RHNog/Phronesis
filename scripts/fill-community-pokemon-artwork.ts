@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import { DurableArtworkCache, isApprovedArtworkSource } from "../lib/artwork/DurableArtworkCache";
 import { PricingRepository, type ArtworkWarmCandidate } from "../lib/pricing/repository";
 import { PokefilesArtworkSource, resolvePokefilesArtwork } from "../lib/providers/community/PokefilesArtworkSource";
@@ -90,7 +91,7 @@ async function writeAuditReport(root: string, report: Record<string, unknown>): 
 const dryRun = process.argv.includes("--dry-run");
 const prefetchLimit = integerArgument("--prefetch", 1_500, maximumPrefetch);
 const concurrency = integerArgument("--concurrency", 4, maximumConcurrency) || 1;
-const databasePath = process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite");
+const databasePath = operationalPricingDatabasePath();
 const reportRoot = process.env.PHRONESIS_COMMUNITY_ARTWORK_REPORT_PATH ?? join(process.cwd(), ".data", "community-artwork");
 const repository = new PricingRepository(databasePath);
 

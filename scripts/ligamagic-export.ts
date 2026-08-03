@@ -14,7 +14,6 @@ import { basename, join, resolve } from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import {
   chromium,
-  type Browser,
   type BrowserContext,
   type Locator,
   type Page,
@@ -26,15 +25,41 @@ import {
   buildLigaMagicSnapshot,
   sha256File,
   type LigaMagicSourceReceipt,
+  type LigaSnapshotManifest,
   type SanitizedNetworkEvent,
 } from "../lib/providers/ligamagic/Snapshot.ts";
+import { readLigaPokemonCsv } from "../lib/providers/ligapokemon/Csv.ts";
+import { buildLigaPokemonSnapshot } from "../lib/providers/ligapokemon/Snapshot.ts";
+import { resolveLigaQuantityAuthority } from "../lib/providers/liga/QuantityAuthority.ts";
 
 type Command = "profile" | "pilot" | "dry-run";
+type ProviderId = "ligamagic" | "ligapokemon";
+
+type ProviderContract = {
+  id: ProviderId;
+  label: "LigaMagic" | "LigaPokemon";
+  featureId: "PHR-API-005" | "PHR-API-013";
+  hosts: readonly string[];
+  formatLabel: string;
+  defaultDebugPort: number;
+  rootEnvironment: string;
+  exportUrlEnvironment: string;
+  debugPortEnvironment: string;
+  readCsv: typeof readLigaMagicCsv;
+  buildSnapshot: (input: {
+    runId: string;
+    outputDirectory: string;
+    startedAt: string;
+    completedAt: string;
+    sources: readonly LigaMagicSourceReceipt[];
+  }) => LigaSnapshotManifest;
+};
 
 type LocalConfig = {
   exportUrl: string;
   configuredAt: string;
   debugPort: number;
+  pilotVerifiedAt?: string;
 };
 
 type ExportControls = {
@@ -54,7 +79,7 @@ function isCommand(value: string | undefined): value is Command {
 
 if (!isCommand(command)) {
   throw new Error(
-    "Usage: ligamagic-export.ts <profile|pilot|dry-run> [--url URL] [--collection LABEL]",
+    "Usage: ligamagic-export.ts <profile|pilot|dry-run> [--provider ligamagic|ligapokemon] [--url URL] [--collection LABEL]",
   );
 }
 const activeCommand: Command = command;
@@ -64,13 +89,49 @@ function argument(name: string): string | undefined {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
+const providerContracts: Record<ProviderId, ProviderContract> = {
+  ligamagic: {
+    id: "ligamagic",
+    label: "LigaMagic",
+    featureId: "PHR-API-005",
+    hosts: ["ligamagic.com.br", "www.ligamagic.com.br"],
+    formatLabel: "Padrão LigaMagic CSV [Modelo para Coleções]",
+    defaultDebugPort: 9225,
+    rootEnvironment: "PHRONESIS_LIGAMAGIC_ROOT",
+    exportUrlEnvironment: "LIGAMAGIC_EXPORT_URL",
+    debugPortEnvironment: "LIGAMAGIC_DEBUG_PORT",
+    readCsv: readLigaMagicCsv,
+    buildSnapshot: buildLigaMagicSnapshot,
+  },
+  ligapokemon: {
+    id: "ligapokemon",
+    label: "LigaPokemon",
+    featureId: "PHR-API-013",
+    hosts: ["ligapokemon.com.br", "www.ligapokemon.com.br"],
+    formatLabel: "Padrão LigaPokemon CSV [Modelo para Coleções]",
+    defaultDebugPort: 9226,
+    rootEnvironment: "PHRONESIS_LIGAPOKEMON_ROOT",
+    exportUrlEnvironment: "LIGAPOKEMON_EXPORT_URL",
+    debugPortEnvironment: "LIGAPOKEMON_DEBUG_PORT",
+    readCsv: readLigaPokemonCsv,
+    buildSnapshot: buildLigaPokemonSnapshot,
+  },
+};
+
+const providerId = argument("--provider") ?? "ligamagic";
+if (providerId !== "ligamagic" && providerId !== "ligapokemon") {
+  throw new Error("Liga provider must be ligamagic or ligapokemon.");
+}
+const provider = providerContracts[providerId];
+
 const localRoot = resolve(
-  process.env.PHRONESIS_LIGAMAGIC_ROOT ?? ".data/ligamagic",
+  process.env[provider.rootEnvironment] ?? `.data/${provider.id}`,
 );
 const profileRoot = join(localRoot, "browser-profile");
 const runsRoot = join(localRoot, "runs");
 const configPath = join(localRoot, "config.json");
-const DEFAULT_DEBUG_PORT = 9225;
+const chromeExecutable =
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
 function ensurePrivateDirectory(path: string): void {
   mkdirSync(path, { recursive: true, mode: 0o700 });
@@ -83,11 +144,11 @@ function validateExportUrl(value: string): string {
   const url = new URL(value);
   if (
     url.protocol !== "https:" ||
-    !["ligamagic.com.br", "www.ligamagic.com.br"].includes(url.hostname) ||
+    !provider.hosts.includes(url.hostname) ||
     url.searchParams.get("view") !== "colecao/export"
   ) {
     throw new Error(
-      "LigaMagic export URL must be the HTTPS collection-export page.",
+      `${provider.label} export URL must be the HTTPS collection-export page.`,
     );
   }
   url.hash = "";
@@ -104,16 +165,17 @@ function writePrivateJson(path: string, value: unknown): void {
 }
 
 function loadConfig(): LocalConfig {
-  const configuredUrl = argument("--url") ?? process.env.LIGAMAGIC_EXPORT_URL;
+  const configuredUrl =
+    argument("--url") ?? process.env[provider.exportUrlEnvironment];
   const configuredPort = Number(
-    argument("--debug-port") ?? process.env.LIGAMAGIC_DEBUG_PORT,
+    argument("--debug-port") ?? process.env[provider.debugPortEnvironment],
   );
   const debugPort = Number.isInteger(configuredPort)
     ? configuredPort
-    : DEFAULT_DEBUG_PORT;
+    : provider.defaultDebugPort;
   if (debugPort < 1024 || debugPort > 65535) {
     throw new Error(
-      "LigaMagic Chrome debug port must be between 1024 and 65535.",
+      `${provider.label} Chrome debug port must be between 1024 and 65535.`,
     );
   }
   if (configuredUrl) {
@@ -128,11 +190,11 @@ function loadConfig(): LocalConfig {
     parsed = JSON.parse(readFileSync(configPath, "utf8"));
   } catch {
     throw new Error(
-      "LigaMagic profile is not configured. Run ligamagic:profile with --url first.",
+      `${provider.label} profile is not configured. Run ${provider.id}:profile with --url first.`,
     );
   }
   if (!parsed || typeof parsed !== "object" || !("exportUrl" in parsed)) {
-    throw new Error("LigaMagic local profile configuration is invalid.");
+    throw new Error(`${provider.label} local profile configuration is invalid.`);
   }
   return {
     exportUrl: validateExportUrl(String(parsed.exportUrl)),
@@ -147,7 +209,11 @@ function loadConfig(): LocalConfig {
       parsed.debugPort >= 1024 &&
       parsed.debugPort <= 65535
         ? parsed.debugPort
-        : DEFAULT_DEBUG_PORT,
+        : provider.defaultDebugPort,
+    pilotVerifiedAt:
+      "pilotVerifiedAt" in parsed && typeof parsed.pilotVerifiedAt === "string"
+        ? parsed.pilotVerifiedAt
+        : undefined,
   };
 }
 
@@ -189,14 +255,12 @@ async function stopDedicatedChrome(debugPort: number): Promise<void> {
 
 function launchPlainChrome(config: LocalConfig): void {
   const child = spawn(
-    "/usr/bin/open",
+    chromeExecutable,
     [
-      "-na",
-      "Google Chrome",
-      "--args",
       "--no-first-run",
       "--no-default-browser-check",
       `--remote-debugging-port=${config.debugPort}`,
+      "--remote-debugging-address=127.0.0.1",
       `--user-data-dir=${profileRoot}`,
       config.exportUrl,
     ],
@@ -205,43 +269,50 @@ function launchPlainChrome(config: LocalConfig): void {
   child.unref();
 }
 
-async function debugPortReady(debugPort: number): Promise<boolean> {
-  try {
-    const response = await fetch(`http://127.0.0.1:${debugPort}/json/version`, {
-      signal: AbortSignal.timeout(1_000),
-    });
-    return response.ok;
-  } catch {
-    return false;
+async function connectToDedicatedChrome(
+  config: LocalConfig,
+  input: { timeoutMs: number; failureMessage: string },
+): Promise<{
+  context: BrowserContext;
+  close: () => Promise<void>;
+}> {
+  const deadline = Date.now() + input.timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const browser = await chromium.connectOverCDP(
+        `http://127.0.0.1:${config.debugPort}`,
+      );
+      const context = browser.contexts()[0];
+      if (context) return { context, close: () => browser.close() };
+      await browser.close();
+    } catch {
+      // The ordinary Chrome process may still be starting its loopback endpoint.
+    }
+    await new Promise((resolveConnection) => setTimeout(resolveConnection, 300));
   }
+  throw new Error(input.failureMessage);
 }
 
-async function relaunchAndAttach(config: LocalConfig): Promise<{
-  browser: Browser;
+async function attachToOpenChrome(config: LocalConfig): Promise<{
   context: BrowserContext;
+  close: () => Promise<void>;
+}> {
+  return connectToDedicatedChrome(config, {
+    timeoutMs: 5_000,
+    failureMessage: `PROFILE_SESSION_REQUIRED: run ${provider.id}:profile, authenticate in the dedicated Chrome window, and leave it open before ${provider.id}:pilot.`,
+  });
+}
+
+async function relaunchForAcquisition(config: LocalConfig): Promise<{
+  context: BrowserContext;
+  close: () => Promise<void>;
 }> {
   await stopDedicatedChrome(config.debugPort);
   launchPlainChrome(config);
-  const deadline = Date.now() + 30_000;
-  while (Date.now() < deadline && !(await debugPortReady(config.debugPort))) {
-    await new Promise((resolveReady) => setTimeout(resolveReady, 500));
-  }
-  if (!(await debugPortReady(config.debugPort))) {
-    throw new Error(
-      `Dedicated LigaMagic Chrome did not open on port ${config.debugPort}.`,
-    );
-  }
-  const browser = await chromium.connectOverCDP(
-    `http://127.0.0.1:${config.debugPort}`,
-  );
-  const context = browser.contexts()[0];
-  if (!context) {
-    await browser.close();
-    throw new Error(
-      "Dedicated LigaMagic Chrome did not expose its persistent browser context.",
-    );
-  }
-  return { browser, context };
+  return connectToDedicatedChrome(config, {
+    timeoutMs: 30_000,
+    failureMessage: `BROWSER_LAUNCH_FAILED: ordinary ${provider.label} Chrome did not expose its loopback session within 30 seconds.`,
+  });
 }
 
 function normalizeLabel(value: string): string {
@@ -286,16 +357,26 @@ async function discoverControls(page: Page): Promise<ExportControls> {
       cardNumberOrderLabel = numberLabel;
     }
     const standardLabel = labels.find(
-      (label) => label === "Padrão LigaMagic CSV [Modelo para Coleções]",
+      (label) => label === provider.formatLabel,
     );
     if (standardLabel && !format) {
       format = candidate;
       standardFormatLabel = standardLabel;
     }
   }
-  if (!collection || collections.length === 0 || !order || !format) {
+  if (!collection && collections.length === 0 && !order && !format) {
     throw new Error(
-      "REAUTHENTICATION_REQUIRED: authenticated LigaMagic export controls were not found.",
+      `REAUTHENTICATION_REQUIRED: authenticated ${provider.label} export controls were not found.`,
+    );
+  }
+  if (!collection || collections.length === 0 || !order || !format) {
+    const missing = [
+      !collection || collections.length === 0 ? "collection" : null,
+      !order ? "card-number ordering" : null,
+      !format ? `format ${provider.formatLabel}` : null,
+    ].filter((value): value is string => value !== null);
+    throw new Error(
+      `SCHEMA_DRIFT: ${provider.label} export page is missing ${missing.join(", ")}.`,
     );
   }
   const form = collection.locator("xpath=ancestor::form[1]");
@@ -306,7 +387,7 @@ async function discoverControls(page: Page): Promise<ExportControls> {
       : page.getByRole("button", { name: /^Exportar$/i }).first();
   if ((await exportButton.count()) !== 1) {
     throw new Error(
-      "LigaMagic collection export button could not be identified uniquely.",
+      `${provider.label} collection export button could not be identified uniquely.`,
     );
   }
   return {
@@ -320,13 +401,69 @@ async function discoverControls(page: Page): Promise<ExportControls> {
   };
 }
 
+function pageMatchesExportUrl(page: Page, exportUrl: string): boolean {
+  try {
+    const current = new URL(page.url());
+    const expected = new URL(exportUrl);
+    return (
+      current.protocol === expected.protocol &&
+      current.hostname === expected.hostname &&
+      current.searchParams.get("view") === expected.searchParams.get("view")
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function resolveExportPage(
+  context: BrowserContext,
+  config: LocalConfig,
+): Promise<Page> {
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    const matching = context
+      .pages()
+      .find((candidate) => pageMatchesExportUrl(candidate, config.exportUrl));
+    if (matching) return matching;
+    await new Promise((resolvePage) => setTimeout(resolvePage, 300));
+  }
+  const page = context.pages()[0] ?? (await context.newPage());
+  await page.goto(config.exportUrl, { waitUntil: "domcontentloaded" });
+  return page;
+}
+
+async function discoverControlsAfterStartup(page: Page): Promise<ExportControls> {
+  const deadline = Date.now() + 30_000;
+  let authenticationError: Error | null = null;
+  while (Date.now() < deadline) {
+    try {
+      return await discoverControls(page);
+    } catch (error) {
+      if (
+        !(error instanceof Error) ||
+        !error.message.includes("REAUTHENTICATION_REQUIRED")
+      ) {
+        throw error;
+      }
+      authenticationError = error;
+    }
+    await page.waitForTimeout(500);
+  }
+  throw (
+    authenticationError ??
+    new Error(
+      `REAUTHENTICATION_REQUIRED: authenticated ${provider.label} export controls were not found.`,
+    )
+  );
+}
+
 function sanitizeUrlEvent(
   phase: "request" | "response",
   request: Request,
   response?: Response,
 ): SanitizedNetworkEvent | null {
   const url = new URL(request.url());
-  if (!["ligamagic.com.br", "www.ligamagic.com.br"].includes(url.hostname))
+  if (!provider.hosts.includes(url.hostname))
     return null;
   return {
     phase,
@@ -366,7 +503,7 @@ async function exportCollection(input: {
   );
   if (!collection)
     throw new Error(
-      `LigaMagic collection disappeared: ${input.collectionLabel}.`,
+      `${provider.label} collection disappeared: ${input.collectionLabel}.`,
     );
   await controls.collection.selectOption({ label: collection.label });
   await controls.order.selectOption({ label: controls.cardNumberOrderLabel });
@@ -422,7 +559,7 @@ async function exportCollection(input: {
     }
     if (!downloadedPath) {
       throw new Error(
-        `LigaMagic ${collection.label} download did not complete within 120 seconds.`,
+        `${provider.label} ${collection.label} download did not complete within 120 seconds.`,
       );
     }
     const suggestedFilename = basename(downloadedPath);
@@ -432,20 +569,27 @@ async function exportCollection(input: {
     const file = lstatSync(filePath);
     if (!file.isFile() || file.isSymbolicLink() || file.size <= 256) {
       throw new Error(
-        `LigaMagic ${collection.label} download is incomplete or unsafe.`,
+        `${provider.label} ${collection.label} download is incomplete or unsafe.`,
       );
     }
     chmodSync(filePath, 0o600);
-    const rows = readLigaMagicCsv(readFileSync(filePath));
+    const rows = provider.readCsv(readFileSync(filePath));
     const actualQuantity = rows.reduce((sum, row) => sum + row.quantity, 0);
-    if (actualQuantity !== collection.advertisedCards) {
+    const quantityAuthority = resolveLigaQuantityAuthority({
+      providerId: provider.id,
+      collectionLabel: collection.label,
+      sourceAdvertisedCards: collection.advertisedCards,
+    });
+    if (actualQuantity !== quantityAuthority.authoritativeCards) {
       throw new Error(
-        `LigaMagic ${collection.label} advertised ${collection.advertisedCards} cards but exported quantity ${actualQuantity} across ${rows.length} rows.`,
+        `${provider.label} ${collection.label} advertised ${collection.advertisedCards} cards but exported quantity ${actualQuantity} across ${rows.length} rows; authoritative expectation is ${quantityAuthority.authoritativeCards}.`,
       );
     }
     const receipt: LigaMagicSourceReceipt = {
       collectionLabel: collection.label,
-      advertisedCards: collection.advertisedCards,
+      sourceAdvertisedCards: quantityAuthority.sourceAdvertisedCards,
+      advertisedCards: quantityAuthority.authoritativeCards,
+      quantityAuthority: quantityAuthority.quantityAuthority,
       actualRows: rows.length,
       actualQuantity,
       exportedAt,
@@ -458,7 +602,8 @@ async function exportCollection(input: {
     writePrivateJson(
       join(input.runDirectory, `receipt-${slug(collection.label)}.json`),
       {
-        featureId: "PHR-API-005",
+        featureId: provider.featureId,
+        providerId: provider.id,
         ...receipt,
         filePath: basename(receipt.filePath),
       },
@@ -482,26 +627,37 @@ async function main(): Promise<void> {
   const config = loadConfig();
   if (activeCommand === "profile") {
     writePrivateJson(configPath, {
-      exportUrl: config.exportUrl,
+      ...config,
       configuredAt: new Date().toISOString(),
-      debugPort: config.debugPort,
     } satisfies LocalConfig);
     await stopDedicatedChrome(config.debugPort);
     launchPlainChrome(config);
     process.stdout.write(
-      `Ordinary Chrome opened on dedicated LigaMagic profile (port ${config.debugPort}). ` +
+      `Ordinary Chrome opened on dedicated ${provider.label} profile (port ${config.debugPort}). ` +
         "Phronesis has not attached automation. Sign in normally, open the collection export page, " +
-        "and leave the session saved; then run ligamagic:pilot.\n",
+        `and leave the session saved; then run ${provider.id}:pilot.\n`,
     );
     return;
   }
 
-  const { browser, context } = await relaunchAndAttach(config);
-  const page = context.pages()[0] ?? (await context.newPage());
+  if (
+    activeCommand === "dry-run" &&
+    provider.id === "ligapokemon" &&
+    !config.pilotVerifiedAt
+  ) {
+    throw new Error(
+      "PILOT_REQUIRED: complete ligapokemon:pilot before a full recurring acquisition.",
+    );
+  }
+
+  const { context, close } =
+    activeCommand === "pilot"
+      ? await attachToOpenChrome(config)
+      : await relaunchForAcquisition(config);
+  const page = await resolveExportPage(context, config);
   page.setDefaultTimeout(30_000);
   try {
-    await page.goto(config.exportUrl, { waitUntil: "domcontentloaded" });
-    const controls = await discoverControls(page);
+    const controls = await discoverControlsAfterStartup(page);
     const id = runId(activeCommand);
     const directory = join(runsRoot, id);
     ensurePrivateDirectory(directory);
@@ -514,7 +670,7 @@ async function main(): Promise<void> {
         : controls.collections[0];
       if (!collection)
         throw new Error(
-          `Requested LigaMagic collection was not found: ${requested}.`,
+          `Requested ${provider.label} collection was not found: ${requested}.`,
         );
       const receipt = await exportCollection({
         page,
@@ -522,7 +678,8 @@ async function main(): Promise<void> {
         collectionLabel: collection.label,
       });
       writePrivateJson(join(directory, "pilot-manifest.json"), {
-        featureId: "PHR-API-005",
+        featureId: provider.featureId,
+        providerId: provider.id,
         runId: id,
         status: "PILOT_COMPLETE",
         startedAt,
@@ -530,6 +687,12 @@ async function main(): Promise<void> {
         collectionCount: controls.collections.length,
         receipt: { ...receipt, filePath: basename(receipt.filePath) },
       });
+      if (provider.id === "ligapokemon") {
+        writePrivateJson(configPath, {
+          ...config,
+          pilotVerifiedAt: new Date().toISOString(),
+        } satisfies LocalConfig);
+      }
       process.stdout.write(
         `${JSON.stringify({ status: "PILOT_COMPLETE", runId: id, collection: receipt.collectionLabel, cards: receipt.actualQuantity, rows: receipt.actualRows, sha256: receipt.sha256 })}\n`,
       );
@@ -552,7 +715,7 @@ async function main(): Promise<void> {
         await page.waitForTimeout(2_500);
     }
     const completedAt = new Date().toISOString();
-    const manifest = buildLigaMagicSnapshot({
+    const manifest = provider.buildSnapshot({
       runId: id,
       outputDirectory: directory,
       startedAt,
@@ -561,12 +724,12 @@ async function main(): Promise<void> {
     });
     process.stdout.write(`${JSON.stringify(manifest)}\n`);
   } finally {
-    await browser.close();
+    await close();
   }
 }
 
 main().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
-  process.stderr.write(`[ligamagic] ${message.replace(/[\r\n]+/g, " ")}\n`);
+  process.stderr.write(`[${provider.id}] ${message.replace(/[\r\n]+/g, " ")}\n`);
   process.exitCode = 1;
 });

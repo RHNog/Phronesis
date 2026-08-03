@@ -33,11 +33,18 @@ function stop(signal = "SIGTERM") {
   if (!next.killed) next.kill(signal);
 }
 
+let stopping = false;
 for (const signal of ["SIGINT", "SIGTERM"]) {
-  process.on(signal, () => stop(signal));
+  process.on(signal, () => {
+    if (stopping) return;
+    stopping = true;
+    stop(signal);
+    setTimeout(() => process.exit(0), 2_000);
+  });
 }
 next.on("exit", (code, signal) => {
   if (!watcher.killed) watcher.kill("SIGTERM");
+  if (stopping) process.exit(0);
   if (signal) process.kill(process.pid, signal);
   else process.exit(code ?? 1);
 });

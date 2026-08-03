@@ -1,5 +1,14 @@
 # Project Atlas
 
+## Arbitrage Data Continuity And Liga Recurrence
+
+- `PHR-TECH-012` makes `.data/mobile-review.sqlite` the semantic operational pricing database unless a test/operator provides an explicit override. Runtime, observers, imports, artwork maintenance, and provider evidence no longer invent separate fallback files.
+- The private runtime uses `scripts/start-phronesis.mjs`, supervising catalogue observation with Next.js. A newly imported Magic checkpoint rebuilds the last complete LigaMagic crosswalk exactly once.
+- `PHR-API-013` generalizes the authenticated Liga export boundary without sharing profiles: LigaMagic and LigaPokemon keep separate hosts, Chrome profiles, debug ports, configuration, runs, hashes, receipts, and SQLite namespaces.
+- Daily recurrence is sequential, overlap-safe, same-day idempotent, and status-bearing. Complete conflict-free LigaMagic snapshots rebuild the Magic crosswalk; one provider failure never deletes last-good evidence from another.
+- LigaPokemon's official authenticated export route is confirmed, but its controls and bytes remain owner-authenticated evidence. Full acquisition requires a successful pilot and regional promotion remains deferred.
+- The external TCG catalogue acquisition tool is a separate owner. Its intended 00:00/06:00/12:00/18:00 schedule is currently inactive; Phronesis can observe/import new checkpoints but cannot make stale upstream files current.
+
 ## GitHub Handoff Continuity
 
 - `PHR-TECH-011` makes GitHub a verifier of committed repository truth, not a second Handoff author.
@@ -54,7 +63,7 @@
 - LigaMagic collection export uses `Padrão LigaMagic CSV [Modelo para Coleções]`; the similarly named 13-column format contains no prices and is rejected.
 - Collection labels count physical card quantity, while CSV rows are unique collection entries. Completeness reconciles the label against summed `Quantidade` and records row count separately.
 - `Compra` is the consumer acquisition price from a store. `Venda` is the store buy offer to a consumer. Both remain distinct integer-centavo evidence lanes.
-- The completed local dry run covers 37 collections and 329,976 cards with zero conflicting duplicate prices. Raw files, hashes, receipts, the manifest, and SQLite snapshot live under ignored `.data/ligamagic/`; no schedule or canonical pricing activation exists.
+- The completed local dry run covers 37 collections and 329,976 cards with zero conflicting duplicate prices. Raw files, hashes, receipts, the manifest, and SQLite snapshot live under ignored `.data/ligamagic/`. The original `PHR-API-005` delivery had no schedule; `PHR-API-013` now owns the loaded 03:00 recurrence and crosswalk promotion.
 
 ## Regional Cross-Market Intelligence
 

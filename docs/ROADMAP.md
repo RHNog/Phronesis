@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Arbitrage And Liga Acquisition Recovery
+
+- Implemented: one operational pricing database across runtime, observer, import, provider, and artwork paths (`PHR-TECH-012`).
+- Implemented: private runtime supervision and automatic crosswalk rebuild after new Magic catalogue or complete LigaMagic snapshot.
+- Implemented: daily 03:00 overlap-safe LigaMagic orchestration plus isolated LigaPokemon profile, pilot, parser, and snapshot assembly (`PHR-API-013`).
+- Verified: focused 11/11 and full 392/392 tests, TypeScript, lint, production build, diff hygiene, and both launchd definitions.
+- Operational state: private review and the daily agent are active. Remaining gates are LigaMagic reauthentication, the external TCG acquisition scheduler, and the owner-authenticated LigaPokemon pilot.
+
 ## Completed Repair: GitHub Handoff Continuity
 
 - Completed: install locked dependencies before project validation and validate the exact committed PR head with full Git history and restored branch identity (`PHR-TECH-011`).
@@ -135,10 +143,10 @@
 
 ## Active: LigaMagic Brazilian Market Snapshot
 
-- Completed: `PHR-API-005` dedicated authenticated collection-export profile, one supervised pilot, safe request capture, and complete non-scheduled dry-run snapshot.
+- Completed: `PHR-API-005` dedicated authenticated collection-export profile, one supervised pilot, safe request capture, and complete initial dry-run snapshot. `PHR-API-013` now owns recurrence.
 - Verified snapshot: 37 collections; 329,976 advertised/exported cards; 329,903 source rows; 329,301 unique identities; 602 identical cross-collection duplicates; zero price conflicts.
 - Confirmed semantics: `Compra` is consumer acquisition price; `Venda` is store buy offer.
-- Gated next: exact LigaMagic/TCGplayer crosswalk, official USD/BRL conversion, landed-cost assumptions, and two-way arbitrage specification. Deferred: 03:00 scheduling and LigaPokémon until separately authorized.
+- Advanced on 2026-08-03: exact crosswalk, official FX, two-way calculations, 03:00 recurrence, and isolated LigaPokemon connector are implemented. Remaining gates are complete route costs, executable availability, LigaMagic reauthentication, and LigaPokemon pilot/promotion.
 
 ## Accepted Remediation: Artwork And Provider Settings
 

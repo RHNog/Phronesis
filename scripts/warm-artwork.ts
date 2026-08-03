@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import { DurableArtworkCache, isApprovedArtworkSource } from "../lib/artwork/DurableArtworkCache";
 import { resolveOnePieceSnapshotArtwork, resolveSnapshotArtwork } from "../lib/pricing/artwork";
 import { PricingRepository, type ArtworkWarmCandidate } from "../lib/pricing/repository";
@@ -52,7 +52,7 @@ function deduplicatedCards(cards: Card[]): Card[] {
 
 const prefetchLimit = integerArgument("--prefetch", 1_000, maximumPrefetch);
 const concurrency = integerArgument("--concurrency", 4, maximumConcurrency) || 1;
-const databasePath = process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite");
+const databasePath = operationalPricingDatabasePath();
 const repository = new PricingRepository(databasePath);
 
 try {

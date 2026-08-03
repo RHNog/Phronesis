@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
+
+- Source: Product Owner request to diagnose the zero Arbitrage queue, assess TCG catalogue freshness, schedule LigaMagic, and add LigaPokemon.
+- Structure: `PHR-STRUCT-20260803-007`; assignment `PHR-ARBITRAGE-ACQUISITION-RECOVERY-20260803`.
+- Implementation prompts: `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md` and `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
+- Outcome: one operational pricing data plane, bounded Magic reconciliation, daily Liga orchestration, and a pilot-gated isolated LigaPokemon connector.
+
 ## Resilient Copy Controls — 2026-08-03
 
 The Product Owner reported that the public worker-link copy control appeared inert on iPhone and authorized a reusable Phronesis-wide correction. `PHR-UX-025` specifies awaited Clipboard API handling, an iPhone/Safari compatibility fallback, explicit success/error feedback, and selectable manual recovery.

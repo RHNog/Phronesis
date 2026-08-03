@@ -20,6 +20,7 @@ import {
   readLigaMagicCsv,
   type LigaMagicRow,
 } from "./Csv.ts";
+import type { LigaQuantityAuthority } from "../liga/QuantityAuthority.ts";
 
 export type SanitizedNetworkEvent = {
   phase: "request" | "response";
@@ -35,7 +36,9 @@ export type SanitizedNetworkEvent = {
 
 export type LigaMagicSourceReceipt = {
   collectionLabel: string;
+  sourceAdvertisedCards: number;
   advertisedCards: number;
+  quantityAuthority: LigaQuantityAuthority;
   actualRows: number;
   actualQuantity: number;
   exportedAt: string;
@@ -46,8 +49,8 @@ export type LigaMagicSourceReceipt = {
   networkEvents: SanitizedNetworkEvent[];
 };
 
-export type LigaMagicSnapshotManifest = {
-  featureId: "PHR-API-005";
+export type LigaSnapshotManifest = {
+  featureId: string;
   contractVersion: string;
   runId: string;
   status: "DRY_RUN_COMPLETE" | "DRY_RUN_REVIEW_REQUIRED";
@@ -55,6 +58,7 @@ export type LigaMagicSnapshotManifest = {
   completedAt: string;
   checkpointWindowMilliseconds: number;
   collectionCount: number;
+  sourceAdvertisedCards: number;
   advertisedCards: number;
   rawRows: number;
   rawQuantity: number;
@@ -64,7 +68,9 @@ export type LigaMagicSnapshotManifest = {
   priceCoverage: Record<string, number>;
   sources: Array<{
     collectionLabel: string;
+    sourceAdvertisedCards: number;
     advertisedCards: number;
+    quantityAuthority: LigaQuantityAuthority;
     actualRows: number;
     actualQuantity: number;
     exportedAt: string;
@@ -74,6 +80,19 @@ export type LigaMagicSnapshotManifest = {
     suggestedFilename: string;
   }>;
   databaseFile: string;
+};
+
+export type LigaMagicSnapshotManifest = LigaSnapshotManifest & {
+  featureId: "PHR-API-005";
+};
+
+export type LigaSnapshotContract = {
+  providerId: "ligamagic" | "ligapokemon";
+  providerLabel: "LigaMagic" | "LigaPokemon";
+  featureId: string;
+  contractVersion: string;
+  databaseFile: string;
+  readCsv: (bytes: Uint8Array) => LigaMagicRow[];
 };
 
 export function sha256File(filePath: string): string {
@@ -112,30 +131,31 @@ function assertIso(value: string, label: string): number {
   return milliseconds;
 }
 
-export function buildLigaMagicSnapshot(input: {
+export function buildLigaNetworkSnapshot(input: {
   runId: string;
   outputDirectory: string;
   startedAt: string;
   completedAt: string;
   sources: readonly LigaMagicSourceReceipt[];
-}): LigaMagicSnapshotManifest {
+}, contract: LigaSnapshotContract): LigaSnapshotManifest {
+  const { providerId, providerLabel } = contract;
   if (!/^[a-zA-Z0-9._-]+$/.test(input.runId)) {
-    throw new Error("LigaMagic run ID contains unsafe characters.");
+    throw new Error(`${providerLabel} run ID contains unsafe characters.`);
   }
-  const started = assertIso(input.startedAt, "LigaMagic run start");
-  const completed = assertIso(input.completedAt, "LigaMagic run completion");
-  if (completed < started) throw new Error("LigaMagic run completion precedes its start.");
-  if (input.sources.length === 0) throw new Error("LigaMagic snapshot requires at least one source.");
+  const started = assertIso(input.startedAt, `${providerLabel} run start`);
+  const completed = assertIso(input.completedAt, `${providerLabel} run completion`);
+  if (completed < started) throw new Error(`${providerLabel} run completion precedes its start.`);
+  if (input.sources.length === 0) throw new Error(`${providerLabel} snapshot requires at least one source.`);
 
   mkdirSync(input.outputDirectory, { recursive: true, mode: 0o700 });
   if (lstatSync(input.outputDirectory).isSymbolicLink()) {
-    throw new Error("LigaMagic output directory must not be a symlink.");
+    throw new Error(`${providerLabel} output directory must not be a symlink.`);
   }
   chmodSync(input.outputDirectory, 0o700);
   const outputRoot = realpathSync(input.outputDirectory);
-  const destination = join(outputRoot, "ligamagic-dry-run.sqlite");
-  const temporary = join(outputRoot, `.ligamagic-dry-run.${process.pid}.${Date.now()}.tmp`);
-  if (existsSync(destination)) throw new Error("LigaMagic dry-run database already exists for this run.");
+  const destination = join(outputRoot, contract.databaseFile);
+  const temporary = join(outputRoot, `.${providerId}-snapshot.${process.pid}.${Date.now()}.tmp`);
+  if (existsSync(destination)) throw new Error(`${providerLabel} snapshot database already exists for this run.`);
 
   const database = new DatabaseSync(temporary);
   let rawRows = 0;
@@ -155,14 +175,16 @@ export function buildLigaMagicSnapshot(input: {
     database.exec(`
       PRAGMA foreign_keys = ON;
       PRAGMA journal_mode = DELETE;
-      CREATE TABLE ligamagic_snapshot_metadata (
+      CREATE TABLE ${providerId}_snapshot_metadata (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
       );
-      CREATE TABLE ligamagic_source (
+      CREATE TABLE ${providerId}_source (
         id INTEGER PRIMARY KEY,
         collection_label TEXT NOT NULL UNIQUE,
+        source_advertised_cards INTEGER NOT NULL,
         advertised_cards INTEGER NOT NULL,
+        quantity_authority TEXT NOT NULL CHECK(quantity_authority IN ('SOURCE_LABEL','PRODUCT_OWNER_EXPORT')),
         actual_rows INTEGER NOT NULL,
         actual_quantity INTEGER NOT NULL,
         exported_at TEXT NOT NULL,
@@ -170,7 +192,7 @@ export function buildLigaMagicSnapshot(input: {
         bytes INTEGER NOT NULL,
         sha256 TEXT NOT NULL
       );
-      CREATE TABLE ligamagic_price (
+      CREATE TABLE ${providerId}_price (
         identity_key TEXT PRIMARY KEY,
         edition_ptbr TEXT NOT NULL,
         edition_en TEXT NOT NULL,
@@ -192,31 +214,31 @@ export function buildLigaMagicSnapshot(input: {
         store_buy_average_centavos INTEGER NOT NULL,
         store_buy_high_centavos INTEGER NOT NULL,
         price_fingerprint TEXT NOT NULL,
-        first_source_id INTEGER NOT NULL REFERENCES ligamagic_source(id),
+        first_source_id INTEGER NOT NULL REFERENCES ${providerId}_source(id),
         source_row_hash TEXT NOT NULL
       );
-      CREATE TABLE ligamagic_source_membership (
-        source_id INTEGER NOT NULL REFERENCES ligamagic_source(id),
+      CREATE TABLE ${providerId}_source_membership (
+        source_id INTEGER NOT NULL REFERENCES ${providerId}_source(id),
         identity_key TEXT NOT NULL,
         source_row_hash TEXT NOT NULL,
         duplicate_kind TEXT NOT NULL CHECK(duplicate_kind IN ('UNIQUE','IDENTICAL','CONFLICT')),
         PRIMARY KEY(source_id, identity_key)
       );
-      CREATE TABLE ligamagic_conflict (
-        source_id INTEGER NOT NULL REFERENCES ligamagic_source(id),
+      CREATE TABLE ${providerId}_conflict (
+        source_id INTEGER NOT NULL REFERENCES ${providerId}_source(id),
         identity_key TEXT NOT NULL,
         existing_price_fingerprint TEXT NOT NULL,
         incoming_price_fingerprint TEXT NOT NULL,
         PRIMARY KEY(source_id, identity_key)
       );
-      CREATE INDEX ligamagic_price_lookup ON ligamagic_price(card_en, edition_code, collector_number);
+      CREATE INDEX ${providerId}_price_lookup ON ${providerId}_price(card_en, edition_code, collector_number);
     `);
     const insertSource = database.prepare(`
-      INSERT INTO ligamagic_source(collection_label, advertised_cards, actual_rows, actual_quantity, exported_at, file_name, bytes, sha256)
-      VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO ${providerId}_source(collection_label, source_advertised_cards, advertised_cards, quantity_authority, actual_rows, actual_quantity, exported_at, file_name, bytes, sha256)
+      VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     const insertPrice = database.prepare(`
-      INSERT INTO ligamagic_price(
+      INSERT INTO ${providerId}_price(
         identity_key, edition_ptbr, edition_en, edition_code, card_pt, card_en,
         quantity, condition, language, rarity, color, extras, collector_number,
         comment, consumer_low_centavos, consumer_average_centavos,
@@ -226,27 +248,27 @@ export function buildLigaMagicSnapshot(input: {
       ON CONFLICT(identity_key) DO NOTHING
     `);
     const findPrice = database.prepare(
-      "SELECT price_fingerprint FROM ligamagic_price WHERE identity_key = ?",
+      `SELECT price_fingerprint FROM ${providerId}_price WHERE identity_key = ?`,
     );
     const insertMembership = database.prepare(`
-      INSERT INTO ligamagic_source_membership(source_id, identity_key, source_row_hash, duplicate_kind)
+      INSERT INTO ${providerId}_source_membership(source_id, identity_key, source_row_hash, duplicate_kind)
       VALUES(?, ?, ?, ?)
     `);
     const insertConflict = database.prepare(`
-      INSERT INTO ligamagic_conflict(source_id, identity_key, existing_price_fingerprint, incoming_price_fingerprint)
+      INSERT INTO ${providerId}_conflict(source_id, identity_key, existing_price_fingerprint, incoming_price_fingerprint)
       VALUES(?, ?, ?, ?)
     `);
     database.exec("BEGIN IMMEDIATE");
     try {
       for (const source of input.sources) {
         if (!existsSync(source.filePath) || lstatSync(source.filePath).isSymbolicLink()) {
-          throw new Error(`LigaMagic source ${source.collectionLabel} is missing or unsafe.`);
+          throw new Error(`${providerLabel} source ${source.collectionLabel} is missing or unsafe.`);
         }
         const actualHash = sha256File(source.filePath);
         if (actualHash !== source.sha256) {
-          throw new Error(`LigaMagic source ${source.collectionLabel} hash changed after acquisition.`);
+          throw new Error(`${providerLabel} source ${source.collectionLabel} hash changed after acquisition.`);
         }
-        const rows = readLigaMagicCsv(readFileSync(source.filePath));
+        const rows = contract.readCsv(readFileSync(source.filePath));
         const quantity = rows.reduce((sum, row) => sum + row.quantity, 0);
         if (
           rows.length !== source.actualRows ||
@@ -254,12 +276,14 @@ export function buildLigaMagicSnapshot(input: {
           quantity !== source.advertisedCards
         ) {
           throw new Error(
-            `LigaMagic source ${source.collectionLabel} expected ${source.advertisedCards} cards across ${source.actualRows} rows but contains quantity ${quantity} across ${rows.length} rows.`,
+            `${providerLabel} source ${source.collectionLabel} expected ${source.advertisedCards} cards across ${source.actualRows} rows but contains quantity ${quantity} across ${rows.length} rows.`,
           );
         }
         const sourceResult = insertSource.run(
           source.collectionLabel,
+          source.sourceAdvertisedCards,
           source.advertisedCards,
+          source.quantityAuthority,
           rows.length,
           quantity,
           source.exportedAt,
@@ -310,7 +334,7 @@ export function buildLigaMagicSnapshot(input: {
             const existing = findPrice.get(row.identityKey) as
               | { price_fingerprint: string }
               | undefined;
-            if (!existing) throw new Error("LigaMagic duplicate lookup lost its canonical row.");
+            if (!existing) throw new Error(`${providerLabel} duplicate lookup lost its canonical row.`);
             if (existing.price_fingerprint === fingerprint) {
               duplicateKind = "IDENTICAL";
               identicalDuplicates += 1;
@@ -329,10 +353,11 @@ export function buildLigaMagicSnapshot(input: {
         }
       }
       const metadata = database.prepare(
-        "INSERT INTO ligamagic_snapshot_metadata(key, value) VALUES(?, ?)",
+        `INSERT INTO ${providerId}_snapshot_metadata(key, value) VALUES(?, ?)`,
       );
-      metadata.run("feature_id", "PHR-API-005");
-      metadata.run("contract_version", LIGAMAGIC_CSV_CONTRACT_VERSION);
+      metadata.run("feature_id", contract.featureId);
+      metadata.run("contract_version", contract.contractVersion);
+      metadata.run("provider_id", providerId);
       metadata.run("run_id", input.runId);
       metadata.run("started_at", input.startedAt);
       metadata.run("completed_at", input.completedAt);
@@ -355,9 +380,9 @@ export function buildLigaMagicSnapshot(input: {
     throw error;
   }
 
-  const manifest: LigaMagicSnapshotManifest = {
-    featureId: "PHR-API-005",
-    contractVersion: LIGAMAGIC_CSV_CONTRACT_VERSION,
+  const manifest: LigaSnapshotManifest = {
+    featureId: contract.featureId,
+    contractVersion: contract.contractVersion,
     runId: input.runId,
     status:
       conflictingDuplicates === 0
@@ -367,6 +392,10 @@ export function buildLigaMagicSnapshot(input: {
     completedAt: input.completedAt,
     checkpointWindowMilliseconds: completed - started,
     collectionCount: input.sources.length,
+    sourceAdvertisedCards: input.sources.reduce(
+      (sum, source) => sum + source.sourceAdvertisedCards,
+      0,
+    ),
     advertisedCards: input.sources.reduce((sum, source) => sum + source.advertisedCards, 0),
     rawRows,
     rawQuantity,
@@ -376,7 +405,9 @@ export function buildLigaMagicSnapshot(input: {
     priceCoverage: coverage,
     sources: input.sources.map((source) => ({
       collectionLabel: source.collectionLabel,
+      sourceAdvertisedCards: source.sourceAdvertisedCards,
       advertisedCards: source.advertisedCards,
+      quantityAuthority: source.quantityAuthority,
       actualRows: source.actualRows,
       actualQuantity: source.actualQuantity,
       exportedAt: source.exportedAt,
@@ -395,4 +426,21 @@ export function buildLigaMagicSnapshot(input: {
   });
   renameSync(temporaryManifest, manifestPath);
   return manifest;
+}
+
+export function buildLigaMagicSnapshot(input: {
+  runId: string;
+  outputDirectory: string;
+  startedAt: string;
+  completedAt: string;
+  sources: readonly LigaMagicSourceReceipt[];
+}): LigaMagicSnapshotManifest {
+  return buildLigaNetworkSnapshot(input, {
+    providerId: "ligamagic",
+    providerLabel: "LigaMagic",
+    featureId: "PHR-API-005",
+    contractVersion: LIGAMAGIC_CSV_CONTRACT_VERSION,
+    databaseFile: "ligamagic-dry-run.sqlite",
+    readCsv: readLigaMagicCsv,
+  }) as LigaMagicSnapshotManifest;
 }

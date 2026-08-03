@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-03 Arbitrage Recovery State
+
+- `PHR-TECH-012` and `PHR-API-013` are implemented and fully validated. Private Arbitrage recovery and the 03:00 calendar schedule are active.
+- The private server now runs the repository supervisor against `.data/mobile-review.sqlite`; `/api/regional/arbitrage` returns 50 ranked `IDENTITY_VERIFIED` rows, evenly split across both directions.
+- The canonical `.data/mobile-review.sqlite` has five 2026-08-01 TCG checkpoints, 329,301 Liga evidence rows observed 2026-07-30, 131,869 matched identities, and 130,183 matched identities with consumer price evidence.
+- The external TCG acquisition dashboard is down. Its enabled 00:00/06:00/12:00/18:00 schedule has stale `last_fired_date` values and no completed catalogue after 2026-08-01; Phronesis is therefore not current to the intended upstream cadence.
+- Repository recurrence schedules LigaMagic and LigaPokemon at 03:00, rebuilds Magic reconciliation only after a complete snapshot, and records overlap-safe atomic status. LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon authentication, exact 20-column schema, and Lote 1 pilot are verified. Lote 10's 9,700-card export is Product Owner-authoritative with its 9,704 source claim preserved; full acquisition now fails closed on Lote 4's separately unauthorized 9,870-advertised versus 9,868-exported mismatch.
+
 ## Mission
 
 Phronesis is a private, evidence-driven decision operating system for collectible-card buying, monitoring, event purchasing, inventory operations, and cross-market opportunity analysis.
@@ -44,7 +52,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - The active private runtime has no `PKMNPRICES_API_KEY` or `PSA_API_TOKEN`. Sealed ingestion and live PSA lookup remain dormant until server-side registration and service restart; PkmnPrices sealed access must be enabled by the provider plan.
 - Beckett/BCCG, TAG, CGC, and SGC expose official public lookup pages but no documented machine API found in the 2026-08-01 research, so Phronesis does not automate them.
 - Arbitrage candidates remain `IDENTITY_VERIFIED` until the Product Owner supplies direction-specific fixed and percentage costs and an operator records real executable availability.
-- The LigaMagic 03:00 export schedule remains disabled; the current snapshot was acquired through the supervised, non-scheduled profile.
+- The LigaMagic 03:00 export schedule is loaded under `PHR-API-013`; its saved session currently requires owner reauthentication before it can replace the July 30 last-good snapshot.
 - Required employee authentication remains activation-gated; compatibility mode must not be represented as enforced login.
 - External marketplace orders, publication, payments, shipping, automatic repricing, and settlement are not implemented or authorized.
 - Pricing Update Tool owns upstream catalogue acquisition and its schedule; Phronesis observes verified completion and does not mutate that repository.

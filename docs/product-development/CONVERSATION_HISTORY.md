@@ -788,3 +788,27 @@ Implemented and live for Product Owner phone review. Focused 4/4 and full 382/38
 ### Acceptance State
 
 Implemented and live for Product Owner phone review. Focused 16/16 and full 386/386 tests, TypeScript, warning-free lint, production build, code-rotation invalidation/audit proof, browser-session reconciliation/cleanup proof, diff hygiene, 390×844 no-overflow review, final private/public health checks, loopback supervision, and public Settings denial pass. Commit and push remain pending.
+## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
+
+### User Intent
+
+- Explain why the Cross-market decision queue showed zero.
+- Determine whether the TCG catalogue snapshots are current.
+- Implement recurring LigaMagic acquisition and add LigaPokemon.
+
+### Decisions And Implementation
+
+- Assigned `PHR-TECH-012` and `PHR-API-013` under `PHR-STRUCT-20260803-007`.
+- Diagnosed a split data plane: the live detached raw-Next runtime opened a database with zero regional matches, while the verified operational database retained 131,869 matches and 130,183 matched rows with consumer price evidence.
+- Standardized runtime and maintenance database resolution, restored observer supervision, and added bounded Magic reconciliation after new source evidence.
+- Added daily 03:00 LigaMagic orchestration with locking, atomic status, same-day idempotency, complete-snapshot gating, and automatic crosswalk promotion.
+- Added an isolated LigaPokemon connector and snapshot namespace. A full run requires a successful owner-authenticated pilot; no Pokémon regional promotion or anonymous marketplace scraping was added.
+- Completed owner-assisted LigaPokemon authentication and validated its distinct 20-column CSV contract. The Lote 1 pilot reconciled 9,772 advertised cards to 9,772 rows/cards.
+- Attempted all 18 collections. Lote 10 repeatedly advertised 9,704 cards but exported 9,700; two independent files were byte-identical. Phronesis retained the raw evidence, classified `SOURCE_COUNT_MISMATCH`, and did not create or promote an incomplete snapshot.
+- The Product Owner authorized Lote 10's 9,700-card export as authoritative. Phronesis encoded an exact, provider/label/count-specific rule that retains 9,704 as source provenance and does not create a general tolerance.
+- The next full run passed Lote 10 and reached Lote 4, which repeatedly advertised 9,870 cards but exported 9,868 in byte-identical files. No authority was inferred for this second mismatch; the complete snapshot remains blocked.
+- Confirmed the external TCG acquisition dashboard is down and its enabled four-daily schedule has not completed a catalogue after 2026-08-01. This is an upstream operational dependency rather than a Phronesis import defect.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready. Full repository gates pass. The private supervisor is consolidated to one wrapper/observer/Next listener and returns 50 ranked identity-verified rows instead of zero. The 03:00 agent is loaded; LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon is authenticated and pilot-verified; Lote 10 now carries explicit Product Owner export authority, while full recurrence remains fail-closed on the separately unauthorized Lote 4 mismatch. The external TCG scheduler remains.

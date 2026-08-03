@@ -10,7 +10,7 @@ LigaMagic authenticated collection-export snapshots
 
 ## Status
 
-Completed — Schedule Gated
+Completed — recurring operation transferred to `PHR-API-013`; reauthentication required
 
 ## Priority
 
@@ -65,7 +65,7 @@ Manual export of every collection is slow, error-prone, and cannot reliably supp
 - `Compra` values normalize to consumer-facing store prices; `Venda` values normalize to store buy offers. Zero remains explicit absence/unavailable evidence and is not converted into a market price.
 - Exact duplicate identities are reported. Conflicting duplicates remain visible and prevent the dry run from claiming an unqualified complete snapshot.
 - The dry run records checkpoint start/end times because 37 exports are not an atomic upstream transaction.
-- No schedule is installed, enabled, or modified.
+- This feature does not install, enable, or modify recurrence. Daily acquisition is now owned separately by `PHR-API-013`.
 
 ## Non-Functional Requirements
 
@@ -142,6 +142,8 @@ Not applicable to this command-line/local integration slice.
 - `PHR-WORKFLOW-004` verified snapshot and last-good reliability precedent.
 
 ## Future Enhancements
+
+Daily recurrence and LigaPokemon connector work advanced into `PHR-API-013` on 2026-08-03. LigaPokemon regional promotion remains future work.
 
 - 03:00 America/New_York daily launchd execution with next-wake recovery.
 - Exact LigaMagic-to-TCGplayer/Scryfall crosswalk with quarantine.

@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Arbitrage And Regional Acquisition Recovery
+
+- Assignment: `PHR-ARBITRAGE-ACQUISITION-RECOVERY-20260803`
+- Document ID: `PHR-STRUCT-20260803-007`
+- Features: `PHR-TECH-012`, `PHR-API-013`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY; LOTE 4 SOURCE COUNT GATED`
+- Objective: restore the verified regional candidate queue, make TCG catalogue-to-crosswalk continuity automatic, schedule daily LigaMagic acquisition, and add LigaPokemon through a separate owner-authenticated fail-closed connector.
+- Root cause: the recovered private runtime started raw Next.js without the LaunchAgent database override and opened `.data/pricing-lookup.sqlite`; the verified 131,869-match crosswalk and 129,809 candidate rows remain in `.data/mobile-review.sqlite`.
+- Catalogue state: all five TCG catalogue checkpoints are healthy but last completed on 2026-08-01. The sibling Pricing Update Tool scheduler is not currently running and its last recorded automated run failed at an upstream disabled `Continue` control. Phronesis owns observation/import continuity, not mutation of that sibling acquisition tool.
+- Delivery lane: Standard — Slice 1 restores the single operational database and reconciliation hook; Slice 2 adds recurring LigaMagic plus pilot-gated LigaPokemon acquisition.
+- Security boundary: no credentials, cookies, request bodies, query values, CAPTCHA/rate-limit bypass, anonymous marketplace scraping, transactions, public deployment, or invented provider schema.
+- Acceptance result: the live API returns 50 ranked identity-verified rows, the observer and app share the canonical database, and the 03:00 LaunchAgent is loaded. LigaPokemon authentication and its exact 20-column pilot passed at 9,772/9,772. Product Owner authority now admits only Lote 10's exact 9,700 export with its 9,704 source claim retained. A subsequent full run passed Lote 10 and failed closed on Lote 4's repeatable 9,870-advertised versus 9,868-exported discrepancy.
+- Work orders: `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md` and `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
+- Next accountable role: Product Owner reauthenticates LigaMagic and explicitly adjudicates the separate two-card LigaPokemon Lote 4 source discrepancy; the external TCG acquisition owner restores its stale scheduler.
+
 ## Active Revision — Timed Worker Issued-Code Continuity
 
 - Assignment: `PHR-TIMED-CODE-CONTINUITY-20260803`
@@ -572,7 +587,7 @@ Official buy/sell quotes and provenance refresh automatically at most hourly; we
 
 ### Verified Result
 
-The private service automatically persisted the official 2026-07-30 PTAX close at buy `5.0733` and sell `5.0739` BRL/USD with BCB provenance. Repeated reads retained the same retrieval timestamp, proving hourly throttling; forced refresh passed. All 245 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, desktop review, 390px regional-panel review, and browser-console checks pass. Direction-specific costs remain unset and therefore continue to gate actionable arbitrage. The LigaMagic schedule remains disabled.
+The private service automatically persisted the official 2026-07-30 PTAX close at buy `5.0733` and sell `5.0739` BRL/USD with BCB provenance. Repeated reads retained the same retrieval timestamp, proving hourly throttling; forced refresh passed. All 245 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, desktop review, 390px regional-panel review, and browser-console checks passed. Direction-specific costs remained unset and therefore gated actionable arbitrage. At this historical acceptance point, the LigaMagic schedule was still disabled; current recurrence is tracked under `PHR-API-013`.
 
 ## Active Assignment — Regional Vending And Arbitrage Intelligence
 

@@ -1,8 +1,8 @@
-import { join } from "node:path";
+import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import { PricingRepository } from "../lib/pricing/repository";
 import { runAssistedSealedArtworkRecovery } from "../lib/providers/community/SealedArtworkReview";
 
-const databasePath = process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite");
+const databasePath = operationalPricingDatabasePath();
 const dryRun = !process.argv.includes("--apply");
 const repository = new PricingRepository(databasePath);
 

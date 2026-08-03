@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { operationalPricingDatabasePath } from "@/lib/pricing/databasePath";
 import { openPriceChartingBulkRepository } from "@/lib/providers/pricecharting/PriceChartingBulkImport";
 import { PriceChartingDailySync, type PriceChartingDailySource } from "@/lib/providers/pricecharting/PriceChartingDailySync";
 import { getProviderCredential } from "@/lib/providers/credentials";
@@ -6,7 +7,7 @@ import { getProviderCredential } from "@/lib/providers/credentials";
 let opened: ReturnType<typeof openPriceChartingBulkRepository> | undefined;
 
 export function getPriceChartingBulkRepository() {
-  opened ??= openPriceChartingBulkRepository(process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite"));
+  opened ??= openPriceChartingBulkRepository(operationalPricingDatabasePath());
   return opened.repository;
 }
 
@@ -24,7 +25,7 @@ export function getPriceChartingDailySources(): PriceChartingDailySource[] {
 export function createPriceChartingDailySync() {
   return new PriceChartingDailySync({
     applicationVersion: process.env.npm_package_version ?? "0.1.0",
-    databasePath: process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite"),
+    databasePath: operationalPricingDatabasePath(),
     receiptDirectory: process.env.PHRONESIS_PRICECHARTING_RECEIPT_DIR ?? join(process.cwd(), ".data", "provider-receipts", "pricecharting"),
   });
 }
