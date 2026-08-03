@@ -1,5 +1,11 @@
 # Prompt History
 
+## Resilient Copy Controls — 2026-08-03
+
+The Product Owner reported that the public worker-link copy control appeared inert on iPhone and authorized a reusable Phronesis-wide correction. `PHR-UX-025` specifies awaited Clipboard API handling, an iPhone/Safari compatibility fallback, explicit success/error feedback, and selectable manual recovery.
+
+Implementation prompt: `docs/prompts/PHR-UX-025-resilient-copy-controls-prompt.md`.
+
 ## GitHub Handoff Continuity — 2026-08-03
 
 The Product Owner authorized repair after the Handoff workflow began failing on GitHub while repository continuity still described an earlier implementation. `PHR-TECH-011` separates dependency-backed project validation from committed-state continuity validation, removes CI-side Handoff mutation, and requires the existing dirty implementation to pass the local gate before a canonical seal.

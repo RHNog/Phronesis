@@ -36,3 +36,15 @@ Result: Pass — Implemented And Publicly Active.
 - Private continuity: `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/settings` returns 200 before and after activation.
 - Remote resilience: named detached `screen` sessions remain listed for `phronesis-private` and `phronesis-public-gateway`; production LaunchAgent definitions validate and are installed for the next normal login.
 - Operational rollback: `tailscale funnel --https=10000 off` removes internet reachability without modifying private Serve.
+
+## 2026-08-03 Timed Task Scope Amendment
+
+Result: Pass — Implemented And Live.
+
+- Focused lifecycle and gateway suites: 11/11 pass.
+- Full supported suite: 378/378 pass.
+- No-event proof: Artwork Review-only grant creation, one-time redemption, `VIEW`/`OPERATE` authorization, unrelated closed-event immunity, and immediate revocation pass.
+- Event-bound proof: Vendor-only and Artwork-plus-Inventory grants fail without an active Event Ledger event; existing event-closure invalidation still passes.
+- Migration proof: a legacy table receives `scope_type='EVENT'` additively and preserves its event identity. The live database reports one `EVENT` grant and the required non-null scope column.
+- `npx tsc --noEmit --incremental false`, warning-free `npm run lint`, Next.js 16.2.12 production build, and `git diff --check`: pass.
+- Live UI/runtime: private Settings contains the no-event task copy; public worker login contains generalized worker copy; private 9443 and public login return 200; public Settings returns 404; uncredentialed Artwork Review redirects; both services bind only to loopback and remain in detached sessions.

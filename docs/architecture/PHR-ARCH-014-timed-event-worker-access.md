@@ -6,7 +6,7 @@
 
 ## Status
 
-Public Worker Gateway Implemented And Live
+Timed Task Access Implemented And Live
 
 ## Priority
 
@@ -18,7 +18,7 @@ Architecture / Security / Authentication / Authorization / UI / Database
 
 ## Objective
 
-Allow an owner to issue a short-lived, self-generated code that lets an event worker use explicitly assigned operational modules without a GitHub account.
+Allow an owner to issue a short-lived, self-generated code that lets a temporary worker use explicitly assigned operational modules without a GitHub account or, for non-transactional Artwork Review, an Event Ledger event.
 
 ## Background And Problem
 
@@ -26,20 +26,22 @@ Permanent Phronesis membership currently requires an invited GitHub identity. Ev
 
 ## Proposed Solution
 
-Add an event-access grant and session boundary alongside Better Auth. An authenticated administrator creates a named grant for the currently active event, chooses a duration and operational modules, and receives a single-use human-readable code. The worker redeems that code at `/event-access`; Phronesis stores only code and bearer-token hashes and sets an HttpOnly session cookie. Every authorization rechecks the grant, session, expiry, and active event.
+Add a temporary-access grant and session boundary alongside Better Auth. An authenticated administrator creates a named grant, chooses a duration and operational modules, and receives a single-use human-readable code. Grants are classified immutably at creation: `TASK` for Artwork Review-only access or `EVENT` when any transactional module is assigned. `EVENT` grants belong to the current active event and close with it; `TASK` grants carry no event and end only by expiry or revocation. The worker redeems either code at `/event-access`; Phronesis stores only code and bearer-token hashes and sets an HttpOnly session cookie.
 
 For workers who cannot install Tailscale, expose a separate localhost-only gateway through Tailscale Funnel. The gateway marks every forwarded request as public worker ingress, strips/overwrites any client-supplied marker, blocks owner-only authentication and administration paths at transport level, and leaves the existing private 9443 Serve mapping untouched. Public-ingress authorization fails closed regardless of global `OPTIONAL` compatibility mode and accepts only a valid event-access cookie.
 
 ## Functional Requirements
 
 - Only a permanent identity with `ADMINISTRATION:ADMIN` may list, create, or revoke grants.
-- A grant belongs to exactly one workspace and active event.
+- A grant belongs to exactly one workspace. An `EVENT` grant also belongs to one active event; a `TASK` grant must not carry an event.
 - The owner provides a worker label, duration from one to 24 hours, and at least one allowed operational module.
 - Temporary access is limited to `VENDOR_WORKSPACE`, `EVENT_LEDGER`, `EVENT_FLIP`, `INVENTORY`, and `ARTWORK_REVIEW`, with `VIEW` or `OPERATE` access. `ADMINISTRATION`, pricing administration, and permanent membership are never available.
 - `ARTWORK_REVIEW:OPERATE` permits manual candidate approval, rejection, restoration, representative undo, packaging-gallery approval, and packaging-gallery undo. Catalogue-wide candidate refresh and assisted recovery require `ARTWORK_REVIEW:ADMIN`, which a timed grant cannot receive.
+- Artwork Review as the only entitlement creates a `TASK` grant without requiring or inheriting an Event Ledger event.
+- Adding `VENDOR_WORKSPACE`, `EVENT_LEDGER`, `EVENT_FLIP`, or `INVENTORY` creates an `EVENT` grant and requires a current active event, even when Artwork Review is also assigned.
 - Codes are single-use and shown only in the creation response.
 - Redemption creates a separate random session and an HttpOnly, SameSite=Lax cookie.
-- A session expires at the earliest of its configured expiry, grant revocation, or event closure.
+- A task session expires at its configured expiry or grant revocation. An event session additionally ends immediately when its event closes.
 - Settings shows active and historical grants and permits immediate revocation.
 - The sign-in screen presents both permanent GitHub sign-in and event-code access.
 - Authorization audit records issuance, redemption, revocation, and event-session logout.
@@ -55,7 +57,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Use constant-time comparisons, one-time redemption, generic invalid-code responses, and per-client attempt throttling.
 - A temporary session must never satisfy identity-required administration endpoints.
 - Prefer permanent authenticated identity when both permanent and temporary cookies exist.
-- Public worker ingress ignores permanent identity and global `OPTIONAL` compatibility. It authorizes only a current event session and must fail closed for a missing, invalid, expired, revoked, or event-closed cookie.
+- Public worker ingress ignores permanent identity and global `OPTIONAL` compatibility. It authorizes only a current temporary session and must fail closed for a missing, invalid, expired, or revoked cookie; event-scoped sessions must additionally fail when their event closes.
 - Event cookies issued through HTTPS forwarding are `Secure`, including when the local Next.js runtime itself is in development mode behind TLS termination.
 
 ### Reliability And Performance
@@ -71,22 +73,26 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 ## User Stories
 
 - As an owner, I can generate an event code for a worker without creating an external account.
-- As a worker, I can enter one code on my phone and work until the event or timer ends.
+- As an Artwork Review worker, I can enter one code on my phone without an Event Ledger event and work until the timer ends or access is revoked.
+- As an event worker, I can enter one code on my phone and work until the event or timer ends.
 - As an owner, I can revoke a worker immediately.
 
 ## Acceptance Criteria
 
 - A valid one-time code creates a scoped timed session and cannot be redeemed twice.
 - The temporary session authorizes only its assigned operational modules and never Administration. A worker assigned only `ARTWORK_REVIEW:OPERATE` sees only Artwork Review in primary navigation and cannot read or operate other product modules.
+- Artwork Review-only access can be issued, redeemed, and authorized when no event exists. It remains valid if unrelated events open or close.
+- Any grant containing a transactional module is rejected unless the referenced event is active, and its session is invalidated when that event closes.
 - Expired, revoked, or event-closed sessions are rejected immediately.
 - Grant management and worker login are usable on mobile.
 - Unit/integration tests cover issuance, redemption, permissions, expiry, closure, revocation, and rate limiting.
 
 ## Edge Cases
 
-- Creation fails when no event is active.
+- Creation without an active event succeeds only when Artwork Review is the sole entitlement.
 - An event that closes between issuance and redemption makes the code unusable.
 - Multiple workers may have independent grants for the same event.
+- Existing event-bound grants migrate as `EVENT`; no active or historical grant is broadened into a task grant.
 - Logout revokes only the presented temporary session, not the grant or other workers.
 
 ## Dependencies
@@ -117,4 +123,4 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Related implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Related tests: `tests/timed-event-access.test.ts`.
 - Last modified: 2026-08-03.
-- Modification reason: Product Owner, working remotely by phone, explicitly authorized a safe browser-only public access path that must not interrupt the existing private owner connection.
+- Modification reason: Product Owner required account-free Artwork Review task access without first opening an unrelated Event Ledger event; transactional modules remain event-bound.

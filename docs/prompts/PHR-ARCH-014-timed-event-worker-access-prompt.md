@@ -16,6 +16,8 @@ Amendment (2026-08-03): add `ARTWORK_REVIEW` as an independently assignable modu
 
 Public-ingress amendment (2026-08-03): implement and activate a separate loopback gateway for browser-only event workers, exposed through an unused Tailscale Funnel port. Preserve the existing 9443 tailnet-only owner path and make public requests fail closed independently of `PHRONESIS_AUTH_MODE=OPTIONAL`.
 
+Timed-task amendment (2026-08-03): allow Artwork Review-only codes without an active Event Ledger event. Classify grants immutably as `TASK` or `EVENT`; any transactional module forces `EVENT` scope and preserves event-closure invalidation.
+
 ## Required Reading
 
 - `docs/architecture/PHR-ARCH-014-timed-event-worker-access.md`
@@ -30,7 +32,9 @@ Public-ingress amendment (2026-08-03): implement and activate a separate loopbac
 - Keep identity-required administration APIs permanent-identity-only.
 - Add administration APIs/UI for generation, listing, copying, and revocation.
 - Add mobile-ready `/event-access` redemption and temporary logout.
-- Reject grants when the event is absent/closed and reject disallowed modules or `ADMIN` access.
+- For an Artwork Review-only entitlement, create a `TASK` grant with no event dependency. Reject a task grant containing any other module.
+- For any grant containing Vendor Workspace, Event Ledger, Event Flip, or Inventory, require one active event, store `EVENT` scope, and preserve immediate event-closure invalidation.
+- Migrate existing grants additively to `EVENT` scope without changing their event bindings, entitlements, status, expiry, or sessions.
 - Add `ARTWORK_REVIEW` to the typed module domain, persistent entitlement schema/migration, employee Settings selectors, timed-worker Settings selector, navigation, page boundary, and review API.
 - Preserve least privilege: `ARTWORK_REVIEW:VIEW` reads the queue/images, `OPERATE` records manual decisions and gallery mutations, and `ADMIN` alone runs refresh or assisted recovery.
 - Backfill `ARTWORK_REVIEW:ADMIN` only for existing active Owner/Admin memberships; do not silently grant it to operators, viewers, or existing timed sessions.
@@ -39,6 +43,7 @@ Public-ingress amendment (2026-08-03): implement and activate a separate loopbac
 - Make the event cookie Secure when TLS was terminated upstream and return a module-derived landing destination from code redemption.
 - Install the gateway as an independent LaunchAgent, configure its public origin for Settings link generation, and expose only the unused Funnel port `10000`; never alter the existing 9443 Serve mapping.
 - Verify public unauthenticated denial, public login availability, owner-only path denial, private owner-path continuity, gateway loopback binding, and Funnel status. Do not create a live test code unless necessary; if created, revoke it after verification.
+- Keep the temporary-access form visible without an event. Default it to Artwork Review-only, disable event-module controls until an event exists, label task versus event behavior clearly, and show the scope in issued-access history.
 
 ## Constraints
 
@@ -51,9 +56,13 @@ Public-ingress amendment (2026-08-03): implement and activate a separate loopbac
 
 `EventAccessRepository` owns grant/session persistence and authorization. Route handlers own cookie issuance/deletion. `requestAuthorization` checks permanent Better Auth identity first, then temporary event access, while `authorizeIdentityRequired` remains unchanged.
 
+The grant table owns an explicit scope discriminator. Existing non-null event storage may remain backward compatible, but application models must expose `eventId: null` and `eventName: null` for task grants; scope rather than a synthetic event controls authorization.
+
 ## Testing Expectations
 
 - Repository lifecycle and authorization tests.
+- Migration tests proving legacy grants remain event-bound.
+- No-event Artwork Review task issuance/redemption/expiry/revocation tests and mixed-scope rejection tests.
 - Route/request authorization integration tests where practical.
 - TypeScript, lint, full supported suite, production build, and responsive visual verification.
 

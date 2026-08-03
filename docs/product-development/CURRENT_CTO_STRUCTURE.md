@@ -1,5 +1,39 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Resilient Copy Controls
+
+- Assignment: `PHR-RESILIENT-COPY-CONTROLS-20260803`
+- Document ID: `PHR-STRUCT-20260803-005`
+- Feature: `PHR-UX-025`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: make access-code and link copying reliable and recoverable on iPhone Safari and every supported Phronesis browser surface.
+- UX rule: always confirm success; if modern and compatibility copy both fail, reveal the exact selectable value with a press-and-hold instruction.
+- Architecture rule: feature panels provide values; one browser utility owns method selection and one client component owns feedback/manual recovery.
+- Security rule: copied values are never logged, persisted, or transmitted by the control.
+- Work order: `docs/prompts/PHR-UX-025-resilient-copy-controls-prompt.md`.
+- Result: worker code, public worker link, and private activation link all use the reusable control with explicit copied feedback and press-and-hold manual recovery.
+- Verification: focused 4/4, full 382/382, TypeScript, warning-free lint, production build, adoption assertion, live private/public route probes, loopback supervision, and phone-width no-overflow review pass.
+- Next accountable role: Product Owner phone review. Commit/push remain separately gated.
+
+## Active Revision — Event-Independent Timed Artwork Task Access
+
+- Assignment: `PHR-TIMED-ARTWORK-TASK-ACCESS-20260803`
+- Document ID: `PHR-STRUCT-20260803-004`
+- Feature: `PHR-ARCH-014`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: generate account-free, time-limited Artwork Review-only access without opening an unrelated Event Ledger event.
+- Scope rule: Artwork Review alone creates immutable `TASK` scope with no event dependency. Vendor Workspace, Event Ledger, Event Flip, or Inventory forces immutable `EVENT` scope and requires the current active event.
+- Lifecycle rule: task access ends by expiry or revocation; event access additionally ends when its event closes. Existing grants remain event-bound after additive migration.
+- UX rule: keep the form available without an event, default to Artwork Review-only, disable and explain transactional choices until an event exists, and label issued task/event access truthfully.
+- Security rule: no task grant may receive another module or `ADMIN`; public gateway, hashing, single-use redemption, throttling, owner-only generation, and module authorization remain unchanged.
+- Acceptance: no-event task issuance/redemption, immutable mixed-scope enforcement, legacy migration safety, mobile UI clarity, public/private runtime continuity, and full gates.
+- Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Result: Settings now renders temporary access without an event and defaults to Artwork Review only. A no-event submission creates `TASK` scope; event-module controls remain disabled until an active event exists, and mixed entitlements are independently rejected by the repository without one.
+- Migration result: the live authorization database received an additive `scope_type`; its one existing grant remains `EVENT`. No existing entitlement, expiry, status, session, or event binding changed. A pre-migration SQLite backup is retained under `/private/tmp` for recovery during this session.
+- Runtime result: the rebuilt application is live on loopback 3100 and the unchanged public gateway remains on loopback 3101. Private 9443 and public worker login return 200; public Settings returns 404; uncredentialed Artwork Review redirects to worker login.
+- Verification: focused 11/11, full 378/378, TypeScript, warning-free lint, production build, diff hygiene, live schema audit, new UI-copy probe, loopback bindings, detached-service supervision, and public/private route probes pass.
+- Next accountable role: Product Owner phone review and generation of the first real Artwork Review-only timed task code. Commit/push remain separately gated.
+
 ## Active Revision — GitHub Handoff Continuity Repair
 
 - Assignment: `PHR-HANDOFF-CONTINUITY-REPAIR-20260803`

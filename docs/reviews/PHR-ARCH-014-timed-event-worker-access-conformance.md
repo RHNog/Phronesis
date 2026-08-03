@@ -21,3 +21,9 @@ The dedicated module conforms to least privilege: permanent employees may receiv
 Verdict: `IMPLEMENTATION CONFORMS — PUBLIC ACTIVATION VERIFIED`.
 
 The gateway is isolated from the existing owner transport, listens only on loopback, overwrites rather than trusts its ingress marker, blocks owner/permanent-auth paths before application routing, and makes public ingress ignore anonymous compatibility and permanent identity. The application still enforces the exact timed-session module as a second boundary. The Product Owner explicitly authorized activation; Funnel port 10000, public denial probes, loopback bindings, and private 9443 continuity were verified live. All 376 tests and static/build gates pass. This same-session review is not independent approval.
+
+## 2026-08-03 Timed Task Scope Amendment
+
+Verdict: `IMPLEMENTATION CONFORMS — PRODUCT REVIEW READY`.
+
+The amendment removes only the unrelated Event Ledger dependency from Artwork Review-only access. Scope is server-derived and immutable; task access cannot contain transactional modules or administration, while event access retains active-event creation and closure checks. The additive migration preserves legacy grants as event-bound. Full 378/378 tests, static/build gates, live migration evidence, loopback runtime, public denial, and private continuity pass. This same-session review is not independent approval.

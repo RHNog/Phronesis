@@ -13,11 +13,11 @@ export async function POST(request: Request) {
   const auth = await authorizeIdentityRequired(request, "ADMINISTRATION", "ADMIN");
   if (!auth.allowed || !auth.workspaceId || !auth.userId) return authorizationErrorResponse(auth);
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
-  if (!body || typeof body.eventId !== "string" || typeof body.workerLabel !== "string" || !Array.isArray(body.entitlements)) return Response.json({ error: "Invalid event access request." }, { status: 400 });
+  if (!body || (body.eventId != null && typeof body.eventId !== "string") || typeof body.workerLabel !== "string" || !Array.isArray(body.entitlements)) return Response.json({ error: "Invalid temporary-access request." }, { status: 400 });
   try {
-    const grant = getEventAccessRepository().createGrant({ workspaceId: auth.workspaceId, eventId: body.eventId, workerLabel: body.workerLabel, durationHours: Number(body.durationHours), entitlements: body.entitlements as ModuleEntitlement[], actorUserId: auth.userId });
+    const grant = getEventAccessRepository().createGrant({ workspaceId: auth.workspaceId, eventId: typeof body.eventId === "string" ? body.eventId : null, workerLabel: body.workerLabel, durationHours: Number(body.durationHours), entitlements: body.entitlements as ModuleEntitlement[], actorUserId: auth.userId });
     return Response.json(grant, { status: 201 });
-  } catch (error) { return Response.json({ error: error instanceof Error ? error.message : "Event access could not be created." }, { status: 400 }); }
+  } catch (error) { return Response.json({ error: error instanceof Error ? error.message : "Temporary access could not be created." }, { status: 400 }); }
 }
 
 export async function DELETE(request: Request) {

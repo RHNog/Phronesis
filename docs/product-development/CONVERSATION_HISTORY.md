@@ -735,3 +735,39 @@ Implemented and live for Product Owner review. Full 373/373 tests, TypeScript, w
 ### Acceptance State
 
 Implemented and publicly live. Public login and health return 200; public Settings and permanent GitHub auth return 404; uncredentialed Artwork Review redirects to event login; private 9443 Settings remains 200. Loopback binding, Funnel topology, detached runtime supervision, 376/376 tests, TypeScript, warning-free lint, production build, plist validation, and diff hygiene pass. No commit or push was requested.
+
+## 2026-08-03 — Event-Independent Timed Artwork Task Access
+
+### User Intent
+
+- Generate random temporary Artwork Review access without opening an unrelated Event Ledger event.
+- Keep transactional worker access correctly attached to event operations.
+
+### Decision And Result
+
+- Added immutable server-derived grant scopes: Artwork Review alone becomes `TASK`; Vendor Workspace, Event Ledger, Event Flip, or Inventory makes the grant `EVENT` and requires an active event.
+- Task access ends by timer or revocation and ignores unrelated event lifecycle. Event access still ends when its event closes.
+- Settings now renders without an event, defaults to Artwork Review only, disables transactional controls until an event exists, and labels task versus event history. Worker login copy is no longer event-only.
+- Migrated the live authorization database additively. Its one existing grant remains event-bound, and no permission or session was broadened.
+- Rebuilt and restarted only the loopback Phronesis application; the separate gateway and Funnel topology were not changed.
+
+### Acceptance State
+
+Implemented and live for Product Owner phone review. Focused 11/11 and full 378/378 tests, TypeScript, warning-free lint, production build, diff hygiene, legacy/live migration audits, new UI-copy probes, public/private HTTP checks, loopback bindings, and detached-service supervision pass. No commit or push was requested.
+
+## 2026-08-03 — Resilient Copy Controls
+
+### User Intent
+
+- Fix the public worker-link copy button that appeared inert on iPhone.
+- Make the correction reusable for other Phronesis features.
+
+### Decision And Implementation
+
+- Assigned `PHR-UX-025` and centralized copy behavior behind an awaited modern API, direct-tap compatibility fallback, and selectable manual recovery.
+- Replaced direct browser clipboard calls for worker codes, public worker links, and employee activation links.
+- Added visible/ARIA feedback without logging, persisting, or transmitting copied values.
+
+### Acceptance State
+
+Implemented and live for Product Owner phone review. Focused 4/4 and full 382/382 tests, TypeScript, warning-free lint, production build, shared-control adoption, private/public route probes, public Settings denial, loopback supervision, and 390×844 no-overflow validation pass. Commit and push remain pending.

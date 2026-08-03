@@ -24,14 +24,14 @@ function secureRequest(request: Request): boolean {
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as { code?: unknown } | null;
-  if (typeof body?.code !== "string") return NextResponse.json({ error: "Enter an event access code." }, { status: 400 });
+  if (typeof body?.code !== "string") return NextResponse.json({ error: "Enter a worker access code." }, { status: 400 });
   try {
     const redeemed = getEventAccessRepository().redeem(body.code, bucket(request));
     const destination = redeemed.grant.entitlements.map((entry) => moduleDestinations[entry.module as keyof typeof moduleDestinations]).find(Boolean) ?? "/event-access";
     const response = NextResponse.json({ workerLabel: redeemed.grant.workerLabel, eventName: redeemed.grant.eventName, expiresAt: redeemed.expiresAt, destination });
     response.cookies.set(EVENT_ACCESS_COOKIE, redeemed.token, { httpOnly: true, sameSite: "lax", secure: secureRequest(request), path: "/", expires: new Date(redeemed.expiresAt), priority: "high" });
     return response;
-  } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Event access code is invalid or expired." }, { status: 401 }); }
+  } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Worker access code is invalid or expired." }, { status: 401 }); }
 }
 
 export async function DELETE(request: Request) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import CopyTextButton from "@/components/ui/CopyTextButton";
 import {
   MEMBERSHIP_ROLES,
   MODULE_ACCESS_LEVELS,
@@ -204,7 +205,9 @@ export default function AccessManagement({ active }: { active: boolean }) {
             <div className="mt-4 rounded-lg border border-cyan-800 bg-cyan-950/30 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-cyan-300">Single-use activation</p>
               <p className="mt-2 break-all font-mono text-sm text-white">{activation.code}</p>
-              <button type="button" onClick={() => void navigator.clipboard.writeText(activation.url)} className="mt-3 min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200">Copy private activation link</button>
+              <div className="mt-3">
+                <CopyTextButton value={activation.url} label="Copy private activation link" copiedLabel="Activation link copied" manualLabel="Private activation link" className="min-h-11 rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200" />
+              </div>
             </div>
           ) : null}
           <div className="mt-6 space-y-4">

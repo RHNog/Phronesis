@@ -19,3 +19,12 @@ Temporary access ends at expiry or event closure and can be revoked immediately.
 - Public authorization ignores anonymous `OPTIONAL` compatibility and permanent owner identity. It accepts only a valid, current event-access cookie and still enforces assigned modules at the application boundary.
 - Preserved the owner route on tailnet-only port `9443`; no public request is routed directly to Phronesis on port `3100`.
 - Added module-correct post-login landing, Secure cookies behind Funnel TLS, a Settings copyable public link, validated unattended runtime definitions, and an explicit one-command Funnel shutdown.
+
+## 2026-08-03 Event-Independent Artwork Review Task
+
+- Artwork Review-only temporary codes no longer require an Event Ledger event.
+- Temporary grants now carry immutable `TASK` or `EVENT` scope. `TASK` is permitted only for Artwork Review; adding Vendor Workspace, Event Ledger, Event Flip, or Inventory forces `EVENT` scope and requires an active event.
+- Task sessions end by expiry or revocation and are unaffected by unrelated event lifecycle. Event sessions retain immediate event-closure invalidation.
+- Settings stays usable without an event, defaults to Artwork Review only, disables event-bound choices until an event exists, and labels issued task/event access explicitly.
+- Existing grants migrated additively as `EVENT`; no historical or active access was broadened.
+- Worker-facing login now says temporary worker access instead of implying every code joins an event.
