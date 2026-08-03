@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-03T19:08:17Z","generation_id":"826b8dac8451e5b915f2","head":"747479031eb828bbaf17dd095c2f27f4c9efb66c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-03T19:11:38Z","generation_id":"0282c2727af1587175db","head":"be12e29608e3f43e73189eaa6c73f00291b005a9","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,10 +6,10 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-price-monitoring-20260730`
-- **HEAD:** `747479031eb828bbaf17dd095c2f27f4c9efb66c`
+- **HEAD:** `be12e29608e3f43e73189eaa6c73f00291b005a9`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-03T19:08:17Z
+- **Generated:** 2026-08-03T19:11:38Z
 
 ## Current objective
 
@@ -36,4 +36,4 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Exact next action
 
-Commit the verified implementation and canonical documentation, then run bare `./handoff` from the clean implementation commit.
+Commit the detached-runner remediation, create a replacement Handoff seal, and verify the next hosted pull-request run.
