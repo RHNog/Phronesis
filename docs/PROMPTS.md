@@ -1,5 +1,13 @@
 # Prompt History
 
+## 2026-08-04 — Local Card Acquisition And Recognition
+
+- Source: Product Owner-approved local card-recognition brief and CTO implementation structure.
+- Structure: `PHR-STRUCT-20260804-003`; assignment `PHR-LOCAL-CARD-RECOGNITION-20260804`.
+- Controlled plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
+- First implementation prompt: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
+- Scope: software-safe macOS fi-8170 capability probe; physical duplex acceptance remains separately hardware-gated.
+
 ## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
 
 - Source: Product Owner request to diagnose the zero Arbitrage queue, assess TCG catalogue freshness, schedule LigaMagic, and add LigaPokemon.

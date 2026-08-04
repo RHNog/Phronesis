@@ -1,5 +1,15 @@
 # CTO Product Development Conversation History
 
+## 2026-08-04 — Local Card Acquisition And Recognition Program
+
+The Product Owner supplied a local card-recognition brief, accepted the CTO implementation structure, and authorized implementation through the Canonical Autonomous Workflow. The approved outcome is an offline-first platform that converts physical card observations into evidence-backed canonical Phronesis assets for Vendor Buying, inventory, TCGPLAYER Tools, LigaMagic, LigaPokémon, and future multi-card capture.
+
+The CTO selected English Magic and one card per frame for the first release, retained operator confirmation for condition and price-material finish uncertainty, and prohibited automatic marketplace publication. The Chief Architect selected Controlled Lane and decomposed the work into fi-8170 acquisition, durable agent, local corpus/recognition, scanner-to-offer, recognized-asset interchange, and later platform/capture expansion.
+
+The first Engineer work order is `PHR-TECH-013 / Slice A`: a standalone Swift/ImageCaptureCore capability probe with explicit physical-scan consent, deterministic JSONL events, atomic frame promotion, SHA-256 evidence, redaction, cancellation, and disconnected tests. Discovery found the driver and SDK but no connected fi-8170, so software implementation proceeds while the physical gate remains explicit.
+
+The software checkpoint now passes Swift build, formatter lint, 18/18 tests, disconnected zero-device enumeration, typed not-found, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review. Same-session Chief Architect conformance passes for the software scope. No physical card was scanned; final Slice A acceptance still requires the connected fi-8170 and an owner-approved low-value batch.
+
 ## 2026-08-03 — GitHub Handoff Continuity Repair
 
 The Product Owner reported repeated GitHub errors after implementing the Handoff workflow and authorized a repair. Hosted logs and a clean-checkout reproduction established two separate causes: the workflow tried to prepare Handoff state before installing the locked Node dependencies required by the repository validators, and the committed Handoff seal still represented an earlier implementation while the public event-worker gateway remained dirty locally.

@@ -1,5 +1,16 @@
 # Roadmap
 
+## Active Controlled Program: Local Card Acquisition And Recognition
+
+1. `PHR-TECH-013-A` — macOS fi-8170 capability probe and supervised low-value hardware qualification.
+2. `PHR-TECH-013-B` — signed durable acquisition agent and Windows-neutral protocol.
+3. `PHR-TECH-014` — licensed local corpus, benchmark, calibrated recognition, and abstention.
+4. `PHR-WORKFLOW-016` — offline English Magic scanner-to-offer Vendor workflow.
+5. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters.
+6. `PHR-UX-026` — Windows parity and multi-card/binder capture expansion.
+
+No later slice inherits acceptance from an earlier game, platform, corpus, or driver without its own evidence.
+
 ## Product Review Candidate: Arbitrage And Liga Acquisition Recovery
 
 - Implemented: one operational pricing database across runtime, observer, import, provider, and artwork paths (`PHR-TECH-012`).

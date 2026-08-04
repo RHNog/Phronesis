@@ -4,39 +4,37 @@
 
 ## Objective
 
-Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal that records the separately authorized live public ingress without conflating it with the CI repair.
+Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.
 
 ## Acceptance criteria
 
-- [x] Diagnose the hosted GitHub failure from Actions logs and reproduce the missing-dependency boundary in a clean checkout.
-- [x] Preserve the existing Artwork Review authorization and public event-gateway implementation in the canonical worktree.
-- [x] Make project validation install locked dependencies before test, lint, build, and diff gates.
-- [x] Make continuity validation read-only against the exact committed PR head with full Git history.
-- [x] Avoid duplicate feature-branch runs by reserving push validation for `main` and pull-request validation for feature work.
-- [x] Pass the full local test, TypeScript, lint, build, and diff-hygiene gate.
-- [x] Commit the implementation and canonical documentation with no secret-bearing runtime data.
-- [x] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
-- [x] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
+- [x] Record the Product Owner-approved objective, Feature IDs, Controlled Lane plan, architecture specification, technical specification, and Engineer work order.
+- [x] Implement the isolated Swift package with list, probe, and explicitly gated scan modes.
+- [x] Prove deterministic JSONL events, redaction, SHA-256, atomic promotion, collision handling, timeout, and cancellation through tests.
+- [x] Pass `swift build`, `swift test`, disconnected CLI checks, `git diff --check`, and private-identifier review.
+- [x] Produce Engineer report and Chief Architect conformance review.
+- [ ] Run the physical fi-8170 duplex gate only after the scanner and owner-approved low-value cards are present.
 
 ## Completed this session
 
-- Confirmed the canonical repository, branch, pull request, hosted failure, and stale seal from Git and GitHub evidence.
-- Replaced CI-side Handoff preparation with separate dependency-backed project validation and committed-state continuity verification.
-- Added the governed specification, work order, release notes, architecture decision, roadmap, atlas, and continuity records for `PHR-TECH-011`.
-- Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
-- Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
-- Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
-- Hosted replacement run `30844716647` passed continuity and project validation. The local and remote seal SHA matched, and no duplicate feature-branch push run was created.
+- Read the approved product brief and inspected Phronesis, TCGPLAYER Tools, the sample scan corpus, installed SDK/driver, and target hardware state.
+- Preserved the dirty canonical Phronesis worktree by creating an isolated assignment worktree and branch from its current HEAD.
+- Selected Controlled Lane and created six ordered slices with permanent `PHR-*` Feature IDs.
+- Verified the installed macOS SDK's ImageCaptureCore scanner discovery, exclusive session, feeder capability, file transfer, completion, and cancellation interfaces.
+- Implemented the standalone Swift probe with no Phronesis runtime or external-system mutation.
+- Passed Swift build, formatter lint, 18/18 tests, disconnected enumeration and not-found checks, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review.
+- Recorded the Engineer report and same-session Chief Architect software conformance.
 
 ## Remaining work
 
-- Monitor the separately activated public event-worker window and disable Funnel port 10000 when that approved window ends.
+- Connect the fi-8170 and run the supervised low-value physical gate.
+- Return the physical evidence through final Chief Architect review and Product Review.
 
 ## Blockers
 
-- No implementation blocker is currently known.
-- No repair blocker remains. Public Funnel is active under a separately authorized window and must be shut down explicitly when that window ends.
+- Software implementation is complete and verified.
+- Final physical acceptance is blocked until the fi-8170 is connected and the Product Owner supplies 2–4 low-value test cards.
 
 ## Exact next action
 
-Operate only with owner-issued timed event codes, then run `tailscale funnel --https=10000 off` when the approved public worker window ends; private port 9443 must remain unchanged.
+Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.

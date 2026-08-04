@@ -1,5 +1,21 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Local Card Acquisition And Recognition
+
+- Assignment: `PHR-LOCAL-CARD-RECOGNITION-20260804`
+- Document ID: `PHR-STRUCT-20260804-003`
+- Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
+- Status: `S1 SOFTWARE VERIFIED — PHYSICAL GATE PENDING`
+- Objective: turn physical card observations into evidence-backed canonical Phronesis assets, beginning with a safe macOS fi-8170 capability probe and progressing through local recognition, Vendor offers, and marketplace-neutral exports.
+- Delivery lane: Controlled, six ordered slices, plan fingerprint `dbe1741ebe0bcc8e75638a441d3e75c6baa19ef4b4e35cf95c40ea66ceb6d29c`.
+- First-release rule: English Magic, one card per frame; condition is operator-confirmed and price-material finish uncertainty forces review.
+- Architecture rule: Phronesis owns workflow and canonical identity; a signed native agent owns scanner control; an isolated local worker owns recognition; immutable evidence remains content-addressed.
+- Safety rule: no physical scan without a connected fi-8170, explicit scan flag, owner-supplied low-value cards, and operator supervision.
+- Publication rule: recognition never publishes. TCGPLAYER Tools and Liga adapters consume `PHR-API-015` only through separate draft/import gates.
+- Current work order: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
+- Current accountable role: Product Owner supplies connected hardware and low-value test cards; Engineer then executes the supervised physical gate.
+- Current checkpoint: Swift build, formatting, 18/18 tests, disconnected enumeration/not-found, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review pass. Same-session Chief Architect conformance passes for software scope.
+
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 
 - Assignment: `PHR-ARBITRAGE-ACQUISITION-RECOVERY-20260803`

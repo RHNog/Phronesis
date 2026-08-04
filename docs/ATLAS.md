@@ -1,5 +1,15 @@
 # Project Atlas
 
+## Local Card Acquisition And Recognition
+
+- `PHR-ARCH-015` treats scanning as one acquisition adapter into immutable frames and regions, not as a Vendor Workspace-only feature.
+- Phronesis owns authorization, canonical identity, pricing, offers, and operator decisions. Native macOS/Windows agents own scanner sessions; an isolated local worker owns recognition.
+- `PHR-TECH-013` first proves the actual fi-8170/ImageCaptureCore contract with a standalone Swift probe and low-value physical gate.
+- `PHR-TECH-014` owns the licensed versioned corpus, derived indexes, benchmark, candidate evidence, confidence calibration, and abstention.
+- `PHR-WORKFLOW-016` reuses existing Vendor identity, price snapshot, offer preset, receipt, and inventory boundaries.
+- `PHR-API-015` exports a marketplace-neutral recognized asset. TCGPLAYER Tools, LigaMagic, and LigaPokémon map from that asset; none receives publication authority from recognition.
+- `PHR-UX-026` later extends the already-generic frame/region model to multi-card and binder capture.
+
 ## Arbitrage Data Continuity And Liga Recurrence
 
 - `PHR-TECH-012` makes `.data/mobile-review.sqlite` the semantic operational pricing database unless a test/operator provides an explicit override. Runtime, observers, imports, artwork maintenance, and provider evidence no longer invent separate fallback files.

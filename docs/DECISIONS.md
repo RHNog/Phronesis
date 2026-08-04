@@ -1,6 +1,17 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-04 — Local recognition is a shared evidence platform
+
+- **Status:** Approved; `PHR-ARCH-015` Controlled Lane in progress.
+- **Decision:** scanner control, recognition, canonical identity, commerce, and marketplace publication are separate boundaries. Phronesis owns workflow and identity, a native agent owns acquisition, and an isolated worker owns recognition.
+- **Decision:** originals and derived artifacts are content-addressed evidence outside SQLite; SQLite stores provenance, jobs, decisions, overrides, and commercial bindings.
+- **Decision:** English Magic, one card per frame, is the first vertical. Condition is operator-confirmed; finish auto-resolution is allowed only where benchmark evidence supports it.
+- **Decision:** recognition outputs accepted, review, or abstained decisions. No candidate is forced and no auto-accept is released before a statistically powered unseen holdout.
+- **Decision:** `PHR-API-015` is marketplace-neutral. TCGPLAYER Tools initially produces draft plans only; LigaMagic and LigaPokémon consume the same envelope; publication remains explicit.
+- **Decision:** `PHR-TECH-013` begins with a standalone macOS capability probe. No product UI, network listener, recognition, or physical scan is part of its software-only checkpoint.
+- **Consequences:** the program can evolve across scanners, platforms, games, and marketplaces without duplicating identity truth or hiding uncertainty. Physical hardware, corpus licensing, retention, and high-confidence release claims remain explicit gates.
+
 ## 2026-08-03 — Preserve One Operational Pricing Database And Pilot-Gate LigaPokemon
 
 - Decision: retain the verified `.data/mobile-review.sqlite` file as the operational default rather than rename 1.2 GB of live data during recovery.
