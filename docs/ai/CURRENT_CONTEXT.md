@@ -1,31 +1,28 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-03T23:38:17Z","generation_id":"1bfb7d6b838fa897236d","head":"5a5607d5b852625b897d005a2693bda4478d5d28","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-04T22:08:25Z","generation_id":"1693baf5ddf4ac489c60","head":"6c4a5eaae826a43c21f917d04f03ed4f01f5f74c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
 
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
-- **Branch:** `codex/phr-price-monitoring-20260730`
-- **HEAD:** `5a5607d5b852625b897d005a2693bda4478d5d28`
+- **Branch:** `codex/phr-local-card-recognition-20260804`
+- **HEAD:** `6c4a5eaae826a43c21f917d04f03ed4f01f5f74c`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-03T23:38:17Z
+- **Generated:** 2026-08-04T22:08:25Z
 
 ## Current objective
 
-Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal that records the separately authorized live public ingress without conflating it with the CI repair.
+Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.
 
 ## Acceptance criteria
 
-- [x] Diagnose the hosted GitHub failure from Actions logs and reproduce the missing-dependency boundary in a clean checkout.
-- [x] Preserve the existing Artwork Review authorization and public event-gateway implementation in the canonical worktree.
-- [x] Make project validation install locked dependencies before test, lint, build, and diff gates.
-- [x] Make continuity validation read-only against the exact committed PR head with full Git history.
-- [x] Avoid duplicate feature-branch runs by reserving push validation for `main` and pull-request validation for feature work.
-- [x] Pass the full local test, TypeScript, lint, build, and diff-hygiene gate.
-- [x] Commit the implementation and canonical documentation with no secret-bearing runtime data.
-- [x] Run bare `./handoff` from a clean implementation commit and pass `./handoff validate-continuity --json`.
-- [x] Push the branch and confirm both GitHub pull-request jobs pass on the seal commit.
+- [x] Record the Product Owner-approved objective, Feature IDs, Controlled Lane plan, architecture specification, technical specification, and Engineer work order.
+- [x] Implement the isolated Swift package with list, probe, and explicitly gated scan modes.
+- [x] Prove deterministic JSONL events, redaction, SHA-256, atomic promotion, collision handling, timeout, and cancellation through tests.
+- [x] Pass `swift build`, `swift test`, disconnected CLI checks, `git diff --check`, and private-identifier review.
+- [x] Produce Engineer report and Chief Architect conformance review.
+- [ ] Run the physical fi-8170 duplex gate only after the scanner and owner-approved low-value cards are present.
 
 ## Constraints
 
@@ -36,4 +33,4 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 
 ## Exact next action
 
-Operate only with owner-issued timed event codes, then run `tailscale funnel --https=10000 off` when the approved public worker window ends; private port 9443 must remain unchanged.
+Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.

@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-04T22:05:08Z","generation_id":"1d47f1410a9159fb8536","head":"cd74ddfed5ffd8aa6d1cfc29138a59d988eebaca","schema_version":"1","worktree_fingerprint":"f2aeacd772bf5abc2704c80ceb5f444fc83f9ce5f5f33e676a00bc4358a7cf9b"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-04T22:08:25Z","generation_id":"1693baf5ddf4ac489c60","head":"6c4a5eaae826a43c21f917d04f03ed4f01f5f74c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Work Queue
 
 > Machine-generated from `docs/ai/ACTIVE_TASK.md` and `docs/BACKLOG.md`. Edit the sources, then

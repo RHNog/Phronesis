@@ -1,35 +1,36 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-03T23:38:17Z","generation_id":"1bfb7d6b838fa897236d","head":"5a5607d5b852625b897d005a2693bda4478d5d28","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-04T22:08:25Z","generation_id":"1693baf5ddf4ac489c60","head":"6c4a5eaae826a43c21f917d04f03ed4f01f5f74c","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
 
-Finish and preserve the isolated public event-worker gateway implementation, repair GitHub Handoff validation, and publish a fresh committed continuity seal that records the separately authorized live public ingress without conflating it with the CI repair.
+Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.
 
 ## Completed in the closing session
 
-- Confirmed the canonical repository, branch, pull request, hosted failure, and stale seal from Git and GitHub evidence.
-- Replaced CI-side Handoff preparation with separate dependency-backed project validation and committed-state continuity verification.
-- Added the governed specification, work order, release notes, architecture decision, roadmap, atlas, and continuity records for `PHR-TECH-011`.
-- Passed 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene.
-- Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
-- Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
-- Hosted replacement run `30844716647` passed continuity and project validation. The local and remote seal SHA matched, and no duplicate feature-branch push run was created.
+- Read the approved product brief and inspected Phronesis, TCGPLAYER Tools, the sample scan corpus, installed SDK/driver, and target hardware state.
+- Preserved the dirty canonical Phronesis worktree by creating an isolated assignment worktree and branch from its current HEAD.
+- Selected Controlled Lane and created six ordered slices with permanent `PHR-*` Feature IDs.
+- Verified the installed macOS SDK's ImageCaptureCore scanner discovery, exclusive session, feeder capability, file transfer, completion, and cancellation interfaces.
+- Implemented the standalone Swift probe with no Phronesis runtime or external-system mutation.
+- Passed Swift build, formatter lint, 18/18 tests, disconnected enumeration and not-found checks, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review.
+- Recorded the Engineer report and same-session Chief Architect software conformance.
 
 ## State left behind
 
-- Branch `codex/phr-price-monitoring-20260730` at `5a5607d5b852625b897d005a2693bda4478d5d28`.
+- Branch `codex/phr-local-card-recognition-20260804` at `6c4a5eaae826a43c21f917d04f03ed4f01f5f74c`.
 - Implementation worktree is clean.
-- Continuity generation `1bfb7d6b838fa897236d` was prepared successfully.
+- Continuity generation `1693baf5ddf4ac489c60` was prepared successfully.
 
 ## Remaining work
 
-- Monitor the separately activated public event-worker window and disable Funnel port 10000 when that approved window ends.
+- Connect the fi-8170 and run the supervised low-value physical gate.
+- Return the physical evidence through final Chief Architect review and Product Review.
 
 ## Blockers
 
-- No implementation blocker is currently known.
-- No repair blocker remains. Public Funnel is active under a separately authorized window and must be shut down explicitly when that window ends.
+- Software implementation is complete and verified.
+- Final physical acceptance is blocked until the fi-8170 is connected and the Product Owner supplies 2–4 low-value test cards.
 
 ## Next action
 
-Operate only with owner-issued timed event codes, then run `tailscale funnel --https=10000 off` when the approved public worker window ends; private port 9443 must remain unchanged.
+Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
