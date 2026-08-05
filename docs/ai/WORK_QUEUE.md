@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-05T14:37:36Z","generation_id":"bd0e2e0fe6d48eb4f962","head":"091ca0e020dd7e7e42d7ae39cd0080180e44c9dd","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"WORK_QUEUE","generated":true,"generated_at":"2026-08-05T16:41:20Z","generation_id":"9aa0ba2e6e5c6b0628ef","head":"66ef681f5cf9d63c2fb5c6e472ca29c9d0d97433","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Work Queue
 
 > Machine-generated from `docs/ai/ACTIVE_TASK.md` and `docs/BACKLOG.md`. Edit the sources, then
@@ -6,16 +6,16 @@
 
 | Rank | Priority | Source ID | Work |
 |---:|---:|---|---|
-| 1 | P0 | `ACTIVE-001` | Run a real English Magic card through the operational workflow for Product Owner experience review. |
+| 1 | P0 | `ACTIVE-001` | Product Owner resolves one of the eight current English Pokémon candidates through the operational workflow for experience review. |
 | 2 | P0 | `ACTIVE-002` | Acquire a labeled real binder holdout before any segmentation activation. |
-| 3 | P0 | `ACTIVE-003` | Acquire separately licensed English Magic training and powered holdout data only after Product Owner provenance approval. |
-| 4 | P0 | `BACKLOG-001` | Product Owner runs a real English Magic card through the operational scanner workflow and confirms the evidence/review experience. |
+| 3 | P0 | `ACTIVE-003` | Acquire separately licensed English Pokémon training and powered holdout data only after Product Owner provenance approval. |
+| 4 | P0 | `BACKLOG-001` | Product Owner resolves one of the eight current English Pokémon review results and confirms the exact-variant/condition/price experience. |
 | 5 | P0 | `BACKLOG-005` | Restore the separately owned TCG catalogue acquisition dashboard/scheduler; its five Phronesis catalogue checkpoints remain at 2026-08-01 and are not current to the four-daily source cadence. |
 | 6 | P0 | `BACKLOG-006` | Reauthenticate the dedicated LigaMagic profile; the loaded daily recurrence currently reports `REAUTHENTICATION_REQUIRED` and preserves the 2026-07-30 last-good snapshot. |
 | 7 | P0 | `BACKLOG-008` | Disable Funnel port 10000 with `tailscale funnel --https=10000 off` when the approved public worker window ends; do not alter private port 9443. |
 | 8 | P0 | `BACKLOG-009` | Configure Product Owner-approved US-to-Brazil fixed BRL and percentage costs and Brazil-to-US fixed USD and percentage costs; never infer unknown costs as zero. |
 | 9 | P0 | `BACKLOG-010` | Verify one real executable listing or dealer offer with price, quantity, counterparty, timestamp, and notes before promoting any arbitrage candidate to `ACTIONABLE`. |
-| 10 | P1 | `BACKLOG-002` | Approve provenance/licensing and curate a powered English Magic holdout before activating any `PHR-TECH-014` auto-accept policy. |
+| 10 | P1 | `BACKLOG-002` | Approve provenance/licensing and curate a powered English Pokémon holdout before activating any `PHR-TECH-014` auto-accept policy. |
 | 11 | P1 | `BACKLOG-007` | Explicitly adjudicate LigaPokemon Lote 4 advertising 9,870 cards while repeat-identical CSV exports contain 9,868; Lote 10's exact 9,700 authority does not generalize, and no incomplete snapshot or Pokémon regional evidence may be promoted (`PHR-API-013`). |
 | 12 | P1 | `BACKLOG-011` | Reconcile the highest-value remaining LigaMagic edition gaps using exact evidence only; preserve the fuzzy-match and Textless prohibitions. |
 | 13 | P1 | `BACKLOG-012` | Activate required employee authentication only after a live owner callback and membership verification. |
