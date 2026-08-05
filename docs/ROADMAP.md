@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Maximum Liga Equivalence Coverage
+
+- Implemented: one provider-aware target disposition for all 162,765 Magic and 46,642 English Pokémon products (`PHR-API-015`).
+- Implemented: bounded encoded-identity repair, ordered exact/compatible Pokémon tiers, complete reporting, and exact/compatible Vendor Workspace language.
+- Live result: Lucario V `27/73` resolves to LigaPokemon R$29.99; Pokémon single-card evidence reaches 32,600 / 43,748 (74.52%); Magic retains 131,883 accepted exact targets.
+- Preserved: ambiguous/unavailable products receive no price, collection-export sealed gaps remain explicit, and compatible rows cannot enter Arbitrage.
+- Next: Product Owner review and separately authorized deployment. Any new sealed or special-product coverage requires another authoritative source rather than weaker matching.
+
 ## Product Review Candidate: Arbitrage And Liga Acquisition Recovery
 
 - Implemented: one operational pricing database across runtime, observer, import, provider, and artwork paths (`PHR-TECH-012`).

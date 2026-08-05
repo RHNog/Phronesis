@@ -21,7 +21,9 @@ export async function GET(request: Request) {
       { error: "categoryId and sku are required." },
       { status: 400 },
     );
+  const repository = getRegionalIntelligenceRepository();
   return Response.json({
-    evidence: getRegionalIntelligenceRepository().evidenceFor(categoryId, sku),
+    evidence: repository.evidenceFor(categoryId, sku),
+    disposition: repository.equivalenceFor(categoryId, sku),
   });
 }

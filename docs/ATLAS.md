@@ -1,10 +1,23 @@
 # Project Atlas
 
+## Dedicated Browser And iOS Application Icon
+
+- `PHR-ARCH-010` separates the readable navigation identity from the compact application mark. Desktop and mobile shell chrome retain `public/brand/phronesis-logo.png`.
+- The Product Owner-supplied 1254×1254 JPEG is preserved by provenance and deterministically converted to `public/brand/phronesis-app-icon.png`; no generative alteration, redraw, recoloring, or network substitution occurs.
+- Next.js static metadata owns `app/favicon.ico` (32×32), `app/icon.png` (512×512), and `app/apple-icon.png` (180×180). Generated browser metadata declares the correct relation, MIME type, and intrinsic size for each asset.
+
+## Maximum Liga Equivalence Coverage
+
+- `PHR-API-015` adds `regional_product_equivalence`, a provider-aware ledger with one exact, compatible, ambiguous, or unavailable disposition for every Magic and English Pokémon TCGplayer product.
+- The live Pokémon target set contains 43,748 singles and 2,894 sealed products. It resolves 30,061 exact and 2,539 compatible targets; 102 remain ambiguous and 13,940 unavailable. Material treatment qualifiers remain compatible unless Liga names the same treatment. Lucario V `27/73` resolves the encoded `Champion&rsquo;s Path` source identity and exposes R$29.99.
+- The live Magic target set contains 159,126 singles and 3,639 sealed products. Its existing accepted crosswalk populates 131,883 exact target rows; 30,882 are unavailable.
+- Compatible evidence is a Vendor Workspace comparison aid only. Arbitrage continues to consume the original collision-safe Magic source crosswalk, and no unavailable or ambiguous target receives a price.
+
 ## Unified Vendor Pricing And Product Identity
 
 - `PHR-UX-022` composes selected-condition TCGplayer evidence and exact provider-labelled LigaMagic/LigaPokemon evidence inside one primary pricing region. Regional unmatched/quarantined states remain explicit and do not replace TCGplayer data.
 - PriceCharting candidates and the existing certificate lookup occupy one native grading disclosure immediately below raw-card pricing. It is closed by default and remains evidence-only.
-- `PHR-ARCH-010` now has a canonical application asset at `public/brand/phronesis-logo.png`, recovered byte-for-byte from the Product Owner's July 9 raster. The desktop/mobile shell and Next.js icon metadata share that asset; its SHA-256 is `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`.
+- `PHR-ARCH-010` retains the canonical full-logo asset at `public/brand/phronesis-logo.png`, recovered byte-for-byte from the Product Owner's July 9 raster. Desktop/mobile shell identity uses that full logo; dedicated favicon and iOS metadata use the separately supplied compact application mark.
 
 ## Timed Worker Session Continuity
 
@@ -16,7 +29,7 @@
 
 - `PHR-API-014` binds only complete LigaPokemon manifests to the English Pokémon TCGplayer catalogue through exact name, bounded set, collector numerator, and finish identity.
 - `regional_pokemon_crosswalk` and `regional_pokemon_evidence` are isolated from the Magic regional tables. Complete source receipts and current Pokémon catalogue state produce deterministic source, pricing, and crosswalk fingerprints.
-- The live 167,912-row snapshot yields 25,200 exact matches and 24,895 two-sided price pairs. Eight source collision rows, 8,474 explicit foreign-market rows, and 2,600 unsupported treatments are quarantined.
+- After bounded presentation decoding, the live 167,912-row snapshot yields 25,549 exact source matches and 25,226 two-sided price pairs. Eight source collision rows, 8,474 explicit foreign-market rows, and 2,600 unsupported treatments are quarantined.
 - Regional evidence lookup is provider-aware and fail closed: `magic-en` reads LigaMagic, `pokemon-en` reads LigaPokemon, and unsupported games receive no substitute. Vendor Workspace shows provider-labelled exact evidence; Arbitrage still reads only the accepted Magic crosswalk until a separate Product Owner candidate-exposure decision.
 
 ## Arbitrage Data Continuity And Liga Recurrence

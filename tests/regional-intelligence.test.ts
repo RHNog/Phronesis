@@ -319,12 +319,16 @@ test("repository derives only a conflict-free edition alias with two independent
   assert.equal(first.unmatched, 1);
   assert.equal(first.derivedEditionAliasCount, 1);
   assert.equal(first.comparableBoth, 2);
+  assert.equal(first.targetTotal, 3);
+  assert.equal(first.targetExact, 2);
+  assert.equal(first.targetUnavailable, 1);
   assert.equal(first.editionAliases[0]?.anchorCount, 2);
   assert.equal(first.editionAliases[0]?.tcgplayerEdition, "Magic 2014 (M14)");
   const method = pricing.prepare("SELECT DISTINCT method FROM regional_crosswalk").get() as { method: string };
   assert.equal(method.method, "EVIDENCE_DERIVED_EDITION_ALIAS_V4");
   const second = repository.buildCrosswalk(ligaPath, manifestPath);
   assert.equal(second.crosswalkFingerprint, first.crosswalkFingerprint);
+  assert.equal(second.targetLedgerFingerprint, first.targetLedgerFingerprint);
   pricing.close();
 });
 
@@ -890,6 +894,9 @@ test("repository adopts one exact identity and quarantines Textless", () => {
   const report = repository.buildCrosswalk(ligaPath, manifestPath);
   assert.equal(report.matched, 1);
   assert.equal(report.unsupportedVariant, 1);
+  assert.equal(report.targetTotal, 1);
+  assert.equal(report.targetExact, 1);
+  assert.equal(report.targetUnavailable, 0);
   assert.equal(
     repository.evidenceFor("magic-en", "mox-normal")?.consumerAverageCentavos,
     11000,
@@ -897,6 +904,10 @@ test("repository adopts one exact identity and quarantines Textless", () => {
   assert.equal(
     repository.evidenceFor("magic-en", "mox-normal")?.sourceProvider,
     "LigaMagic",
+  );
+  assert.equal(
+    repository.evidenceFor("magic-en", "mox-normal")?.matchQuality,
+    "EXACT",
   );
   pricing.exec(`
     CREATE TABLE regional_pokemon_crosswalk(

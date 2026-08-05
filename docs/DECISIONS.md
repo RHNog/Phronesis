@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-05 — Target-complete Liga reconciliation separates comparison from Arbitrage authority
+
+- **Status:** Implemented; Product Review and deployment remain pending (`PHR-API-015`).
+- **Context:** LigaPokemon contained the reported Lucario V at R$29.99, but an encoded apostrophe hid the exact set identity. The source-centric crosswalk also could not state what happened to every TCGplayer target, while forcing an equivalent for source-absent products would fabricate evidence.
+- **Decision:** retain both collision-safe source crosswalks, add one provider-aware disposition per TCGplayer target, decode only bounded presentation entities, and admit ordered unique structural equivalents for Vendor Workspace. Label compatible rows and prohibit them from Arbitrage.
+- **Consequences:** every Magic and English Pokémon target is auditable. Pokémon exposes 32,600 exact-or-compatible single-card targets; Magic retains 131,883 accepted exact targets. Sealed and source-absent products remain explicitly unavailable, and price never selects identity.
+
 ## 2026-08-05 — Capture Before Import And Project Regional Evidence By Provider
 
 - **Status:** Implemented and live (`PHR-TECH-012`, `PHR-API-014`).

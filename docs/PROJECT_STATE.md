@@ -1,6 +1,21 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-05 Dedicated Application Icon State
+
+- `PHR-ARCH-010` now uses the Product Owner-supplied compact Phronesis mark for favicon, browser application icon, and iOS home-screen metadata while leaving the full navigation logo unchanged.
+- Canonical PNG SHA-256: `0fc335597c0f7fbe7407d6d8faec0b1d084a12b8937ec052405820565b5e0dbb`. Derived hashes: browser `2bdc7e40c845234eac0d148f787c26ec03b8d7ea6ca5417602543d8bab1ee632`, Apple `5e149948b3a4b92fc0cd5694d831931f4703fdd453739134025887abe9b9bdfe`, favicon `4ed3a7ecdb376d54aec6bd5bb2054874f1c718a2733c3debfbb5f59deb7c237e`.
+- Focused 6/6 and full 404/404 tests, TypeScript, lint, production build, visual inspection, static metadata, HTTP asset integrity, and diff hygiene pass. The launch-managed private runtime is restarted and verified; repository publication is authorized in this delivery.
+
+## 2026-08-05 Maximum Liga Equivalence State
+
+- `PHR-API-015` is implemented and Product Review ready. The operational database has exactly one Liga disposition for every current Magic and English Pokémon target.
+- Lucario V, Champion's Path, `27/73`, Holofoil now resolves the acquired `Champion&rsquo;s Path` LigaPokemon identity with R$29.99 low/average/high evidence.
+- Pokémon: 46,642 total targets; 30,061 exact, 2,539 compatible, 102 ambiguous, and 13,940 unavailable. Exact-or-compatible evidence covers 32,600 / 43,748 singles (74.52%).
+- Magic: 162,765 total targets; 131,883 exact and 30,882 unavailable.
+- Compatible rows are comparison evidence only. Arbitrage remains bound to the original exact Magic source crosswalk.
+- Full 404/404 tests, TypeScript, lint, production build, deterministic Pokémon rebuild, and live database audits pass. The launch-managed private runtime is restarted and verified; repository publication is authorized in this delivery.
+
 ## 2026-08-05 Regional Evidence And Catalogue Continuity State
 
 - `PHR-API-014` now serves exact provider-labelled regional evidence in Vendor Workspace: LigaMagic for `magic-en` and LigaPokemon for `pokemon-en`. Unsupported categories, missing Pokémon tables, and every non-`MATCHED` identity return no evidence.

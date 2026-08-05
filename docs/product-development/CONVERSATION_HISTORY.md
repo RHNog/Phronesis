@@ -1,5 +1,19 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Dedicated Favicon And iOS Application Icon
+
+The Product Owner supplied a new compact Phronesis mark and directed that it become the browser favicon and iOS application icon. CTO preserved the permanent product-identity feature `PHR-ARCH-010` and assigned the bounded revision under `PHR-STRUCT-20260805-004`. The established full raster remains the readable desktop/mobile navigation identity; this request did not authorize replacing application chrome, redesigning the mark, or deploying the build.
+
+Implementation deterministically converts the 1254×1254 JPEG attachment into `public/brand/phronesis-app-icon.png`, then derives static Next.js metadata assets at 512×512 for the browser icon, 180×180 for Apple touch, and 32×32 for the root ICO favicon. No generative image modification, recoloring, redraw, or network substitute occurred. Fresh production HTML and HTTP probes proved all three metadata relations, MIME types, dimensions, and exact repository hashes. Focused 6/6 and full 404/404 tests, TypeScript, lint, build, visual QA, and diff hygiene pass. The Product Owner subsequently authorized commit, push, and deployment. The launch-managed private runtime was restarted and live metadata/assets match the repository; same-session conformance passes but is not independent Product Owner approval.
+
+## 2026-08-05 — Maximum Liga Equivalence Coverage
+
+The Product Owner reported that Lucario V, Champion's Path, `27/73`, Holofoil showed TCGplayer evidence but no Brazil price, then directed Phronesis to achieve maximum reconciliation and account for every TCGplayer item through LigaPokemon or LigaMagic. CTO assigned `PHR-API-015` under `PHR-STRUCT-20260805-003`, with a non-negotiable boundary: maximum defensible evidence cannot mean fabricated equivalence.
+
+Diagnosis found the exact LigaPokemon product and R$29.99 foil price in the current complete snapshot. Liga encoded its set as `Champion&rsquo;s Path`; the literal entity text prevented the otherwise exact identity. The implementation adds bounded entity/ampersand normalization and a target-complete provider ledger. Every target is exact, compatible, ambiguous, or unavailable. Ordered structural tiers may tolerate title decoration or a generic vintage finish family only when one semantic source identity remains. Price, rarity, source order, and unbounded fuzzy matching cannot select identity.
+
+The operational rebuild now records 30,061 exact, 2,539 compatible, 102 ambiguous, and 13,940 unavailable Pokémon targets across 46,642 products; exact-or-compatible evidence covers 32,600 of 43,748 singles. Material title qualifiers such as Staff, Cosmos Holo, Jumbo, and pattern foils remain visibly compatible unless Liga names the same treatment. Magic records 131,883 exact and 30,882 unavailable targets across 162,765 products. Lucario resolves to the acquired Liga identity with R$29.99 low/average/high. Full 404/404 tests, TypeScript, lint, build, repeated Pokémon fingerprints, and live database invariants pass. The Product Owner subsequently authorized commit, push, and deployment. The launch-managed private runtime was restarted; live Lucario evidence, route isolation, and zero compatible-in-exact-Arbitrage leakage pass. Same-session conformance passes but is not independent acceptance.
+
 ## 2026-08-05 — Unified Pricing Hierarchy And Phronesis Asset Recovery
 
 The Product Owner directed Vendor Workspace to show Liga prices alongside TCGplayer prices and place grading in a single expandable card beneath that pricing hierarchy. The same direction requested recovery of the Phronesis logos/icons developed several weeks earlier. CTO assigned the bounded increment to existing features `PHR-UX-022` and `PHR-ARCH-010` under `PHR-STRUCT-20260805-002`; price math, regional identity rules, provider acquisition, arbitrage exposure, and transactions remained outside scope.

@@ -32,8 +32,13 @@ import {
   type ArbitrageDirection,
   type RegionalCostProfile,
   type RegionalMarketEvidence,
+  type RegionalProductEquivalenceDisposition,
 } from "@/lib/regional/domain";
 import { normalizeSearchText } from "@/lib/pricing/domain";
+import {
+  ensureRegionalProductEquivalenceTable,
+  regionalProductEquivalenceSummary,
+} from "@/lib/regional/ProductEquivalence";
 
 type Sql = Record<string, string | number | null>;
 
@@ -83,6 +88,14 @@ export type CrosswalkReport = {
   anyLigaPriceMatchedCoveragePercent: number;
   supportedWithoutAnyLigaPrice: number;
   crosswalkFingerprint: string;
+  targetTotal: number;
+  targetExact: number;
+  targetCompatible: number;
+  targetAmbiguous: number;
+  targetUnavailable: number;
+  targetWithLigaConsumerPrice: number;
+  targetPricedCoveragePercent: number;
+  targetLedgerFingerprint: string;
   worldChampionshipPlayerAliasCount: number;
   worldChampionshipPlayerAliases: Array<{
     year: string;
@@ -217,6 +230,7 @@ export class RegionalIntelligenceRepository {
       );
       CREATE INDEX IF NOT EXISTS regional_verification_product ON regional_availability_verification(category_id, sku, direction, observed_at DESC);
     `);
+    ensureRegionalProductEquivalenceTable(this.database);
     this.ensureProfileColumn("brl_per_usd_buy", "REAL");
     this.ensureProfileColumn("brl_per_usd_sell", "REAL");
     this.ensureProfileColumn("fx_fetched_at", "TEXT");
@@ -429,10 +443,26 @@ export class RegionalIntelligenceRepository {
     if (categoryId === "magic-en") {
       const row = this.database
         .prepare(
-          `SELECT e.*, c.category_id, c.sku FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key) WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
+          `SELECT e.*,q.category_id,q.sku,q.status AS match_quality,
+            q.method AS match_method,q.confidence AS match_confidence,
+            q.reason AS match_reason
+          FROM regional_product_equivalence q
+          JOIN regional_evidence e ON e.liga_identity_key=q.liga_identity_key
+          WHERE q.provider_id='ligamagic' AND q.status IN ('EXACT','COMPATIBLE')
+            AND q.category_id=? AND q.sku=?`,
         )
         .get(categoryId, sku) as Sql | undefined;
-      return row ? evidenceDto(row, "LigaMagic") : null;
+      if (row) return evidenceDto(row, "LigaMagic");
+      const legacyRow = this.database
+        .prepare(
+          `SELECT e.*,c.category_id,c.sku,'EXACT' AS match_quality,
+            c.method AS match_method,100 AS match_confidence,
+            c.reason AS match_reason
+          FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key)
+          WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
+        )
+        .get(categoryId, sku) as Sql | undefined;
+      return legacyRow ? evidenceDto(legacyRow, "LigaMagic") : null;
     }
     if (
       categoryId !== "pokemon-en" ||
@@ -451,13 +481,63 @@ export class RegionalIntelligenceRepository {
           e.consumer_low_centavos,e.consumer_average_centavos,
           e.consumer_high_centavos,e.store_buy_low_centavos,
           e.store_buy_average_centavos,e.store_buy_high_centavos,
-          c.category_id,c.sku
+          q.category_id,q.sku,q.status AS match_quality,
+          q.method AS match_method,q.confidence AS match_confidence,
+          q.reason AS match_reason
+        FROM regional_product_equivalence q
+        JOIN regional_pokemon_evidence e
+          ON e.liga_identity_key=q.liga_identity_key
+        WHERE q.provider_id='ligapokemon'
+          AND q.status IN ('EXACT','COMPATIBLE')
+          AND q.category_id=? AND q.sku=?`,
+      )
+      .get(categoryId, sku) as Sql | undefined;
+    if (row) return evidenceDto(row, "LigaPokemon");
+    const legacyRow = this.database
+      .prepare(
+        `SELECT e.liga_identity_key,e.card_name,
+          e.set_name AS edition_name,e.set_code AS edition_code,
+          e.collector_number,e.variant,e.observed_at,
+          e.consumer_low_centavos,e.consumer_average_centavos,
+          e.consumer_high_centavos,e.store_buy_low_centavos,
+          e.store_buy_average_centavos,e.store_buy_high_centavos,
+          c.category_id,c.sku,'EXACT' AS match_quality,
+          'LEGACY_EXACT_SOURCE_CROSSWALK_V1' AS match_method,
+          100 AS match_confidence,
+          'Legacy collision-safe exact source crosswalk.' AS match_reason
         FROM regional_pokemon_crosswalk c
         JOIN regional_pokemon_evidence e USING(liga_identity_key)
         WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
       )
       .get(categoryId, sku) as Sql | undefined;
-    return row ? evidenceDto(row, "LigaPokemon") : null;
+    return legacyRow ? evidenceDto(legacyRow, "LigaPokemon") : null;
+  }
+
+  equivalenceFor(
+    categoryId: string,
+    sku: string,
+  ): RegionalProductEquivalenceDisposition | null {
+    const provider = categoryId === "magic-en"
+      ? { id: "ligamagic", label: "LigaMagic" as const }
+      : categoryId === "pokemon-en"
+        ? { id: "ligapokemon", label: "LigaPokemon" as const }
+        : null;
+    if (!provider) return null;
+    const row = this.database
+      .prepare(
+        `SELECT status,method,confidence,reason
+        FROM regional_product_equivalence
+        WHERE provider_id=? AND category_id=? AND sku=?`,
+      )
+      .get(provider.id, categoryId, sku) as Sql | undefined;
+    if (!row) return null;
+    return {
+      sourceProvider: provider.label,
+      status: String(row.status) as RegionalProductEquivalenceDisposition["status"],
+      method: String(row.method),
+      confidence: Number(row.confidence),
+      reason: String(row.reason),
+    };
   }
 
   private regionalTablesExist(tableNames: string[]): boolean {
@@ -559,11 +639,16 @@ export class RegionalIntelligenceRepository {
         collectorNumber: string;
       }>
     >();
-    const productRows = this.database
+    const allTargetRows = this.database
       .prepare(
-        `SELECT category_id, sku, name, set_name, collector_number, variant FROM pricing_products WHERE category_id='magic-en' AND product_type='SINGLE'`,
+        `SELECT category_id,sku,product_type,name,set_name,collector_number,
+          variant,language
+        FROM pricing_products WHERE category_id='magic-en' ORDER BY sku`,
       )
       .all() as Sql[];
+    const productRows = allTargetRows.filter(
+      (row) => String(row.product_type) === "SINGLE",
+    );
     for (const row of productRows) {
       const key = crossMarketIdentityKey({
         name: String(row.name),
@@ -824,7 +909,10 @@ export class RegionalIntelligenceRepository {
     this.database.exec("BEGIN IMMEDIATE");
     try {
       this.database.exec(
-        "DELETE FROM regional_evidence; DELETE FROM regional_crosswalk;",
+        `DELETE FROM regional_product_equivalence
+          WHERE provider_id='ligamagic' AND category_id='magic-en';
+        DELETE FROM regional_evidence;
+        DELETE FROM regional_crosswalk;`,
       );
       for (const row of ligaRows) {
         counts.total += 1;
@@ -1496,6 +1584,73 @@ export class RegionalIntelligenceRepository {
           quarantineCollision.run(row.liga_identity_key);
         }
       }
+      const acceptedBySku = new Map<
+        string,
+        Array<{ ligaIdentityKey: string; method: string; reason: string }>
+      >();
+      const acceptedRows = this.database
+        .prepare(
+          `SELECT sku,liga_identity_key,method,reason FROM regional_crosswalk
+          WHERE status='MATCHED' AND category_id='magic-en'
+          ORDER BY sku,liga_identity_key`,
+        )
+        .all() as Sql[];
+      for (const row of acceptedRows) {
+        const sku = String(row.sku);
+        acceptedBySku.set(sku, [
+          ...(acceptedBySku.get(sku) ?? []),
+          {
+            ligaIdentityKey: String(row.liga_identity_key),
+            method: String(row.method),
+            reason: String(row.reason),
+          },
+        ]);
+      }
+      const insertEquivalence = this.database.prepare(`
+        INSERT INTO regional_product_equivalence(
+          category_id,sku,provider_id,liga_identity_key,status,method,
+          confidence,reason,source_run_id,source_hash,pricing_fingerprint,
+          reconciled_at
+        ) VALUES(?,?,'ligamagic',?,?,?,?,?,?,?,?,?)
+      `);
+      const reconciledAt = new Date().toISOString();
+      for (const target of allTargetRows) {
+        const matches = acceptedBySku.get(String(target.sku)) ?? [];
+        const sealed = String(target.product_type) !== "SINGLE";
+        const status = sealed
+          ? "UNAVAILABLE"
+          : matches.length === 1
+            ? "EXACT"
+            : matches.length > 1
+              ? "AMBIGUOUS"
+              : "UNAVAILABLE";
+        const match = status === "EXACT" ? matches[0] : null;
+        insertEquivalence.run(
+          String(target.category_id),
+          String(target.sku),
+          match?.ligaIdentityKey ?? null,
+          status,
+          match
+            ? `ACCEPTED_LIGAMAGIC_SOURCE_CROSSWALK:${match.method}`
+            : sealed
+              ? "LIGA_COLLECTION_EXPORT_HAS_NO_SEALED_IDENTITY_V1"
+              : matches.length > 1
+                ? "AMBIGUOUS_ACCEPTED_LIGAMAGIC_SOURCE_CROSSWALK_V1"
+                : "UNAVAILABLE_NO_ACCEPTED_LIGAMAGIC_IDENTITY_V1",
+          match ? 100 : 0,
+          match
+            ? match.reason
+            : sealed
+              ? "The authenticated LigaMagic collection export contains card identities, not sealed catalogue identities."
+              : matches.length > 1
+                ? "More than one accepted LigaMagic source identity resolves to this target."
+                : "No LigaMagic identity in the acquired snapshot satisfies the existing collision-safe matching policy.",
+          manifest.runId,
+          sourceHash,
+          pricingFingerprint,
+          reconciledAt,
+        );
+      }
       this.database.exec("COMMIT");
     } catch (error) {
       this.database.exec("ROLLBACK");
@@ -1514,6 +1669,11 @@ export class RegionalIntelligenceRepository {
       matchedCoveragePercent: percent(counts.matched, counts.total - counts.unsupportedVariant),
       ...coverage,
       crosswalkFingerprint: this.crosswalkFingerprint(),
+      ...regionalProductEquivalenceSummary(this.database, {
+        providerId: "ligamagic",
+        categoryId: "magic-en",
+        evidenceTable: "regional_evidence",
+      }),
       worldChampionshipPlayerAliasCount:
         worldChampionshipPlayerAliases.size,
       worldChampionshipPlayerAliases: [
@@ -1865,6 +2025,10 @@ function evidenceDto(
 ): RegionalMarketEvidence {
   return {
     sourceProvider,
+    matchQuality: String(row.match_quality) as RegionalMarketEvidence["matchQuality"],
+    matchMethod: String(row.match_method),
+    matchConfidence: Number(row.match_confidence),
+    matchReason: String(row.match_reason),
     ligaIdentityKey: String(row.liga_identity_key),
     categoryId: String(row.category_id),
     sku: String(row.sku),

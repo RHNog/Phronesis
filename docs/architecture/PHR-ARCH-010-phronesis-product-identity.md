@@ -10,7 +10,7 @@ Phronesis Product Identity and Repository Continuity
 
 ## Status
 
-Completed — Visual Assets Restored
+Completed — Dedicated Application Icon
 
 ## Priority
 
@@ -46,7 +46,8 @@ Use `Phronesis` as the canonical human-readable name and `phronesis-web` as the 
 - A case-insensitive repository scan must find no legacy-name occurrences outside Git internals and generated dependencies.
 - The approved July 2026 raster logo must be recovered into one stable repository asset path with its source provenance and hash recorded.
 - The application shell and mobile navigation must use that canonical asset without removing the readable Phronesis wordmark.
-- Browser/app icon metadata must resolve from the canonical recovered artwork rather than the generic framework favicon.
+- Browser and iOS app-icon metadata must resolve from the Product Owner-supplied dedicated application mark rather than the full wordmark or a generic framework favicon.
+- The full recovered Phronesis logo remains the canonical readable navigation identity; the dedicated application mark must not silently replace it in the shell.
 
 ## Non-Functional Requirements
 
@@ -58,7 +59,7 @@ New documents and code must use the canonical identity.
 
 The migration must not alter business logic, domain boundaries, or Git history.
 
-The original raster bytes must be preserved exactly; responsive presentation may scale or crop through layout but must not redraw the mark.
+The original full-logo raster bytes must be preserved exactly. The dedicated application-icon source must retain the Product Owner-supplied composition and may only be deterministically converted or resized for platform metadata assets.
 
 ### Security
 
@@ -80,9 +81,11 @@ Product identity must remain independent from provider and collectible-domain ab
 - Repository content contains no case-insensitive legacy-name occurrence.
 - The sidebar, README, package metadata, Atlas, provider user agents, and history namespace identify Phronesis.
 - Lint, type checking, and relevant tests pass.
-- The canonical logo asset has SHA-256 `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`.
-- Desktop sidebar, mobile navigation trigger/drawer, and Next.js application icon metadata use the recovered identity.
-- The retired generic `favicon.ico` no longer overrides the Phronesis application icon.
+- The canonical full-logo asset retains SHA-256 `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`.
+- Desktop sidebar and mobile navigation trigger/drawer continue using the readable full-logo identity.
+- A canonical repository PNG derived from the supplied 1254×1254 JPEG application mark records the source provenance and SHA-256.
+- Next.js emits a 512×512 browser application icon, a 180×180 Apple touch icon, and a real 32×32 root `favicon.ico` from that dedicated mark.
+- Browser metadata identifies the icon formats and intrinsic sizes, and the production routes return the intended image bytes.
 
 ## Edge Cases
 
@@ -102,7 +105,7 @@ Product identity must remain independent from provider and collectible-domain ab
 
 This is a mechanical identity migration. Do not reinterpret the architecture or introduce a second product brand.
 
-The recovered source is the Product Owner's `/Users/ramonnogueira/Downloads/Phronesis Logo.png`, created 2026-07-09, 1254×1254 PNG without alpha. Store the exact bytes under `public/brand/` and use the local Next.js image and metadata conventions documented by the installed Next.js version.
+The recovered full-logo source is the Product Owner's `/Users/ramonnogueira/Downloads/Phronesis Logo.png`, created 2026-07-09, 1254×1254 PNG without alpha. The dedicated app-icon source is the Product Owner attachment supplied on 2026-08-05, a 1254×1254 JPEG with SHA-256 `e0373e63b8d8e0b7e68f23742e2c9397396db353c4a8f53fc0d28019e55656d9`. Store a deterministic canonical PNG under `public/brand/` and purpose-sized static metadata files under `app/`, following the installed Next.js icon conventions.
 
 ## Success Metrics
 
@@ -119,4 +122,4 @@ The recovered source is the Product Owner's `/Users/ramonnogueira/Downloads/Phro
 - Related tests: `docs/testing/PHR-ARCH-010-product-identity-validation.md`.
 - Related release notes: `docs/release-notes/PHR-ARCH-010.md`.
 - Last modified: 2026-08-05.
-- Modification reason: Recover the previously approved raster identity and replace generic application chrome with the canonical Phronesis mark.
+- Modification reason: Adopt the Product Owner-supplied dedicated mark as the browser favicon and iOS application icon while preserving the full logo in navigation.

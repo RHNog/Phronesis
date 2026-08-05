@@ -1,5 +1,22 @@
 # Agent Handoff
 
+## Product Review Candidate — Dedicated Favicon And iOS Application Icon — 2026-08-05
+
+- `PHR-ARCH-010` now separates the compact app mark from the full Phronesis navigation logo. The Product Owner attachment is the source for application metadata; `phronesis-logo.png` remains unchanged in desktop/mobile shell chrome.
+- Static Next.js assets provide `app/favicon.ico` at 32×32, `app/icon.png` at 512×512, and `app/apple-icon.png` at 180×180. A canonical 1254×1254 PNG lives at `public/brand/phronesis-app-icon.png`.
+- Fresh production HTML declares all three icon links with the correct relation, type, and size; HTTP responses are 200 and byte-identical to repository assets.
+- Focused 6/6 and full 404/404 tests, TypeScript, lint, build, visual QA, asset hashes/dimensions, and diff hygiene pass. The launch-managed private runtime is restarted and verified; repository publication is authorized in this delivery.
+
+## Product Review Candidate — Maximum Liga Equivalence Coverage — 2026-08-05
+
+- `PHR-API-015` fixes the reported Lucario V `27/73` gap: bounded decoding reconciles LigaPokemon's `Champion&rsquo;s Path` presentation to the exact TCGplayer printing and exposes the acquired R$29.99 low/average/high evidence.
+- `regional_product_equivalence` now records one exact, compatible, ambiguous, or unavailable disposition for every current Magic and English Pokémon TCGplayer target.
+- Live Pokémon result: 30,061 exact, 2,539 compatible, 102 ambiguous, and 13,940 unavailable across 46,642 products; exact-or-compatible evidence covers 32,600 / 43,748 singles (74.52%).
+- Live Magic result: 131,883 exact and 30,882 unavailable across 162,765 products.
+- Compatible evidence is labelled for Vendor Workspace comparison only. Arbitrage still reads the original exact Magic source crosswalk.
+- Full 404/404 tests, TypeScript, lint, production build, repeated Magic/Pokémon snapshot fingerprints, and live database invariants pass.
+- The operational crosswalk/ledgers were rebuilt and the launch-managed private runtime was restarted from the validated build. Local/tailnet Vendor Workspace, live Lucario evidence, public route isolation, and exact-Arbitrage exclusion all pass; repository publication is authorized in this delivery.
+
 ## Product Review Candidate — Unified Vendor Pricing And Brand Recovery — 2026-08-05
 
 - `PHR-UX-022` now renders one combined TCGplayer/Liga pricing card in Snapshot evidence. The exact live Pikachu shows $2.09 TCG Market, $2.92 delivered, and LigaPokemon R$38.99 low / R$42.07 market in the same semantic region.

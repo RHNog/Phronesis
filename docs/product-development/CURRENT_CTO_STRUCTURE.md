@@ -1,5 +1,40 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Dedicated Favicon And iOS Application Icon
+
+- Assignment: `PHR-DEDICATED-APPLICATION-ICON-20260805`
+- Document ID: `PHR-STRUCT-20260805-004`
+- Feature: `PHR-ARCH-010`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: use the Product Owner-supplied square Phronesis mark as the browser favicon and iOS home-screen icon while retaining the established full logo in desktop/mobile navigation.
+- Source rule: preserve the supplied composition; deterministic format conversion and resizing are allowed, but no redraw, generative alteration, recoloring, or network substitute is authorized.
+- Platform rule: follow the installed Next.js 16.2.12 static icon conventions with a real root favicon, a browser icon, and an Apple touch icon at their intended intrinsic sizes.
+- Acceptance: source provenance and hashes recorded; 512×512 PNG browser icon, 180×180 PNG Apple icon, and 32×32 ICO favicon validate; browser metadata points to all intended assets; shell logo remains unchanged; focused/full gates, TypeScript, lint, build, and diff hygiene pass.
+- Work order: `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
+- Result: `public/brand/phronesis-app-icon.png` preserves the supplied composition. Static Next.js assets now provide a 512×512 browser icon, 180×180 Apple touch icon, and 32×32 root favicon while navigation continues to use `phronesis-logo.png`.
+- Verification: focused 6/6 and full 404/404 tests, TypeScript, lint, Next.js 16.2.12 production build, visual inspection, local production metadata tags, exact HTTP hashes/MIME types/dimensions, and diff hygiene pass.
+- Deployment: launch-managed private runtime restarted; local and tailnet Vendor Workspace return 200; live metadata and icon hashes match the repository. The public event gateway remains restricted and unchanged.
+- Next accountable role: Product Owner reviews the dedicated application mark. Same-session conformance passes but is not independent approval. Commit and push are authorized in this delivery.
+
+## Active Revision — Maximum Liga Equivalence Coverage
+
+- Assignment: `PHR-MAXIMUM-LIGA-EQUIVALENCE-20260805`
+- Document ID: `PHR-STRUCT-20260805-003`
+- Feature: `PHR-API-015`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: account for every Magic and English Pokémon TCGplayer target, maximize defensible LigaMagic/LigaPokemon price coverage, fix the Lucario V encoded-set defect, and label compatible equivalents separately from exact printings.
+- Product rule: every target receives an exact, compatible, ambiguous, or unavailable disposition. Phronesis must never invent a Liga identity or price when the acquired provider snapshot contains none.
+- Arbitrage boundary: the original exact source crosswalk remains the sole Arbitrage identity authority; compatible Vendor Workspace evidence cannot enter candidate or executable-opportunity queries.
+- Standard Slice 1: add bounded Pokémon identity decoding and the provider-aware target equivalence ledger with deterministic exact/compatible classification and complete target disposition.
+- Standard Slice 2: expose match-quality metadata in Vendor Workspace, validate Lucario V R$29.99 evidence, and complete cross-provider coverage/reporting gates.
+- Final integration: focused and full tests, TypeScript, lint, build, deterministic complete-snapshot rebuild, target-ledger audit, Arbitrage isolation, responsive review, and diff hygiene.
+- Decision condition: stop only if maximizing coverage would require price-selected identity, unbounded fuzzy matching, credentials, new provider acquisition, or promotion of compatible evidence into Arbitrage.
+- Work order: `docs/prompts/PHR-API-015-maximum-liga-equivalence-coverage-prompt.md`.
+- Result: Lucario V `27/73` now resolves exactly to the acquired R$29.99 LigaPokemon foil row. Pokémon has 46,642 target dispositions: 30,061 exact, 2,539 compatible, 102 ambiguous, and 13,940 unavailable. Magic has 162,765 dispositions: 131,883 exact and 30,882 unavailable.
+- Verification: full 404/404 tests, TypeScript, lint, production build, repeated Pokémon snapshot fingerprints, complete target-ledger audit, provider isolation, and explicit Arbitrage exclusion pass.
+- Deployment: launch-managed private runtime restarted; the live Lucario API returns exact R$29.99 LigaPokemon evidence and its disposition metadata; public event access remains 200 while public Settings remains 404; compatible-in-exact-Arbitrage audit remains zero.
+- Next accountable role: Product Owner reviews exact/compatible Vendor Workspace language. Commit and push are authorized in this delivery.
+
 ## Active Revision — Unified Vendor Pricing And Brand Asset Recovery
 
 - Assignment: `PHR-VENDOR-PRICING-BRAND-RESTORATION-20260805`

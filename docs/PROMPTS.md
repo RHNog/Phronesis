@@ -1,5 +1,19 @@
 # Prompt History
 
+## 2026-08-05 — Dedicated Favicon And iOS Application Icon
+
+- Source: Product Owner supplied the compact Phronesis mark and directed its use as both browser favicon and iOS application icon.
+- Feature: `PHR-ARCH-010` under `PHR-STRUCT-20260805-004`.
+- Implementation prompt: `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
+- Outcome: the full navigation logo remains unchanged; deterministic static 512×512 browser, 180×180 Apple, and 32×32 favicon assets use the supplied compact mark with recorded hashes and Next.js metadata.
+
+## 2026-08-05 — Maximum Liga Equivalence Coverage
+
+- Source: Product Owner report that Lucario V lacked Brazil pricing and direction to maximize LigaMagic/LigaPokemon conciliation for every TCGplayer item.
+- Feature: `PHR-API-015`; structure `PHR-STRUCT-20260805-003`.
+- Implementation prompt: `docs/prompts/PHR-API-015-maximum-liga-equivalence-coverage-prompt.md`.
+- Outcome: encoded Lucario identity repaired at R$29.99, complete target-disposition ledger for both games, 32,600 Pokémon single-card exact-or-compatible targets, visible compatibility semantics, and unchanged exact-only Arbitrage authority.
+
 ## 2026-08-05 — Unified Vendor Pricing And Brand Asset Recovery
 
 - Source: Product Owner direction to place Liga beside TCGplayer, collapse grading beneath that card, and recover the earlier Phronesis logos/icons.

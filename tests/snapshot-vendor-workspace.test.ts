@@ -6,6 +6,24 @@ import { createSnapshotPurchaseEvaluation } from "../features/vendor/components/
 import { groupSearchMatchesByArtwork } from "../lib/pricing/domain";
 import type { SearchMatch } from "../lib/pricing/types";
 
+function pngDimensions(bytes: Buffer): { width: number; height: number } {
+  assert.equal(bytes.subarray(1, 4).toString("ascii"), "PNG");
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+  };
+}
+
+function icoDimensions(bytes: Buffer): { width: number; height: number } {
+  assert.equal(bytes.readUInt16LE(0), 0);
+  assert.equal(bytes.readUInt16LE(2), 1);
+  assert.equal(bytes.readUInt16LE(4), 1);
+  return {
+    width: bytes[6] || 256,
+    height: bytes[7] || 256,
+  };
+}
+
 const match: SearchMatch = {
   categoryId: "magic-en",
   sku: "tcg:test-card",
@@ -227,10 +245,12 @@ test("regional evidence visibly preserves its Liga provider provenance", () => {
     "utf8",
   );
   assert.match(panel, /evidence\.sourceProvider/);
-  assert.match(panel, /Brazil market · exact match/);
+  assert.match(panel, /exact printing/);
+  assert.match(panel, /compatible Liga equivalent/);
+  assert.match(panel, /excluded from Arbitrage/);
 });
 
-test("the recovered Phronesis identity is used by desktop, mobile, and app icon surfaces", () => {
+test("the full Phronesis logo stays in navigation while the dedicated mark owns app icons", () => {
   const brand = readFileSync(
     new URL("../components/ui/PhronesisBrand.tsx", import.meta.url),
     "utf8",
@@ -243,15 +263,10 @@ test("the recovered Phronesis identity is used by desktop, mobile, and app icon 
     new URL("../components/ui/MobileNavigation.tsx", import.meta.url),
     "utf8",
   );
-  const icon = readFileSync(
-    new URL("../app/icon.ts", import.meta.url),
-    "utf8",
-  );
   assert.match(brand, /\/brand\/phronesis-logo\.png/);
   assert.match(brand, /Phronesis/);
   assert.match(sidebar, /PhronesisBrand/);
   assert.match(mobile, /PhronesisBrand compact/);
-  assert.match(icon, /phronesisLogoResponse/);
   const logo = readFileSync(
     new URL("../public/brand/phronesis-logo.png", import.meta.url),
   );
@@ -259,8 +274,36 @@ test("the recovered Phronesis identity is used by desktop, mobile, and app icon 
     createHash("sha256").update(logo).digest("hex"),
     "29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984",
   );
-  assert.equal(
-    existsSync(new URL("../app/favicon.ico", import.meta.url)),
-    false,
+
+  const canonicalIcon = readFileSync(
+    new URL("../public/brand/phronesis-app-icon.png", import.meta.url),
   );
+  const browserIcon = readFileSync(new URL("../app/icon.png", import.meta.url));
+  const appleIcon = readFileSync(
+    new URL("../app/apple-icon.png", import.meta.url),
+  );
+  const favicon = readFileSync(new URL("../app/favicon.ico", import.meta.url));
+
+  assert.deepEqual(pngDimensions(canonicalIcon), { width: 1254, height: 1254 });
+  assert.deepEqual(pngDimensions(browserIcon), { width: 512, height: 512 });
+  assert.deepEqual(pngDimensions(appleIcon), { width: 180, height: 180 });
+  assert.deepEqual(icoDimensions(favicon), { width: 32, height: 32 });
+  assert.equal(
+    createHash("sha256").update(canonicalIcon).digest("hex"),
+    "0fc335597c0f7fbe7407d6d8faec0b1d084a12b8937ec052405820565b5e0dbb",
+  );
+  assert.equal(
+    createHash("sha256").update(browserIcon).digest("hex"),
+    "2bdc7e40c845234eac0d148f787c26ec03b8d7ea6ca5417602543d8bab1ee632",
+  );
+  assert.equal(
+    createHash("sha256").update(appleIcon).digest("hex"),
+    "5e149948b3a4b92fc0cd5694d831931f4703fdd453739134025887abe9b9bdfe",
+  );
+  assert.equal(
+    createHash("sha256").update(favicon).digest("hex"),
+    "4ed3a7ecdb376d54aec6bd5bb2054874f1c718a2733c3debfbb5f59deb7c237e",
+  );
+  assert.equal(existsSync(new URL("../app/icon.ts", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../app/apple-icon.ts", import.meta.url)), false);
 });

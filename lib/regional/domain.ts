@@ -15,6 +15,10 @@ export type ArbitrageState =
 
 export type RegionalMarketEvidence = {
   sourceProvider: "LigaMagic" | "LigaPokemon";
+  matchQuality: "EXACT" | "COMPATIBLE";
+  matchMethod: string;
+  matchConfidence: number;
+  matchReason: string;
   ligaIdentityKey: string;
   categoryId: string;
   sku: string;
@@ -30,6 +34,14 @@ export type RegionalMarketEvidence = {
   storeBuyLowCentavos: number | null;
   storeBuyAverageCentavos: number | null;
   storeBuyHighCentavos: number | null;
+};
+
+export type RegionalProductEquivalenceDisposition = {
+  sourceProvider: RegionalMarketEvidence["sourceProvider"];
+  status: "EXACT" | "COMPATIBLE" | "AMBIGUOUS" | "UNAVAILABLE";
+  method: string;
+  confidence: number;
+  reason: string;
 };
 
 export type RegionalCostProfile = {
