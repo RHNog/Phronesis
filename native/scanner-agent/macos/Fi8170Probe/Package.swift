@@ -30,5 +30,9 @@ let package = Package(
       name: "Fi8170ProbeCoreTests",
       dependencies: ["Fi8170ProbeCore"]
     ),
+    .testTarget(
+      name: "Fi8170ProbePlatformTests",
+      dependencies: ["Fi8170ProbePlatform"]
+    ),
   ]
 )

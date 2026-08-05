@@ -7,7 +7,7 @@ Software Checkpoint Verified — Physical Gate Pending
 ## Software Gate
 
 - [x] `swift build`
-- [x] `swift test` — 18/18.
+- [x] `swift test` — 19/19.
 - [x] Disconnected `list` emits valid start/enumeration-complete events and exits cleanly with zero devices.
 - [x] Disconnected `probe` emits a typed not-found failure and never requests a scan.
 - [x] CLI rejects `scan` without `--allow-physical-scan`.
@@ -21,7 +21,7 @@ Software Checkpoint Verified — Physical Gate Pending
 
 ## Physical Gate
 
-- [ ] Connected fi-8170 is discovered without exposing its serial.
+- [x] Connected fi-8170 is discovered over local USB without exposing its serial.
 - [ ] Exclusive session opens and closes.
 - [ ] ADF capabilities and actual supported resolutions are recorded.
 - [ ] 2–4 owner-approved low-value cards complete a duplex scan.
@@ -32,7 +32,9 @@ Software Checkpoint Verified — Physical Gate Pending
 
 ## Current Evidence
 
-Physical gate blocked: the fi-8170 was not connected during discovery. No card has been scanned by this implementation.
+The fi-8170 is now detected at the USB 2.0 link rate and emitted as a redacted local USB scanner. Live validation exposed and corrected a discovery defect: the ImageCaptureCore browser mask specified the scanner type but omitted the required local-device location bit. A platform regression test now locks both bits.
+
+The scanner session still times out while opening, matching Image Capture error `-21345`. The signed, notarized, universal Image Scanner Driver for macOS 2.4.1 was installed after the current Mac boot and its helper did not launch during the session request. Restart macOS before the next bounded capability probe. No card has been scanned by this implementation.
 
 ## Commands
 

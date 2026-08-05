@@ -4,6 +4,9 @@ import Foundation
 import ImageCaptureCore
 
 public final class ImageCaptureProbe: NSObject, ICDeviceBrowserDelegate, ICScannerDeviceDelegate {
+  public static let localScannerBrowserMask = ICDeviceTypeMask(
+    rawValue: ICDeviceTypeMask.scanner.rawValue | ICDeviceLocationTypeMask.local.rawValue)!
+
   private let options: ProbeOptions
   private let emitter: ProbeEventEmitter
   private let browser = ICDeviceBrowser()
@@ -39,7 +42,7 @@ public final class ImageCaptureProbe: NSObject, ICDeviceBrowserDelegate, ICScann
     }
 
     browser.delegate = self
-    browser.browsedDeviceTypeMask = .scanner
+    browser.browsedDeviceTypeMask = Self.localScannerBrowserMask
     browser.start()
     scheduleDiscoveryCompletion(options.discoveryTimeout)
 

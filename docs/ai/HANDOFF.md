@@ -53,7 +53,7 @@ Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capa
 
 ## Exact next action
 
-Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
+Restart macOS so the post-boot Image Scanner Driver for macOS 2.4.1 can initialize, then rerun the bounded `probe` command. Load 2–4 low-value test cards and run the supervised `scan` gate only after session opening succeeds. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
 
 ## Implementation worktree snapshot
 
