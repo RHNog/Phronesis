@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-05T04:30:31Z","generation_id":"83dcdb09717b46d38035","head":"e1db9b74e9b90a175f87e40f65c3b4aa72c57dce","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-05T13:32:10Z","generation_id":"08845c81fa3a8e0dc609","head":"52c19c704bc422eb05ed4164d0946ff2382b57ae","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Bootstrap Package
 
 Use this instruction in a new AI session:
@@ -9,33 +9,29 @@ Use this instruction in a new AI session:
 
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **Commit:** `e1db9b74e9b90a175f87e40f65c3b4aa72c57dce`
-- **Generation ID:** `83dcdb09717b46d38035`
+- **Commit:** `52c19c704bc422eb05ed4164d0946ff2382b57ae`
+- **Generation ID:** `08845c81fa3a8e0dc609`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 ## Objective
 
-Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.
+Implement and verify the `PHR-TECH-014` calibration-tooling increment: deterministic local corpus construction, immutable split validation, and sealed executable benchmark evidence.
 
 ## Completed work
 
-- Read the approved product brief and inspected Phronesis, TCGPLAYER Tools, the sample scan corpus, installed SDK/driver, and target hardware state.
-- Preserved the dirty canonical Phronesis worktree by creating an isolated assignment worktree and branch from its current HEAD.
-- Selected Controlled Lane and created six ordered slices with permanent `PHR-*` Feature IDs.
-- Verified the installed macOS SDK's ImageCaptureCore scanner discovery, exclusive session, feeder capability, file transfer, completion, and cancellation interfaces.
-- Implemented the standalone Swift probe with no Phronesis runtime or external-system mutation.
-- Passed Swift build, formatter lint, 18/18 tests, disconnected enumeration and not-found checks, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review.
-- Recorded the Engineer report and same-session Chief Architect software conformance.
+- Completed and sealed the scanner-to-offer foundation through the Product Review boundary.
+- Replayed the immutable 18-frame physical Windows bundle; all frames processed and the English-Magic policy safely abstained on Pokémon observations.
+- Received Product Owner direction on 2026-08-05 to continue development while deployment, publication, and auto-accept remain unapproved.
+- Implemented and validated the complete calibration-tooling increment with synthetic evidence only.
 
 ## Remaining work
 
-- Connect the fi-8170 and run the supervised low-value physical gate.
-- Return the physical evidence through final Chief Architect review and Product Review.
+- Acquire separately licensed English Magic training and powered holdout data only after Product Owner provenance approval.
 
 ## Blockers
 
-- Software implementation is complete and verified.
-- Final physical acceptance is blocked until the fi-8170 is connected and the Product Owner supplies 2–4 low-value test cards.
+- Tooling implementation is not blocked.
+- Real calibration and auto-accept activation remain blocked on licensed/provenance-approved English Magic reference and holdout assets.
 
 ## Validation
 
@@ -48,7 +44,7 @@ Read [DECISIONS.md](../DECISIONS.md) before implementation.
 
 ## Exact next action
 
-Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
+Obtain Product Owner approval for specific English Magic source provenance and recognition-use scope before constructing the first real corpus. Do not activate auto-accept from synthetic or underpowered evidence.
 
 ## Resume protocol
 

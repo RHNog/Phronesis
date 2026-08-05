@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-05T04:30:31Z","generation_id":"83dcdb09717b46d38035","head":"e1db9b74e9b90a175f87e40f65c3b4aa72c57dce","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-05T13:32:10Z","generation_id":"08845c81fa3a8e0dc609","head":"52c19c704bc422eb05ed4164d0946ff2382b57ae","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,23 +6,22 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **HEAD:** `e1db9b74e9b90a175f87e40f65c3b4aa72c57dce`
+- **HEAD:** `52c19c704bc422eb05ed4164d0946ff2382b57ae`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-05T04:30:31Z
+- **Generated:** 2026-08-05T13:32:10Z
 
 ## Current objective
 
-Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.
+Implement and verify the `PHR-TECH-014` calibration-tooling increment: deterministic local corpus construction, immutable split validation, and sealed executable benchmark evidence.
 
 ## Acceptance criteria
 
-- [x] Record the Product Owner-approved objective, Feature IDs, Controlled Lane plan, architecture specification, technical specification, and Engineer work order.
-- [x] Implement the isolated Swift package with list, probe, and explicitly gated scan modes.
-- [x] Prove deterministic JSONL events, redaction, SHA-256, atomic promotion, collision handling, timeout, and cancellation through tests.
-- [x] Pass `swift build`, `swift test`, disconnected CLI checks, `git diff --check`, and private-identifier review.
-- [x] Produce Engineer report and Chief Architect conformance review.
-- [ ] Run the physical fi-8170 duplex gate only after the scanner and owner-approved low-value cards are present.
+- [x] Build canonical local corpus bundles from explicit metadata and source paths without placing image evidence in Git.
+- [x] Reject duplicate assets and canonical identities assigned across multiple train/dev/holdout splits.
+- [x] Produce deterministic sealed benchmark reports with recall, precision, exception rate, latency, pairing, and failure-stratum evidence.
+- [x] Prove underpowered or provenance-blocked evidence remains `NOT_QUALIFIED` and cannot enable auto-accept.
+- [x] Pass focused/full tests, Swift tests, TypeScript, lint, build, diff hygiene, and Chief Architect conformance review.
 
 ## Constraints
 
@@ -33,4 +32,4 @@ Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capa
 
 ## Exact next action
 
-Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
+Obtain Product Owner approval for specific English Magic source provenance and recognition-use scope before constructing the first real corpus. Do not activate auto-accept from synthetic or underpowered evidence.
