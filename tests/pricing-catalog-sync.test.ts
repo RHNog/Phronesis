@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
@@ -17,6 +18,9 @@ import {
   tcgplayerCatalogSources,
 } from "../lib/pricing/tcgplayerCatalog";
 import {
+  captureCompletedCatalogues,
+  drainCapturedCatalogues,
+  pendingCapturedCatalogueCount,
   readCompletedCatalogues,
   syncCompletedCatalogues,
 } from "../lib/pricing/tcgplayerObserver";
@@ -90,6 +94,23 @@ function compositeMagicCsv(): string {
       Number: "1",
       Condition: "Near Mint",
       "TCG Market Price": "1.00",
+    }),
+  ].join("\r\n");
+}
+
+function pokemonCsv(): string {
+  return [
+    TCGPLAYER_CATALOG_HEADERS.join(","),
+    csvRow({
+      "TCGplayer Id": "9001",
+      "Product Line": "Pokemon",
+      "Set Name": "Vivid Voltage",
+      "Product Name": "Pikachu V",
+      Number: "043/185",
+      Condition: "Near Mint Holofoil",
+      "TCG Market Price": "2.05",
+      "TCG Low Price With Shipping": "2.92",
+      "TCG Low Price": "1.43",
     }),
   ].join("\r\n");
 }
@@ -300,6 +321,144 @@ test("unchanged catalogues at a new checkpoint refresh currency without duplicat
       .get() as { count: number };
     assert.equal(historyCount.count, 4);
     repository.close();
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test("capture plane protects sequential catalogues before a separate durable drain", () => {
+  const fixture = fixtureRoot();
+  try {
+    const statePath = join(fixture.root, "state", "run_state.json");
+    const magicPath = join(fixture.run, "catalog_magic.csv");
+    const pokemonPath = join(fixture.run, "catalog_pokemon.csv");
+    const archiveRoot = join(fixture.root, "archive");
+    writeFileSync(magicPath, magicCsv());
+    writeFileSync(
+      statePath,
+      JSON.stringify({
+        run_dir: fixture.run,
+        steps: { "export_catalog::magic": { done: true, at: 1_775_000_000 } },
+      }),
+    );
+    const magicCapture = captureCompletedCatalogues({
+      archiveRoot,
+      toolRoot: fixture.root,
+    });
+    assert.equal(magicCapture[0].outcome, "CAPTURED");
+    assert.equal(pendingCapturedCatalogueCount(archiveRoot), 1);
+    assert.equal(existsSync(fixture.database), false);
+
+    const magicReceiptPath = magicCapture[0].receiptPath!;
+    const interruptedReceipt = JSON.parse(
+      readFileSync(magicReceiptPath, "utf8"),
+    ) as { status: string };
+    interruptedReceipt.status = "IMPORTING";
+    writeFileSync(
+      magicReceiptPath,
+      `${JSON.stringify(interruptedReceipt, null, 2)}\n`,
+    );
+
+    writeFileSync(pokemonPath, pokemonCsv());
+    writeFileSync(
+      statePath,
+      JSON.stringify({
+        run_dir: fixture.run,
+        steps: {
+          "export_catalog::magic": { done: true, at: 1_775_000_000 },
+          "export_catalog::pokemon": { done: true, at: 1_775_000_030 },
+        },
+      }),
+    );
+    const secondCapture = captureCompletedCatalogues({
+      archiveRoot,
+      toolRoot: fixture.root,
+    });
+    assert.equal(secondCapture[0].outcome, "ALREADY_CAPTURED");
+    assert.equal(secondCapture[1].outcome, "CAPTURED");
+    assert.equal(pendingCapturedCatalogueCount(archiveRoot), 2);
+
+    rmSync(magicPath);
+    rmSync(pokemonPath);
+    const drained = drainCapturedCatalogues({
+      archiveRoot,
+      databasePath: fixture.database,
+    });
+    assert.deepEqual(
+      drained.map((attempt) => [attempt.categoryId, attempt.outcome]),
+      [
+        ["magic-en", "IMPORTED"],
+        ["pokemon-en", "IMPORTED"],
+      ],
+    );
+    assert.equal(pendingCapturedCatalogueCount(archiveRoot), 0);
+    const repository = new PricingRepository(fixture.database);
+    assert.equal(repository.search("magic-en", "Test Card").singles.length, 2);
+    assert.equal(repository.search("pokemon-en", "Pikachu V").singles.length, 1);
+    repository.close();
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test("capture receipts fail closed when an archived catalogue is corrupted", () => {
+  const fixture = fixtureRoot();
+  try {
+    const catalog = join(fixture.run, "catalog_magic.csv");
+    const archiveRoot = join(fixture.root, "archive");
+    writeFileSync(catalog, magicCsv());
+    writeFileSync(
+      join(fixture.root, "state", "run_state.json"),
+      JSON.stringify({
+        run_dir: fixture.run,
+        steps: { "export_catalog::magic": { done: true, at: 1_775_000_000 } },
+      }),
+    );
+    const capture = captureCompletedCatalogues({
+      archiveRoot,
+      toolRoot: fixture.root,
+    })[0];
+    const receipt = JSON.parse(readFileSync(capture.receiptPath!, "utf8")) as {
+      archiveFile: string;
+    };
+    writeFileSync(join(archiveRoot, receipt.archiveFile), `${magicCsv()}\ncorrupt`);
+    const drained = drainCapturedCatalogues({
+      archiveRoot,
+      databasePath: fixture.database,
+    });
+    assert.equal(drained[0].outcome, "FAILED");
+    assert.match(drained[0].error ?? "", /hash does not match/);
+    assert.equal(pendingCapturedCatalogueCount(archiveRoot), 0);
+    assert.equal(
+      JSON.parse(readFileSync(capture.receiptPath!, "utf8")).status,
+      "FAILED",
+    );
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test("a deleted completed catalogue cannot prevent capture of later files", () => {
+  const fixture = fixtureRoot();
+  try {
+    writeFileSync(join(fixture.run, "catalog_pokemon.csv"), pokemonCsv());
+    writeFileSync(
+      join(fixture.root, "state", "run_state.json"),
+      JSON.stringify({
+        run_dir: fixture.run,
+        steps: {
+          "export_catalog::magic": { done: true, at: 1_775_000_000 },
+          "export_catalog::pokemon": { done: true, at: 1_775_000_030 },
+        },
+      }),
+    );
+    const captured = captureCompletedCatalogues({
+      archiveRoot: join(fixture.root, "archive"),
+      toolRoot: fixture.root,
+    });
+    assert.equal(captured[0].outcome, "FAILED");
+    assert.equal(captured[1].outcome, "CAPTURED");
+    assert.match(captured[0].error ?? "", /no such file|ENOENT/i);
   } finally {
     rmSync(fixture.root, { recursive: true, force: true });
   }

@@ -36,6 +36,7 @@
     "regional:acquisition": "node --import ./tests/register-test-hooks.mjs scripts/sync-regional-marketplaces.ts once",
     "regional:acquisition:status": "node --import ./tests/register-test-hooks.mjs scripts/sync-regional-marketplaces.ts status",
     "regional:crosswalk": "node --import ./tests/register-test-hooks.mjs scripts/build-regional-crosswalk.ts",
+    "regional:pokemon-crosswalk": "node --import ./tests/register-test-hooks.mjs scripts/build-pokemon-regional-crosswalk.ts",
     "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
     "review:phone:status": "node scripts/private-review-status.mjs"
   },

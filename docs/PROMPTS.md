@@ -1,5 +1,33 @@
 # Prompt History
 
+## 2026-08-05 — Unified Vendor Pricing And Brand Asset Recovery
+
+- Source: Product Owner direction to place Liga beside TCGplayer, collapse grading beneath that card, and recover the earlier Phronesis logos/icons.
+- Features: `PHR-UX-022` and `PHR-ARCH-010` under `PHR-STRUCT-20260805-002`.
+- Implementation prompts: `docs/prompts/PHR-UX-022-selection-focused-vendor-workspace-prompt.md` and `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
+- Outcome: one combined raw-card pricing region, one subordinate grading disclosure, byte-identical July logo recovery, shared shell branding, and Next.js icon metadata.
+
+## 2026-08-05 — Provider-Aware Regional Evidence And Capture-First Catalogues
+
+- Source: Product Owner direction to correct missing LigaMagic/LigaPokemon prices and the August 4 Pokémon snapshot immediately.
+- Features: `PHR-API-014` and `PHR-TECH-012`.
+- Implementation prompts: `docs/prompts/PHR-API-014-ligapokemon-catalogue-reconciliation-prompt.md` and `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md`.
+- Outcome: exact source-labelled Liga evidence in Vendor Workspace, separate durable capture/import processes, six-hour-cadence freshness, August 5 recovery for all five catalogues, and live private deployment. Pokémon Arbitrage remains separately gated.
+
+## 2026-08-04 — Timed Worker Session Continuity
+
+- Source: Product Owner report that worker access appeared revoked after the first successful login.
+- Feature: `PHR-ARCH-014`; structure `PHR-STRUCT-20260804-002`.
+- Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Outcome: grant-bounded persistent HttpOnly cookies and server-validated `/event-access` resumption, without making one-time codes reusable.
+
+## 2026-08-04 — LigaPokemon Catalogue Reconciliation
+
+- Source: Product Owner direction to reconcile the completed LigaPokemon acquisition data.
+- Feature: `PHR-API-014`.
+- Implementation prompt: `docs/prompts/PHR-API-014-ligapokemon-catalogue-reconciliation-prompt.md`.
+- Outcome: isolated exact Pokémon crosswalk, complete-manifest integrity checks, collision and foreign-market quarantine, automatic acquisition/catalogue refresh hooks, and a deterministic live result of 25,200 accepted mappings. Arbitrage exposure remains separately gated.
+
 ## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
 
 - Source: Product Owner request to diagnose the zero Arbitrage queue, assess TCG catalogue freshness, schedule LigaMagic, and add LigaPokemon.
@@ -85,7 +113,7 @@ Implementation prompt: `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-pr
 
 ## Timed Event Worker Access — 2026-07-31
 
-`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Its 2026-08-03 amendment adds an independently assignable `ARTWORK_REVIEW` module with manual `OPERATE` versus system-wide `ADMIN` separation. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Its 2026-08-03 amendment adds an independently assignable `ARTWORK_REVIEW` module with manual `OPERATE` versus system-wide `ADMIN` separation. Its 2026-08-04 amendment resumes a valid HttpOnly session for the configured duration while preserving single-use codes. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 
 ## Event Flip And Display Case Inventory — 2026-07-31
 

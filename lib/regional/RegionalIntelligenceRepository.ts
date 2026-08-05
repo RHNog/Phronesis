@@ -426,13 +426,48 @@ export class RegionalIntelligenceRepository {
   }
 
   evidenceFor(categoryId: string, sku: string): RegionalMarketEvidence | null {
+    if (categoryId === "magic-en") {
+      const row = this.database
+        .prepare(
+          `SELECT e.*, c.category_id, c.sku FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key) WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
+        )
+        .get(categoryId, sku) as Sql | undefined;
+      return row ? evidenceDto(row, "LigaMagic") : null;
+    }
+    if (
+      categoryId !== "pokemon-en" ||
+      !this.regionalTablesExist([
+        "regional_pokemon_crosswalk",
+        "regional_pokemon_evidence",
+      ])
+    ) {
+      return null;
+    }
     const row = this.database
       .prepare(
-        `SELECT e.*, c.category_id, c.sku FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key) WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
+        `SELECT e.liga_identity_key,e.card_name,
+          e.set_name AS edition_name,e.set_code AS edition_code,
+          e.collector_number,e.variant,e.observed_at,
+          e.consumer_low_centavos,e.consumer_average_centavos,
+          e.consumer_high_centavos,e.store_buy_low_centavos,
+          e.store_buy_average_centavos,e.store_buy_high_centavos,
+          c.category_id,c.sku
+        FROM regional_pokemon_crosswalk c
+        JOIN regional_pokemon_evidence e USING(liga_identity_key)
+        WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
       )
       .get(categoryId, sku) as Sql | undefined;
-    if (!row) return null;
-    return evidenceDto(row);
+    return row ? evidenceDto(row, "LigaPokemon") : null;
+  }
+
+  private regionalTablesExist(tableNames: string[]): boolean {
+    const placeholders = tableNames.map(() => "?").join(",");
+    const row = this.database
+      .prepare(
+        `SELECT COUNT(*) AS count FROM sqlite_master WHERE type='table' AND name IN (${placeholders})`,
+      )
+      .get(...tableNames) as Sql;
+    return Number(row.count) === tableNames.length;
   }
 
   buildCrosswalk(
@@ -1824,8 +1859,12 @@ export function discoverLatestLigaSnapshot(
   throw new Error("No complete LigaMagic dry-run snapshot was found.");
 }
 
-function evidenceDto(row: Sql): RegionalMarketEvidence {
+function evidenceDto(
+  row: Sql,
+  sourceProvider: RegionalMarketEvidence["sourceProvider"],
+): RegionalMarketEvidence {
   return {
+    sourceProvider,
     ligaIdentityKey: String(row.liga_identity_key),
     categoryId: String(row.category_id),
     sku: String(row.sku),

@@ -10,7 +10,7 @@ Recurring LigaMagic and LigaPokemon snapshot acquisition
 
 ## Status
 
-Implemented — schedule active; LigaPokemon Lote 4 source-count gated
+Implemented — schedule active; LigaPokemon snapshot verified
 
 ## Priority
 
@@ -42,7 +42,7 @@ LigaMagic regional evidence is frozen at the July 30 supervised run. There is no
 - Add a once-only regional acquisition orchestrator with an exclusive lock, atomic status receipt, last-good preservation, and sanitized errors.
 - Run LigaMagic daily at 03:00 America/New_York through a repository-owned per-user LaunchAgent definition.
 - Register LigaPokemon profile/pilot/full-snapshot commands. Recurrence reports `NOT_CONFIGURED` until the Product Owner completes login and a pilot validates the exact format; it must not scrape public marketplace pages or assume schema compatibility.
-- After a complete LigaMagic snapshot, rebuild the operational Magic regional crosswalk. LigaPokemon promotion into arbitrage remains gated on its verified pilot and a separate exact Pokémon crosswalk result.
+- After a complete provider snapshot, rebuild its operational regional crosswalk. `PHR-API-014` supplies the isolated exact Pokémon crosswalk; Pokémon promotion into Arbitrage remains separately gated.
 
 ## Functional Requirements
 
@@ -54,9 +54,10 @@ LigaMagic regional evidence is frozen at the July 30 supervised run. There is no
 - Pilot and full acquisition discover collections, deterministic ordering, exact provider CSV format, and the unique export control semantically.
 - Every raw export is hash-bound and reconciles advertised quantity, rows, and summed quantity.
 - A stable advertised/exported count mismatch is classified as `SOURCE_COUNT_MISMATCH` unless an exact Product Owner authorization exists.
-- The only approved count exception is LigaPokemon `Lote 10 (9.704 cards)`: the repeat-identical 9,700-card collection-model CSV is authoritative. Receipts and snapshots must preserve both the source-advertised 9,704 and authoritative 9,700 values plus `PRODUCT_OWNER_EXPORT` provenance. Any other label or quantity fails closed.
+- The approved count exceptions are exact LigaPokemon collection contracts: `Lote 10 (9.704 cards)` is authoritative at 9,700, `Lote 4 (9.870 cards)` at 9,868, `Lote RF 3 (9.983 cards)` at 9,982, and `Lote RF 6 (7.681 cards)` at 7,679. Each was independently repeat-exported byte-identically before Product Owner authorization. Receipts and snapshots preserve source-advertised and authoritative values plus `PRODUCT_OWNER_EXPORT` provenance. Any other label or quantity fails closed.
 - The recurring orchestrator prevents overlap, records provider outcomes, preserves last-good runs, and never deletes failed evidence automatically.
 - LigaMagic success triggers regional reconciliation against the canonical pricing database.
+- LigaPokemon success triggers `PHR-API-014` reconciliation and is recorded only when both snapshot and crosswalk complete.
 - LigaPokemon absence or expired authentication is explicit and does not invalidate last-good LigaMagic evidence.
 - The LaunchAgent definition schedules 03:00 local time and uses the canonical JarvisSSD checkout.
 
@@ -95,7 +96,7 @@ Completed raw exports, manifests, and SQLite snapshots remain queryable without 
 
 ### Extensibility
 
-LigaPokemon may enter regional arbitrage only through a separately verified exact identity crosswalk and evidence-semantics decision.
+LigaPokemon may enter regional arbitrage only through the verified `PHR-API-014` exact identity crosswalk and a separate Product Owner evidence/candidate decision.
 
 ### Responsiveness
 
@@ -133,7 +134,7 @@ Not applicable to this command-line acquisition slice.
 
 ## Future Enhancements
 
-- Exact LigaPokemon-to-TCGplayer Pokémon crosswalk and two-way Pokémon arbitrage.
+- Product Owner-approved two-way Pokémon candidate exposure over the exact `PHR-API-014` crosswalk.
 - Owner-facing acquisition health in Settings after the backend contract stabilizes.
 
 ## Technical Notes
@@ -149,12 +150,11 @@ CLI outcomes use concise provider-specific states and exact reauthentication ins
 - One complete LigaMagic snapshot per authorized day or one actionable failure receipt.
 - Zero overlapping acquisitions.
 - Zero credential/session values in repository or generated receipts.
-- LigaPokemon remains unpromoted until a complete count-reconciled snapshot and a separately approved exact regional crosswalk exist.
+- LigaPokemon records provider success only after a complete count-reconciled snapshot and successful exact regional crosswalk rebuild.
 
 ## Open Questions
 
-- Should LigaPokemon's repeat-identical Lote 4 export of 9,868 cards become authoritative over the source label's 9,870 claim? It remains `SOURCE_COUNT_MISMATCH` because the Product Owner authorized only Lote 10's 9,700-card export.
-- LigaPokemon regional promotion still requires its separately approved exact Pokémon crosswalk.
+- What evidence, cost, and executable-availability policy must be accepted before `PHR-API-014` mappings enter Arbitrage?
 
 ## Traceability
 
@@ -162,5 +162,5 @@ CLI outcomes use concise provider-specific states and exact reauthentication ins
 - Related implementation prompt: `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
 - Related tests: `docs/testing/PHR-API-013-recurring-liga-network-acquisition-validation.md`.
 - Related release notes: `docs/release-notes/PHR-API-013.md`.
-- Last modified: 2026-08-03.
-- Modification reason: record Product Owner authorization for Lote 10 and the separately discovered, still-unauthorized Lote 4 source-count mismatch.
+- Last modified: 2026-08-04.
+- Modification reason: connect successful LigaPokemon acquisition to the implemented `PHR-API-014` exact reconciliation while retaining the separate Arbitrage-exposure gate.

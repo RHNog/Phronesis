@@ -1,13 +1,37 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-05 Regional Evidence And Catalogue Continuity State
+
+- `PHR-API-014` now serves exact provider-labelled regional evidence in Vendor Workspace: LigaMagic for `magic-en` and LigaPokemon for `pokemon-en`. Unsupported categories, missing Pokémon tables, and every non-`MATCHED` identity return no evidence.
+- Live Pikachu V `043/185` (`tcg:3191420d96ce55402e9e891c`) returns its August 5 TCGplayer snapshot plus LigaPokemon low R$38.99, average R$42.07, and explicit source provenance. Pokémon remains absent from Arbitrage.
+- `PHR-TECH-012` separates fast capture from import/reconciliation. Atomic SHA-256 receipts and archives remain durable while one child drains them; interrupted imports recover idempotently and corrupt archives fail closed.
+- A bounded read-only recovery from the Pricing Update Tool's latest PostgreSQL staging tables advanced all five operational categories to the August 5 12:21 run. Each category is `CURRENT` and `stale: false`.
+- The private launch-managed runtime, capture observer, and Next server are healthy; `/vendor` and both live provider-evidence probes return HTTP 200.
+- Verification passes 54 focused tests, 402/402 full tests, TypeScript, lint, production build, and diff hygiene.
+
+## 2026-08-04 Timed Worker Session Continuity State
+
+- `PHR-ARCH-014` now resumes a valid redeemed worker session for its complete remaining configured duration when the stable `/event-access` link is reopened in the same browser.
+- The live grant and session involved in the report were not revoked; the previous login route ignored the existing session and rejected the correctly consumed one-time code on replay.
+- Codes remain single-use. The HttpOnly cookie is bounded by the session deadline and server resume rechecks expiry, revocation, event closure, and entitlements.
+- The Next.js 16.2.12 build is deployed through `com.phronesis.private-review`; private Inventory and public worker login return 200, while public Settings remains 404.
+
+## 2026-08-04 LigaPokemon Reconciliation State
+
+- `PHR-API-014` is implemented and live verified against snapshot `dry-run-20260804T041909649Z`.
+- The isolated Pokémon tables contain 167,912 evidence rows and 25,200 exact accepted mappings; 24,884 mappings have both LigaPokemon consumer-low and TCGplayer Near Mint evidence.
+- Two consecutive builds produced fingerprint `295be8d699da35d13b8df82a59a6d46ae9a51fd6f337e6c60b3a7f3259c91d9a`. Zero accepted target duplicates or missing targets remain.
+- The Magic crosswalk remains 329,301 rows / 131,885 matches with fingerprint `38dfd400845f0aea1b9835b8a7502d3b0e2f3d46abdac75f5b41dd9d69fa1a42`.
+- Exact Vendor Workspace evidence was subsequently approved and activated on 2026-08-05. Pokémon candidate exposure is still not implemented; the Arbitrage queue remains Magic-only pending Product Owner acceptance, complete route costs, and executable availability.
+
 ## 2026-08-03 Arbitrage Recovery State
 
 - `PHR-TECH-012` and `PHR-API-013` are implemented and fully validated. Private Arbitrage recovery and the 03:00 calendar schedule are active.
 - The private server now runs the repository supervisor against `.data/mobile-review.sqlite`; `/api/regional/arbitrage` returns 50 ranked `IDENTITY_VERIFIED` rows, evenly split across both directions.
 - The canonical `.data/mobile-review.sqlite` has five 2026-08-01 TCG checkpoints, 329,301 Liga evidence rows observed 2026-07-30, 131,869 matched identities, and 130,183 matched identities with consumer price evidence.
 - The external TCG acquisition dashboard is down. Its enabled 00:00/06:00/12:00/18:00 schedule has stale `last_fired_date` values and no completed catalogue after 2026-08-01; Phronesis is therefore not current to the intended upstream cadence.
-- Repository recurrence schedules LigaMagic and LigaPokemon at 03:00, rebuilds Magic reconciliation only after a complete snapshot, and records overlap-safe atomic status. LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon authentication, exact 20-column schema, and Lote 1 pilot are verified. Lote 10's 9,700-card export is Product Owner-authoritative with its 9,704 source claim preserved; full acquisition now fails closed on Lote 4's separately unauthorized 9,870-advertised versus 9,868-exported mismatch.
+- Repository recurrence schedules LigaMagic and LigaPokemon at 03:00, rebuilds provider-specific reconciliation only after a complete snapshot, and records overlap-safe atomic status. LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon authentication, exact 20-column schema, and Lote 1 pilot are verified. Exact Product Owner authorities preserve both source and exported quantities for Lote 10, Lote 4, Lote RF 3, and Lote RF 6. A full 18-collection snapshot succeeds at 167,912 unique identities with zero duplicate conflicts, durable status records LigaPokemon `SUCCESS`, and `PHR-API-014` now rebuilds its isolated exact crosswalk.
 
 ## Mission
 

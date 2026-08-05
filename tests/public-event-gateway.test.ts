@@ -61,14 +61,18 @@ test("loopback public gateway marks forwarded traffic and blocks owner-only path
 test("public ingress fails closed before optional compatibility and lands workers by module", () => {
   const authorization = readFileSync(new URL("../lib/auth/requestAuthorization.ts", import.meta.url), "utf8");
   const route = readFileSync(new URL("../app/api/auth/event-access/route.ts", import.meta.url), "utf8");
+  const loginPage = readFileSync(new URL("../app/event-access/page.tsx", import.meta.url), "utf8");
+  const eventSession = readFileSync(new URL("../lib/auth/EventAccessSession.ts", import.meta.url), "utf8");
   const login = readFileSync(new URL("../components/auth/EventAccessLogin.tsx", import.meta.url), "utf8");
   const proxy = readFileSync(new URL("../proxy.ts", import.meta.url), "utf8");
   assert.ok(authorization.indexOf("isPublicEventIngress(requestHeaders)") < authorization.indexOf("const status = getAuthRuntimeStatus()"));
   assert.match(authorization, /deniedDecision\(module, requiredAccess, "UNAUTHENTICATED"\)/);
-  assert.match(route, /ARTWORK_REVIEW: "\/artwork-review"/);
+  assert.match(eventSession, /ARTWORK_REVIEW: "\/artwork-review"/);
   assert.match(route, /x-phronesis-public-event/);
   assert.match(route, /secure: secureRequest\(request\)/);
+  assert.match(route, /eventAccessCookieLifetime/);
   assert.match(login, /body\.destination\?\?callbackURL/);
+  assert.match(loginPage, /resumeSession/);
   assert.match(proxy, /x-phronesis-public-event/);
   assert.match(proxy, /!eventSession/);
 });

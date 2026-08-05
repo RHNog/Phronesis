@@ -61,3 +61,15 @@ Result: Pass — Implemented And Live.
 - TypeScript, warning-free lint, Next.js 16.2.12 production build, and `git diff --check`: pass.
 - A 390×844 browser review confirms Settings and public login remain free of horizontal overflow. No real credential was created or rotated for visual testing.
 - Final live runtime: private Settings and public login return 200; public Settings remains 404; app and gateway remain loopback-only in detached supervisors.
+
+## 2026-08-04 Timed Session Continuity Amendment
+
+Result: Pass — Implemented And Live.
+
+- Live database diagnosis: the reported worker grant remained `REDEEMED`, its session remained unrevoked, and both retained a future expiry. The failure was the stable login page ignoring the existing cookie and asking for the consumed one-time code again.
+- Focused timed-access and public-gateway suites: 13/13 pass outside the filesystem sandbox, including loopback binding.
+- Full supported suite: 396/397 pass in the restricted sandbox; the only failure is the same public-gateway loopback test receiving sandbox `EPERM`, and that test passes in the focused unrestricted run.
+- Resume proof: a redeemed session resumes mid-duration, selects the assigned module, and fails closed after expiry, revocation, event closure, or malformed cookie input. The human-readable code remains single-use.
+- Cookie proof: the response sets both absolute `expires` and bounded `maxAge` from the server session deadline, while retaining HttpOnly, SameSite=Lax, Secure-on-forwarded-TLS, path, and priority controls.
+- `npx tsc --noEmit --incremental false`, warning-free `npm run lint`, Next.js 16.2.12 production build, and `git diff --check`: pass.
+- Live deployment: the private LaunchAgent restarted against the new build; private Inventory and public worker login return 200, public Settings remains 404, and the production stylesheet returns 200 through public port 10000.

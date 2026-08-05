@@ -147,33 +147,26 @@ function acquireProvider(providerId: LigaProviderId, now: Date): LigaProviderOut
           : "Acquisition did not return a complete verified snapshot receipt.",
     };
   }
-  if (providerId === "ligapokemon") {
-    return {
-      providerId,
-      status: "SUCCESS",
-      startedAt,
-      completedAt,
-      snapshotRunId: receipt.runId,
-      promotionStatus: "NOT_APPLICABLE",
-      message: "Snapshot verified; regional promotion remains pilot-gated.",
-    };
-  }
-
-  const promoted = runChild([
+  const reconciled = runChild([
     "--import",
     "./tests/register-test-hooks.mjs",
-    "scripts/build-regional-crosswalk.ts",
+    providerId === "ligapokemon"
+      ? "scripts/build-pokemon-regional-crosswalk.ts"
+      : "scripts/build-regional-crosswalk.ts",
   ]);
   return {
     providerId,
-    status: promoted.ok ? "SUCCESS" : "FAILED",
+    status: reconciled.ok ? "SUCCESS" : "FAILED",
     startedAt,
     completedAt: new Date().toISOString(),
     snapshotRunId: receipt.runId,
-    promotionStatus: promoted.ok ? "SUCCESS" : "FAILED",
-    message: promoted.ok
-      ? "Snapshot verified and the Magic regional crosswalk was rebuilt."
-      : promoted.message || "Snapshot completed but regional reconciliation failed.",
+    promotionStatus: reconciled.ok ? "SUCCESS" : "FAILED",
+    message: reconciled.ok
+      ? providerId === "ligapokemon"
+        ? "Snapshot verified and the Pokémon regional crosswalk was rebuilt; Arbitrage exposure remains separately gated."
+        : "Snapshot verified and the Magic regional crosswalk was rebuilt."
+      : reconciled.message ||
+        "Snapshot completed but regional reconciliation failed.",
   };
 }
 

@@ -3,6 +3,11 @@ import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { AuthorizationRepository } from "../lib/auth/AuthorizationRepository.ts";
 import { EventAccessRepository } from "../lib/auth/EventAccessRepository.ts";
+import {
+  eventAccessCookieLifetime,
+  eventAccessDestination,
+  eventAccessToken,
+} from "../lib/auth/EventAccessSession.ts";
 import { readFileSync } from "node:fs";
 
 function fixture() {
@@ -16,13 +21,33 @@ function fixture() {
 
 test("event code is single use and creates scoped authorization", () => {
   const { repository, workspaceId } = fixture();
-  const grant = repository.createGrant({ workspaceId,eventId:"event-1",workerLabel:"Front case",durationHours:12,actorUserId:"owner",entitlements:[{module:"VENDOR_WORKSPACE",access:"OPERATE"}] });
+  const now = new Date("2026-08-04T12:00:00Z");
+  const grant = repository.createGrant({ workspaceId,eventId:"event-1",workerLabel:"Front case",durationHours:12,actorUserId:"owner",entitlements:[{module:"VENDOR_WORKSPACE",access:"OPERATE"}] }, now);
   assert.match(grant.code!, /^[A-Z2-9]{4}(?:-[A-Z2-9]{4}){3}$/);
-  const session = repository.redeem(grant.code!, "client");
-  assert.equal(repository.authorize(session.token,"VENDOR_WORKSPACE","OPERATE")?.allowed,true);
-  assert.equal(repository.authorize(session.token,"INVENTORY","VIEW")?.reason,"MODULE_NOT_ASSIGNED");
-  assert.equal(repository.authorize(session.token,"ADMINISTRATION","VIEW")?.allowed,false);
-  assert.throws(()=>repository.redeem(grant.code!,"other"),/invalid or expired/i);
+  const session = repository.redeem(grant.code!, "client", now);
+  assert.equal(repository.authorize(session.token,"VENDOR_WORKSPACE","OPERATE",now)?.allowed,true);
+  assert.equal(repository.authorize(session.token,"INVENTORY","VIEW",now)?.reason,"MODULE_NOT_ASSIGNED");
+  assert.equal(repository.authorize(session.token,"ADMINISTRATION","VIEW",now)?.allowed,false);
+  const resumed = repository.resumeSession(session.token, new Date("2026-08-04T18:00:00Z"));
+  assert.equal(resumed?.grant.id, grant.id);
+  assert.equal(resumed?.expiresAt, grant.expiresAt);
+  assert.throws(()=>repository.redeem(grant.code!,"other",now),/invalid or expired/i);
+  assert.equal(repository.resumeSession(session.token, new Date("2026-08-05T00:00:01Z")), null);
+});
+
+test("worker cookie persistence and resume destination are bounded by grant expiry", () => {
+  const now = new Date("2026-08-04T12:00:00Z");
+  const lifetime = eventAccessCookieLifetime("2026-08-04T17:30:00Z", now);
+  assert.equal(lifetime.expires.toISOString(), "2026-08-04T17:30:00.000Z");
+  assert.equal(lifetime.maxAge, 19_800);
+  assert.equal(
+    eventAccessDestination([{ module: "ARTWORK_REVIEW", access: "OPERATE" }]),
+    "/artwork-review",
+  );
+  assert.equal(
+    eventAccessToken(new Headers({ cookie: "other=1; phronesis-event-access=abc%2F123" })),
+    "abc/123",
+  );
 });
 
 test("an owner can replace only an unused code and the previous code stops working", () => {
@@ -68,10 +93,12 @@ test("revocation, expiry, and event closure invalidate sessions immediately", ()
   const second=repository.redeem(two.code!,"client-2",now);
   assert.equal(repository.revoke(workspaceId,two.id,"owner",now),true);
   assert.equal(repository.authorize(second.token,"VENDOR_WORKSPACE","VIEW",now),null);
+  assert.equal(repository.resumeSession(second.token,now),null);
   const three=repository.createGrant({workspaceId,eventId:"event-1",workerLabel:"Runner",durationHours:4,actorUserId:"owner",entitlements:[{module:"VENDOR_WORKSPACE",access:"VIEW"}]},now);
   const third=repository.redeem(three.code!,"client-3",now);
   database.prepare("UPDATE phronesis_purchase_event SET status='CLOSED' WHERE id='event-1'").run();
   assert.equal(repository.authorize(third.token,"VENDOR_WORKSPACE","VIEW",now)?.allowed,false);
+  assert.equal(repository.resumeSession(third.token,now),null);
 });
 
 test("grant validation prevents administrative or unbounded access", () => {
@@ -135,4 +162,7 @@ test("employee and timed-worker Settings expose an Artwork Review only preset", 
   assert.match(temporary, /Replace lost code/);
   assert.match(temporary, /method: "PATCH"/);
   assert.doesNotMatch(temporary, /if\(!event\)return/);
+  const loginPage = readFileSync(new URL("../app/event-access/page.tsx", import.meta.url), "utf8");
+  assert.match(loginPage, /resumeSession/);
+  assert.match(loginPage, /eventAccessDestination/);
 });

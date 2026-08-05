@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import type { PricingExportContract } from "../lib/pricing/contract";
 import { parsePricingExport, PricingContractError } from "../lib/pricing/contract";
-import { askingPriceSpread, deliveredPriceFor, nearestPricedCondition, queryClearlyTargetsSingle } from "../lib/pricing/domain";
+import { askingPriceSpread, deliveredPriceFor, isStale, nearestPricedCondition, queryClearlyTargetsSingle } from "../lib/pricing/domain";
 import { PricingRepository } from "../lib/pricing/repository";
 import { createPricingSearchPlan } from "../lib/pricing/searchPlan";
 import {
@@ -373,6 +373,12 @@ test("runtime evidence disables development chrome and keeps stale dates coheren
   assert.ok(displayedSnapshotDates.length > 0);
   assert.deepEqual(new Set(displayedSnapshotDates), new Set(["2026-07-01"]));
   assert.ok(stale.singles.every((match) => match.previousSnapshotDate === null));
+});
+
+test("catalogue freshness reflects the six-hour acquisition cadence", () => {
+  const snapshot = "2026-08-05T12:00:00.000Z";
+  assert.equal(isStale(snapshot, new Date("2026-08-05T19:59:59.999Z")), false);
+  assert.equal(isStale(snapshot, new Date("2026-08-05T20:00:00.001Z")), true);
 });
 
 test("native VoiceOver evidence requires the complete decision flow without combined-card truncation", () => {

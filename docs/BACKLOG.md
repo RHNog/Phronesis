@@ -1,14 +1,22 @@
 <!-- handoff: {"document":"BACKLOG","owner":"human-and-agent","schema_version":"1"} -->
 # Backlog
 
+- [x] [P1] Reconcile the complete LigaPokemon snapshot to the English Pokémon TCGplayer catalogue through exact collision-safe identity (`PHR-API-014`).
+- [x] [P1] Expose exact provider-labelled LigaMagic and LigaPokemon evidence in Vendor Workspace without admitting Pokémon to Arbitrage (`PHR-API-014`).
+- [ ] [P1] Specify and obtain Product Owner acceptance for Pokémon regional candidate exposure, including price-lane semantics, direction costs, and executable availability evidence (follow-up to `PHR-API-014`).
+- [ ] [P2] Add independently verified identity rules for Poké Ball, Master Ball, vintage editions, foreign-language printings, and unresolved promotional buckets without weakening exact reconciliation (`PHR-API-014`).
+
 Use `- [ ] [P0]`, `[P1]`, `[P2]`, or `[P3]` for machine ordering.
 
 ## Active gates
 
 - [x] [P0] Restart the loopback private runtime through the canonical launcher and verify the regional API reads the 131,869-match operational crosswalk (`PHR-TECH-012`).
-- [ ] [P0] Restore the separately owned TCG catalogue acquisition dashboard/scheduler; its five Phronesis catalogue checkpoints remain at 2026-08-01 and are not current to the four-daily source cadence.
+- [x] [P0] Restore the separately owned TCG catalogue acquisition dashboard/scheduler and recover the five Phronesis checkpoints to the 2026-08-05 12:21 run (`PHR-TECH-012`).
+- [x] [P0] Separate catalogue capture from import/reconciliation so later completed games cannot be deleted while Magic blocks the observer (`PHR-TECH-012`).
 - [ ] [P0] Reauthenticate the dedicated LigaMagic profile; the loaded daily recurrence currently reports `REAUTHENTICATION_REQUIRED` and preserves the 2026-07-30 last-good snapshot.
-- [ ] [P1] Explicitly adjudicate LigaPokemon Lote 4 advertising 9,870 cards while repeat-identical CSV exports contain 9,868; Lote 10's exact 9,700 authority does not generalize, and no incomplete snapshot or Pokémon regional evidence may be promoted (`PHR-API-013`).
+- [x] [P1] Product Owner authorized the repeat-identical LigaPokemon Lote 4 export at 9,868 while retaining its 9,870 source label; the exception is exact and does not authorize any other mismatch (`PHR-API-013`).
+- [x] [P1] Product Owner authorized the repeat-identical LigaPokemon Lote RF 3 export at 9,982 while retaining its 9,983 source label; the exception is exact and does not authorize any other mismatch (`PHR-API-013`).
+- [x] [P1] Product Owner authorized the repeat-identical LigaPokemon Lote RF 6 export at 7,679 while retaining its 7,681 source label; the exception is exact and does not authorize any other mismatch (`PHR-API-013`).
 
 - [x] [P0] Complete local validation, commit the event-worker gateway implementation, create a fresh Handoff seal, and confirm both GitHub pull-request jobs pass.
 - [x] [P0] Activate the public event-worker Funnel only during an explicitly approved event window after Product Owner review; keep private port 9443 unchanged.

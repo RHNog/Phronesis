@@ -1,4 +1,4 @@
-import { POKEMON_SET_ALIASES } from "@/lib/pricing/artwork";
+import { POKEMON_SET_ALIASES } from "@/lib/pricing/pokemonIdentity";
 import type { SearchMatch } from "@/lib/pricing/types";
 import type { Card, CardImageUrls } from "@/types/card";
 

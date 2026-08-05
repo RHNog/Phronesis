@@ -1,6 +1,27 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-05 — Capture Before Import And Project Regional Evidence By Provider
+
+- **Status:** Implemented and live (`PHR-TECH-012`, `PHR-API-014`).
+- **Context:** A synchronous Magic import and crosswalk rebuild blocked the catalogue observer while the upstream tool completed and deleted Pokémon plus three sibling CSVs. Separately, Vendor Workspace queried only the legacy Magic regional tables even though 25,200 exact Pokémon matches existed.
+- **Decision:** keep the observer parent limited to immediate hash-bound archival and atomic receipt persistence, and run imports/reconciliation in at most one child process. Route regional evidence by approved category/provider, expose only exact `MATCHED` rows with visible provenance, and never fall back across games. Treat the six-hour source schedule as overdue after eight hours.
+- **Consequences:** later exports remain capturable during large imports; interrupted receipts recover idempotently; corrupt archives fail closed. LigaMagic and LigaPokemon prices are visible for exact Vendor Workspace identities, while Pokémon Arbitrage, route costs, and availability remain separately gated.
+
+## 2026-08-04 — One-Time Codes Bootstrap Durable Timed Sessions
+
+- **Status:** Implemented and live (`PHR-ARCH-014`).
+- **Context:** A successfully redeemed worker grant and session remained active, but revisiting the stable worker link showed the code form. Re-entering the correctly consumed code then appeared to the operator as access revocation.
+- **Decision:** keep the human-readable code single-use and treat the random HttpOnly session as the credential for the remaining configured duration. `/event-access` resumes only after server-side validation, and the cookie carries bounded relative and absolute expiry matching the session deadline.
+- **Consequences:** navigation, reload, and reopening the link in the same browser no longer require code reuse. Logout, owner revocation, expiry, event closure, or a missing browser cookie still require a new valid access path and cannot be bypassed by replaying the original code.
+
+## 2026-08-04 — Reconcile Pokémon Exactly Before Candidate Exposure
+
+- **Status:** Implemented and live verified (`PHR-API-014`).
+- **Context:** The complete LigaPokemon snapshot contains 167,912 identities, but TCGplayer and LigaPokemon differ across set labels, title punctuation, collector presentation, finishes, foreign sets, and special treatments. Reusing the Magic tables or widening text matching would create silent cross-game or physical-printing collisions.
+- **Decision:** maintain isolated Pokémon crosswalk/evidence tables and admit only one English Near Mint single with exact normalized card name, bounded explicit set equivalence, collector numerator, and Normal/Holofoil/Reverse Holofoil identity. Quarantine foreign-market labels, unsupported treatments, multiple targets, and source-to-target collision groups. Rebuild after complete LigaPokemon snapshots and Pokémon catalogue checkpoints, but do not expose rows through Arbitrage without a separate Product Owner gate.
+- **Consequences:** 25,200 exact identities are available as regional evidence and 24,884 have two-sided price data. Eight punctuation-duplicate source rows remain quarantined; broader foreign, pattern, vintage, and promotional coverage remains explicit residual work. Magic reconciliation and its candidate queue are unchanged.
+
 ## 2026-08-03 — Preserve One Operational Pricing Database And Pilot-Gate LigaPokemon
 
 - Decision: retain the verified `.data/mobile-review.sqlite` file as the operational default rather than rename 1.2 GB of live data during recovery.
@@ -9,8 +30,8 @@
 - Decision: install a 03:00 local LigaMagic recurrence with overlap locking, atomic status, exact completeness checks, and automatic Magic reconciliation.
 - Decision: add LigaPokemon profile/pilot/snapshot capability now, but require the authenticated pilot marker before any full run and prohibit regional promotion until a separate exact Pokémon crosswalk is approved.
 - Decision: use ordinary Chrome plus post-startup loopback CDP attachment for Liga providers. LigaPokemon removes authenticated controls from Playwright-launched contexts, while the owner-authenticated ordinary-Chrome path exposes the exact export contract without credential or storage inspection.
-- Decision: preserve exact advertised-versus-exported quantity equality by default. The Product Owner explicitly authorizes the repeat-identical 9,700-card CSV as authoritative only for LigaPokemon `Lote 10 (9.704 cards)`; receipts and snapshots retain both numbers and `PRODUCT_OWNER_EXPORT` provenance. Every other mismatch remains `SOURCE_COUNT_MISMATCH`.
-- Rationale: the zero queue was a data-plane selection defect, while LigaPokemon required owner authentication to establish its real 20-column contract. The verified Lote 1 pilot passed and Lote 10 reproducibly exports 9,700 despite advertising 9,704. A narrow evidence-bearing exception honors the Product Owner's decision without creating a general tolerance or erasing upstream provenance.
+- Decision: preserve exact advertised-versus-exported quantity equality by default. The Product Owner explicitly authorizes repeat-identical LigaPokemon exports only for `Lote 10 (9.704 cards)` at 9,700, `Lote 4 (9.870 cards)` at 9,868, `Lote RF 3 (9.983 cards)` at 9,982, and `Lote RF 6 (7.681 cards)` at 7,679; receipts and snapshots retain source and authoritative numbers with `PRODUCT_OWNER_EXPORT` provenance. Every other mismatch remains `SOURCE_COUNT_MISMATCH`.
+- Rationale: the verified Lote 1 pilot passed, while these four collections each reproducibly export a stable quantity below their labels. Exact evidence-bearing exceptions honor the Product Owner's decisions without creating a general tolerance or erasing upstream provenance.
 
 ## 2026-08-03 — GitHub verifies committed Handoff state instead of preparing it
 

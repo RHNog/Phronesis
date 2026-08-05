@@ -1,19 +1,76 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Unified Vendor Pricing And Brand Asset Recovery
+
+- Assignment: `PHR-VENDOR-PRICING-BRAND-RESTORATION-20260805`
+- Document ID: `PHR-STRUCT-20260805-002`
+- Features: `PHR-UX-022`, `PHR-ARCH-010`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: show exact LigaMagic/LigaPokemon evidence inside the same selected-card pricing card as TCGplayer, place grading in one collapsed disclosure immediately below, and restore the approved July Phronesis raster identity to application chrome and icon metadata.
+- Evidence rule: TCGplayer and Liga remain separately labelled sources inside one visual hierarchy; unmatched or quarantined Liga identity remains explicit and never substitutes another printing.
+- Grading rule: PriceCharting and certificate lookup are optional subordinate evidence, collapsed by default, and never overwrite raw-card prices.
+- Identity rule: use the exact local 1254×1254 raster with SHA-256 `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`; no redraw or network substitute.
+- Acceptance: one combined pricing card, one grading disclosure, no duplicate regional/certificate panels, accessible responsive shell branding, focused/full automated gates, production build, and private live review.
+- Result: the exact Pikachu live review shows TCGplayer $2.09 / delivered $2.92 beside LigaPokemon R$38.99 low / R$42.07 market in one semantic region. Grading is closed by default immediately below and expands to PriceCharting plus certificate lookup. The recovered logo is visible in desktop/mobile shell chrome and supplies `/icon` plus `/apple-icon` with byte-identical SHA-256.
+- Verification: focused 27/27, full 403/403, standalone TypeScript, warning-free lint, production build, diff hygiene, private HTTP/icon probes, desktop interaction, 390px zero-overflow audit, initial collapsed-state assertion, and clean browser console pass.
+- Next accountable role: Product Owner reviews the live Vendor Workspace and restored identity. No commit or push is included in this mixed dirty worktree.
+
+## Active Revision — Provider-Aware Regional Evidence And Capture-First Catalogues
+
+- Assignment: `PHR-REGIONAL-EVIDENCE-CAPTURE-CONTINUITY-20260805`
+- Document ID: `PHR-STRUCT-20260805-001`
+- Features: `PHR-API-014`, `PHR-TECH-012`
+- Status: `IMPLEMENTED AND LIVE — CTO ACCEPTED; POKÉMON ARBITRAGE GATED`
+- Objective: show exact LigaMagic/LigaPokemon prices in Vendor Workspace and prevent long-running imports from causing later completed catalogue files to be missed.
+- Provider rule: `magic-en` reads only LigaMagic exact matches; `pokemon-en` reads only LigaPokemon exact matches; unsupported categories and quarantined identities receive no substitute.
+- Capture rule: the observer hashes, archives, and receipts completed files immediately; a separate single child imports and performs follow-up so capture remains live.
+- Freshness rule: the six-hour source cadence becomes overdue after an eight-hour grace window and remains visibly last-good rather than falsely current.
+- Result: all five catalogues are current to August 5 12:21; the exact screenshot Pikachu returns LigaPokemon R$38.99 low / R$42.07 average; both live provider probes and `/vendor` return HTTP 200.
+- Verification: focused 54/54, full 402/402, TypeScript, lint, production build, diff hygiene, receipt audit, live SQLite audit, and private runtime health pass.
+- Next accountable role: operations monitors the next ordinary 18:00 capture. LigaMagic reauthentication and Pokémon Arbitrage candidate policy remain separate work.
+
+## Active Revision — Timed Worker Session Continuity
+
+- Assignment: `PHR-TIMED-WORKER-SESSION-CONTINUITY-20260804`
+- Document ID: `PHR-STRUCT-20260804-002`
+- Feature: `PHR-ARCH-014`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY`
+- Objective: after one successful code redemption, keep the worker authenticated for the complete configured grant duration across navigation, reloads, and reopening the stable worker link in the same browser.
+- Credential rule: the human-readable code remains single-use; the random HttpOnly session is the durable credential and expires only at the grant deadline, explicit revocation/logout, or event closure.
+- Resume rule: `/event-access` must recognize a current worker cookie, validate it against server truth, and redirect to the first assigned module instead of asking for the consumed code again.
+- Security rule: every resume rechecks the SQLite grant/session, scope, expiry, revocation, event state, and entitlements; no plaintext code or token becomes client-readable or server-recoverable.
+- Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Result: the redeemed grant and session were not revoked. The stable login route now validates the existing HttpOnly cookie against SQLite and resumes the worker at the first assigned module. The cookie carries both bounded `maxAge` and absolute `expires` through the server-issued session deadline; one-time codes remain non-reusable.
+- Next accountable role: Product Owner refreshes the existing worker link in the same browser and accepts the live continuity behavior.
+
+## Active Revision — LigaPokemon Catalogue Reconciliation
+
+- Assignment: `PHR-LIGAPOKEMON-CATALOGUE-RECONCILIATION-20260804`
+- Document ID: `PHR-STRUCT-20260804-001`
+- Feature: `PHR-API-014`
+- Status: `IMPLEMENTED AND LIVE — VENDOR EVIDENCE ACTIVE; ARBITRAGE EXPOSURE GATED`
+- Objective: reconcile the complete 167,912-identity LigaPokemon snapshot to the English Pokémon TCGplayer catalogue through exact card, set, collector, and finish identity while preserving Magic reconciliation.
+- Identity rule: bounded explicit set equivalence only; no fuzzy matching, price-based matching, pattern inference, vintage-edition inference, or foreign-set collapse.
+- Persistence rule: isolated transactional Pokémon crosswalk/evidence tables, hash-bound reports, target-collision quarantine, and no mutation of the Magic crosswalk.
+- Exposure rule: exact matches may appear as provider-labelled Vendor Workspace evidence; do not expose Pokémon through Arbitrage until a separate Product Owner acceptance.
+- Work order: `docs/prompts/PHR-API-014-ligapokemon-catalogue-reconciliation-prompt.md`.
+- Result: 25,200 exact matches from 167,912 identities; 24,884 carry both LigaPokemon consumer-low and TCGplayer Near Mint evidence. Eight collision rows, 8,474 explicit foreign-market rows, and 2,600 unsupported treatments remain quarantined. Two builds produced fingerprint `295be8d699da35d13b8df82a59a6d46ae9a51fd6f337e6c60b3a7f3259c91d9a` with zero accepted target collisions.
+- Next accountable role: Product Owner decides whether to authorize a separately specified Pokémon candidate-exposure increment. Route costs and executable availability remain independent gates.
+
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 
 - Assignment: `PHR-ARBITRAGE-ACQUISITION-RECOVERY-20260803`
 - Document ID: `PHR-STRUCT-20260803-007`
 - Features: `PHR-TECH-012`, `PHR-API-013`
-- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY; LOTE 4 SOURCE COUNT GATED`
+- Status: `IMPLEMENTED AND LIVE — PRODUCT REVIEW READY; LIGAPOKEMON SNAPSHOT VERIFIED`
 - Objective: restore the verified regional candidate queue, make TCG catalogue-to-crosswalk continuity automatic, schedule daily LigaMagic acquisition, and add LigaPokemon through a separate owner-authenticated fail-closed connector.
 - Root cause: the recovered private runtime started raw Next.js without the LaunchAgent database override and opened `.data/pricing-lookup.sqlite`; the verified 131,869-match crosswalk and 129,809 candidate rows remain in `.data/mobile-review.sqlite`.
-- Catalogue state: all five TCG catalogue checkpoints are healthy but last completed on 2026-08-01. The sibling Pricing Update Tool scheduler is not currently running and its last recorded automated run failed at an upstream disabled `Continue` control. Phronesis owns observation/import continuity, not mutation of that sibling acquisition tool.
+- Catalogue state: all five TCG catalogue checkpoints are current to the 2026-08-05 12:21 run. Capture-first receipts prevent imports from blocking later source archival. Phronesis observes the sibling Pricing Update Tool without mutating its acquisition workflow.
 - Delivery lane: Standard — Slice 1 restores the single operational database and reconciliation hook; Slice 2 adds recurring LigaMagic plus pilot-gated LigaPokemon acquisition.
 - Security boundary: no credentials, cookies, request bodies, query values, CAPTCHA/rate-limit bypass, anonymous marketplace scraping, transactions, public deployment, or invented provider schema.
-- Acceptance result: the live API returns 50 ranked identity-verified rows, the observer and app share the canonical database, and the 03:00 LaunchAgent is loaded. LigaPokemon authentication and its exact 20-column pilot passed at 9,772/9,772. Product Owner authority now admits only Lote 10's exact 9,700 export with its 9,704 source claim retained. A subsequent full run passed Lote 10 and failed closed on Lote 4's repeatable 9,870-advertised versus 9,868-exported discrepancy.
+- Acceptance result: the live API returns 50 ranked identity-verified rows, the observer and app share the canonical database, and the 03:00 LaunchAgent is loaded. LigaPokemon authentication and its exact 20-column pilot passed at 9,772/9,772. Exact Product Owner authorities preserve the source claims for Lote 10, Lote 4, Lote RF 3, and Lote RF 6. Full acquisition now completes all 18 collections with 167,912 unique identities and zero duplicate conflicts; the durable orchestrator records LigaPokemon `SUCCESS`.
 - Work orders: `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md` and `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
-- Next accountable role: Product Owner reauthenticates LigaMagic and explicitly adjudicates the separate two-card LigaPokemon Lote 4 source discrepancy; the external TCG acquisition owner restores its stale scheduler.
+- Next accountable role: Product Owner reauthenticates LigaMagic and separately decides Pokémon Arbitrage exposure; operations monitors the next ordinary catalogue capture.
 
 ## Active Revision — Timed Worker Issued-Code Continuity
 

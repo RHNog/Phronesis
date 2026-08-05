@@ -5,8 +5,10 @@
 - Implemented: one operational pricing database across runtime, observer, import, provider, and artwork paths (`PHR-TECH-012`).
 - Implemented: private runtime supervision and automatic crosswalk rebuild after new Magic catalogue or complete LigaMagic snapshot.
 - Implemented: daily 03:00 overlap-safe LigaMagic orchestration plus isolated LigaPokemon profile, pilot, parser, and snapshot assembly (`PHR-API-013`).
-- Verified: focused 11/11 and full 392/392 tests, TypeScript, lint, production build, diff hygiene, and both launchd definitions.
-- Operational state: private review and the daily agent are active. Remaining gates are LigaMagic reauthentication, the external TCG acquisition scheduler, and the owner-authenticated LigaPokemon pilot.
+- Implemented: capture-first atomic archives and receipts plus a separate importer child, preventing large Magic work from blocking later game capture (`PHR-TECH-012`).
+- Verified: focused 54/54 and full 402/402 tests, TypeScript, lint, production build, diff hygiene, live five-category recovery, and private runtime probes.
+- Implemented: exact isolated LigaPokemon catalogue reconciliation with 25,200 accepted identities and 24,895 two-sided price pairs, plus provider-labelled Vendor Workspace evidence (`PHR-API-014`).
+- Operational state: all five TCGplayer categories are current to the August 5 12:21 run; private review, capture observer, and daily Liga agent are active. Remaining gates are LigaMagic reauthentication and separately approved Pokémon Arbitrage candidate exposure.
 
 ## Completed Repair: GitHub Handoff Continuity
 
@@ -160,7 +162,7 @@
 - Implemented: catalogue-first watch refresh, unique legacy identity reconciliation, truthful failure state, and secret-free provider health (`PHR-TECH-010`).
 - Implemented: manual watch composer and immediate offer ladder (`PHR-UX-010`, `PHR-UX-011`).
 - Implemented / activation gated: module-at-invite single-use employee activation (`PHR-ARCH-012`).
-- Implemented / product review ready: account-free timed event worker codes with scoped operational sessions, including independently assignable Artwork Review (`PHR-ARCH-014`). Strict isolation still requires the gated `REQUIRED` auth activation.
+- Implemented / live product review ready: account-free timed worker codes with scoped operational sessions, independently assignable Artwork Review, and server-validated session resumption through the configured duration (`PHR-ARCH-014`). Strict isolation of the separate private owner path still requires the gated `REQUIRED` auth activation.
 - Implemented: persistent exact/Bulk event cart and immutable receipts (`PHR-WORKFLOW-006`).
 - Implemented: bounded artwork resolution, restart-safe exact provider mappings, bounded event prewarming, and exact-SKU curated local images (`PHR-API-004`, `PHR-TECH-007`).
 - Accepted locally at checkpoint `6c38c1f`. Required authentication and unconfigured external providers remain gated; GitHub publication is not part of this checkpoint.

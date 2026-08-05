@@ -21,7 +21,6 @@ import {
 } from "@/data/seedStrategies";
 import EvaluationSummary from "@/features/vendor/components/EvaluationSummary";
 import VendorCheckout from "@/features/vendor/components/VendorCheckout";
-import GradingCertificateLookup from "@/features/vendor/components/GradingCertificateLookup";
 import RegionalMarketPanel from "@/features/vendor/components/RegionalMarketPanel";
 import PriceChartingGradedArea from "@/features/vendor/components/PriceChartingGradedArea";
 import {
@@ -673,6 +672,10 @@ export default function SnapshotVendorWorkspace({
     response?.categories.filter((category) => category.loaded).length ?? 0;
   const failedCategoryCount =
     response?.categories.filter((category) => category.lastError).length ?? 0;
+  const staleCategoryCount =
+    response?.categories.filter(
+      (category) => category.loaded && category.stale,
+    ).length ?? 0;
   const freshnessTone = failedCategoryCount
     ? "border-red-900 bg-red-950/40 text-red-200"
     : response?.categories.some((category) => category.loaded && category.stale)
@@ -710,7 +713,9 @@ export default function SnapshotVendorWorkspace({
             ? "No catalogue loaded · observer waiting for a verified update"
             : failedCategoryCount
               ? `${failedCategoryCount} import issue${failedCategoryCount === 1 ? "" : "s"} · last-good data retained`
-              : `${loadedCategoryCount} catalogues current · search routes automatically`}
+              : staleCategoryCount
+                ? `${staleCategoryCount} catalogue${staleCategoryCount === 1 ? "" : "s"} overdue · last-good data retained`
+                : `${loadedCategoryCount} catalogues current · search routes automatically`}
         </div>
       </header>
 
@@ -877,9 +882,11 @@ export default function SnapshotVendorWorkspace({
                       : ""}{" "}
                     · {selectedMatch.variant} · {selectedMatch.language}
                   </p>
-                  <p className="mt-1 text-xs text-zinc-500">
+                  <p
+                    className={`mt-1 text-xs ${selectedFreshness?.stale ? "font-semibold text-amber-300" : "text-zinc-500"}`}
+                  >
                     {selectedFreshness?.snapshotDate
-                      ? `Catalogue ${timestamp(selectedFreshness.snapshotDate)}`
+                      ? `Catalogue ${timestamp(selectedFreshness.snapshotDate)}${selectedFreshness.stale ? " · refresh overdue" : ""}`
                       : "Catalogue freshness unavailable"}
                   </p>
                   {selectedArtworkProvenance ? (
@@ -953,10 +960,34 @@ export default function SnapshotVendorWorkspace({
                 </p>
               )}
 
-              {selectedMatch.productType === "SINGLE" ? <PriceChartingGradedArea match={selectedMatch} /> : null}
+              <section
+                data-combined-pricing-card
+                aria-labelledby="combined-pricing-heading"
+                className="mt-5 rounded-xl border border-zinc-700 bg-zinc-900/70 p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                      Raw-card market evidence
+                    </p>
+                    <h3
+                      id="combined-pricing-heading"
+                      className="mt-1 text-base font-semibold text-white"
+                    >
+                      {selectedMatch.productType === "SINGLE"
+                        ? "TCGplayer + Liga pricing"
+                        : "TCGplayer pricing"}
+                    </h3>
+                  </div>
+                  <span className="rounded-full border border-zinc-700 bg-zinc-950 px-2.5 py-1 text-[11px] text-zinc-400">
+                    {selectedMatch.productType === "SINGLE"
+                      ? `${conditionCodes[condition]} · exact printing`
+                      : "Unopened product"}
+                  </span>
+                </div>
 
               {!price ? (
-                <div className="mt-5 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
+                <div className="mt-4 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
                   <p className="font-semibold">No price in this condition.</p>
                   {nearest ? (
                     <p className="mt-1 text-amber-200">
@@ -971,7 +1002,7 @@ export default function SnapshotVendorWorkspace({
                 </div>
               ) : (
                 <>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {price.directLowCents !== null && price.directLowCents !== undefined ? <div className="rounded-lg border border-emerald-400/60 bg-emerald-950/40 p-3 sm:col-span-2"><p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">Primary reference · TCG Direct Low</p><p className="mt-1 text-3xl font-semibold tabular-nums text-emerald-200">{money(price.directLowCents)}</p><p className="mt-1 text-xs text-emerald-100/70">Direct-qualified listing floor; takes precedence in the offer calculation.</p></div> : null}
                     <div className="rounded-lg bg-zinc-950 p-3">
                       <p className="text-xs text-zinc-500">Market price</p>
@@ -1016,6 +1047,15 @@ export default function SnapshotVendorWorkspace({
                   </div>
                 </>
               )}
+
+              {selectedMatch.productType === "SINGLE" ? (
+                <div className="mt-4 border-t border-zinc-800 pt-4">
+                  <RegionalMarketPanel
+                    categoryId={selectedMatch.categoryId}
+                    sku={selectedMatch.sku}
+                  />
+                </div>
+              ) : null}
 
               <div className="mt-5 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
                 <button
@@ -1064,6 +1104,15 @@ export default function SnapshotVendorWorkspace({
                   </p>
                 )}
               </div>
+              </section>
+
+              {selectedMatch.productType === "SINGLE" ? (
+                <PriceChartingGradedArea
+                  key={selectedMatch.sku}
+                  match={selectedMatch}
+                />
+              ) : null}
+
               {!selectedArtwork && !selectedMatch.imageUrl ? (
                 <div className="mt-3 rounded-lg border border-dashed border-zinc-700 p-3">
                   <label className="block text-xs font-medium text-zinc-300">
@@ -1135,14 +1184,6 @@ export default function SnapshotVendorWorkspace({
                 </select>
               </label>
             </div>
-            {selectedMatch ? (
-              <div className="mt-4">
-                <RegionalMarketPanel
-                  categoryId={selectedMatch.categoryId}
-                  sku={selectedMatch.sku}
-                />
-              </div>
-            ) : null}
             <label className="mt-4 block text-sm font-medium text-zinc-300">
               Seller asking price (USD) · optional comparison
               <input
@@ -1176,7 +1217,6 @@ export default function SnapshotVendorWorkspace({
                   : "The offer ladder is ready above. Enter the seller's asking price for a decision comparison."}
             </div>
           )}
-          <GradingCertificateLookup />
         </section>
       </div>
     </section>

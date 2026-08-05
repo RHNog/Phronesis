@@ -6,7 +6,7 @@
 
 ## Status
 
-Timed Task Access Implemented And Live
+Timed Task Access Implemented And Live — Session Continuity Product Review Ready
 
 ## Priority
 
@@ -41,6 +41,8 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Adding `VENDOR_WORKSPACE`, `EVENT_LEDGER`, `EVENT_FLIP`, or `INVENTORY` creates an `EVENT` grant and requires a current active event, even when Artwork Review is also assigned.
 - Codes are single-use and shown only in the creation response.
 - Redemption creates a separate random session and an HttpOnly, SameSite=Lax cookie.
+- The worker cookie is persistent through the grant's remaining duration and is not reduced to a browser-session cookie. Its absolute expiry cannot exceed the grant expiry.
+- Visiting `/event-access` with a valid worker cookie validates server truth and resumes the session at the first assigned module without re-entering the consumed code.
 - A task session expires at its configured expiry or grant revocation. An event session additionally ends immediately when its event closes.
 - Settings shows active and historical grants and permits immediate revocation.
 - The sign-in screen presents both permanent GitHub sign-in and event-code access.
@@ -82,6 +84,8 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 ## Acceptance Criteria
 
 - A valid one-time code creates a scoped timed session and cannot be redeemed twice.
+- Navigation, reload, and reopening the stable worker login link in the same browser resume that valid session through the configured duration without another code entry.
+- An expired, revoked, logged-out, or event-closed session does not resume and returns to code entry.
 - The temporary session authorizes only its assigned operational modules and never Administration. A worker assigned only `ARTWORK_REVIEW:OPERATE` sees only Artwork Review in primary navigation and cannot read or operate other product modules.
 - Artwork Review-only access can be issued, redeemed, and authorized when no event exists. It remains valid if unrelated events open or close.
 - Any grant containing a transactional module is rejected unless the referenced event is active, and its session is invalidated when that event closes.
@@ -98,6 +102,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Multiple workers may have independent grants for the same event.
 - Existing event-bound grants migrate as `EVENT`; no active or historical grant is broadened into a task grant.
 - Browser-session code data is ignored and removed unless a successful owner-only grant listing confirms the same grant remains `ACTIVE` and unexpired.
+- A worker who opens the stable `/event-access` link while already authenticated resumes the existing server-validated session; the route never treats the redeemed code as reusable.
 - Logout revokes only the presented temporary session, not the grant or other workers.
 
 ## Dependencies
@@ -127,5 +132,5 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Originating direction: CTO request on 2026-07-31.
 - Related implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Related tests: `tests/timed-event-access.test.ts`.
-- Last modified: 2026-08-03.
-- Modification reason: Product Owner required account-free Artwork Review task access without an event and later required safe recovery after owner page navigation without weakening one-time-code storage.
+- Last modified: 2026-08-04.
+- Modification reason: Product Owner required a redeemed worker session to persist and resume for its complete configured duration without weakening one-time-code storage.

@@ -1,6 +1,7 @@
 import type { Card, CardImageUrls } from "@/types/card";
 import type { SearchMatch } from "@/lib/pricing/types";
 import { artworkIdentityName } from "@/lib/pricing/domain";
+import { pokemonSetIdentity } from "@/lib/pricing/pokemonIdentity";
 
 function normalized(value: string | null | undefined): string {
   return (value ?? "")
@@ -19,42 +20,10 @@ function normalizedSet(value: string): string {
   );
 }
 
-/**
- * TCGplayer and TCGdex occasionally publish different labels for the same
- * Pokémon set. Keep those equivalences explicit: a broad prefix removal or
- * fuzzy set match can silently attach artwork from a different printing.
- */
-export const POKEMON_SET_ALIASES: Readonly<Record<string, string>> = {
-  "black and white promos": "bw black star promos",
-  "diamond and pearl promos": "dp black star promos",
-  "diamond pearl promos": "dp black star promos",
-  "ex emerald": "emerald",
-  "ex firered leafgreen": "firered leafgreen",
-  "ex team magma vs team aqua": "team magma vs team aqua",
-  "hgss promos": "hgss black star promos",
-  "legendary treasures radiant collection": "legendary treasures",
-  "mega evolution promo": "mep black star promos",
-  "nintendo promos": "nintendo black star promos",
-  "sm cosmic eclipse": "cosmic eclipse",
-  "sm promos": "sm black star promos",
-  "sm unbroken bonds": "unbroken bonds",
-  "scarlet violet 151": "151",
-  "scarlet violet promo cards": "svp black star promos",
-  "sun moon base set": "sun moon",
-  "sv scarlet violet base set": "scarlet violet",
-  "sword shield base set": "sword shield",
-  "sword shield promo cards": "swsh black star promos",
-  "wotc promo": "wizards black star promos",
-  "xy base set": "xy",
-  "xy promos": "xy black star promos",
-};
-
 function comparableSet(value: string, categoryId: string): string {
-  const set = normalizedSet(value);
-  if (categoryId !== "pokemon-en") return set;
-  const eraNeutralSet = set.replace(/^(?:ex|sm|xy)\s+/, "");
-  const aliasedSet = POKEMON_SET_ALIASES[set] ?? POKEMON_SET_ALIASES[eraNeutralSet] ?? eraNeutralSet;
-  return aliasedSet.replace(/^(?:ex|sm|xy)\s+/, "");
+  return categoryId === "pokemon-en"
+    ? pokemonSetIdentity(value)
+    : normalizedSet(value);
 }
 
 function normalizedOnePieceSet(value: string): string {
@@ -163,7 +132,6 @@ export function resolveSnapshotArtwork(
   }
   return artwork;
 }
-
 function onePieceBaseName(value: string): string {
   return normalized(
     artworkIdentityName(value)

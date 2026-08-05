@@ -1,90 +1,76 @@
+import { spawn, type ChildProcess } from "node:child_process";
 import { resolve } from "node:path";
 import { pricingLookupConfig } from "../config/pricingLookup";
-import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import {
+  captureCompletedCatalogues,
   defaultPricingToolRoot,
-  syncCompletedCatalogues,
+  pendingCapturedCatalogueCount,
 } from "../lib/pricing/tcgplayerObserver";
-import { refreshWatchedCategory } from "../lib/watchlist/CatalogueWatchRefresh";
-import { enrichWatchedCategoryWithJustTCG } from "../lib/watchlist/JustTCGWatchEnrichment";
-import {
-  getMarketEvidenceRepository,
-  getWatchlistRepository,
-} from "../lib/watchlist/repositories";
-import { rebuildRegionalCrosswalk } from "../lib/regional/reconciliation";
 
 const once = process.argv.includes("--once");
-const databasePath = operationalPricingDatabasePath();
 const toolRoot =
   process.env.PHRONESIS_PRICING_TOOL_ROOT ?? defaultPricingToolRoot();
 const archiveRoot =
   process.env.PHRONESIS_PRICING_ARCHIVE_ROOT ??
   resolve(".data/pricing-catalogues");
+const importerPath = resolve("scripts/import-pricing-catalogues.ts");
+const loaderPath = resolve("tests/register-test-hooks.mjs");
 let running = false;
+let importer: ChildProcess | null = null;
 
-async function synchronize() {
+function startImporterIfNeeded(): void {
+  if (importer || pendingCapturedCatalogueCount(archiveRoot) === 0) return;
+  importer = spawn(
+    process.execPath,
+    ["--import", loaderPath, importerPath],
+    { cwd: process.cwd(), env: process.env, stdio: "inherit" },
+  );
+  importer.once("exit", (code, signal) => {
+    importer = null;
+    if (code && code !== 0) {
+      process.stderr.write(
+        `[pricing-import] importer exited with ${code}; captured catalogues remain durable for review or retry.\n`,
+      );
+    } else if (signal) {
+      process.stderr.write(
+        `[pricing-import] importer stopped by ${signal}; interrupted receipts will recover on the next drain.\n`,
+      );
+    }
+  });
+}
+
+function capture(): void {
   if (running) return;
   running = true;
   try {
-    const verifiedCategories = new Set<string>();
-    const attempts = syncCompletedCatalogues({
+    const attempts = captureCompletedCatalogues({
       archiveRoot,
-      databasePath,
       toolRoot,
-      onVerifiedCheckpoint: ({
-        categoryId,
-        checkpointAt,
-        pricingRepository,
-      }) => {
-        verifiedCategories.add(categoryId);
-        const refreshed = refreshWatchedCategory({
-          categoryId,
-          checkpointAt,
-          pricingRepository,
-          watchlistRepository: getWatchlistRepository(),
-        });
-        process.stdout.write(
-          `${JSON.stringify({ categoryId, checkpointAt, watchlists: refreshed })}\n`,
-        );
-      },
     });
-    for (const attempt of attempts)
+    for (const attempt of attempts) {
       process.stdout.write(`${JSON.stringify(attempt)}\n`);
-    if (verifiedCategories.has("magic-en")) {
-      const report = rebuildRegionalCrosswalk({ databasePath });
-      process.stdout.write(
-        `${JSON.stringify({ event: "regional-crosswalk-reconciled", sourceRunId: report.sourceRunId, matched: report.matched, comparableBoth: report.comparableBoth, fingerprint: report.crosswalkFingerprint })}\n`,
-      );
     }
-    for (const categoryId of verifiedCategories) {
-      const enrichment = await enrichWatchedCategoryWithJustTCG({
-        categoryId,
-        evidenceRepository: getMarketEvidenceRepository(),
-        watchlistRepository: getWatchlistRepository(),
-      });
-      process.stdout.write(
-        `${JSON.stringify({ categoryId, justtcgWatchEnrichment: enrichment })}\n`,
-      );
-    }
+    startImporterIfNeeded();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     process.stderr.write(
-      `[pricing-sync] ${message.replace(/[\r\n]+/g, " ")}\n`,
+      `[pricing-capture] ${message.replace(/[\r\n]+/g, " ").slice(0, 800)}\n`,
     );
   } finally {
     running = false;
   }
 }
 
-void synchronize();
+capture();
 if (!once) {
   const timer = setInterval(
-    () => void synchronize(),
+    capture,
     pricingLookupConfig.observerPollMilliseconds,
   );
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
     process.on(signal, () => {
       clearInterval(timer);
+      if (importer && !importer.killed) importer.kill(signal);
       process.exit(0);
     });
   }

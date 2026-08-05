@@ -31,3 +31,9 @@ List, redemption, authorization, status mapping, API validation, Settings, and w
 The authenticated owner tab now retains only the latest unused code in ephemeral session storage and restores it after an owner-only grant listing confirms the grant is still active. Active and redeemed rows always expose the public worker login link. Active rows without a locally retained code provide a two-step replacement action backed by server-side salt/hash rotation; the prior code stops working immediately, while scope, event, expiry, and entitlements remain unchanged.
 
 Focused 16/16 and full 386/386 tests, TypeScript, warning-free lint, production build, diff hygiene, mobile no-overflow review, final loopback process verification, private/public 200 probes, and public Settings denial pass.
+
+## 2026-08-04 Timed Session Continuity Amendment
+
+Added a shared server session helper for cookie parsing, module landing, and grant-bounded cookie lifetime. The redemption route now sets both absolute `expires` and bounded `maxAge`. The `/event-access` server page recognizes the existing HttpOnly cookie, looks up the hashed session, and redirects only after the repository confirms the redeemed grant is current, unrevoked, unexpired, correctly scoped, and still event-active where required.
+
+The live record associated with the report was neither revoked nor expired; the earlier page simply ignored it and prompted for its already-consumed code. The rebuilt LaunchAgent is live. Focused 13/13 tests, TypeScript, warning-free lint, production build, diff hygiene, private/public page probes, public owner-path denial, and public stylesheet delivery pass. The restricted full suite reports 396/397 only because its loopback gateway fixture cannot bind inside that sandbox; the same test passes unrestricted.

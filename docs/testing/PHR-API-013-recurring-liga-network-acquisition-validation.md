@@ -2,12 +2,12 @@
 
 ## Status
 
-Passed with an upstream data-integrity gate. The 03:00 schedule is loaded, the LigaPokemon pilot is verified, and the exact Lote 10 authority passes. Full snapshot creation now fails closed on a separate stable two-card Lote 4 mismatch.
+Passed. The 03:00 schedule is loaded, LigaPokemon authentication and pilot are verified, all four exact Product Owner quantity authorities pass, and a complete conflict-free 18-collection snapshot is recorded successfully.
 
 ## Automated Evidence
 
 - Focused continuity/provider/private-service tests: 11/11 passed.
-- Full supported test suite: 392/392 passed.
+- Full supported test suite: 393/393 passed.
 - TypeScript, lint, production build, diff hygiene, and launchd plist validation passed.
 
 ## Verified Behaviors
@@ -21,11 +21,18 @@ Passed with an upstream data-integrity gate. The 03:00 schedule is loaded, the L
 - The authenticated pilot completed Lote 1 with 9,772 advertised cards, 9,772 rows, and a matching quantity sum.
 - Full acquisition reached Lote 10 and stopped because the page advertised 9,704 cards while the CSV contained 9,700 rows/cards. An independent repeat produced the identical 1,081,895-byte file and SHA-256 `060ccf4bf2ce66fee1957495bb4eb46434455aea99b4de828dfe5d4e44f14e6d`.
 - After Product Owner authorization, Lote 10 records source-advertised 9,704, authoritative 9,700, and `PRODUCT_OWNER_EXPORT` provenance; changed labels, counts, providers, or quantities remain strict.
-- The next full run passed Lote 10 and reached Lote 4. Lote 4 advertised 9,870 but exported 9,868; an independent repeat produced the identical 1,110,600-byte file and SHA-256 `c9317ffa241641dc6b5d8c3936f09f457892b03a4d8b3665cf278ebd0bc50e94`. No authority exists for this second mismatch.
+- The next full run passed Lote 10 and reached Lote 4. Lote 4 advertised 9,870 but exported 9,868; an independent repeat produced the identical 1,110,600-byte file and SHA-256 `c9317ffa241641dc6b5d8c3936f09f457892b03a4d8b3665cf278ebd0bc50e94`.
+- After Product Owner authorization, Lote 4 records source-advertised 9,870, authoritative 9,868, and `PRODUCT_OWNER_EXPORT` provenance; changed labels, counts, providers, or quantities remain strict.
+- Two subsequent full runs passed Lote 4 and reached Lote RF 3. It advertised 9,983 but exported 9,982 rows/cards in both runs; the two 1,256,589-byte files are byte-identical with SHA-256 `4c7328dc25b05856966500bbd22a0607f6aa462c6d36e02e476357bf2f6a0dec`.
+- After Product Owner authorization, Lote RF 3 records source-advertised 9,983, authoritative 9,982, and `PRODUCT_OWNER_EXPORT` provenance; changed labels, counts, providers, or quantities remain strict.
+- The next full run passed all three then-approved authorities and reached collection 18 of 18, Lote RF 6. It advertised 7,681 but exported 7,679 rows/cards. An independent collection-only pilot produced a second byte-identical 1,007,852-byte file with SHA-256 `c0866cb2963289cbe5fc2a8478ab779ac1f4f5406299b3cde21df504bab628f8`.
+- After Product Owner authorization, Lote RF 6 records source-advertised 7,681, authoritative 7,679, and `PRODUCT_OWNER_EXPORT` provenance; changed labels, counts, providers, or quantities remain strict.
+- Full snapshot `dry-run-20260804T041632935Z` completed all 18 collections with 167,921 source-advertised cards, 167,912 authoritative rows/cards, 167,912 unique identities, zero identical duplicates, and zero conflicting duplicates.
+- The scheduled-equivalent orchestrator independently created and verified snapshot `dry-run-20260804T041909649Z`, recording LigaPokemon `SUCCESS`. Overall orchestration remained `PARTIAL_FAILURE` only because LigaMagic independently returned `REAUTHENTICATION_REQUIRED`.
 - The recurring runner uses an exclusive owner-readable lock, rejects live overlap, preserves stale-lock evidence, atomically updates status, and records provider outcomes independently.
 - A same-day successful provider outcome is not reacquired unless `--force` is explicit.
 - Only a `DRY_RUN_COMPLETE` receipt can proceed; conflicting duplicate evidence fails closed.
-- Complete LigaMagic acquisition triggers the operational Magic regional crosswalk rebuild. LigaPokemon remains unpromoted.
+- Complete acquisition triggers the provider-specific operational crosswalk rebuild: Magic through its existing reconciler and LigaPokemon through `PHR-API-014`. Pokémon candidate exposure remains unpromoted.
 - `com.phronesis.regional-acquisition.plist` schedules 03:00 America/New_York through the canonical JarvisSSD checkout.
 
 ## Research Boundary
@@ -34,8 +41,7 @@ The Product Owner authenticated in the isolated ordinary-Chrome profile. Phrones
 
 ## Remaining Operational Checks
 
-- Reauthenticate the saved LigaMagic profile, then rerun the once-only acquisition. The first scheduled-equivalent run reached the authenticated page safely but returned `REAUTHENTICATION_REQUIRED`; no snapshot or last-good crosswalk was replaced.
-- Decide whether the repeat-identical 9,868-card Lote 4 CSV is authoritative over its 9,870 source label. Until explicitly authorized, recurrence records `SOURCE_COUNT_MISMATCH` and preserves partial raw evidence without snapshot promotion.
+- Reauthenticate the saved LigaMagic profile, then rerun the once-only acquisition. LigaPokemon now completes independently and is protected by same-day success idempotency; no failed Magic run replaces its last-good snapshot or crosswalk.
 
 ## Activation Evidence
 

@@ -35,3 +35,10 @@ Temporary access ends at expiry or event closure and can be revoked immediately.
 - Active and redeemed access rows always retain the public worker login-link copy control.
 - An active row whose code is no longer available locally now offers a two-step `Replace lost code` action. Confirmation rotates the server hash, invalidates the old code immediately, preserves access scope and expiry, returns the new code once, and records a secret-free audit event.
 - Redeemed, expired, revoked, event-closed, malformed, or unauthorized browser-session values are removed and can never be recovered from the server.
+
+## 2026-08-04 Worker Session Continuity
+
+- Reopening the stable worker link in the same browser now resumes a valid redeemed session instead of asking for its already-consumed code.
+- Worker cookies persist only through the remaining server-issued session duration, with both absolute and relative browser expiry controls.
+- Every resume revalidates the hashed SQLite session, grant state, expiry, revocation, event state, and entitlements before redirecting to the first assigned module.
+- Codes remain single-use; expiry, logout, owner revocation, and event closure continue to fail closed at the worker login page.

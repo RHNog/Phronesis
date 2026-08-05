@@ -33,3 +33,9 @@ The amendment removes only the unrelated Event Ledger dependency from Artwork Re
 Verdict: `IMPLEMENTATION CONFORMS — PRODUCT REVIEW READY`.
 
 Plaintext remains unrecoverable from server storage. Ephemeral browser retention is gated by successful owner-only reconciliation and cleared when server truth is no longer active. Lost-code replacement is owner-confirmed, active-only, race-safe against event closure, immediately invalidates the old hash, and records no secret. The stable public link remains accessible without weakening worker authorization. Full 386/386 tests and all static/build/live gates pass. This same-session review is not independent approval.
+
+## 2026-08-04 Timed Session Continuity Review
+
+Verdict: `IMPLEMENTATION CONFORMS — PRODUCT REVIEW READY`.
+
+The correction preserves the code as a one-time bootstrap credential and makes only the random HttpOnly session durable. Resume is server-owned and rechecks the session hash, grant state, scope, expiry, revocation, event state, and entitlements before module landing. Cookie persistence is capped at the server deadline; no plaintext credential becomes recoverable or script-readable. Focused 13/13 tests, TypeScript, lint, build, diff hygiene, and live public/private probes pass. The full restricted-sandbox run is 396/397 solely because loopback binding is denied there; the same gateway test passes outside that sandbox. This same-session review is not independent approval.

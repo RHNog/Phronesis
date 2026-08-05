@@ -894,6 +894,37 @@ test("repository adopts one exact identity and quarantines Textless", () => {
     repository.evidenceFor("magic-en", "mox-normal")?.consumerAverageCentavos,
     11000,
   );
+  assert.equal(
+    repository.evidenceFor("magic-en", "mox-normal")?.sourceProvider,
+    "LigaMagic",
+  );
+  pricing.exec(`
+    CREATE TABLE regional_pokemon_crosswalk(
+      liga_identity_key TEXT PRIMARY KEY,category_id TEXT,sku TEXT,status TEXT
+    );
+    CREATE TABLE regional_pokemon_evidence(
+      liga_identity_key TEXT PRIMARY KEY,card_name TEXT,set_name TEXT,set_code TEXT,
+      collector_number TEXT,variant TEXT,observed_at TEXT,
+      consumer_low_centavos INTEGER,consumer_average_centavos INTEGER,
+      consumer_high_centavos INTEGER,store_buy_low_centavos INTEGER,
+      store_buy_average_centavos INTEGER,store_buy_high_centavos INTEGER
+    );
+    INSERT INTO regional_pokemon_crosswalk VALUES(
+      'pikachu-v','pokemon-en','pikachu-v','MATCHED'
+    );
+    INSERT INTO regional_pokemon_evidence VALUES(
+      'pikachu-v','Pikachu V','Vivid Voltage','VIV','43','Holofoil',
+      '2026-08-05T07:03:05.790Z',3899,4207,NULL,NULL,NULL,NULL
+    );
+  `);
+  const pokemonEvidence = repository.evidenceFor(
+    "pokemon-en",
+    "pikachu-v",
+  );
+  assert.equal(pokemonEvidence?.sourceProvider, "LigaPokemon");
+  assert.equal(pokemonEvidence?.editionName, "Vivid Voltage");
+  assert.equal(pokemonEvidence?.consumerLowCentavos, 3899);
+  assert.equal(repository.evidenceFor("onepiece-en", "pikachu-v"), null);
   repository.updateProfile(completeProfile);
   const before = repository
     .listCandidates()

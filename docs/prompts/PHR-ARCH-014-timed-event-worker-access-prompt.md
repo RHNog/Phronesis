@@ -20,6 +20,8 @@ Timed-task amendment (2026-08-03): allow Artwork Review-only codes without an ac
 
 Issued-code continuity amendment (2026-08-03): preserve the latest unused plaintext code only in the authenticated owner tab's `sessionStorage`, reconcile it against owner-only server grant truth after navigation, keep the public login link available in active/redeemed history, and provide audited owner-confirmed rotation for an active unused code that was lost.
 
+Timed-session continuity amendment (2026-08-04): after the code's one successful redemption, preserve the random HttpOnly worker session through the full remaining grant duration. A worker who revisits `/event-access` in the same browser must be server-validated and resumed at the first assigned module rather than being asked for the consumed code again.
+
 ## Required Reading
 
 - `docs/architecture/PHR-ARCH-014-timed-event-worker-access.md`
@@ -34,6 +36,8 @@ Issued-code continuity amendment (2026-08-03): preserve the latest unused plaint
 - Keep identity-required administration APIs permanent-identity-only.
 - Add administration APIs/UI for generation, listing, copying, and revocation.
 - Add mobile-ready `/event-access` redemption and temporary logout.
+- Add a server-owned current-session lookup and make `/event-access` resume a valid worker cookie to its first authorized destination. Invalid, expired, revoked, logged-out, and event-closed cookies must fail closed at code entry.
+- Set both absolute `expires` and bounded `maxAge` cookie attributes from the server-issued session expiry so browser persistence matches the grant duration.
 - For an Artwork Review-only entitlement, create a `TASK` grant with no event dependency. Reject a task grant containing any other module.
 - For any grant containing Vendor Workspace, Event Ledger, Event Flip, or Inventory, require one active event, store `EVENT` scope, and preserve immediate event-closure invalidation.
 - Migrate existing grants additively to `EVENT` scope without changing their event bindings, entitlements, status, expiry, or sessions.
@@ -53,6 +57,7 @@ Issued-code continuity amendment (2026-08-03): preserve the latest unused plaint
 ## Constraints
 
 - Never store or log plaintext codes or session tokens server-side. The only plaintext continuity exception is the latest unused code in the authenticated owner tab's ephemeral `sessionStorage`; never use durable browser storage.
+- Never make the human-readable code reusable to solve session continuity. Resume only the random hashed server session represented by the HttpOnly cookie.
 - Never insert synthetic workers into Better Auth or permanent membership tables.
 - Never grant `ADMINISTRATION` or any `ADMIN` level through event access.
 - Preserve OPTIONAL-mode compatibility on the private owner path. Public gateway ingress must enforce timed event sessions independently; switching the entire private application to `REQUIRED` remains a separate owner-login rollout.
@@ -69,6 +74,7 @@ The grant table owns an explicit scope discriminator. Existing non-null event st
 - Migration tests proving legacy grants remain event-bound.
 - No-event Artwork Review task issuance/redemption/expiry/revocation tests and mixed-scope rejection tests.
 - Route/request authorization integration tests where practical.
+- Session-resume tests covering navigation/reopen success plus expiry, revocation, logout, event closure, and destination selection.
 - TypeScript, lint, full supported suite, production build, and responsive visual verification.
 
 ## Documentation Updates

@@ -234,5 +234,5 @@ export function isStale(snapshotDate: string | null, now = new Date()): boolean 
   if (!snapshotDate) return false;
   const parsed = new Date(snapshotDate.includes("T") ? snapshotDate : `${snapshotDate}T00:00:00Z`);
   const age = now.getTime() - parsed.getTime();
-  return age > pricingLookupConfig.staleAfterDays * 86_400_000;
+  return age > pricingLookupConfig.staleAfterHours * 3_600_000;
 }

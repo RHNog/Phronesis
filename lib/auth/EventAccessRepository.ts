@@ -17,6 +17,11 @@ export type EventAccessGrant = {
   code?: string;
 };
 
+export type EventAccessSession = {
+  expiresAt: string;
+  grant: EventAccessGrant;
+};
+
 function hashSession(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -159,6 +164,27 @@ export class EventAccessRepository {
     const active = row.status === "REDEEMED" && scopeActive && new Date(String(row.expires_at)).getTime() > at.getTime() && new Date(String(row.session_expires_at)).getTime() > at.getTime();
     const allowed = active && assigned !== null && accessSatisfies(assigned, requiredAccess);
     return { allowed, reason: !active ? "UNAUTHENTICATED" : !assigned ? "MODULE_NOT_ASSIGNED" : allowed ? "AUTHORIZED" : "INSUFFICIENT_ACCESS", userId: `event-worker:${row.id}`, workspaceId: String(row.workspace_id), membershipId: null, role: "OPERATOR", module, requiredAccess, assignedAccess: assigned };
+  }
+
+  resumeSession(token: string, at = new Date()): EventAccessSession | null {
+    if (!token || token.length > 128) return null;
+    const row = this.database.prepare(`SELECT g.*, s.id session_id,
+      s.expires_at session_expires_at, e.name event_name, e.status event_status
+      FROM phronesis_event_access_session s
+      JOIN phronesis_event_access_grant g ON g.id=s.grant_id
+      LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id
+      WHERE s.token_hash=? AND s.revoked_at IS NULL`).get(hashSession(token)) as SqlRow | undefined;
+    if (!row) return null;
+    const scopeActive = row.scope_type === "TASK" ||
+      (row.scope_type === "EVENT" && row.event_status === "ACTIVE");
+    const active = row.status === "REDEEMED" && scopeActive &&
+      new Date(String(row.expires_at)).getTime() > at.getTime() &&
+      new Date(String(row.session_expires_at)).getTime() > at.getTime();
+    if (!active) return null;
+    return {
+      expiresAt: String(row.session_expires_at),
+      grant: this.mapGrant(row, at),
+    };
   }
 
   revoke(workspaceId: string, grantId: string, actorUserId: string, at = new Date()): boolean {

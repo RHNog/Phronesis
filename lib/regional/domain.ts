@@ -14,6 +14,7 @@ export type ArbitrageState =
   | "REJECTED";
 
 export type RegionalMarketEvidence = {
+  sourceProvider: "LigaMagic" | "LigaPokemon";
   ligaIdentityKey: string;
   categoryId: string;
   sku: string;

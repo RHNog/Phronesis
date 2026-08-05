@@ -32,12 +32,19 @@ test("new Magic catalogue imports trigger regional reconciliation through the sh
     new URL("../scripts/watch-pricing-catalogues.ts", import.meta.url),
     "utf8",
   );
+  const importer = readFileSync(
+    new URL("../scripts/import-pricing-catalogues.ts", import.meta.url),
+    "utf8",
+  );
   const privateAgent = readFileSync(
     new URL("../ops/launchd/com.phronesis.private-review.plist", import.meta.url),
     "utf8",
   );
-  assert.match(watcher, /verifiedCategories\.has\("magic-en"\)/);
-  assert.match(watcher, /rebuildRegionalCrosswalk\(\{ databasePath \}\)/);
+  assert.match(watcher, /captureCompletedCatalogues/);
+  assert.match(watcher, /pendingCapturedCatalogueCount/);
+  assert.match(watcher, /spawn\(/);
+  assert.match(importer, /verifiedCategories\.has\("magic-en"\)/);
+  assert.match(importer, /rebuildRegionalCrosswalk\(\{ databasePath \}\)/);
   assert.match(privateAgent, /scripts\/start-phronesis\.mjs/);
   assert.match(privateAgent, /\.data\/mobile-review\.sqlite/);
 });

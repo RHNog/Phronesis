@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 import { createSnapshotPurchaseEvaluation } from "../features/vendor/components/SnapshotVendorWorkspace";
 import { groupSearchMatchesByArtwork } from "../lib/pricing/domain";
@@ -128,6 +129,8 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
   assert.match(component, /Selection locked for evaluation/);
   assert.match(component, /Search another card/);
   assert.match(component, /PriceChartingGradedArea/);
+  assert.match(component, /data-combined-pricing-card/);
+  assert.match(component, /TCGplayer \+ Liga pricing/);
   assert.match(component, /Primary reference · TCG Direct Low/);
   assert.match(component, /tcgDirectLowCents/);
   assert.equal(component.match(/<VendorCheckout/g)?.length, 1);
@@ -143,6 +146,8 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
     component.indexOf("Snapshot evidence") <
       component.indexOf("Buying decision"),
   );
+  assert.match(component, /refresh overdue/);
+  assert.match(component, /catalogue.*overdue/);
   assert.match(component, /order-4/);
   assert.match(component, /api\/pricing\/search/);
   assert.match(component, /api\/pricing\/artwork/);
@@ -187,5 +192,75 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
   assert.match(checkout, /TCG Market/);
   assert.match(checkout, /Walk away/);
   assert.doesNotMatch(component, /function OfferFirstSummary/);
-  assert.match(component, /GradingCertificateLookup/);
+  assert.equal(component.match(/<RegionalMarketPanel/g)?.length, 1);
+  assert.equal(component.match(/<PriceChartingGradedArea/g)?.length, 1);
+  assert.ok(
+    component.indexOf("data-combined-pricing-card") <
+      component.indexOf("<PriceChartingGradedArea"),
+  );
+  const buyingDecision = component.slice(
+    component.indexOf('aria-labelledby="vendor-decision-heading"'),
+  );
+  assert.doesNotMatch(buyingDecision, /RegionalMarketPanel/);
+  assert.doesNotMatch(buyingDecision, /GradingCertificateLookup/);
+
+  const grading = readFileSync(
+    new URL(
+      "../features/vendor/components/PriceChartingGradedArea.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(grading, /data-grading-disclosure/);
+  assert.match(grading, /Grading information/);
+  assert.match(grading, /GradingCertificateLookup embedded/);
+  assert.match(grading, /onToggle/);
+  assert.doesNotMatch(grading, /data-grading-disclosure[^>]*open=/);
+});
+
+test("regional evidence visibly preserves its Liga provider provenance", () => {
+  const panel = readFileSync(
+    new URL(
+      "../features/vendor/components/RegionalMarketPanel.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(panel, /evidence\.sourceProvider/);
+  assert.match(panel, /Brazil market · exact match/);
+});
+
+test("the recovered Phronesis identity is used by desktop, mobile, and app icon surfaces", () => {
+  const brand = readFileSync(
+    new URL("../components/ui/PhronesisBrand.tsx", import.meta.url),
+    "utf8",
+  );
+  const sidebar = readFileSync(
+    new URL("../components/ui/Sidebar.tsx", import.meta.url),
+    "utf8",
+  );
+  const mobile = readFileSync(
+    new URL("../components/ui/MobileNavigation.tsx", import.meta.url),
+    "utf8",
+  );
+  const icon = readFileSync(
+    new URL("../app/icon.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(brand, /\/brand\/phronesis-logo\.png/);
+  assert.match(brand, /Phronesis/);
+  assert.match(sidebar, /PhronesisBrand/);
+  assert.match(mobile, /PhronesisBrand compact/);
+  assert.match(icon, /phronesisLogoResponse/);
+  const logo = readFileSync(
+    new URL("../public/brand/phronesis-logo.png", import.meta.url),
+  );
+  assert.equal(
+    createHash("sha256").update(logo).digest("hex"),
+    "29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984",
+  );
+  assert.equal(
+    existsSync(new URL("../app/favicon.ico", import.meta.url)),
+    false,
+  );
 });

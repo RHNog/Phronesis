@@ -1,13 +1,33 @@
 # Project Atlas
 
+## Unified Vendor Pricing And Product Identity
+
+- `PHR-UX-022` composes selected-condition TCGplayer evidence and exact provider-labelled LigaMagic/LigaPokemon evidence inside one primary pricing region. Regional unmatched/quarantined states remain explicit and do not replace TCGplayer data.
+- PriceCharting candidates and the existing certificate lookup occupy one native grading disclosure immediately below raw-card pricing. It is closed by default and remains evidence-only.
+- `PHR-ARCH-010` now has a canonical application asset at `public/brand/phronesis-logo.png`, recovered byte-for-byte from the Product Owner's July 9 raster. The desktop/mobile shell and Next.js icon metadata share that asset; its SHA-256 is `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`.
+
+## Timed Worker Session Continuity
+
+- `PHR-ARCH-014` separates a single-use human code from the random HttpOnly session created at redemption.
+- The session cookie persists only until the server-issued deadline. Reopening `/event-access` validates the hashed SQLite session, grant, scope, expiry, revocation, event state, and entitlements before redirecting to the first assigned module.
+- The stable link never makes the code reusable. Missing, expired, revoked, logged-out, or event-closed sessions return to code entry.
+
+## LigaPokemon Exact Catalogue Reconciliation
+
+- `PHR-API-014` binds only complete LigaPokemon manifests to the English Pokémon TCGplayer catalogue through exact name, bounded set, collector numerator, and finish identity.
+- `regional_pokemon_crosswalk` and `regional_pokemon_evidence` are isolated from the Magic regional tables. Complete source receipts and current Pokémon catalogue state produce deterministic source, pricing, and crosswalk fingerprints.
+- The live 167,912-row snapshot yields 25,200 exact matches and 24,895 two-sided price pairs. Eight source collision rows, 8,474 explicit foreign-market rows, and 2,600 unsupported treatments are quarantined.
+- Regional evidence lookup is provider-aware and fail closed: `magic-en` reads LigaMagic, `pokemon-en` reads LigaPokemon, and unsupported games receive no substitute. Vendor Workspace shows provider-labelled exact evidence; Arbitrage still reads only the accepted Magic crosswalk until a separate Product Owner candidate-exposure decision.
+
 ## Arbitrage Data Continuity And Liga Recurrence
 
 - `PHR-TECH-012` makes `.data/mobile-review.sqlite` the semantic operational pricing database unless a test/operator provides an explicit override. Runtime, observers, imports, artwork maintenance, and provider evidence no longer invent separate fallback files.
-- The private runtime uses `scripts/start-phronesis.mjs`, supervising catalogue observation with Next.js. A newly imported Magic checkpoint rebuilds the last complete LigaMagic crosswalk exactly once.
+- The private runtime uses `scripts/start-phronesis.mjs`, supervising catalogue observation with Next.js. The observer hashes and archives completed files immediately with atomic receipts; a separate child imports and reconciles so large categories cannot pause capture.
+- The August 5 12:21 run is active for all five games. Six-hour cadence freshness uses an eight-hour grace window and visibly marks overdue last-good evidence.
 - `PHR-API-013` generalizes the authenticated Liga export boundary without sharing profiles: LigaMagic and LigaPokemon keep separate hosts, Chrome profiles, debug ports, configuration, runs, hashes, receipts, and SQLite namespaces.
 - Daily recurrence is sequential, overlap-safe, same-day idempotent, and status-bearing. Complete conflict-free LigaMagic snapshots rebuild the Magic crosswalk; one provider failure never deletes last-good evidence from another.
-- LigaPokemon's official authenticated export route is confirmed, but its controls and bytes remain owner-authenticated evidence. Full acquisition requires a successful pilot and regional promotion remains deferred.
-- The external TCG catalogue acquisition tool is a separate owner. Its intended 00:00/06:00/12:00/18:00 schedule is currently inactive; Phronesis can observe/import new checkpoints but cannot make stale upstream files current.
+- LigaPokemon's official authenticated export route is confirmed, but its controls and bytes remain owner-authenticated evidence. Full acquisition requires a successful pilot; `PHR-API-014` now owns exact regional reconciliation while candidate exposure remains deferred.
+- The external TCG catalogue acquisition tool remains a separate owner. Its 00:00/06:00/12:00/18:00 schedule is active; Phronesis observes and durably captures its completed checkpoints without mutating that provider workflow.
 
 ## GitHub Handoff Continuity
 
@@ -111,7 +131,7 @@
 
 - `PHR-UX-025` centralizes Phronesis copy actions behind an awaited modern Clipboard API, a direct-tap compatibility fallback, and an explicit selectable manual recovery field. Current worker-code, public-link, and activation-link controls never fail silently or log/persist copied values.
 - `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.
-- `PHR-ARCH-014` permits account-free timed workers to receive only explicit operational modules. `ARTWORK_REVIEW` is independent from `ADMINISTRATION`: worker `OPERATE` covers manual candidate/gallery decisions, while refresh and assisted recovery remain permanent-identity `ADMIN` operations. Artwork Review alone creates an event-independent timed `TASK`; any transactional module forces active-event `EVENT` scope. Browser-only workers enter through an isolated public Funnel on port 10000 and a loopback gateway; owner Settings/permanent authentication are transport-blocked, public authorization accepts only valid timed sessions, and private owner Serve remains tailnet-only on 9443.
+- `PHR-ARCH-014` permits account-free timed workers to receive only explicit operational modules. `ARTWORK_REVIEW` is independent from `ADMINISTRATION`: worker `OPERATE` covers manual candidate/gallery decisions, while refresh and assisted recovery remain permanent-identity `ADMIN` operations. Artwork Review alone creates an event-independent timed `TASK`; any transactional module forces active-event `EVENT` scope. Browser-only workers enter through an isolated public Funnel on port 10000 and a loopback gateway; owner Settings/permanent authentication are transport-blocked, public authorization accepts only valid timed sessions, valid cookies resume for their server-bounded duration, and private owner Serve remains tailnet-only on 9443.
 - `AuthorizationRepository` owns the single workspace, memberships, explicit entitlements, local invitations, and append-only audit records in ignored SQLite storage.
 - Secure page, Route Handler, and mutation checks live in the server Data Access Layer. Next.js Proxy and filtered navigation are optimistic/user-experience controls only.
 - Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Required mode fails closed unless base URL, secret, GitHub credentials, migration, and owner invitation are ready.

@@ -1,5 +1,31 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Unified Pricing Hierarchy And Phronesis Asset Recovery
+
+The Product Owner directed Vendor Workspace to show Liga prices alongside TCGplayer prices and place grading in a single expandable card beneath that pricing hierarchy. The same direction requested recovery of the Phronesis logos/icons developed several weeks earlier. CTO assigned the bounded increment to existing features `PHR-UX-022` and `PHR-ARCH-010` under `PHR-STRUCT-20260805-002`; price math, regional identity rules, provider acquisition, arbitrage exposure, and transactions remained outside scope.
+
+Local and Git-history recovery found the July Brand Book and the Product Owner's original July 9 `Phronesis Logo.png`. The 1254×1254 raster was verified at SHA-256 `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984` and restored byte-for-byte to the repository. No network substitute or redraw was used.
+
+Implementation now places selected-condition TCGplayer data, exact LigaMagic/LigaPokemon evidence, freshness/provenance, and Track price inside one primary card. One collapsed grading disclosure immediately follows and owns PriceCharting candidates plus certificate lookup. Desktop/mobile shell and Next.js icon surfaces use the recovered identity. Full 403/403 tests, TypeScript, lint, build, diff hygiene, live exact Pikachu interaction, icon hash, clean console, and 390px zero-overflow review pass. Same-session Chief Architect conformance passes; Product Review is ready, but Product Owner acceptance and commit/push remain pending.
+
+## 2026-08-05 — Regional Evidence And Catalogue Capture Continuity
+
+The Product Owner directed Phronesis to immediately correct two live defects: LigaMagic/LigaPokemon prices were absent from Vendor Workspace, and Pokémon still showed an August 4 snapshot despite completed August 5 catalogue downloads. The request authorized implementation and private deployment under `PHR-API-014` and `PHR-TECH-012`.
+
+Diagnosis proved that exact regional data existed—131,883 matched Magic identities and 25,200 matched Pokémon identities—but `/api/regional/evidence` queried only the legacy Magic tables. The provider-aware contract now routes `magic-en` exclusively to LigaMagic and `pokemon-en` exclusively to LigaPokemon, returns only exact `MATCHED` evidence, identifies its source provider, and fails closed for unsupported categories or missing tables. Vendor Workspace displays that provenance without altering TCGplayer snapshot pricing. The exact Pikachu V `043/185` from the report now returns LigaPokemon consumer-low R$38.99 and average R$42.07.
+
+The snapshot failure was a process-boundary race. The observer started importing 798,798 Magic rows and rebuilding its crosswalk while the upstream tool completed four later CSVs and deleted every transient file. Phronesis now captures each completed file into a hash-bound archive plus atomic durable receipt and drains those receipts in a separate child process. Interrupted imports recover idempotently, corrupted archives fail closed, and a missing earlier file cannot block later capture. Freshness now reflects the six-hour schedule with an eight-hour grace window.
+
+The deleted August 5 files were safely recovered read-only from the Pricing Update Tool's latest PostgreSQL staging tables, using the exact logged completion timestamps and verified row counts. Pokémon, One Piece, Riftbound, and Lorcana imported successfully, Pokémon reconciliation retained its deterministic fingerprint, and all five category checkpoints now identify the August 5 12:21 run as `CURRENT` and `stale: false`. Focused 54/54 and full 402/402 tests, TypeScript, lint, production build, diff hygiene, live provider endpoints, and launch-managed runtime health pass. CTO accepts the bounded Vendor evidence and capture-continuity increment; Pokémon Arbitrage remains separately gated.
+
+## 2026-08-04 — LigaPokemon Catalogue Reconciliation
+
+The Product Owner directed Phronesis to reconcile the completed LigaPokemon acquisition. `PHR-STRUCT-20260804-001` assigned `PHR-API-014` to an exact, isolated cross-market identity lane. The accepted scope deliberately excluded Pokémon Arbitrage exposure: first prove catalogue identity and evidence coverage, preserve Magic, and retain every unsupported or ambiguous row.
+
+Phronesis now binds only a complete conflict-free LigaPokemon manifest to its named SQLite snapshot, verifies the declared unique-identity count, and matches English Near Mint singles only through normalized exact card name, bounded explicit set equivalence, collector numerator, and Normal/Holofoil/Reverse Holofoil finish. Explicit foreign-market labels, unsupported treatments, multiple targets, and all source-to-target collision groups are quarantined. Recurring LigaPokemon snapshots and verified Pokémon TCGplayer catalogue checkpoints rebuild the isolated tables automatically.
+
+Two live builds over snapshot `dry-run-20260804T041909649Z` produced the same fingerprint `295be8d699da35d13b8df82a59a6d46ae9a51fd6f337e6c60b3a7f3259c91d9a`: 25,200 exact accepted identities, 25,034 with LigaPokemon consumer-low, 25,002 with TCGplayer Near Mint, and 24,884 with both. Eight punctuation-duplicate Professor's Research rows remain quarantined across four targets; 8,474 explicit foreign-market rows and 2,600 unsupported treatments also remain inactive. Direct audit found zero accepted target duplicates and zero missing targets. Magic remains 329,301 rows / 131,885 matches with its prior fingerprint. Same-session Chief Architect conformance passes; Product Owner acceptance is still required before Pokémon enters Arbitrage.
+
 ## 2026-08-03 — GitHub Handoff Continuity Repair
 
 The Product Owner reported repeated GitHub errors after implementing the Handoff workflow and authorized a repair. Hosted logs and a clean-checkout reproduction established two separate causes: the workflow tried to prepare Handoff state before installing the locked Node dependencies required by the repository validators, and the committed Handoff seal still represented an earlier implementation while the public event-worker gateway remained dirty locally.
@@ -807,8 +833,30 @@ Implemented and live for Product Owner phone review. Focused 16/16 and full 386/
 - Attempted all 18 collections. Lote 10 repeatedly advertised 9,704 cards but exported 9,700; two independent files were byte-identical. Phronesis retained the raw evidence, classified `SOURCE_COUNT_MISMATCH`, and did not create or promote an incomplete snapshot.
 - The Product Owner authorized Lote 10's 9,700-card export as authoritative. Phronesis encoded an exact, provider/label/count-specific rule that retains 9,704 as source provenance and does not create a general tolerance.
 - The next full run passed Lote 10 and reached Lote 4, which repeatedly advertised 9,870 cards but exported 9,868 in byte-identical files. No authority was inferred for this second mismatch; the complete snapshot remains blocked.
+- The Product Owner then authorized the exact 9,868-card Lote 4 export while retaining the 9,870 source claim. Phronesis encoded the provider/label/count-specific authority and did not generalize it.
+- Two full reruns passed Lote 10 and Lote 4, then stopped at Lote RF 3, which advertised 9,983 but repeat-identically exported 9,982 cards. Both 1,256,589-byte files share SHA-256 `4c7328dc25b05856966500bbd22a0607f6aa462c6d36e02e476357bf2f6a0dec`; no incomplete snapshot was promoted.
+- The Product Owner authorized the exact 9,982-card Lote RF 3 export while retaining the 9,983 source claim. The next full run passed all three authorities and reached collection 18 of 18, Lote RF 6, which advertised 7,681 but exported 7,679. A collection-only repeat was byte-identical at 1,007,852 bytes and SHA-256 `c0866cb2963289cbe5fc2a8478ab779ac1f4f5406299b3cde21df504bab628f8`; no incomplete snapshot was promoted.
+- The Product Owner authorized the exact 7,679-card Lote RF 6 export while retaining the 7,681 source claim. Full snapshot `dry-run-20260804T041632935Z` then completed all 18 collections with 167,912 authoritative rows/cards, 167,912 unique identities, and zero duplicate conflicts. A scheduled-equivalent rerun independently recorded LigaPokemon `SUCCESS`; overall orchestration remains partial only because LigaMagic requires reauthentication.
 - Confirmed the external TCG acquisition dashboard is down and its enabled four-daily schedule has not completed a catalogue after 2026-08-01. This is an upstream operational dependency rather than a Phronesis import defect.
 
 ### Acceptance State
 
-Implementation and same-session conformance are Product Review ready. Full repository gates pass. The private supervisor is consolidated to one wrapper/observer/Next listener and returns 50 ranked identity-verified rows instead of zero. The 03:00 agent is loaded; LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon is authenticated and pilot-verified; Lote 10 now carries explicit Product Owner export authority, while full recurrence remains fail-closed on the separately unauthorized Lote 4 mismatch. The external TCG scheduler remains.
+Implementation and same-session conformance are Product Review ready. Full repository gates pass. The private supervisor is consolidated to one wrapper/observer/Next listener and returns 50 ranked identity-verified rows instead of zero. The 03:00 agent is loaded; LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon is authenticated, pilot-verified, and complete at 167,912 unique identities with durable provider `SUCCESS`. The external TCG scheduler remains stale, and Pokémon regional promotion remains separately gated.
+
+## 2026-08-04 — Timed Worker Session Continuity
+
+### User Intent
+
+- Keep temporary worker access valid after the first successful login for the complete configured duration.
+- Stop the stable worker link from asking for an already-consumed code while the session is still active.
+
+### Decision And Implementation
+
+- Preserved the human-readable code as a single-use bootstrap credential.
+- Made the random HttpOnly session the durable credential through the remaining grant deadline by setting bounded `maxAge` and absolute `expires`.
+- Added a server-owned `/event-access` resume path that validates SQLite session/grant truth, scope, expiry, revocation, event state, and entitlements before module redirect.
+- Diagnosed the live record without reading or storing credentials: the grant and session were unrevoked and unexpired; the login page had ignored the current session.
+
+### Acceptance State
+
+Implemented and live for Product Owner review. Focused 13/13 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, LaunchAgent restart, private/public 200 probes, public Settings denial, and public stylesheet delivery pass. The restricted full suite is 396/397 only because its loopback gateway fixture receives sandbox `EPERM`; that same test passes in the unrestricted focused suite. No commit or push was requested.

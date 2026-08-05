@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import PhronesisBrand from "@/components/ui/PhronesisBrand";
 import {
   useCallback,
   useEffect,
@@ -122,19 +123,7 @@ export default function MobileNavigation({
         className="flex h-11 w-11 flex-none items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-200 transition hover:border-zinc-700 hover:text-white focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300 md:hidden"
         onClick={() => setIsOpen(true)}
       >
-        <svg
-          aria-hidden="true"
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M4 7h16M4 12h16M4 17h16"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="2"
-          />
-        </svg>
+        <PhronesisBrand compact />
       </button>
 
       {isOpen ? (
@@ -155,16 +144,8 @@ export default function MobileNavigation({
             className="flex h-full w-[min(21rem,calc(100vw-3rem))] flex-col border-r border-zinc-800 bg-zinc-950 shadow-2xl shadow-black"
           >
             <div className="flex min-h-16 items-center justify-between border-b border-zinc-800 px-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300">
-                  Workspace
-                </p>
-                <h2
-                  id="mobile-navigation-title"
-                  className="text-lg font-semibold tracking-tight text-white"
-                >
-                  Phronesis
-                </h2>
+              <div id="mobile-navigation-title">
+                <PhronesisBrand />
               </div>
               <button
                 ref={closeRef}

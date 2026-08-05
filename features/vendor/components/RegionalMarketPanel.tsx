@@ -67,7 +67,7 @@ export default function RegionalMarketPanel({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-            Brazil market · exact match
+            {evidence.sourceProvider} · Brazil market · exact match
           </p>
           <p className="mt-1 text-xs text-zinc-500">
             Observed {new Date(evidence.observedAt).toLocaleString()}

@@ -109,7 +109,7 @@ test("same-day completion and messages are deterministic and sanitized", () => {
   assert.equal(classifyAcquisitionFailure("download timed out"), "FAILED");
 });
 
-test("LigaPokemon Lote 10 uses only the exact Product Owner export authority", () => {
+test("LigaPokemon uses only the exact Product Owner export authorities", () => {
   assert.deepEqual(
     resolveLigaQuantityAuthority({
       providerId: "ligapokemon",
@@ -119,6 +119,42 @@ test("LigaPokemon Lote 10 uses only the exact Product Owner export authority", (
     {
       sourceAdvertisedCards: 9_704,
       authoritativeCards: 9_700,
+      quantityAuthority: "PRODUCT_OWNER_EXPORT",
+    },
+  );
+  assert.deepEqual(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote RF 6 (7.681 cards)",
+      sourceAdvertisedCards: 7_681,
+    }),
+    {
+      sourceAdvertisedCards: 7_681,
+      authoritativeCards: 7_679,
+      quantityAuthority: "PRODUCT_OWNER_EXPORT",
+    },
+  );
+  assert.deepEqual(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote RF 3 (9.983 cards)",
+      sourceAdvertisedCards: 9_983,
+    }),
+    {
+      sourceAdvertisedCards: 9_983,
+      authoritativeCards: 9_982,
+      quantityAuthority: "PRODUCT_OWNER_EXPORT",
+    },
+  );
+  assert.deepEqual(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote 4 (9.870 cards)",
+      sourceAdvertisedCards: 9_870,
+    }),
+    {
+      sourceAdvertisedCards: 9_870,
+      authoritativeCards: 9_868,
       quantityAuthority: "PRODUCT_OWNER_EXPORT",
     },
   );
@@ -135,6 +171,38 @@ test("LigaPokemon Lote 10 uses only the exact Product Owner export authority", (
       providerId: "ligamagic",
       collectionLabel: "Lote 10 (9.704 cards)",
       sourceAdvertisedCards: 9_704,
+    }).quantityAuthority,
+    "SOURCE_LABEL",
+  );
+  assert.equal(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote 4 (9.871 cards)",
+      sourceAdvertisedCards: 9_871,
+    }).quantityAuthority,
+    "SOURCE_LABEL",
+  );
+  assert.equal(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote 4 (9.870 cards)",
+      sourceAdvertisedCards: 9_869,
+    }).quantityAuthority,
+    "SOURCE_LABEL",
+  );
+  assert.equal(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote RF 3 (9.983 cards)",
+      sourceAdvertisedCards: 9_982,
+    }).quantityAuthority,
+    "SOURCE_LABEL",
+  );
+  assert.equal(
+    resolveLigaQuantityAuthority({
+      providerId: "ligapokemon",
+      collectionLabel: "Lote RF 6 (7.681 cards)",
+      sourceAdvertisedCards: 7_679,
     }).quantityAuthority,
     "SOURCE_LABEL",
   );
