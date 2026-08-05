@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-05T02:19:51Z","generation_id":"44847155edb90e5d0edf","head":"1fed5f940b0c5cdd493d31c123d22b935ef306c6","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-05T03:38:14Z","generation_id":"9f1239ea1776fa84a7a0","head":"4abfaccc77edae57b4780b4556609016b7e8cca1","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -17,9 +17,9 @@ Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capa
 
 ## State left behind
 
-- Branch `codex/phr-local-card-recognition-20260804` at `1fed5f940b0c5cdd493d31c123d22b935ef306c6`.
+- Branch `codex/phr-local-card-recognition-20260804` at `4abfaccc77edae57b4780b4556609016b7e8cca1`.
 - Implementation worktree is clean.
-- Continuity generation `44847155edb90e5d0edf` was prepared successfully.
+- Continuity generation `9f1239ea1776fa84a7a0` was prepared successfully.
 
 ## Remaining work
 

@@ -15,11 +15,11 @@
   ],
   "blockers": "- Software implementation is complete and verified.\n- Final physical acceptance is blocked until the fi-8170 is connected and the Product Owner supplies 2\u20134 low-value test cards.",
   "branch": "codex/phr-local-card-recognition-20260804",
-  "commit": "1fed5f940b0c5cdd493d31c123d22b935ef306c6",
+  "commit": "4abfaccc77edae57b4780b4556609016b7e8cca1",
   "completed_work": "- Read the approved product brief and inspected Phronesis, TCGPLAYER Tools, the sample scan corpus, installed SDK/driver, and target hardware state.\n- Preserved the dirty canonical Phronesis worktree by creating an isolated assignment worktree and branch from its current HEAD.\n- Selected Controlled Lane and created six ordered slices with permanent `PHR-*` Feature IDs.\n- Verified the installed macOS SDK's ImageCaptureCore scanner discovery, exclusive session, feeder capability, file transfer, completion, and cancellation interfaces.\n- Implemented the standalone Swift probe with no Phronesis runtime or external-system mutation.\n- Passed Swift build, formatter lint, 18/18 tests, disconnected enumeration and not-found checks, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review.\n- Recorded the Engineer report and same-session Chief Architect software conformance.",
   "exact_next_action": "Connect the fi-8170, supply 2\u20134 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.",
-  "generated_at": "2026-08-05T02:19:51Z",
-  "generation_id": "44847155edb90e5d0edf",
+  "generated_at": "2026-08-05T03:38:14Z",
+  "generation_id": "9f1239ea1776fa84a7a0",
   "important_decisions": "docs/DECISIONS.md",
   "objective": "Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capability probe for the approved `PHR-ARCH-015` local card-acquisition and recognition program.",
   "remaining_work": "- Connect the fi-8170 and run the supervised low-value physical gate.\n- Return the physical evidence through final Chief Architect review and Product Review.",
@@ -27,7 +27,7 @@
   "resume_instruction": "Acquire Handoff",
   "schema_version": "1",
   "validation": {
-    "completed_at": "2026-08-05T02:19:51Z",
+    "completed_at": "2026-08-05T03:38:14Z",
     "report": "docs/ai/reports/validation-latest.json",
     "status": "passed"
   },
