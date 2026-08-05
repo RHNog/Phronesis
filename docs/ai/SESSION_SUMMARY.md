@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-05T14:19:37Z","generation_id":"8ea083c7a3f32a4f8435","head":"74f530b384a70285f6aa3e81db73b6107095a053","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-05T14:25:56Z","generation_id":"1bbb2c3636b40bea5766","head":"57423ef0a40c35a08b4e88691ccf44fb84ec4d92","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -16,9 +16,9 @@ Implement and verify the benchmark-only `PHR-UX-026` automatic binder-region det
 
 ## State left behind
 
-- Branch `codex/phr-local-card-recognition-20260804` at `74f530b384a70285f6aa3e81db73b6107095a053`.
+- Branch `codex/phr-local-card-recognition-20260804` at `57423ef0a40c35a08b4e88691ccf44fb84ec4d92`.
 - Implementation worktree is clean.
-- Continuity generation `8ea083c7a3f32a4f8435` was prepared successfully.
+- Continuity generation `1bbb2c3636b40bea5766` was prepared successfully.
 
 ## Remaining work
 

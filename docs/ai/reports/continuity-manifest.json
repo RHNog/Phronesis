@@ -1,19 +1,19 @@
 {
   "artifacts": {
-    "docs/ai/BOOTSTRAP.md": "5e470d3f844639d273eafa897c53c99bab5ad5e7726dbf08a111149e90feff41",
-    "docs/ai/CURRENT_CONTEXT.md": "a510df0474340498f990b9171ab03ad879edae85ff24289d2e185a350c3327f7",
-    "docs/ai/HANDOFF.md": "0aec6667beebfae0dbcfc52e6f6d2196aa9409f40ebeedd94df226f7e91abbc4",
-    "docs/ai/SESSION_SUMMARY.md": "c89439f2ffa25847948cb592ae50b3f08a82305e58cb537c46c2863dc0a6140b",
-    "docs/ai/WORK_QUEUE.md": "fef680e882db8bda4e9d9f77078306280caade04696101ba70c2781afd523538",
-    "docs/ai/reports/bootstrap-latest.json": "4267b359a9020dc54087390cb0bd93058ca840fab1505803b2982598603664a4",
-    "docs/ai/reports/validation-latest.json": "1e67536f71529b3f1fb9f4b38f3ee406d6eaba13ffaa76ad5c06c950c1f7cecc",
-    "docs/ai/reports/validation-latest.md": "cfd2a1386f4fea9cd6ff83bb6ad2d33ba734564a1b8c3f5cdbd12111f4f4d25e"
+    "docs/ai/BOOTSTRAP.md": "3d69073cf709c3ad8c1c36c175b1b2ba6895e83a1a4f12d8fe1f621c4ff46a56",
+    "docs/ai/CURRENT_CONTEXT.md": "14dcfb0893996f7f9c9fcb7d9db939fb71afff90f2df64c3d40425d85944b079",
+    "docs/ai/HANDOFF.md": "fd9290d56f309475665c422a1a51fd594988e254331fa52bf0899998d4590c8a",
+    "docs/ai/SESSION_SUMMARY.md": "ce4df52b186046236908bdd63a9e555c336c9852ded8348af95ce7b1a916589b",
+    "docs/ai/WORK_QUEUE.md": "bcd5a0f2875b3b451718711fac4d0162b3d493a24e4d328e5e64bc4679434dd7",
+    "docs/ai/reports/bootstrap-latest.json": "afbe0cbd34b629d2b89c48b54ded8e3b6a4d55da7208dd1ec7471b5b6b26d673",
+    "docs/ai/reports/validation-latest.json": "ae3747ad210967b34c5a677b8136b7ce5a9eeb4475acc6640d4d67429d10b9c4",
+    "docs/ai/reports/validation-latest.md": "0274d81a83724ded8d55de027b7d66a418a239fd87f972b6f96d70cf4c972c85"
   },
   "branch": "codex/phr-local-card-recognition-20260804",
   "config_digest": "24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af",
-  "generated_at": "2026-08-05T14:19:37Z",
-  "generation_id": "8ea083c7a3f32a4f8435",
-  "head": "74f530b384a70285f6aa3e81db73b6107095a053",
+  "generated_at": "2026-08-05T14:25:56Z",
+  "generation_id": "1bbb2c3636b40bea5766",
+  "head": "57423ef0a40c35a08b4e88691ccf44fb84ec4d92",
   "schema_version": "1",
   "worktree_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 }
