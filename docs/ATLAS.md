@@ -9,7 +9,7 @@
 - `PHR-TECH-014` now provides immutable local evidence, deterministic corpus-bundle construction, split-leakage and recognition-use approval gates, corpus activation/rollback, Apple Vision evidence, read-only catalogue retrieval, sealed multi-metric benchmark qualification, candidate review, and abstention. Real licensed artwork indexing and auto-accept remain gated.
 - `PHR-WORKFLOW-016` provides authenticated batch-folder intake, evidence review, operator material confirmation, server-verified exact-condition price binding, buying-preset binding, and local offer drafts without purchase or inventory mutation.
 - `PHR-API-015` exports a marketplace-neutral hash-bound recognized asset and pure TCGplayer/Liga draft rows. TCGPLAYER Tools, LigaMagic, and LigaPokémon remain independent consumers; none receives publication authority from recognition.
-- `PHR-UX-026` provides the normalized multi-region and append-only correction foundation. Automatic binder segmentation remains benchmark-gated.
+- `PHR-UX-026` provides normalized multi-region correction plus versioned local Vision region suggestions, top-left geometry, deterministic reading order, duplicate/container suppression, strict worker validation, and a sealed IoU benchmark. Suggestions remain outside active revisions; real binder qualification is pending.
 
 ## Arbitrage Data Continuity And Liga Recurrence
 

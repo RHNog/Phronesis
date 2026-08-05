@@ -13,6 +13,7 @@ import { SqliteRecognitionCatalogue } from "@/lib/cardRecognition/sqliteCatalogu
 import { DatabaseSync } from "node:sqlite";
 import { assessCorpusReadiness, buildCorpusBundle, corpusObjectPath, verifyCorpusManifest, type CorpusManifest } from "@/lib/cardRecognition/corpus";
 import { runCalibration } from "@/lib/cardRecognition/calibration";
+import { benchmarkRegionDetection, regionIntersectionOverUnion, validateRegionDetection, type RegionDetectionResult } from "@/lib/cardRecognition/regionDetection";
 
 function candidate(score: number, id = "printing-1"): RecognitionCandidate {
   return { canonicalPrintingId: id, canonicalVariantId: null, categoryId: "1", sku: "sku-1", rank: 1, score, evidence: [] };
@@ -36,6 +37,61 @@ function envelope(): RecognizedAssetEnvelopeV1 {
 test("region model defaults to one full frame and rejects invalid corrections", () => {
   assert.deepEqual(fullFrameRegion("frame-1").geometry, { x: 0, y: 0, width: 1, height: 1, rotationDegrees: 0 });
   assert.throws(() => validateRegionGeometry({ x: 0.8, y: 0, width: 0.3, height: 1, rotationDegrees: 0 }), /bounds/);
+});
+
+function regionPrediction(regions: Array<{ x: number; y: number; width: number; height: number; confidence?: number }>): RegionDetectionResult {
+  return { schemaVersion: "phronesis.vision-regions.v1", coordinateOrigin: "TOP_LEFT", regions: regions.map(({ confidence = 0.9, ...geometry }, order) => ({ order, confidence, geometry: { ...geometry, rotationDegrees: 0 } })) };
+}
+
+test("region suggestions require top-left deterministic order and reject duplicates", () => {
+  const valid = regionPrediction([{ x: 0.1, y: 0.1, width: 0.2, height: 0.3 }, { x: 0.4, y: 0.1, width: 0.2, height: 0.3 }]);
+  assert.doesNotThrow(() => validateRegionDetection(valid));
+  assert.equal(regionIntersectionOverUnion(valid.regions[0].geometry, valid.regions[0].geometry), 1);
+  assert.throws(() => validateRegionDetection({ ...valid, coordinateOrigin: "BOTTOM_LEFT" as "TOP_LEFT" }), /contract/);
+  assert.throws(() => validateRegionDetection({ ...valid, regions: [{ ...valid.regions[0], order: 1 }] }), /contiguous/);
+  assert.throws(() => validateRegionDetection(regionPrediction([{ x: 0.1, y: 0.1, width: 0.2, height: 0.3 }, { x: 0.105, y: 0.105, width: 0.2, height: 0.3 }])), /duplicates/);
+});
+
+test("synthetic region cases validate contracts but cannot qualify production segmentation", () => {
+  const geometry = { x: 0.1, y: 0.1, width: 0.2, height: 0.3, rotationDegrees: 0 as const };
+  const input = { schemaVersion: "phronesis.region-benchmark.v1" as const, benchmarkVersion: "regions-v1", createdAt: "2026-08-05T02:00:00.000Z", qualification: { minimumRealHoldoutFrames: 1, minimumPerStratum: 1 }, cases: [{ caseId: "synthetic-1", split: "HOLDOUT" as const, sourceKind: "SYNTHETIC" as const, sourceFrameSha256: "c".repeat(64), labelSha256: "d".repeat(64), stratum: "synthetic-grid", expectedRegions: [geometry], prediction: regionPrediction([geometry]), latencyMs: 10 }] };
+  const first = benchmarkRegionDetection(input);
+  const second = benchmarkRegionDetection(structuredClone(input));
+  assert.equal(first.reportSha256, second.reportSha256);
+  assert.equal(first.syntheticCaseCount, 1);
+  assert.equal(first.realHoldoutFrameCount, 0);
+  assert.equal(first.status, "NOT_QUALIFIED");
+});
+
+test("region benchmark matches each label once and reports underpowered real evidence", () => {
+  const first = { x: 0.1, y: 0.1, width: 0.2, height: 0.3, rotationDegrees: 0 as const };
+  const second = { x: 0.4, y: 0.1, width: 0.2, height: 0.3, rotationDegrees: 0 as const };
+  const report = benchmarkRegionDetection({ schemaVersion: "phronesis.region-benchmark.v1", benchmarkVersion: "regions-v1", createdAt: "2026-08-05T02:00:00.000Z", cases: [{ caseId: "real-1", split: "HOLDOUT", sourceKind: "LABELED_REAL", sourceFrameSha256: "d".repeat(64), labelSha256: "e".repeat(64), labelApproval: { approvedBy: "test-owner", approvedAt: "2026-08-05T00:00:00.000Z", scope: "synthetic unit-test declaration" }, stratum: "nine-pocket", expectedRegions: [first, second], prediction: regionPrediction([first]), latencyMs: 20 }] });
+  assert.equal(report.truePositives, 1);
+  assert.equal(report.falsePositives, 0);
+  assert.equal(report.falseNegatives, 1);
+  assert.equal(report.precision, 1);
+  assert.equal(report.recall, 0.5);
+  assert.equal(report.exactCountRate, 0);
+  assert.equal(report.status, "NOT_QUALIFIED");
+});
+
+test("region benchmark validates thresholds and can qualify only labeled real evidence", () => {
+  const geometry = { x: 0.1, y: 0.1, width: 0.2, height: 0.3, rotationDegrees: 0 as const };
+  const base = { schemaVersion: "phronesis.region-benchmark.v1" as const, benchmarkVersion: "regions-v1", createdAt: "2026-08-05T02:00:00.000Z", cases: [{ caseId: "real-1", split: "HOLDOUT" as const, sourceKind: "LABELED_REAL" as const, sourceFrameSha256: "e".repeat(64), labelSha256: "f".repeat(64), labelApproval: { approvedBy: "test-owner", approvedAt: "2026-08-05T00:00:00.000Z", scope: "synthetic unit-test declaration" }, stratum: "nine-pocket", expectedRegions: [geometry], prediction: regionPrediction([geometry]), latencyMs: 20 }] };
+  assert.throws(() => benchmarkRegionDetection({ ...base, qualification: { minimumRealHoldoutFrames: 0 } }), /positive integer/);
+  const report = benchmarkRegionDetection({ ...base, qualification: { minimumRealHoldoutFrames: 1, minimumPerStratum: 1, requiredPrecision: 1, requiredRecall: 1, requiredExactCountRate: 1, maximumP95LatencyMs: 20 } });
+  assert.equal(report.status, "QUALIFIED");
+  assert.equal(report.meanMatchedIou, 1);
+});
+
+test("real region evidence requires approval and cannot reuse a source frame", () => {
+  const geometry = { x: 0.1, y: 0.1, width: 0.2, height: 0.3, rotationDegrees: 0 as const };
+  const item = { caseId: "real-1", split: "HOLDOUT" as const, sourceKind: "LABELED_REAL" as const, sourceFrameSha256: "1".repeat(64), labelSha256: "2".repeat(64), stratum: "nine-pocket", expectedRegions: [geometry], prediction: regionPrediction([geometry]), latencyMs: 20 };
+  const base = { schemaVersion: "phronesis.region-benchmark.v1" as const, benchmarkVersion: "regions-v1", createdAt: "2026-08-05T02:00:00.000Z" };
+  assert.throws(() => benchmarkRegionDetection({ ...base, cases: [item] }), /approval evidence/);
+  const approved = { ...item, labelApproval: { approvedBy: "test-owner", approvedAt: "2026-08-05T00:00:00.000Z", scope: "synthetic unit-test declaration" } };
+  assert.throws(() => benchmarkRegionDetection({ ...base, cases: [approved, { ...approved, caseId: "real-2", labelSha256: "3".repeat(64) }] }), /reused/);
 });
 
 test("review-only policy never auto-accepts and safely abstains below threshold", () => {

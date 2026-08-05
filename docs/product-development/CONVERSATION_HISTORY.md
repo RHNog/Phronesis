@@ -1,5 +1,21 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Binder Segmentation Benchmark Continuation
+
+### User Intent
+
+- Move forward with development after completion of the local recognition calibration toolchain.
+
+### Decision
+
+- Real English Magic calibration remains blocked because no specific source/provenance approval was supplied.
+- Continue with the next unblocked brief slice: benchmark-only local multi-card/binder region suggestions under `PHR-UX-026`.
+- Keep detector output outside active repository regions and preserve deployment, production activation, recognition auto-accept, and publication gates.
+
+### Acceptance State
+
+Benchmark tooling is implemented and same-session conformance complete. The real smoke test returned an internal-rectangle false localization, so production segmentation is explicitly not accepted. Full 414/414 repository tests, 4/4 Swift tests, TypeScript, zero-warning lint, production build, and diff hygiene pass. A labeled real binder holdout and separate Designer/Product Review remain mandatory for activation.
+
 ## 2026-08-05 — Local Recognition Calibration Tooling Continuation
 
 ### User Intent

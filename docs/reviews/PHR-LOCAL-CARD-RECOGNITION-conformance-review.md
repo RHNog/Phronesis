@@ -32,3 +32,9 @@ Product Owner reviews the visible package. Auto-accept requires a separately app
 `CONFORMS — REAL CORPUS QUALIFICATION AND RELEASE GATES REMAIN CLOSED`
 
 The implementation now turns explicit local source files into checksum-verified bundles and produces reproducible benchmark reports without assuming that source possession grants recognition or redistribution rights. Identity and identical-byte leakage across partitions fail before bundle writes. Benchmark cases cannot change the manifest's split or expected identity, and one asset cannot be replayed to inflate statistical power. Qualification requires corpus readiness plus minimum holdout, accepted-result, precision, and per-stratum evidence. Synthetic tests, 409/409 repository tests, 2/2 Swift tests, TypeScript, zero-warning lint, and production build pass. This remains a same-session review and is not independent Product Owner acceptance.
+
+## 2026-08-05 Binder Segmentation Tooling Review
+
+`CONFORMS AS BENCHMARK TOOLING — PRODUCTION SEGMENTATION DOES NOT CONFORM YET`
+
+The native worker and TypeScript boundary preserve local-only execution, versioned evidence, top-left normalized geometry, deterministic order, and fail-closed validation. The benchmark excludes synthetic cases from qualification and prevents reuse of frames or labels. No detector output mutates active regions. The real smoke result is a known false localization, not positive accuracy evidence. Production activation remains blocked until an approved, immutable, representative binder holdout meets all configured thresholds and returns through Designer and Product Review. Full 414/414 repository tests, 4/4 Swift tests, TypeScript, zero-warning lint, production build, and diff hygiene pass. This is a same-session review, not independent approval.

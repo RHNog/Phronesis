@@ -8,7 +8,7 @@
 4. `PHR-TECH-014` — conservative local engine and calibration toolchain implemented; next gate is Product Owner-approved English Magic corpus provenance and a powered holdout before auto-accept.
 5. `PHR-WORKFLOW-016` — offline scanner-to-offer Vendor workflow implemented and Product Review ready.
 6. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters implemented; independent consumer adoption remains.
-7. `PHR-UX-026` — multi-region/correction foundation implemented; automatic binder segmentation remains a later benchmarked expansion.
+7. `PHR-UX-026` — multi-region correction and benchmark-only detector implemented; next gate is an approved labeled real holdout across binder failure strata before activation.
 
 No later slice inherits acceptance from an earlier game, platform, corpus, or driver without its own evidence.
 

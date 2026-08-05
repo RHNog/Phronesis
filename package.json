@@ -42,6 +42,7 @@
     "recognition:once": "node --import ./tests/register-test-hooks.mjs scripts/watch-card-recognition.ts --once",
     "recognition:corpus:build": "node --import ./tests/register-test-hooks.mjs scripts/build-card-recognition-corpus.ts",
     "recognition:benchmark": "node --import ./tests/register-test-hooks.mjs scripts/benchmark-card-recognition.ts",
+    "recognition:regions:benchmark": "node --import ./tests/register-test-hooks.mjs scripts/benchmark-card-regions.ts",
     "review:phone": "node scripts/start-phronesis.mjs dev --hostname 127.0.0.1 --port 3100",
     "review:phone:status": "node scripts/private-review-status.mjs"
   },

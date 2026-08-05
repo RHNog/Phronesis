@@ -19,8 +19,10 @@ do {
         try emit(analyzer.analyze(imageURL: URL(fileURLWithPath: arguments[1])))
     case "distance" where arguments.count == 3:
         try emit(DistanceOutput(distance: try analyzer.distance(queryArchive: arguments[1], referenceArchive: arguments[2])))
+    case "detect-regions" where arguments.count == 2:
+        try emit(analyzer.detectRegions(imageURL: URL(fileURLWithPath: arguments[1])))
     default:
-        throw NSError(domain: "PhronesisVisionWorker", code: 64, userInfo: [NSLocalizedDescriptionKey: "usage: phronesis-vision-worker analyze <image> | distance <query-feature> <reference-feature>"])
+        throw NSError(domain: "PhronesisVisionWorker", code: 64, userInfo: [NSLocalizedDescriptionKey: "usage: phronesis-vision-worker analyze <image> | distance <query-feature> <reference-feature> | detect-regions <image>"])
     }
 } catch {
     try? emit(ErrorOutput(error: String(describing: error)))

@@ -45,3 +45,12 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Added top-1/top-k recall, accepted precision, review/abstention, p50/p95 latency, pairing accuracy, and per-stratum failure metrics with minimum holdout, accepted, and stratum power gates.
 - Prevented repeated use of one corpus asset from inflating holdout size.
 - Used synthetic test bytes only. No live corpus, runtime, policy, service, or external repository changed.
+
+## 2026-08-05 Binder Segmentation Benchmark Tooling
+
+- Added `detect-regions` to the local macOS Vision worker with versioned JSON, top-left normalized coordinates, confidence, orientation, duplicate suppression, containing-page suppression, and deterministic row-major order.
+- Added a strict TypeScript worker boundary; malformed origin, geometry, confidence, order, and high-IoU duplicates fail closed.
+- Added `recognition:regions:benchmark` with one-to-one IoU matching, precision, recall, exact-count rate, matched IoU, p95 latency, failure strata, and deterministic report sealing.
+- Real qualification requires unique source-frame and label hashes plus explicit labeling approval. Synthetic cases are counted but excluded from qualification.
+- A real edge-to-edge card scan with SHA-256 `ec25cf42ee3ebec05cc8129c55b58a163146ae2e4b24623b5081e4572ee4f637` produced one small landscape suggestion at `(0.227963, 0.220926, 0.186268, 0.142377)`, visibly corresponding to internal artwork rather than the whole card. This is retained as negative evidence; no tuning exception or production activation followed.
+- No suggestion was written to the repository and no UI, runtime, deployment, or external state changed.

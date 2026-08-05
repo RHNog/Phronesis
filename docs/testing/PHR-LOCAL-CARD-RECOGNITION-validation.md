@@ -39,3 +39,12 @@
 - Next.js 16.2.12 production build: pass; 52 pages emitted.
 - Diff whitespace validation: pass before documentation closeout.
 - Synthetic evidence proves deterministic bundle/report hashes, idempotent bundle construction, no object writes for invalid manifests, canonical identity/object split-leakage rejection, immutable case binding, duplicate holdout-asset rejection, explicit usage approval, and fail-closed `NOT_QUALIFIED` output.
+
+## 2026-08-05 Binder Segmentation Tooling Validation
+
+- Focused region/binder tests: pass, 6/6.
+- Full Phronesis suite: pass, 414/414.
+- macOS Vision Swift tests: pass, 4/4.
+- Standalone TypeScript, zero-warning ESLint, and Next.js 16.2.12 production build: pass; 52 pages emitted.
+- Contract evidence covers top-left origin, contiguous reading order, duplicate rejection, bounded IoU, one-to-one label matching, synthetic exclusion, real-label approval, source reuse denial, threshold validation, and deterministic report sealing.
+- Real single-card smoke: worker executed successfully but localized an internal rectangle rather than the edge-to-edge card. Result remains `NOT_QUALIFIED`; automatic region adoption is disabled.

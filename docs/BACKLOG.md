@@ -8,7 +8,7 @@ Use `- [ ] [P0]`, `[P1]`, `[P2]`, or `[P3]` for machine ordering.
 - [ ] [P0] Product Owner reviews `PHR-WORKFLOW-016` at `/vendor/scanner`; do not deploy or publish during review.
 - [ ] [P1] Approve provenance/licensing and curate a powered English Magic holdout before activating any `PHR-TECH-014` auto-accept policy.
 - [ ] [P2] Adopt `PHR-API-015` conformance fixtures independently in TCGPLAYER Tools, LigaMagic, and LigaPokémon consumers; do not share runtime code, databases, credentials, or publication authority.
-- [ ] [P3] Benchmark automatic binder segmentation before extending the implemented `PHR-UX-026` manual region foundation.
+- [ ] [P3] Acquire and approve a labeled real binder holdout, run the implemented `PHR-UX-026` segmentation benchmark across required strata, and return to Designer/Product Review before activating suggestions.
 
 - [x] [P0] Restart the loopback private runtime through the canonical launcher and verify the regional API reads the 131,869-match operational crosswalk (`PHR-TECH-012`).
 - [ ] [P0] Restore the separately owned TCG catalogue acquisition dashboard/scheduler; its five Phronesis catalogue checkpoints remain at 2026-08-01 and are not current to the four-daily source cadence.
