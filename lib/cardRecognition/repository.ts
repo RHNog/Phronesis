@@ -120,6 +120,31 @@ export class CardRecognitionRepository {
     if (!result.changes) throw new Error("scan session not found");
   }
 
+  reconcileSessionState(sessionId: string, now = new Date().toISOString()): ScanSessionState {
+    const row = this.database.prepare(`SELECT s.state,
+      (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE'
+          AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)) regions,
+      (SELECT COUNT(*) FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND j.state IN ('PENDING','LEASED')) pending,
+      (SELECT COUNT(*) FROM recognition_resolution x JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE'
+          AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+          AND x.revision=(SELECT MAX(x2.revision) FROM recognition_resolution x2 WHERE x2.region_id=x.region_id)) resolved
+      FROM recognition_session s WHERE s.id=?`).get(sessionId) as { state: string; regions: number; pending: number; resolved: number } | undefined;
+    if (!row) throw new Error("scan session not found");
+    if (row.state === "CANCELLED") return "CANCELLED";
+    const state: ScanSessionState = row.regions === 0
+      ? "CAPTURING"
+      : row.pending > 0
+        ? "PROCESSING"
+        : row.resolved === row.regions
+          ? "OFFER_READY"
+          : "REVIEW";
+    this.setSessionState(sessionId, state, now);
+    return state;
+  }
+
   listSessions(limit = 20): ScanSessionSummary[] {
     const safeLimit = Math.max(1, Math.min(100, Math.trunc(limit)));
     const rows = this.database.prepare("SELECT id FROM recognition_session ORDER BY updated_at DESC,id DESC LIMIT ?").all(safeLimit) as Array<{ id: string }>;
@@ -185,6 +210,7 @@ export class CardRecognitionRepository {
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(randomUUID(), input.regionId, revisionRow.revision, decision.decisionId, input.condition, input.finish.trim(), input.quantity, input.priceSnapshotId.trim(), input.priceSnapshotAt, input.buyingPresetId.trim(), input.offerCents, input.currency.trim().toUpperCase(), input.resolvedBy, now);
       this.database.exec("COMMIT");
     } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    this.reconcileSessionState(input.sessionId, now);
     return decision;
   }
 
@@ -272,13 +298,17 @@ export class CardRecognitionRepository {
   }
 
   failJob(jobId: string, owner: string, message: string, now = new Date().toISOString()): void {
+    const context = this.database.prepare(`SELECT f.session_id FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE j.id=?`)
+      .get(jobId) as { session_id: string } | undefined;
     const result = this.database.prepare("UPDATE recognition_job SET state='FAILED',last_error=?,lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND state='LEASED' AND lease_owner=?")
       .run(message.slice(0, 500), now, jobId, owner);
     if (!result.changes) throw new Error("job lease is not owned");
+    if (context) this.reconcileSessionState(context.session_id, now);
   }
 
   completeJob(jobId: string, owner: string, decision: RecognitionDecision): void {
-    const row = this.database.prepare("SELECT region_id,state,lease_owner FROM recognition_job WHERE id=?").get(jobId) as { region_id: string; state: string; lease_owner: string | null } | undefined;
+    const row = this.database.prepare(`SELECT j.region_id,j.state,j.lease_owner,f.session_id FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE j.id=?`)
+      .get(jobId) as { region_id: string; state: string; lease_owner: string | null; session_id: string } | undefined;
     if (!row || row.state !== "LEASED" || row.lease_owner !== owner || row.region_id !== decision.regionId) throw new Error("job lease is not owned");
     this.database.exec("BEGIN IMMEDIATE");
     try {
@@ -286,6 +316,7 @@ export class CardRecognitionRepository {
       this.database.prepare("UPDATE recognition_job SET state='COMPLETED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=?").run(decision.createdAt, jobId);
       this.database.exec("COMMIT");
     } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    this.reconcileSessionState(row.session_id, decision.createdAt);
   }
 
   activateCorpus(manifest: CorpusManifest, now = new Date().toISOString()): VerifiedCorpusManifest {

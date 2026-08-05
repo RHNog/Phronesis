@@ -3,12 +3,12 @@
 
 ## 2026-08-05 Local Card Recognition State
 
-- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree and are Product Review ready. `PHR-TECH-014` now also has deterministic corpus construction and sealed calibration commands; real-corpus qualification remains gated.
+- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree. The scanner-to-offer path is privately operational at tailnet-only `:9444`; real-corpus qualification remains gated.
 - `PHR-UX-026` now has benchmark-only local Vision rectangle suggestions and a sealed localization benchmark. A real smoke test exposed an internal-rectangle false localization, so automatic region adoption remains disabled pending a labeled binder holdout.
 - The Windows batch-folder watcher imports sealed bundles idempotently, the local macOS Vision worker produces OCR/feature evidence, and canonical catalogue retrieval is read-only and explicitly game-gated.
 - The exact 18-frame physical bundle replay completed 18/18 jobs with 18 safe abstentions because the batch is Pokémon and the approved first recognition lane is English Magic. A discovered Pokémon-to-Magic false-positive was corrected before review.
-- Auto-accept remains disabled until a provenance-approved English Magic corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, deployment, and publication remain gated.
-- No live runtime, purchase, inventory, external repository, marketplace, or publication state changed.
+- Auto-accept remains disabled until a provenance-approved English Magic corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, public deployment, and publication remain gated.
+- Persistent user LaunchAgents supervise the isolated loopback scanner app and recurring recognition worker. Existing `:9443` and public `:10000` services remain unchanged; no purchase, inventory, external repository, marketplace, or publication state changed.
 
 ## 2026-08-03 Arbitrage Recovery State
 
@@ -53,6 +53,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - LigaMagic snapshot evidence crossed against TCGplayer: 71,954 exact plus 14,438 qualifier-preserving alias mappings, 86,392 matched identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
 - Official Banco Central do Brasil PTAX buy/sell evidence and two-way US/Brazil arbitrage calculations with explicit truth gates.
 - Persistent private review service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
+- Persistent tailnet-only Scanner to Offer service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9444/vendor/scanner` with a recurring Windows-bundle recognition worker.
 - Local content-addressed scan evidence, recoverable recognition jobs, Apple Vision evidence, review/abstention, operator material confirmation, exact-condition price binding, local offer drafts, recognized-asset envelopes, and pure TCGplayer/Liga draft adapters.
 
 ## Current constraints

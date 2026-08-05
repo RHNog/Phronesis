@@ -17,6 +17,7 @@
 - Reuse canonical pricing and offer policy; persist exact price/preset bindings.
 - Keep every unresolved, stale, or failed asset out of the offer.
 - Preserve state across reload and process restart.
+- Reconcile the displayed session stage from durable current jobs and operator resolutions after import, job completion/failure, and resolution; an idempotent reimport cannot regress a terminal session to processing.
 
 ## Constraints
 

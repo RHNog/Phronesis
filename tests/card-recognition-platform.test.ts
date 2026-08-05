@@ -213,6 +213,22 @@ test("expired recognition leases are recoverable by a new worker", () => {
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
+test("session state follows durable work instead of a stale import badge", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-recognition-state-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const object = repository.putObject(Buffer.from("frame"));
+    const sessionId = repository.createSession("state");
+    const imported = repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:00.000Z", pairedFrameId: null });
+    assert.equal(repository.reconcileSessionState(sessionId), "PROCESSING");
+    const lease = repository.acquireJob("worker", 1000, new Date("2026-08-04T00:00:00.000Z"));
+    assert.ok(lease);
+    repository.completeJob(lease.jobId, "worker", { decisionId: "decision-state", regionId: imported.region.regionId, status: "ABSTAINED", selectedCandidate: null, candidates: [], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "No supported candidate.", createdAt: "2026-08-04T00:00:01.000Z" });
+    assert.equal(repository.sessionSummary(sessionId).state, "REVIEW");
+    assert.equal(repository.reconcileSessionState(sessionId), "REVIEW");
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
 test("operator resolution is append-only and creates a bound local offer line", () => {
   const root = mkdtempSync(join(tmpdir(), "phronesis-recognition-"));
   const repository = new CardRecognitionRepository(":memory:", root);

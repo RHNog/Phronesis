@@ -35,6 +35,6 @@ export async function ingestWindowsBundle(input: { bundlePath: string; runtimeRo
     });
     frames.push({ sequence: frame.observedSequence, status: result.status, sha256: frame.sha256 });
   }
-  input.repository.setSessionState(imported.manifest.sessionId, "PROCESSING");
+  input.repository.reconcileSessionState(imported.manifest.sessionId);
   return { schemaVersion: "phronesis.recognition-import.v1" as const, bridgeStatus: imported.status, manifestSha256: imported.manifestSha256, session: input.repository.sessionSummary(imported.manifest.sessionId), frames };
 }

@@ -4,15 +4,15 @@
 
 ## Objective
 
-Implement and verify the benchmark-only `PHR-UX-026` automatic binder-region detection increment without activating detector suggestions in production sessions.
+Operate and verify the privately activated `PHR-WORKFLOW-016` scanner-to-offer path while preserving conservative recognition gates.
 
 ## Acceptance criteria
 
-- [x] Add local Vision rectangle suggestions with versioned JSON and deterministic reading order.
-- [x] Preserve top-left normalized geometry and reject malformed or overlapping duplicate worker output.
-- [x] Add sealed IoU-based precision, recall, exact-count, latency, and failure-stratum reports.
-- [x] Prove synthetic or underpowered evidence remains `NOT_QUALIFIED` and cannot change active regions.
-- [x] Pass focused/full tests, Swift tests, TypeScript, lint, build, diff hygiene, and Chief Architect conformance review.
+- [x] Run the scanner page on an isolated loopback service and tailnet-only HTTPS port without disturbing existing services.
+- [x] Supervise the recurring bundle watcher and local recognition worker across process restart.
+- [x] Preserve immutable evidence and complete the existing 18-frame batch with correct safe abstentions.
+- [x] Reconcile terminal session stages from durable job/resolution truth.
+- [x] Pass full tests, lint, build, route/evidence probes, idle stability, phone-width browser review, and same-session conformance.
 
 ## Completed this session
 
@@ -22,10 +22,13 @@ Implement and verify the benchmark-only `PHR-UX-026` automatic binder-region det
 - Implemented and validated the complete calibration-tooling increment with synthetic evidence only.
 - Received Product Owner direction to move forward; selected the next unblocked benchmark-only binder slice because real Magic corpus provenance is still unspecified.
 - Completed binder benchmark tooling and preserved a real internal-rectangle false localization as negative evidence.
+- Activated the conservative Scanner to Offer path at tailnet-only `:9444` with persistent user LaunchAgents.
+- Corrected the live session's stale processing badge and verified `REVIEW`, 18 abstentions, zero pending jobs, immutable evidence bytes, and existing-service continuity.
 
 ## Remaining work
 
-- Acquire a labeled real binder holdout before any production activation.
+- Run a real English Magic card through the operational workflow for Product Owner experience review.
+- Acquire a labeled real binder holdout before any segmentation activation.
 - Acquire separately licensed English Magic training and powered holdout data only after Product Owner provenance approval.
 
 ## Blockers
@@ -36,4 +39,4 @@ Implement and verify the benchmark-only `PHR-UX-026` automatic binder-region det
 
 ## Exact next action
 
-Obtain Product Owner-approved real binder frames and immutable labels across the required failure strata, then run the implemented benchmark. Do not activate suggestions from synthetic or single-image evidence.
+Run one owner-selected English Magic card through the Windows bridge and verify the resulting evidence-backed candidate or abstention in the private scanner UI. Do not enable auto-accept or segmentation suggestions.

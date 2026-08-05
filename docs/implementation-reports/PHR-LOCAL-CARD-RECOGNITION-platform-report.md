@@ -2,7 +2,7 @@
 
 ## Scope
 
-Implemented authorized slices S2-S6 through the conservative Product Review boundary. Auto-accept, licensed catalogue-scale artwork ingestion, automatic binder segmentation, downstream consumer adoption, deployment, and publication remain gated.
+Implemented authorized slices S2-S6 and privately activated the conservative scanner-to-offer path on the owner's tailnet. Auto-accept, licensed catalogue-scale artwork ingestion, automatic binder segmentation, downstream consumer adoption, public deployment, and publication remain gated.
 
 ## Implementation
 
@@ -23,7 +23,7 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 
 - No automatic condition grading or finish inference.
 - No raw scan or derived runtime object entered Git.
-- No live Phronesis, purchase, inventory, credential, or marketplace state changed.
+- No purchase, inventory, credential, marketplace, existing `:9443` runtime, or public Funnel state changed.
 - No TCGPLAYER Tools source changed; its dirty independent repository was inspected read-only.
 - No consumer adapter exposes publication.
 - No precision or coverage claim was made from the 138 unlabeled scans.
@@ -34,7 +34,15 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Benchmark exact-printing precision/coverage by risk stratum before activating auto-accept.
 - Product Owner reviews the visible workflow.
 - Consumer projects separately adopt conformance fixtures.
-- Deployment, scheduler installation, push, and publication require their own authority.
+- Public deployment, push, and publication require their own authority.
+
+## 2026-08-05 Private Operational Activation
+
+- Built and installed a persistent local recognition worker and an isolated loopback Next.js scanner-review service under user LaunchAgents.
+- Exposed only the isolated service through tailnet-only HTTPS at `:9444`; the existing private `:9443` runtime and public `:10000` Funnel were preserved.
+- Reconciled session state from durable jobs and resolutions. This corrected a stale `PROCESSING` badge after all work completed and prevents an idempotent bundle reimport from regressing a terminal session.
+- Live session `phr-card-test-20260804-002` reports `REVIEW`, 18 frames, 18 regions, 18 abstentions, and zero pending/review-candidate/accepted/failed results.
+- The recurring watcher is quiet while idle, recovers expired leases, and retains its dedicated recognition SQLite store with owner-only file permissions.
 
 ## 2026-08-05 Calibration Tooling Continuation
 

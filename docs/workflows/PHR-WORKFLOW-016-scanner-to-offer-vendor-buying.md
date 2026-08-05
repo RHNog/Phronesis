@@ -33,6 +33,7 @@ Let a buyer load qualified English Magic cards, press Start, review exceptions, 
 - Treat front/back pairing as acquisition evidence. Only the operator-selected card face enters recognition; the paired reverse remains linked evidence.
 - Require explicit condition and price-material finish confirmation before a line becomes offer-ready.
 - Keep scan session, recognition review, and offer draft recoverable after process restart.
+- Derive the persisted session stage from durable work: `CAPTURING` with no regions, `PROCESSING` while any current job is pending or leased, `REVIEW` when terminal results still require resolution, and `OFFER_READY` only when every current region has an operator-bound resolution. Reimporting an idempotent bundle must not regress a terminal session to `PROCESSING`.
 
 ## Acceptance Criteria
 
@@ -55,8 +56,8 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - Design gate: `docs/design/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying.md`.
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
-- Last modified: 2026-08-04.
-- Modification reason: advance the authorized scanner-to-offer slice with a bounded recoverable UX and explicit mutation boundaries.
+- Last modified: 2026-08-05.
+- Modification reason: define durable session-state reconciliation and prevent stale processing state after completion or idempotent reimport.
 
 ## Private Operational Activation — 2026-08-05
 

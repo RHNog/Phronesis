@@ -48,3 +48,14 @@
 - Standalone TypeScript, zero-warning ESLint, and Next.js 16.2.12 production build: pass; 52 pages emitted.
 - Contract evidence covers top-left origin, contiguous reading order, duplicate rejection, bounded IoU, one-to-one label matching, synthetic exclusion, real-label approval, source reuse denial, threshold validation, and deterministic report sealing.
 - Real single-card smoke: worker executed successfully but localized an internal rectangle rather than the edge-to-edge card. Result remains `NOT_QUALIFIED`; automatic region adoption is disabled.
+
+## 2026-08-05 Private Operational Validation
+
+- Full Phronesis suite: pass, 415/415, including durable session-state reconciliation.
+- ESLint with zero warnings and Next.js 16.2.12 production build: pass; 52 pages emitted.
+- Both user LaunchAgents report `running`; the scanner service binds loopback `127.0.0.1:3200` and the worker watches `/Users/Shared/PhronesisScannerBridge/ready`.
+- Tailnet-only `:9444` scanner route: HTTP 200. Existing tailnet-only `:9443`: HTTP 200. Existing public `:10000` gateway remains configured unchanged and responds with its expected redirect.
+- Live API: session state `REVIEW`; 18 frames, 18 regions, 18 abstained, zero pending, review-candidate, accepted, or failed results.
+- Live evidence route: HTTP 200; 209,102 bytes; SHA-256 `2c50390fd9ab18afda0c0602846044ed82bdbd5776ed0d0d9945ec4dcf72eac8`.
+- Worker idle-log line count remained 21 before and after a seven-second interval, proving the five-second poll does not emit idle heartbeat spam.
+- Browser validation at 390×844: 375px document width inside a 390px viewport, no horizontal overflow, primary buttons at least 44px high, correct `REVIEW` state and exact counts, and zero console warnings/errors.

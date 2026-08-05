@@ -2,7 +2,7 @@
 
 ## Review Status
 
-`CONFORMS FOR PRODUCT REVIEW — CALIBRATION, CONSUMER ADOPTION, AND RELEASE GATES REMAIN CLOSED`
+`CONFORMS FOR PRIVATE OPERATION — CALIBRATION, CONSUMER ADOPTION, AND PUBLIC RELEASE GATES REMAIN CLOSED`
 
 This is a same-session conformance review and is not represented as independent approval.
 
@@ -25,7 +25,13 @@ No claim is made that OCR-only retrieval meets product accuracy. Apple Vision fe
 
 ## Next Accountable Gate
 
-Product Owner reviews the visible package. Auto-accept requires a separately approved corpus and powered English Magic holdout. TCGPLAYER Tools and Liga consumer adoption, deployment, push, and publication remain separate controlled changes.
+The privately activated package is ready for Product Owner use on the tailnet. Auto-accept requires a separately approved corpus and powered English Magic holdout. TCGPLAYER Tools and Liga consumer adoption, public deployment, push, and publication remain separate controlled changes.
+
+## 2026-08-05 Private Activation Review
+
+`CONFORMS — TAILNET-ONLY OPERATIONAL PATH VERIFIED`
+
+The isolated `:9444` service and recurring recognition worker are supervised by user LaunchAgents and do not modify the existing `:9443` or public `:10000` routes. Live replay retained the correct 18/18 Pokémon abstention result, immutable evidence bytes, zero pending jobs, and quiet idle polling. Durable state reconciliation now derives `PROCESSING`, `REVIEW`, and `OFFER_READY` from current jobs and operator resolutions; the live session correctly transitioned from stale `PROCESSING` to `REVIEW`. Phone-width browser evidence shows no horizontal overflow, 44px actions, and no console warnings/errors. Full 415/415 tests, zero-warning lint, and production build pass. This is a same-session review and not independent approval.
 
 ## 2026-08-05 Calibration Tooling Review
 

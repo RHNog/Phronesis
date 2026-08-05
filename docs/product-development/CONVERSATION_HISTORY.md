@@ -15,7 +15,7 @@
 
 ### Acceptance State
 
-Activation in progress. Final state requires loopback/private-route health, recurring worker supervision, existing-bundle idempotency, evidence retrieval, and existing `:9443` continuity.
+Private activation accepted by evidence. The isolated app and recurring worker run under user LaunchAgents, tailnet-only `:9444` returns the scanner page and immutable evidence, existing `:9443` remains HTTP 200, and the public `:10000` mapping is unchanged. The exact batch is terminal at `REVIEW` with 18 safe abstentions and zero pending jobs. A stale aggregate `PROCESSING` state discovered during live review was corrected with durable lifecycle reconciliation and regression coverage. Full 415/415 tests, zero-warning lint, production build, quiet idle polling, and 390×844 browser validation pass. Auto-accept, binder activation, purchase/inventory mutation, external consumers, publication, and public exposure remain gated.
 
 ## 2026-08-05 — Binder Segmentation Benchmark Continuation
 
