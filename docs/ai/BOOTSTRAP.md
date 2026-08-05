@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-05T13:32:10Z","generation_id":"08845c81fa3a8e0dc609","head":"52c19c704bc422eb05ed4164d0946ff2382b57ae","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"BOOTSTRAP","generated":true,"generated_at":"2026-08-05T14:19:37Z","generation_id":"8ea083c7a3f32a4f8435","head":"74f530b384a70285f6aa3e81db73b6107095a053","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Bootstrap Package
 
 Use this instruction in a new AI session:
@@ -9,13 +9,13 @@ Use this instruction in a new AI session:
 
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **Commit:** `52c19c704bc422eb05ed4164d0946ff2382b57ae`
-- **Generation ID:** `08845c81fa3a8e0dc609`
+- **Commit:** `74f530b384a70285f6aa3e81db73b6107095a053`
+- **Generation ID:** `8ea083c7a3f32a4f8435`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 ## Objective
 
-Implement and verify the `PHR-TECH-014` calibration-tooling increment: deterministic local corpus construction, immutable split validation, and sealed executable benchmark evidence.
+Implement and verify the benchmark-only `PHR-UX-026` automatic binder-region detection increment without activating detector suggestions in production sessions.
 
 ## Completed work
 
@@ -23,15 +23,19 @@ Implement and verify the `PHR-TECH-014` calibration-tooling increment: determini
 - Replayed the immutable 18-frame physical Windows bundle; all frames processed and the English-Magic policy safely abstained on Pokémon observations.
 - Received Product Owner direction on 2026-08-05 to continue development while deployment, publication, and auto-accept remain unapproved.
 - Implemented and validated the complete calibration-tooling increment with synthetic evidence only.
+- Received Product Owner direction to move forward; selected the next unblocked benchmark-only binder slice because real Magic corpus provenance is still unspecified.
+- Completed binder benchmark tooling and preserved a real internal-rectangle false localization as negative evidence.
 
 ## Remaining work
 
+- Acquire a labeled real binder holdout before any production activation.
 - Acquire separately licensed English Magic training and powered holdout data only after Product Owner provenance approval.
 
 ## Blockers
 
-- Tooling implementation is not blocked.
+- Benchmark-tooling implementation is not blocked.
 - Real calibration and auto-accept activation remain blocked on licensed/provenance-approved English Magic reference and holdout assets.
+- Production binder segmentation remains blocked on a labeled real holdout and separate Product Review.
 
 ## Validation
 
@@ -44,7 +48,7 @@ Read [DECISIONS.md](../DECISIONS.md) before implementation.
 
 ## Exact next action
 
-Obtain Product Owner approval for specific English Magic source provenance and recognition-use scope before constructing the first real corpus. Do not activate auto-accept from synthetic or underpowered evidence.
+Obtain Product Owner-approved real binder frames and immutable labels across the required failure strata, then run the implemented benchmark. Do not activate suggestions from synthetic or single-image evidence.
 
 ## Resume protocol
 
