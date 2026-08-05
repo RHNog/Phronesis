@@ -3,7 +3,7 @@
 
 ## 2026-08-05 Local Card Recognition State
 
-- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree and are Product Review ready.
+- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree and are Product Review ready. `PHR-TECH-014` now also has deterministic corpus construction and sealed calibration commands; real-corpus qualification remains gated.
 - The Windows batch-folder watcher imports sealed bundles idempotently, the local macOS Vision worker produces OCR/feature evidence, and canonical catalogue retrieval is read-only and explicitly game-gated.
 - The exact 18-frame physical bundle replay completed 18/18 jobs with 18 safe abstentions because the batch is Pokémon and the approved first recognition lane is English Magic. A discovered Pokémon-to-Magic false-positive was corrected before review.
 - Auto-accept remains disabled until a provenance-approved English Magic corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, deployment, and publication remain gated.

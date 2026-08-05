@@ -6,7 +6,7 @@
 
 ## Status
 
-Implemented Foundation — Auto-Accept And Licensed Artwork Index Gated
+Calibration Tooling In Progress — Auto-Accept And Licensed Artwork Index Gated
 
 ## Priority
 
@@ -44,6 +44,10 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 - No paid or cloud recognition dependency exists at runtime.
 - Restarted jobs are lease-safe and idempotent; duplicate frame or region delivery cannot create duplicate assets.
 - A benchmark that lacks a powered holdout reports `NOT_QUALIFIED` and cannot activate auto-accept.
+- Corpus construction copies source bytes into a content-addressed bundle, emits canonical JSON, and rejects identity leakage across train/dev/holdout partitions.
+- The executable benchmark reports top-1/top-k exact-printing recall, accepted precision, review and abstention rates, latency percentiles, pairing accuracy, and failure strata.
+- Unknown or restricted provenance may be retained for private review-only experiments, but corpus readiness must report it explicitly and cannot silently authorize redistribution or auto-accept.
+- Calibration readiness requires an explicit per-asset recognition-use approval record with approver, timestamp, and scope; a license label or redistribution flag alone is insufficient.
 
 ## Non-Goals
 
@@ -65,5 +69,5 @@ Runtime authority lives under `.data/card-recognition/` and is ignored by Git. S
 
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - Related prompt: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`.
-- Last modified: 2026-08-04.
-- Modification reason: advance the approved conservative local recognition foundation while keeping precision and licensing gates fail closed.
+- Last modified: 2026-08-05.
+- Modification reason: continue the approved program with executable corpus construction and calibration evidence while keeping licensing and auto-accept gates fail closed.

@@ -26,3 +26,9 @@ No claim is made that OCR-only retrieval meets product accuracy. Apple Vision fe
 ## Next Accountable Gate
 
 Product Owner reviews the visible package. Auto-accept requires a separately approved corpus and powered English Magic holdout. TCGPLAYER Tools and Liga consumer adoption, deployment, push, and publication remain separate controlled changes.
+
+## 2026-08-05 Calibration Tooling Review
+
+`CONFORMS — REAL CORPUS QUALIFICATION AND RELEASE GATES REMAIN CLOSED`
+
+The implementation now turns explicit local source files into checksum-verified bundles and produces reproducible benchmark reports without assuming that source possession grants recognition or redistribution rights. Identity and identical-byte leakage across partitions fail before bundle writes. Benchmark cases cannot change the manifest's split or expected identity, and one asset cannot be replayed to inflate statistical power. Qualification requires corpus readiness plus minimum holdout, accepted-result, precision, and per-stratum evidence. Synthetic tests, 409/409 repository tests, 2/2 Swift tests, TypeScript, zero-warning lint, and production build pass. This remains a same-session review and is not independent Product Owner acceptance.

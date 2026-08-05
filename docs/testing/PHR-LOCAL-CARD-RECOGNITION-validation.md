@@ -28,3 +28,14 @@
 ## Calibration Result
 
 `NOT_QUALIFIED`. The current physical scans lack immutable exact-printing ground truth and are not a powered unseen English Magic holdout. Auto-accept remains disabled even when a candidate score is high.
+
+## 2026-08-05 Calibration Tooling Validation
+
+- Focused corpus/calibration tests: pass, 7/7.
+- Full Phronesis suite: pass, 409/409.
+- macOS Vision Swift tests: pass, 2/2.
+- Standalone TypeScript: pass.
+- ESLint with zero warnings: pass.
+- Next.js 16.2.12 production build: pass; 52 pages emitted.
+- Diff whitespace validation: pass before documentation closeout.
+- Synthetic evidence proves deterministic bundle/report hashes, idempotent bundle construction, no object writes for invalid manifests, canonical identity/object split-leakage rejection, immutable case binding, duplicate holdout-asset rejection, explicit usage approval, and fail-closed `NOT_QUALIFIED` output.

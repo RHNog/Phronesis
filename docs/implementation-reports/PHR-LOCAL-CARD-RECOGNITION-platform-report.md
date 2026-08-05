@@ -35,3 +35,13 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Product Owner reviews the visible workflow.
 - Consumer projects separately adopt conformance fixtures.
 - Deployment, scheduler installation, push, and publication require their own authority.
+
+## 2026-08-05 Calibration Tooling Continuation
+
+- Added `recognition:corpus:build` to hash explicitly supplied local files, create a content-addressed bundle, and emit a canonical manifest without committing image evidence.
+- Added immutable canonical-identity and identical-object split leakage rejection before bundle writes.
+- Added explicit recognition-use approval evidence; descriptive licensing metadata alone does not make a corpus calibration-ready.
+- Added `recognition:benchmark` to validate every case against its immutable corpus asset and emit a deterministic SHA-256-sealed report.
+- Added top-1/top-k recall, accepted precision, review/abstention, p50/p95 latency, pairing accuracy, and per-stratum failure metrics with minimum holdout, accepted, and stratum power gates.
+- Prevented repeated use of one corpus asset from inflating holdout size.
+- Used synthetic test bytes only. No live corpus, runtime, policy, service, or external repository changed.

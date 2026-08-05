@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -11,6 +11,8 @@ import { sealRecognizedAssetEnvelope, toLigaDraft, toTcgplayerDraft, validateRec
 import { classifyObservedGame, createRecognitionDecision, retrieveCandidates } from "@/lib/cardRecognition/pipeline";
 import { SqliteRecognitionCatalogue } from "@/lib/cardRecognition/sqliteCatalogue";
 import { DatabaseSync } from "node:sqlite";
+import { assessCorpusReadiness, buildCorpusBundle, corpusObjectPath, verifyCorpusManifest, type CorpusManifest } from "@/lib/cardRecognition/corpus";
+import { runCalibration } from "@/lib/cardRecognition/calibration";
 
 function candidate(score: number, id = "printing-1"): RecognitionCandidate {
   return { canonicalPrintingId: id, canonicalVariantId: null, categoryId: "1", sku: "sku-1", rank: 1, score, evidence: [] };
@@ -45,6 +47,71 @@ test("underpowered holdout cannot qualify auto-accept", () => {
   const report = benchmarkRecognition([{ expectedPrintingId: "printing-1", split: "HOLDOUT", decisionStatus: "ACCEPTED", selectedPrintingId: "printing-1", latencyMs: 25 }]);
   assert.equal(report.status, "NOT_QUALIFIED");
   assert.equal(report.acceptedPrecision, 1);
+});
+
+test("corpus builder hashes bytes, emits a canonical manifest, and is idempotent", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-corpus-build-"));
+  try {
+    const source = join(root, "source.jpg");
+    const output = join(root, "bundle");
+    writeFileSync(source, "licensed synthetic reference");
+    const specification = {
+      schemaVersion: "phronesis.corpus-build.v1" as const,
+      corpusVersion: "fixture-v1",
+      createdAt: "2026-08-05T00:00:00.000Z",
+      assets: [{ assetId: "asset-1", canonicalPrintingId: "printing-1", canonicalVariantId: null, categoryId: "magic-en", sku: "sku-1", language: "English", setName: "Fixture", collectorNumber: "1", finishApplicability: ["NONFOIL"], source: "synthetic-test", provenance: "source-controlled synthetic bytes", license: "test-only", redistribution: "PERMITTED" as const, split: "HOLDOUT" as const, sourcePath: source }],
+    };
+    const first = buildCorpusBundle(specification, output);
+    const second = buildCorpusBundle(specification, output);
+    assert.equal(first.manifestSha256, second.manifestSha256);
+    assert.equal(readFileSync(corpusObjectPath(output, first.assets[0].objectSha256), "utf8"), "licensed synthetic reference");
+    assert.equal(JSON.parse(readFileSync(join(output, "manifest.json"), "utf8")).corpusVersion, "fixture-v1");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("corpus validation rejects canonical identity leakage across immutable splits", () => {
+  const common = { canonicalPrintingId: "printing-1", canonicalVariantId: null, categoryId: "magic-en", sku: "sku-1", language: "English", setName: "Fixture", collectorNumber: "1", finishApplicability: ["NONFOIL"], source: "synthetic-test", provenance: "fixture", license: "test-only", redistribution: "PERMITTED" as const, objectSha256: "a".repeat(64) };
+  assert.throws(() => verifyCorpusManifest({ schemaVersion: "phronesis.corpus.v1", corpusVersion: "leaky", createdAt: "2026-08-05T00:00:00.000Z", assets: [{ ...common, assetId: "train", split: "TRAIN" }, { ...common, assetId: "holdout", split: "HOLDOUT" }] }), /leaks across/);
+});
+
+test("an invalid corpus build writes no content-addressed objects", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-corpus-invalid-"));
+  try {
+    const source = join(root, "source.jpg");
+    const output = join(root, "bundle");
+    writeFileSync(source, "synthetic collision");
+    const common = { canonicalPrintingId: "printing-1", canonicalVariantId: null, categoryId: "magic-en", sku: "sku-1", language: "English", setName: "Fixture", collectorNumber: "1", finishApplicability: ["NONFOIL"], source: "synthetic-test", provenance: "fixture", license: "test-only", redistribution: "PERMITTED" as const, sourcePath: source };
+    assert.throws(() => buildCorpusBundle({ schemaVersion: "phronesis.corpus-build.v1", corpusVersion: "invalid", createdAt: "2026-08-05T00:00:00.000Z", assets: [{ ...common, assetId: "train", split: "TRAIN" }, { ...common, assetId: "holdout", split: "HOLDOUT" }] }, output), /leaks across/);
+    assert.equal(existsSync(join(output, "manifest.json")), false);
+    assert.equal(existsSync(join(output, "objects")), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("sealed calibration reports metrics but remains blocked by underpowered or unknown-license evidence", () => {
+  const manifest: CorpusManifest = {
+    schemaVersion: "phronesis.corpus.v1", corpusVersion: "fixture-v1", createdAt: "2026-08-05T00:00:00.000Z",
+    assets: [{ assetId: "asset-1", canonicalPrintingId: "printing-1", canonicalVariantId: null, categoryId: "magic-en", sku: "sku-1", language: "English", setName: "Fixture", collectorNumber: "1", finishApplicability: ["NONFOIL"], source: "synthetic-test", provenance: "fixture", license: "unknown", redistribution: "UNKNOWN", objectSha256: "b".repeat(64), split: "HOLDOUT" }],
+  };
+  const input = { schemaVersion: "phronesis.recognition-calibration.v1" as const, benchmarkVersion: "benchmark-v1", createdAt: "2026-08-05T01:00:00.000Z", manifest, qualification: { minimumHoldout: 1, minimumAccepted: 1, minimumPerStratum: 1, requiredAcceptedPrecision: 1 }, cases: [{ caseId: "case-1", corpusAssetId: "asset-1", expectedPrintingId: "printing-1", split: "HOLDOUT" as const, decisionStatus: "ACCEPTED" as const, selectedPrintingId: "printing-1", candidatePrintingIds: ["printing-1"], latencyMs: 12, pairingCorrect: true, stratum: "standard-nonfoil" }] };
+  const first = runCalibration(input);
+  const second = runCalibration(structuredClone(input));
+  assert.equal(first.reportSha256, second.reportSha256);
+  assert.equal(first.metrics.top1Recall, 1);
+  assert.equal(first.metrics.topKRecall, 1);
+  assert.equal(first.metrics.pairingAccuracy, 1);
+  assert.equal(first.metrics.failureStrata[0].stratum, "standard-nonfoil");
+  assert.equal(first.corpusReadiness.status, "NOT_READY");
+  assert.equal(first.status, "NOT_QUALIFIED");
+});
+
+test("calibration cannot change a corpus asset split or expected identity", () => {
+  const manifest: CorpusManifest = { schemaVersion: "phronesis.corpus.v1", corpusVersion: "fixture-v1", createdAt: "2026-08-05T00:00:00.000Z", assets: [{ assetId: "asset-1", canonicalPrintingId: "printing-1", canonicalVariantId: null, categoryId: "magic-en", sku: "sku-1", language: "English", setName: "Fixture", collectorNumber: "1", finishApplicability: ["NONFOIL"], source: "synthetic-test", provenance: "fixture", license: "test-only", redistribution: "PERMITTED", recognitionUse: "APPROVED", recognitionApproval: { approvedBy: "test-owner", approvedAt: "2026-08-05T00:00:00.000Z", scope: "synthetic calibration test" }, objectSha256: "c".repeat(64), split: "HOLDOUT" }] };
+  const base = { schemaVersion: "phronesis.recognition-calibration.v1" as const, benchmarkVersion: "benchmark-v1", createdAt: "2026-08-05T01:00:00.000Z", manifest };
+  assert.throws(() => runCalibration({ ...base, cases: [{ caseId: "case-1", corpusAssetId: "asset-1", expectedPrintingId: "printing-1", split: "DEV", decisionStatus: "REVIEW", selectedPrintingId: "printing-1", latencyMs: 1 }] }), /immutable split/);
+  assert.throws(() => runCalibration({ ...base, cases: [{ caseId: "case-1", corpusAssetId: "asset-1", expectedPrintingId: "printing-2", split: "HOLDOUT", decisionStatus: "REVIEW", selectedPrintingId: "printing-2", latencyMs: 1 }] }), /expected identity/);
+  assert.throws(() => runCalibration({ ...base, cases: [{ caseId: "case-1", corpusAssetId: "asset-1", expectedPrintingId: "printing-1", split: "HOLDOUT", decisionStatus: "REVIEW", selectedPrintingId: "printing-1", latencyMs: 1 }, { caseId: "case-2", corpusAssetId: "asset-1", expectedPrintingId: "printing-1", split: "HOLDOUT", decisionStatus: "REVIEW", selectedPrintingId: "printing-1", latencyMs: 1 }] }), /reused/);
+  assert.throws(() => runCalibration({ ...base, qualification: { minimumHoldout: 0 }, cases: [] }), /positive integer/);
+  assert.equal(assessCorpusReadiness(manifest, 1).status, "READY");
 });
 
 test("repository stores content once, imports frames idempotently, and revisions are append-only", () => {

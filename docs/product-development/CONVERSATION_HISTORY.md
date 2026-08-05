@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Local Recognition Calibration Tooling Continuation
+
+### User Intent
+
+- Continue development after receiving the private mobile URL and learning that the new scanner route is not deployed.
+
+### Decision And Result
+
+- Continued locally with the next safe `PHR-TECH-014` increment: corpus construction and executable benchmark evidence.
+- Added deterministic content-addressed bundles, immutable identity/object split enforcement, explicit recognition-use approval evidence, duplicate holdout-asset prevention, and sealed multi-metric reports.
+- Did not treat the instruction as deployment, publication, external-consumer mutation, corpus-license approval, or auto-accept activation authority.
+- Corrected the stale generated active-task source that still described the completed physical scanner gate.
+
+### Acceptance State
+
+Implemented and same-session conformance complete. Full 409/409 repository tests, 2/2 Swift tests, TypeScript, zero-warning lint, production build, and diff hygiene pass. Real English Magic calibration remains gated on separately approved provenance and a powered holdout.
+
 ## 2026-08-05 — Local Recognition Platform Implementation
 
 After the Windows duplex bridge passed physical acceptance, the Product Owner explicitly authorized implementation through the end of the approved local card-recognition brief under the Canonical Autonomous Workflow. The Chief Architect advanced `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the safe `PHR-UX-026` foundation while preserving the prior English-Magic-first, operator-confirmed material, and no-publication rules.

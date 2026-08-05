@@ -33,25 +33,55 @@ export function decideCandidates(candidates: RecognitionCandidate[], policy: Con
   return { status: "REVIEW", selected: top, reason: policy.autoAcceptEnabled ? "Candidate did not meet the auto-accept threshold and margin." : "Auto-accept is disabled pending a qualified holdout." };
 }
 
-export type BenchmarkCase = { expectedPrintingId: string; split: "TRAIN" | "DEV" | "HOLDOUT"; decisionStatus: RecognitionDecisionStatus; selectedPrintingId: string | null; latencyMs: number };
+export type BenchmarkCase = {
+  expectedPrintingId: string;
+  split: "TRAIN" | "DEV" | "HOLDOUT";
+  decisionStatus: RecognitionDecisionStatus;
+  selectedPrintingId: string | null;
+  candidatePrintingIds?: string[];
+  latencyMs: number;
+  pairingCorrect?: boolean | null;
+  stratum?: string;
+};
 
-export function benchmarkRecognition(cases: BenchmarkCase[], minimumHoldout = 1000, requiredAcceptedPrecision = 0.999) {
+export function benchmarkRecognition(cases: BenchmarkCase[], minimumHoldout = 1000, requiredAcceptedPrecision = 0.999, minimumAccepted = 100, minimumPerStratum = 30) {
+  if (!Number.isInteger(minimumHoldout) || minimumHoldout < 1) throw new Error("minimumHoldout must be a positive integer");
+  if (!Number.isInteger(minimumAccepted) || minimumAccepted < 1) throw new Error("minimumAccepted must be a positive integer");
+  if (!Number.isInteger(minimumPerStratum) || minimumPerStratum < 1) throw new Error("minimumPerStratum must be a positive integer");
+  if (!Number.isFinite(requiredAcceptedPrecision) || requiredAcceptedPrecision <= 0 || requiredAcceptedPrecision > 1) throw new Error("requiredAcceptedPrecision must be in (0,1]");
   const holdout = cases.filter((item) => item.split === "HOLDOUT");
   const accepted = holdout.filter((item) => item.decisionStatus === "ACCEPTED");
   const correct = accepted.filter((item) => item.selectedPrintingId === item.expectedPrintingId).length;
   const acceptedPrecision = accepted.length ? correct / accepted.length : null;
   const sortedLatency = holdout.map((item) => item.latencyMs).sort((a, b) => a - b);
   const percentile = (p: number) => sortedLatency.length ? sortedLatency[Math.min(sortedLatency.length - 1, Math.ceil(sortedLatency.length * p) - 1)] : null;
-  const qualified = holdout.length >= minimumHoldout && accepted.length > 0 && acceptedPrecision !== null && acceptedPrecision >= requiredAcceptedPrecision;
+  const top1Correct = holdout.filter((item) => (item.candidatePrintingIds?.[0] ?? item.selectedPrintingId) === item.expectedPrintingId).length;
+  const topKCorrect = holdout.filter((item) => (item.candidatePrintingIds ?? (item.selectedPrintingId ? [item.selectedPrintingId] : [])).includes(item.expectedPrintingId)).length;
+  const paired = holdout.filter((item) => typeof item.pairingCorrect === "boolean");
+  const strata = [...new Set(holdout.map((item) => item.stratum ?? "UNSPECIFIED"))].sort().map((stratum) => {
+    const members = holdout.filter((item) => (item.stratum ?? "UNSPECIFIED") === stratum);
+    return {
+      stratum,
+      count: members.length,
+      top1Errors: members.filter((item) => (item.candidatePrintingIds?.[0] ?? item.selectedPrintingId) !== item.expectedPrintingId).length,
+      acceptedErrors: members.filter((item) => item.decisionStatus === "ACCEPTED" && item.selectedPrintingId !== item.expectedPrintingId).length,
+    };
+  });
+  const strataPowered = strata.length > 0 && strata.every((item) => item.count >= minimumPerStratum);
+  const qualified = holdout.length >= minimumHoldout && accepted.length >= minimumAccepted && acceptedPrecision !== null && acceptedPrecision >= requiredAcceptedPrecision && strataPowered;
   return {
     status: qualified ? "QUALIFIED" as const : "NOT_QUALIFIED" as const,
     holdoutCount: holdout.length,
     acceptedCount: accepted.length,
     acceptedPrecision,
+    top1Recall: holdout.length ? top1Correct / holdout.length : null,
+    topKRecall: holdout.length ? topKCorrect / holdout.length : null,
     reviewRate: holdout.length ? holdout.filter((item) => item.decisionStatus === "REVIEW").length / holdout.length : null,
     abstainRate: holdout.length ? holdout.filter((item) => item.decisionStatus === "ABSTAINED").length / holdout.length : null,
+    pairingAccuracy: paired.length ? paired.filter((item) => item.pairingCorrect).length / paired.length : null,
     p50LatencyMs: percentile(0.5),
     p95LatencyMs: percentile(0.95),
-    qualification: { minimumHoldout, requiredAcceptedPrecision },
+    failureStrata: strata,
+    qualification: { minimumHoldout, minimumAccepted, minimumPerStratum, requiredAcceptedPrecision, strataPowered },
   };
 }
