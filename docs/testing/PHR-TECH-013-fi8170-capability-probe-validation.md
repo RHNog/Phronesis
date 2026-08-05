@@ -34,7 +34,7 @@ Software Checkpoint Verified — Physical Gate Pending
 
 The fi-8170 is now detected at the USB 2.0 link rate and emitted as a redacted local USB scanner. Live validation exposed and corrected a discovery defect: the ImageCaptureCore browser mask specified the scanner type but omitted the required local-device location bit. A platform regression test now locks both bits.
 
-The scanner session still times out while opening, matching Image Capture error `-21345`. The signed, notarized, universal Image Scanner Driver for macOS 2.4.1 was installed after the current Mac boot and its helper did not launch during the session request. Restart macOS before the next bounded capability probe. No card has been scanned by this implementation.
+The scanner session still times out while opening, matching Image Capture error `-21345`. A restart after installing the signed, notarized, universal Image Scanner Driver for macOS 2.4.1 did not change the result. The host reports macOS 27.0, while Ricoh's current fi-8170 compatibility contract supports Image Scanner Driver for macOS 2.4.1 only through macOS Tahoe 26. USB discovery succeeds, but the unsupported ICA helper never launches during a session request. No card has been scanned by this implementation.
 
 ## Commands
 

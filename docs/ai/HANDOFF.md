@@ -34,7 +34,7 @@ Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capa
 ## Blockers
 
 - Software implementation is complete and verified.
-- Final physical acceptance is blocked until the fi-8170 is connected and the Product Owner supplies 2–4 low-value test cards.
+- Final physical acceptance is blocked because the host runs macOS 27.0, beyond Ricoh's current fi-8170 ICA support through macOS Tahoe 26; USB discovery passes but session opening times out.
 
 ## Validation
 
@@ -53,7 +53,7 @@ Implement and verify `PHR-TECH-013 / Slice A`, the standalone macOS fi-8170 capa
 
 ## Exact next action
 
-Connect the fi-8170, supply 2–4 low-value test cards, and run the documented supervised `scan` gate. Do not begin corpus, recognition, Vendor UI, or marketplace work before physical Slice A acceptance.
+Obtain Product Owner direction for the macOS 27 compatibility boundary: validate the existing Slice A implementation on a Ricoh-supported macOS Tahoe 26 host, wait for Ricoh macOS 27 ICA support, or authorize a separately specified acquisition-adapter architecture. Do not load or scan cards, or begin corpus, recognition, Vendor UI, or marketplace work, before session-open and physical Slice A acceptance.
 
 ## Implementation worktree snapshot
 
