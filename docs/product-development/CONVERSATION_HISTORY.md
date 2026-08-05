@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Urgent Private Scanner-To-Offer Activation
+
+### User Intent
+
+- Move forward and make the local recognition feature operational as soon as possible.
+
+### Decision
+
+- Treat the instruction as authority for private tailnet activation of the already-reviewed scanner-to-offer workflow and recurring local worker.
+- Preserve the existing `:9443` service and unrelated dirty canonical checkout by using a parallel loopback service and separate tailnet-only port.
+- Keep automatic recognition acceptance, binder-region adoption, purchases, inventory mutation, external consumers, publication, and public Funnel exposure closed.
+- Remove repetitive idle/already-imported watcher logging before persistent activation.
+
+### Acceptance State
+
+Activation in progress. Final state requires loopback/private-route health, recurring worker supervision, existing-bundle idempotency, evidence retrieval, and existing `:9443` continuity.
+
 ## 2026-08-05 — Binder Segmentation Benchmark Continuation
 
 ### User Intent

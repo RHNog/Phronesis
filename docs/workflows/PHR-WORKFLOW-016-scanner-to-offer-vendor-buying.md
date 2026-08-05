@@ -57,3 +57,7 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
 - Last modified: 2026-08-04.
 - Modification reason: advance the authorized scanner-to-offer slice with a bounded recoverable UX and explicit mutation boundaries.
+
+## Private Operational Activation — 2026-08-05
+
+The Product Owner authorized urgent private operation. Activation uses an isolated loopback service and a separate tailnet-only HTTPS port so the existing private Phronesis runtime and its unrelated dirty canonical checkout remain untouched. The recurring worker reads the Windows bridge READY inbox, canonical pricing snapshot, and dedicated recognition store. It remembers observed bundle directories for the process lifetime, emits no idle heartbeat spam, and retries a bundle only after worker restart or a failed import. Recognition remains review/abstention-only; binder suggestions, auto-accept, purchase, inventory, publication, and public Funnel exposure remain disabled.
