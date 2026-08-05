@@ -8,8 +8,8 @@
 - Workflow revision: `2.20.0`
 - Delivery lane: `Controlled`
 - Plan ID: `PHR-PLAN-20260804-002`
-- Plan fingerprint input: `PHR-LOCAL-CARD-RECOGNITION-20260804|2.20.0|CONTROLLED|S1:PHR-TECH-013-A|S1W:PHR-TECH-015|S2:PHR-TECH-013-B|S3:PHR-TECH-014|S4:PHR-WORKFLOW-016|S5:PHR-API-015|S6:PHR-UX-026`
-- Plan fingerprint: `027566c5714fa71d690c356714781ab95cf6c7d2867ff6ed64ee4f6494aca505`
+- Plan fingerprint input: `PHR-LOCAL-CARD-RECOGNITION-20260804|2.20.0|CONTROLLED|S1:PHR-TECH-013-A|S1W:PHR-TECH-015|S2:PHR-TECH-013-B|S3:PHR-TECH-014|S4:PHR-WORKFLOW-016|S5:PHR-API-015|S6:PHR-UX-026|AUTHORIZED:2026-08-04|AUTO_ACCEPT:BENCHMARK_GATED|PUBLISH:DISABLED`
+- Plan fingerprint: `6e3ad12423e6abd178d7a722958e416b204885b859b7cf1ce5f5f9a217861f2d`
 - Approved product brief: Product Owner-approved local card-recognition brief and CTO structure, 2026-08-04.
 
 ## Lane Rationale
@@ -50,4 +50,4 @@ Return to the Product Owner only if:
 
 ## Current Slice
 
-S1 software is verified but its physical gate remains blocked by the unsupported macOS 27 ICA runtime. The Product Owner authorized contingency S1W on 2026-08-04. S1W is complete: Windows duplex acquisition, sealing, Mac hash/import evidence, operator handling, and repository gates pass. Later slices remain gated until the CTO explicitly advances the program.
+S1 software is verified but its physical gate remains blocked by the unsupported macOS 27 ICA runtime. The Product Owner authorized contingency S1W and then explicitly authorized autonomous implementation through the end of the approved brief on 2026-08-04. S1W is complete: Windows duplex acquisition, sealing, Mac hash/import evidence, operator handling, and repository gates pass. S2-S6 may now advance in order under the canonical workflow. Auto-accept remains disabled until a powered unseen holdout passes the approved policy, and publication/deployment remain separate explicit gates.

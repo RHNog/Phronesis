@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-05 Local Card Recognition State
+
+- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree and are Product Review ready.
+- The Windows batch-folder watcher imports sealed bundles idempotently, the local macOS Vision worker produces OCR/feature evidence, and canonical catalogue retrieval is read-only and explicitly game-gated.
+- The exact 18-frame physical bundle replay completed 18/18 jobs with 18 safe abstentions because the batch is Pokémon and the approved first recognition lane is English Magic. A discovered Pokémon-to-Magic false-positive was corrected before review.
+- Auto-accept remains disabled until a provenance-approved English Magic corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, deployment, and publication remain gated.
+- No live runtime, purchase, inventory, external repository, marketplace, or publication state changed.
+
 ## 2026-08-03 Arbitrage Recovery State
 
 - `PHR-TECH-012` and `PHR-API-013` are implemented and fully validated. Private Arbitrage recovery and the 03:00 calendar schedule are active.
@@ -44,6 +52,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - LigaMagic snapshot evidence crossed against TCGplayer: 71,954 exact plus 14,438 qualifier-preserving alias mappings, 86,392 matched identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
 - Official Banco Central do Brasil PTAX buy/sell evidence and two-way US/Brazil arbitrage calculations with explicit truth gates.
 - Persistent private review service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
+- Local content-addressed scan evidence, recoverable recognition jobs, Apple Vision evidence, review/abstention, operator material confirmation, exact-condition price binding, local offer drafts, recognized-asset envelopes, and pure TCGplayer/Liga draft adapters.
 
 ## Current constraints
 

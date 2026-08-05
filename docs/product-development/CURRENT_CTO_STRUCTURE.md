@@ -5,16 +5,16 @@
 - Assignment: `PHR-LOCAL-CARD-RECOGNITION-20260804`
 - Document ID: `PHR-STRUCT-20260804-003`
 - Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-TECH-015`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
-- Status: `S1W COMPLETE — WINDOWS BRIDGE OPERATIONAL`
+- Status: `S2-S6 IMPLEMENTED — PRODUCT REVIEW READY; CALIBRATION AND CONSUMER ADOPTION GATED`
 - Objective: turn physical card observations into evidence-backed canonical Phronesis assets, beginning with a safe macOS fi-8170 capability probe and progressing through local recognition, Vendor offers, and marketplace-neutral exports.
-- Delivery lane: Controlled, seven ordered slices including contingency S1W, plan fingerprint `027566c5714fa71d690c356714781ab95cf6c7d2867ff6ed64ee4f6494aca505`.
+- Delivery lane: Controlled, seven ordered slices including contingency S1W, plan fingerprint `6e3ad12423e6abd178d7a722958e416b204885b859b7cf1ce5f5f9a217861f2d`.
 - First-release rule: English Magic, one card per frame; condition is operator-confirmed and price-material finish uncertainty forces review.
 - Architecture rule: Phronesis owns workflow and canonical identity; a signed native agent owns scanner control; an isolated local worker owns recognition; immutable evidence remains content-addressed.
 - Safety rule: no physical scan without a connected fi-8170, explicit scan flag, owner-supplied low-value cards, and operator supervision.
 - Publication rule: recognition never publishes. TCGPLAYER Tools and Liga adapters consume `PHR-API-015` only through separate draft/import gates.
-- Current work order: `docs/prompts/PHR-TECH-015-windows-scanner-bridge-prompt.md`.
-- Current accountable role: CTO selects the next approved slice; no later source-changing slice starts implicitly.
-- Current checkpoint: Windows PaperStream acquired 18 duplex frames, the Windows seal and Mac verifier matched all hashes, repeat import was idempotent, the operator reported no damage or feed issues, and all repository gates pass.
+- Current work orders: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`, `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`, `docs/prompts/PHR-API-015-recognized-asset-interchange-prompt.md`, and `docs/prompts/PHR-UX-026-multi-card-binder-capture-prompt.md`.
+- Current accountable role: Product Owner reviews the visible scanner-to-offer package. A separately licensed and labeled English Magic corpus/holdout is required before auto-accept; consumer projects adopt the v1 envelope through their own workflows.
+- Current checkpoint: the batch watcher re-imported the exact 18-frame Windows bundle idempotently, local Vision analyzed all 18 frames, and the English-Magic-only policy safely abstained on all 18 Pokémon observations after a game-classification false-positive was found and corrected. Durable objects, job recovery, region revisions, operator resolution, exact-condition price binding, offer drafts, immutable interchange, TCGplayer/Liga draft adapters, desktop/phone UI, 404 repository tests, Swift tests, TypeScript, lint, and production build pass. No live runtime, purchase, inventory, marketplace, deployment, external repository, or publication state changed.
 
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 

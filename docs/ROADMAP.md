@@ -5,10 +5,10 @@
 1. `PHR-TECH-013-A` — macOS fi-8170 capability probe and supervised low-value hardware qualification.
 2. `PHR-TECH-015` — temporary Windows/Parallels PaperStream bridge; duplex acquisition, sealing, and Mac hash import verified, final acceptance gates in progress.
 3. `PHR-TECH-013-B` — signed durable acquisition agent and Windows-neutral protocol.
-4. `PHR-TECH-014` — licensed local corpus, benchmark, calibrated recognition, and abstention.
-5. `PHR-WORKFLOW-016` — offline English Magic scanner-to-offer Vendor workflow.
-6. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters.
-7. `PHR-UX-026` — Windows parity and multi-card/binder capture expansion.
+4. `PHR-TECH-014` — conservative local engine implemented; next gate is a licensed English Magic corpus and powered holdout before auto-accept.
+5. `PHR-WORKFLOW-016` — offline scanner-to-offer Vendor workflow implemented and Product Review ready.
+6. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters implemented; independent consumer adoption remains.
+7. `PHR-UX-026` — multi-region/correction foundation implemented; automatic binder segmentation remains a later benchmarked expansion.
 
 No later slice inherits acceptance from an earlier game, platform, corpus, or driver without its own evidence.
 

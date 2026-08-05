@@ -6,10 +6,10 @@
 - Phronesis owns authorization, canonical identity, pricing, offers, and operator decisions. Native macOS/Windows agents own scanner sessions; an isolated local worker owns recognition.
 - `PHR-TECH-013` first proves the actual fi-8170/ImageCaptureCore contract with a standalone Swift probe and low-value physical gate.
 - `PHR-TECH-015` temporarily routes supported fi-8170 acquisition through Windows PaperStream, seals Windows-local frames into a hash-bound Parallels bundle, and requires a distrustful macOS import; it owns no identity or product state.
-- `PHR-TECH-014` owns the licensed versioned corpus, derived indexes, benchmark, candidate evidence, confidence calibration, and abstention.
-- `PHR-WORKFLOW-016` reuses existing Vendor identity, price snapshot, offer preset, receipt, and inventory boundaries.
-- `PHR-API-015` exports a marketplace-neutral recognized asset. TCGPLAYER Tools, LigaMagic, and LigaPokémon map from that asset; none receives publication authority from recognition.
-- `PHR-UX-026` later extends the already-generic frame/region model to multi-card and binder capture.
+- `PHR-TECH-014` now provides immutable local evidence, corpus activation/rollback, Apple Vision evidence, read-only catalogue retrieval, benchmark qualification, candidate review, and abstention. Licensed artwork indexing and auto-accept remain gated.
+- `PHR-WORKFLOW-016` provides authenticated batch-folder intake, evidence review, operator material confirmation, server-verified exact-condition price binding, buying-preset binding, and local offer drafts without purchase or inventory mutation.
+- `PHR-API-015` exports a marketplace-neutral hash-bound recognized asset and pure TCGplayer/Liga draft rows. TCGPLAYER Tools, LigaMagic, and LigaPokémon remain independent consumers; none receives publication authority from recognition.
+- `PHR-UX-026` provides the normalized multi-region and append-only correction foundation. Automatic binder segmentation remains benchmark-gated.
 
 ## Arbitrage Data Continuity And Liga Recurrence
 

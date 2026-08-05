@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Local Recognition Platform Implementation
+
+After the Windows duplex bridge passed physical acceptance, the Product Owner explicitly authorized implementation through the end of the approved local card-recognition brief under the Canonical Autonomous Workflow. The Chief Architect advanced `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the safe `PHR-UX-026` foundation while preserving the prior English-Magic-first, operator-confirmed material, and no-publication rules.
+
+The implemented package now provides content-addressed scan evidence, durable sessions and recoverable jobs, append-only multi-region corrections, a local Apple Vision evidence worker, read-only catalogue retrieval, game gating, deterministic review/abstention, corpus activation/rollback, benchmark qualification, authenticated Scanner to Offer APIs/UI, server-verified exact-condition price bindings, local offer drafts, immutable Recognized Asset Envelope v1, and pure TCGplayer/Liga draft adapters. TCGPLAYER Tools remained read-only because it is an independent dirty repository and consumer adoption is a separate workflow.
+
+The exact 18-frame Windows bundle replay found three irrelevant Magic review candidates from Pokémon `BASIC` headers. Engineering added explicit observed-game evidence before catalogue retrieval and replayed the immutable batch. Final evidence is 18 completed jobs, 18 safe abstentions, zero review/accepted/failed, which is correct because the physical batch is Pokémon while first-release recognition is English Magic. Product Review remains pending. Auto-accept, licensed artwork indexing, automatic binder segmentation, consumer adoption, deployment, push, and publication remain gated.
+
 ## 2026-08-04 — Windows Bridge Duplex Acquisition
 
 The Product Owner authorized the Windows bridge while the fi-8170 macOS session remains blocked by the unsupported macOS 27 ICA boundary, prepared the PaperStream job, supplied low-value cards, corrected the job to duplex after rejecting a back-only first scan, and completed the supervised batch.

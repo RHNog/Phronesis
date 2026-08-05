@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useEffect,
   useMemo,
@@ -702,15 +703,18 @@ export default function SnapshotVendorWorkspace({
             and negotiate from one desktop workspace.
           </p>
         </div>
-        <div
-          aria-live="polite"
-          className={`rounded-lg border px-3 py-2 text-xs ${freshnessTone}`}
-        >
-          {!loadedCategoryCount
-            ? "No catalogue loaded · observer waiting for a verified update"
-            : failedCategoryCount
-              ? `${failedCategoryCount} import issue${failedCategoryCount === 1 ? "" : "s"} · last-good data retained`
-              : `${loadedCategoryCount} catalogues current · search routes automatically`}
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/vendor/scanner" className="inline-flex min-h-11 items-center rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-200 hover:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300">Scanner intake</Link>
+          <div
+            aria-live="polite"
+            className={`rounded-lg border px-3 py-2 text-xs ${freshnessTone}`}
+          >
+            {!loadedCategoryCount
+              ? "No catalogue loaded · observer waiting for a verified update"
+              : failedCategoryCount
+                ? `${failedCategoryCount} import issue${failedCategoryCount === 1 ? "" : "s"} · last-good data retained`
+                : `${loadedCategoryCount} catalogues current · search routes automatically`}
+          </div>
         </div>
       </header>
 
