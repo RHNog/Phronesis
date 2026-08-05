@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Pokémon-First Recognition Revision
+
+### User Intent
+
+- Make Pokémon, rather than Magic, the first implemented recognition product line and apply the necessary operational adjustments.
+
+### Decision
+
+- Change the active first-release lane to English Pokémon (`pokemon-en`) while preserving one-card-per-frame acquisition, operator confirmation, review-only recognition, and every purchase/publication gate.
+- Treat English as the retained conservative first-language boundary. Card backs, Spanish Pokémon, Magic, and insufficient language evidence abstain.
+- Require name-plus-collector retrieval and explicit labelled catalogue-variant selection because Pokémon normal, holofoil, and reverse-holofoil SKUs can share the same name and collector number.
+- Reprocess the existing immutable 18-frame session append-only so its eight English faces can exercise the new lane while nine backs and one Spanish face remain safe abstentions.
+
+### Acceptance State
+
+Implemented, privately activated, and accepted by the authorized evidence gates under `PHR-ARCH-015`, `PHR-TECH-014`, and `PHR-WORKFLOW-016`. The live append-only replay retains both revisions and presents eight English Pokémon reviews plus ten abstentions; the repeated replay is idempotent. Full 416/416 tests, TypeScript, lint, production build, live API/service evidence, route continuity, and 390×844 mobile validation pass. Auto-accept, active binder segmentation, purchase/inventory mutation, downstream adoption, new public exposure, and publication remain closed. Product Owner experience review of one exact candidate is next.
+
 ## 2026-08-05 — Urgent Private Scanner-To-Offer Activation
 
 ### User Intent

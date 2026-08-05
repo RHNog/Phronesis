@@ -6,8 +6,9 @@ Use `- [ ] [P0]`, `[P1]`, `[P2]`, or `[P3]` for machine ordering.
 ## Active gates
 
 - [x] [P0] Privately activate and validate `PHR-WORKFLOW-016` at tailnet-only `:9444/vendor/scanner`; preserve existing services and do not publish.
-- [ ] [P0] Product Owner runs a real English Magic card through the operational scanner workflow and confirms the evidence/review experience.
-- [ ] [P1] Approve provenance/licensing and curate a powered English Magic holdout before activating any `PHR-TECH-014` auto-accept policy.
+- [x] [P0] Make English Pokémon the default private recognition lane and replay the accepted 18-frame batch append-only; verify eight reviews and ten safe abstentions.
+- [ ] [P0] Product Owner resolves one of the eight current English Pokémon review results and confirms the exact-variant/condition/price experience.
+- [ ] [P1] Approve provenance/licensing and curate a powered English Pokémon holdout before activating any `PHR-TECH-014` auto-accept policy.
 - [ ] [P2] Adopt `PHR-API-015` conformance fixtures independently in TCGPLAYER Tools, LigaMagic, and LigaPokémon consumers; do not share runtime code, databases, credentials, or publication authority.
 - [ ] [P3] Acquire and approve a labeled real binder holdout, run the implemented `PHR-UX-026` segmentation benchmark across required strata, and return to Designer/Product Review before activating suggestions.
 

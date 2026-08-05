@@ -155,11 +155,20 @@ export class CardRecognitionRepository {
     const row = this.database.prepare(`SELECT s.*,
       (SELECT COUNT(*) FROM recognition_frame f WHERE f.session_id=s.id) frames,
       (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)) regions,
-      (SELECT COUNT(*) FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND j.state IN ('PENDING','LEASED')) pending,
-      (SELECT COUNT(*) FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND d.status='REVIEW') review_count,
-      (SELECT COUNT(*) FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND d.status='ACCEPTED') accepted,
-      (SELECT COUNT(*) FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND d.status='ABSTAINED') abstained,
-      (SELECT COUNT(*) FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=s.id AND d.status='FAILED') failed
+      (SELECT COUNT(*) FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order) AND j.state IN ('PENDING','LEASED')) pending,
+      (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+          AND (SELECT d.status FROM recognition_decision d WHERE d.region_id=r.id ORDER BY d.rowid DESC LIMIT 1)='REVIEW') review_count,
+      (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+          AND (SELECT d.status FROM recognition_decision d WHERE d.region_id=r.id ORDER BY d.rowid DESC LIMIT 1)='ACCEPTED') accepted,
+      (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+          AND (SELECT d.status FROM recognition_decision d WHERE d.region_id=r.id ORDER BY d.rowid DESC LIMIT 1)='ABSTAINED') abstained,
+      (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=s.id AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+          AND (SELECT d.status FROM recognition_decision d WHERE d.region_id=r.id ORDER BY d.rowid DESC LIMIT 1)='FAILED') failed
       FROM recognition_session s WHERE s.id=?`).get(sessionId) as Record<string, string | number | null> | undefined;
     if (!row) throw new Error("scan session not found");
     return {
@@ -195,11 +204,14 @@ export class CardRecognitionRepository {
     if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || !Number.isSafeInteger(input.offerCents) || input.offerCents < 0) throw new Error("quantity or offer is invalid");
     if (!Number.isFinite(Date.parse(input.priceSnapshotAt))) throw new Error("price snapshot timestamp is invalid");
     const row = this.database.prepare(`SELECT d.payload_json FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id
-      WHERE d.region_id=? AND f.session_id=? ORDER BY d.rowid DESC LIMIT 1`).get(input.regionId, input.sessionId) as { payload_json: string } | undefined;
+      WHERE d.region_id=? AND f.session_id=? AND r.state='ACTIVE'
+        AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+      ORDER BY d.rowid DESC LIMIT 1`).get(input.regionId, input.sessionId) as { payload_json: string } | undefined;
     if (!row) throw new Error("recognition decision not found");
     const prior = JSON.parse(row.payload_json) as RecognitionDecision;
     const selected = prior.candidates.find((candidate) => candidate.canonicalPrintingId === input.canonicalPrintingId);
     if (!selected) throw new Error("selected candidate was not produced by recognition");
+    if (selected.catalogueIdentity && selected.catalogueIdentity.variant.localeCompare(input.finish.trim(), undefined, { sensitivity: "base" }) !== 0) throw new Error("finish must match the selected catalogue variant");
     const now = input.now ?? new Date().toISOString();
     const decision: RecognitionDecision = { ...prior, decisionId: randomUUID(), status: "ACCEPTED", selectedCandidate: selected, decidedBy: "OPERATOR", reason: "Operator reviewed identity and confirmed material fields.", createdAt: now };
     const revisionRow = this.database.prepare("SELECT COALESCE(MAX(revision),0)+1 revision FROM recognition_resolution WHERE region_id=?").get(input.regionId) as { revision: number };
@@ -217,7 +229,9 @@ export class CardRecognitionRepository {
   offerDraft(sessionId: string) {
     return this.database.prepare(`SELECT r.id region_id,d.payload_json,x.condition_code,x.finish,x.quantity,x.price_snapshot_id,x.price_snapshot_at,x.buying_preset_id,x.offer_cents,x.currency,x.resolved_by,x.resolved_at
       FROM recognition_resolution x JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id JOIN recognition_decision d ON d.id=x.decision_id
-      WHERE f.session_id=? AND x.revision=(SELECT MAX(x2.revision) FROM recognition_resolution x2 WHERE x2.region_id=x.region_id)
+      WHERE f.session_id=? AND r.state='ACTIVE'
+        AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+        AND x.revision=(SELECT MAX(x2.revision) FROM recognition_resolution x2 WHERE x2.region_id=x.region_id)
       ORDER BY f.sequence,r.region_order`).all(sessionId).map((raw) => {
         const row = raw as Record<string, string | number>;
         const decision = JSON.parse(String(row.payload_json)) as RecognitionDecision;
@@ -266,6 +280,52 @@ export class CardRecognitionRepository {
     this.insertRegion(next, now);
     this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)").run(randomUUID(), next.regionId, state === "ACTIVE" ? "PENDING" : "CANCELLED", now);
     return next;
+  }
+
+  reprocessSession(sessionId: string, reason: string, now = new Date().toISOString()): { status: "REPROCESSED" | "ALREADY_REPROCESSED"; regions: DetectedCardRegion[] } {
+    const correctionReason = reason.trim();
+    if (correctionReason.length < 3 || correctionReason.length > 200) throw new Error("reprocessing reason must contain 3 to 200 characters");
+    const session = this.database.prepare("SELECT state FROM recognition_session WHERE id=?").get(sessionId) as { state: string } | undefined;
+    if (!session) throw new Error("scan session not found");
+    if (session.state === "CANCELLED") throw new Error("cancelled scan session cannot be reprocessed");
+    const pending = this.database.prepare(`SELECT COUNT(*) count FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id
+      WHERE f.session_id=? AND r.state='ACTIVE'
+        AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+        AND j.state IN ('PENDING','LEASED')`).get(sessionId) as { count: number };
+    if (pending.count > 0) throw new Error("scan session still has active recognition work");
+    const current = this.database.prepare(`SELECT r.* FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
+      WHERE f.session_id=? AND r.state='ACTIVE'
+        AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+      ORDER BY f.sequence,r.region_order`).all(sessionId) as Array<Record<string, string | number | null>>;
+    if (!current.length) throw new Error("scan session has no active regions");
+    const targets = current.filter((row) => row.correction_reason !== correctionReason);
+    if (!targets.length) {
+      this.reconcileSessionState(sessionId, now);
+      return { status: "ALREADY_REPROCESSED", regions: [] };
+    }
+    const regions: DetectedCardRegion[] = [];
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      for (const prior of targets) {
+        const revision = Number(prior.revision) + 1;
+        const region: DetectedCardRegion = {
+          regionId: `${String(prior.frame_id)}:region:${Number(prior.region_order)}:r${revision}`,
+          frameId: String(prior.frame_id),
+          order: Number(prior.region_order),
+          revision,
+          state: "ACTIVE",
+          geometry: JSON.parse(String(prior.geometry_json)),
+          parentRegionId: String(prior.id),
+          correctionReason,
+        };
+        this.insertRegion(region, now);
+        this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)").run(randomUUID(), region.regionId, "PENDING", now);
+        regions.push(region);
+      }
+      this.database.prepare("UPDATE recognition_session SET state='PROCESSING',updated_at=? WHERE id=?").run(now, sessionId);
+      this.database.exec("COMMIT");
+    } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    return { status: "REPROCESSED", regions };
   }
 
   activeRegions(frameId: string): DetectedCardRegion[] {

@@ -24,13 +24,13 @@ Native signed code, valuable physical assets, raw scan privacy, high-precision r
 | S1W | `PHR-TECH-015` | Temporary supported Windows PaperStream capture with sealed Mac import | Engineer | macOS 27 ICA compatibility blocker; working local Windows VM | cross-platform tests, VM preflight, then supervised low-value duplex evidence | remove dedicated share/tools; preserve captured evidence |
 | S2 | `PHR-TECH-013-B` | Durable signed acquisition agent and normalized session transport | Engineer | Accepted S1 | restart/disconnect/jam/duplicate delivery tests | Disable agent; retain immutable evidence spool |
 | S3 | `PHR-TECH-014` | Versioned corpus and calibrated recognition with abstention | Engineer | Accepted acquisition contract and licensed corpus | powered unseen holdout and rollback activation | return active pointer to last-good corpus/index |
-| S4 | `PHR-WORKFLOW-016` | Offline English Magic scanner-to-offer workflow | Designer then Engineer | Accepted S2/S3 | end-to-end offer with traceability and no unresolved line | feature flag/session rollback; no purchase mutation |
+| S4 | `PHR-WORKFLOW-016` | Offline English Pokémon scanner-to-offer workflow | Designer then Engineer | Accepted S2/S3 | end-to-end offer with traceability and no unresolved line | feature flag/session rollback; no purchase mutation |
 | S5 | `PHR-API-015` | Marketplace-neutral recognized-asset interchange and draft adapters | Engineer | Accepted canonical output | schema conformance and draft-plan import | disable adapter/export version |
 | S6 | `PHR-UX-026` | Windows parity and multi-card/binder expansion | Architect/Designer/Engineer | Accepted first release | platform/game-specific qualification | independent adapter/feature rollback |
 
 ## Final Integration Checks
 
-- Offline scanner-to-offer flow on qualified English Magic cards.
+- Offline scanner-to-offer flow on qualified English Pokémon cards.
 - Evidence reproducibility from content hashes and recorded versions.
 - No auto-accept without powered precision evidence.
 - No downstream publication side effect.
@@ -50,4 +50,4 @@ Return to the Product Owner only if:
 
 ## Current Slice
 
-S1 software is verified but its physical gate remains blocked by the unsupported macOS 27 ICA runtime. The Product Owner authorized contingency S1W and then explicitly authorized autonomous implementation through the end of the approved brief on 2026-08-04. S1W is complete: Windows duplex acquisition, sealing, Mac hash/import evidence, operator handling, and repository gates pass. S2-S6 may now advance in order under the canonical workflow. Auto-accept remains disabled until a powered unseen holdout passes the approved policy, and publication/deployment remain separate explicit gates.
+S1 software is verified but its physical gate remains blocked by the unsupported macOS 27 ICA runtime. The Product Owner authorized contingency S1W and then explicitly authorized autonomous implementation through the end of the approved brief on 2026-08-04. S1W is complete: Windows duplex acquisition, sealing, Mac hash/import evidence, operator handling, and repository gates pass. On 2026-08-05 the Product Owner changed S4's first product line from English Magic to English Pokémon; this bounded revision preserves the original Feature IDs and all review, auto-accept, and publication gates. The Pokémon-first revision is implemented and privately operational: append-only live replay produced eight reviews and ten abstentions, and the private phone workflow passed. Auto-accept remains disabled until a powered unseen holdout passes the approved policy, while downstream adoption and publication remain separate explicit gates.

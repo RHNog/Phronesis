@@ -4,6 +4,8 @@
 
 Approved for bounded implementation on 2026-08-04. The workflow is an operator console inside Phronesis, not a scanner-driver UI or publishing surface.
 
+The 2026-08-05 Product Owner revision makes English Pokémon the first operational product line. The visual system remains unchanged; Resolve adds an explicit exact-SKU choice where normal, holofoil, and reverse-holofoil catalogue variants share a name and collector number.
+
 ## Information Architecture
 
 1. **Capture** starts or resumes a session and reports durable frame intake.
@@ -16,6 +18,7 @@ A persistent status strip distinguishes received, processing, review, abstained,
 
 - Start, pause, resume, and cancel operate on a named session and survive page reload.
 - The system may recommend identity; the operator owns condition and any price-material finish ambiguity.
+- Every Pokémon candidate shows name, set, collector number, catalogue variant, language, rank, and evidence score. Choosing a candidate binds its catalogue finish; the operator cannot submit a different free-text finish.
 - Accepting a candidate advances focus to the next exception and is reversible until the offer draft is finalized.
 - Abstention is a successful safe outcome, not an error.
 - No control on this surface purchases, adds inventory, or publishes.

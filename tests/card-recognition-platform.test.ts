@@ -8,7 +8,7 @@ import { fullFrameRegion, validateRegionGeometry, type RecognitionCandidate } fr
 import { benchmarkRecognition, conservativePolicy, decideCandidates } from "@/lib/cardRecognition/policy";
 import { CardRecognitionRepository } from "@/lib/cardRecognition/repository";
 import { sealRecognizedAssetEnvelope, toLigaDraft, toTcgplayerDraft, validateRecognizedAssetBatch, type RecognizedAssetEnvelopeV1 } from "@/lib/cardRecognition/interchange";
-import { classifyObservedGame, createRecognitionDecision, retrieveCandidates } from "@/lib/cardRecognition/pipeline";
+import { activeRecognitionLane, classifyObservedGame, classifyObservedLanguage, createRecognitionDecision, retrieveCandidates } from "@/lib/cardRecognition/pipeline";
 import { SqliteRecognitionCatalogue } from "@/lib/cardRecognition/sqliteCatalogue";
 import { DatabaseSync } from "node:sqlite";
 import { assessCorpusReadiness, buildCorpusBundle, corpusObjectPath, verifyCorpusManifest, type CorpusManifest } from "@/lib/cardRecognition/corpus";
@@ -16,7 +16,7 @@ import { runCalibration } from "@/lib/cardRecognition/calibration";
 import { benchmarkRegionDetection, regionIntersectionOverUnion, validateRegionDetection, type RegionDetectionResult } from "@/lib/cardRecognition/regionDetection";
 
 function candidate(score: number, id = "printing-1"): RecognitionCandidate {
-  return { canonicalPrintingId: id, canonicalVariantId: null, categoryId: "1", sku: "sku-1", rank: 1, score, evidence: [] };
+  return { canonicalPrintingId: id, canonicalVariantId: null, categoryId: "1", sku: "sku-1", catalogueIdentity: { name: "Fixture", setName: "Fixture Set", collectorNumber: "1/1", variant: "Normal", language: "English" }, rank: 1, score, evidence: [] };
 }
 
 function envelope(): RecognizedAssetEnvelopeV1 {
@@ -226,6 +226,15 @@ test("session state follows durable work instead of a stale import badge", () =>
     repository.completeJob(lease.jobId, "worker", { decisionId: "decision-state", regionId: imported.region.regionId, status: "ABSTAINED", selectedCandidate: null, candidates: [], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "No supported candidate.", createdAt: "2026-08-04T00:00:01.000Z" });
     assert.equal(repository.sessionSummary(sessionId).state, "REVIEW");
     assert.equal(repository.reconcileSessionState(sessionId), "REVIEW");
+    const replay = repository.reprocessSession(sessionId, "Recognition pipeline pokemon-v1", "2026-08-04T00:00:02.000Z");
+    assert.equal(replay.status, "REPROCESSED");
+    assert.equal(replay.regions[0].revision, 2);
+    assert.deepEqual(repository.sessionSummary(sessionId).counts, { frames: 1, regions: 1, pending: 1, review: 0, accepted: 0, abstained: 0, failed: 0 });
+    const replayLease = repository.acquireJob("worker-pokemon", 1000, new Date("2026-08-04T00:00:03.000Z"));
+    assert.ok(replayLease);
+    repository.completeJob(replayLease.jobId, "worker-pokemon", { decisionId: "decision-pokemon", regionId: replay.regions[0].regionId, status: "REVIEW", selectedCandidate: candidate(0.94, "pokemon-en:sku-1"), candidates: [candidate(0.94, "pokemon-en:sku-1")], corpusVersion: "c2", indexVersion: "i2", pipelineVersion: "pokemon-v1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-04T00:00:04.000Z" });
+    assert.deepEqual(repository.sessionSummary(sessionId).counts, { frames: 1, regions: 1, pending: 0, review: 1, accepted: 0, abstained: 0, failed: 0 });
+    assert.equal(repository.reprocessSession(sessionId, "Recognition pipeline pokemon-v1").status, "ALREADY_REPROCESSED");
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
@@ -239,7 +248,8 @@ test("operator resolution is append-only and creates a bound local offer line", 
     const lease = repository.acquireJob("worker", 1000, new Date("2026-08-04T00:00:00.000Z"));
     assert.ok(lease);
     repository.completeJob(lease.jobId, "worker", { decisionId: "decision-1", regionId: imported.region.regionId, status: "REVIEW", selectedCandidate: candidate(0.9), candidates: [candidate(0.9)], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-04T00:00:01.000Z" });
-    repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "NONFOIL", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" });
+    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Reverse Holofoil", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /finish must match/);
+    repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" });
     const offer = repository.offerDraft(sessionId);
     assert.equal(offer.length, 1);
     assert.equal(offer[0].quantity, 2);
@@ -259,19 +269,47 @@ test("recognized envelope is stable and draft adapters remain pure", () => {
   assert.throws(() => validateRecognizedAssetBatch([item, item], new Date("2026-08-05T00:00:00.000Z")), /duplicate assetId/);
 });
 
-test("Vision OCR retrieves a canonical candidate but remains operator review", () => {
+test("Magic retrieval remains explicit and is no longer the default product lane", () => {
   const analysis = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "Jin Sakai, Ghost of Tsushima 10", confidence: 0.99, x: 0.1, y: 0.9, width: 0.7, height: 0.05 }, { text: "Legendary Creature — Human Samurai", confidence: 0.99, x: 0.1, y: 0.45, width: 0.7, height: 0.05 }] };
   const catalogue = { search: (_categoryId: string, query: string) => query === "Jin Sakai, Ghost of Tsushima" ? [{ categoryId: "magic-en", sku: "123", name: "Jin Sakai, Ghost of Tsushima", setName: "FIN", collectorNumber: "1", variant: "Normal", language: "English" }] : [] };
-  assert.equal(retrieveCandidates(analysis, catalogue)[0].canonicalPrintingId, "magic-en:123");
-  const decision = createRecognitionDecision({ regionId: "region-1", analysis, catalogue, corpusVersion: "corpus-1", indexVersion: "index-1", now: "2026-08-04T00:00:00.000Z" });
+  assert.equal(retrieveCandidates(analysis, catalogue).length, 0);
+  assert.equal(retrieveCandidates(analysis, catalogue, "magic-en")[0].canonicalPrintingId, "magic-en:123");
+  const decision = createRecognitionDecision({ regionId: "region-1", analysis, catalogue, categoryId: "magic-en", corpusVersion: "corpus-1", indexVersion: "index-1", now: "2026-08-04T00:00:00.000Z" });
   assert.equal(decision.status, "REVIEW");
   assert.equal(decision.selectedCandidate?.sku, "123");
 });
 
-test("game classification prevents Pokémon headers from becoming Magic candidates", () => {
-  const analysis = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "BASIC", confidence: 0.99, x: 0.1, y: 0.9, width: 0.2, height: 0.05 }, { text: "Alcremie HP 90", confidence: 0.99, x: 0.2, y: 0.85, width: 0.5, height: 0.05 }] };
+test("English Pokémon name and collector evidence retrieves labelled exact variants", () => {
+  const analysis = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "BASIC", confidence: 0.99, x: 0.1, y: 0.94, width: 0.2, height: 0.05 }, { text: "Geodude", confidence: 0.99, x: 0.2, y: 0.91, width: 0.5, height: 0.05 }, { text: "HP 80", confidence: 0.99, x: 0.75, y: 0.9, width: 0.2, height: 0.05 }, { text: "During your opponent's next turn, this Pokémon takes 30 less damage.", confidence: 0.99, x: 0.1, y: 0.4, width: 0.8, height: 0.05 }, { text: "MEW EN 074/165", confidence: 0.99, x: 0.1, y: 0.03, width: 0.5, height: 0.05 }] };
+  const searches: Array<{ categoryId: string; query: string }> = [];
+  const catalogue = { search: (categoryId: string, query: string) => {
+    searches.push({ categoryId, query });
+    return query === "Geodude 074 165" ? [
+      { categoryId: "pokemon-en", sku: "normal", name: "Geodude", setName: "SV: Scarlet & Violet 151", collectorNumber: "074/165", variant: "Normal", language: "English" },
+      { categoryId: "pokemon-en", sku: "reverse", name: "Geodude", setName: "SV: Scarlet & Violet 151", collectorNumber: "074/165", variant: "Reverse Holofoil", language: "English" },
+    ] : [];
+  } };
+  assert.equal(activeRecognitionLane.categoryId, "pokemon-en");
   assert.equal(classifyObservedGame(analysis), "POKEMON");
-  assert.equal(retrieveCandidates(analysis, { search: () => { throw new Error("unsupported game must not query Magic"); } }).length, 0);
+  assert.equal(classifyObservedLanguage(analysis), "ENGLISH");
+  const candidates = retrieveCandidates(analysis, catalogue);
+  assert.deepEqual(searches[0], { categoryId: "pokemon-en", query: "Geodude 074 165" });
+  assert.equal(candidates.length, 2);
+  assert.equal(candidates[0].catalogueIdentity.name, "Geodude");
+  assert.equal(candidates[1].catalogueIdentity.variant, "Reverse Holofoil");
+  const decision = createRecognitionDecision({ regionId: "region-pokemon", analysis, catalogue, corpusVersion: "pokemon-corpus", indexVersion: "pokemon-index", now: "2026-08-05T00:00:00.000Z" });
+  assert.equal(decision.status, "REVIEW");
+  assert.equal(decision.pipelineVersion, "local-vision-ocr-pokemon-en-v1");
+});
+
+test("Spanish Pokémon and card backs abstain before catalogue retrieval", () => {
+  const spanish = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "FASE 1", confidence: 1, x: 0.1, y: 0.94, width: 0.2, height: 0.05 }, { text: "Toxicroak", confidence: 1, x: 0.2, y: 0.91, width: 0.5, height: 0.05 }, { text: "Evoluciona de Croagunk", confidence: 1, x: 0.1, y: 0.88, width: 0.5, height: 0.05 }, { text: "El Pokémon Activo de tu rival pasa a estar Envenenado.", confidence: 1, x: 0.1, y: 0.4, width: 0.8, height: 0.05 }] };
+  const back = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "ParétoN", confidence: 0.3, x: 0.1, y: 0.7, width: 0.2, height: 0.05 }] };
+  const catalogue = { search: () => { throw new Error("unsupported evidence must not query the catalogue"); } };
+  assert.equal(classifyObservedLanguage(spanish), "SPANISH");
+  assert.equal(retrieveCandidates(spanish, catalogue).length, 0);
+  assert.equal(classifyObservedGame(back), "UNKNOWN");
+  assert.equal(retrieveCandidates(back, catalogue).length, 0);
 });
 
 test("read-only catalogue retrieval uses exact FTS tokens", () => {

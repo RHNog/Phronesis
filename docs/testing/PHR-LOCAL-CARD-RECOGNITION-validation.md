@@ -27,7 +27,7 @@
 
 ## Calibration Result
 
-`NOT_QUALIFIED`. The current physical scans lack immutable exact-printing ground truth and are not a powered unseen English Magic holdout. Auto-accept remains disabled even when a candidate score is high.
+`NOT_QUALIFIED`. The current physical scans lack immutable exact-printing ground truth and are not a powered unseen English Pokémon holdout. Auto-accept remains disabled even when a candidate score is high.
 
 ## 2026-08-05 Calibration Tooling Validation
 
@@ -59,3 +59,15 @@
 - Live evidence route: HTTP 200; 209,102 bytes; SHA-256 `2c50390fd9ab18afda0c0602846044ed82bdbd5776ed0d0d9945ec4dcf72eac8`.
 - Worker idle-log line count remained 21 before and after a seven-second interval, proving the five-second poll does not emit idle heartbeat spam.
 - Browser validation at 390×844: 375px document width inside a 390px viewport, no horizontal overflow, primary buttons at least 44px high, correct `REVIEW` state and exact counts, and zero console warnings/errors.
+
+## 2026-08-05 Pokémon-First Operational Validation
+
+- Full Phronesis suite: pass, 416/416.
+- Standalone TypeScript, zero-warning ESLint, Next.js 16.2.12 production build, and diff whitespace validation: pass.
+- A safety replay against a SQLite backup of the live store produced the expected eight review results and ten abstentions before the production mutation.
+- The authorized live append-only replay created exactly 18 revision-2 regions while retaining all 18 revision-1 regions and decisions. Current live counts are 18 frames, 18 active regions, eight review, ten abstained, zero pending, zero accepted, and zero failed.
+- Review frames 1, 3, 5, 7, 9, 11, 13, and 17 produced two exact catalogue-variant candidates each. Their first-ranked identities are Alcremie `071/172` Normal, Geodude `074/165` Normal, Barbaracle `107/196` Holofoil, Pinsir `127/165` Normal twice, Hitmontop `072/172` Normal, Geodude `074/165` Normal, and Drowzee `096/165` Normal.
+- Frames 2, 4, 6, 8, 10, 12, 14, 16, and 18 are card backs and abstained. Frame 15 is Spanish Toxicroak and abstained. No unsupported frame queried into a current review result.
+- Repeating the same command returned `ALREADY_REPROCESSED` with `regionCount: 0`.
+- Mobile browser validation at 390×844 reports a 375px document width, no horizontal overflow, 301×110px candidate choices, and all primary actions at least 44px high. Selecting Reverse Holofoil changed the bound finish from `Normal` to `Reverse Holofoil`; reload restored the first-ranked Normal choice. Browser console logs were empty.
+- Persistent scanner and recognition LaunchAgents report `running`. Tailnet-only `:9443` and `:9444` return HTTP 200; the pre-existing public `:10000` Funnel mapping remains unchanged and returns its expected HTTP 307 redirect.

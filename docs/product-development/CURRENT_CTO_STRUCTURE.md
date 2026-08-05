@@ -5,16 +5,16 @@
 - Assignment: `PHR-LOCAL-CARD-RECOGNITION-20260804`
 - Document ID: `PHR-STRUCT-20260804-003`
 - Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-TECH-015`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
-- Status: `PRIVATE OPERATIONAL — TAILNET :9444 VERIFIED; AUTO-ACCEPT AND PUBLICATION GATED`
+- Status: `POKÉMON-FIRST REVISION IMPLEMENTED AND PRIVATELY OPERATIONAL — PRODUCT REVIEW READY; AUTO-ACCEPT AND PUBLICATION GATED`
 - Objective: turn physical card observations into evidence-backed canonical Phronesis assets, beginning with a safe macOS fi-8170 capability probe and progressing through local recognition, Vendor offers, and marketplace-neutral exports.
 - Delivery lane: Controlled, seven ordered slices including contingency S1W, plan fingerprint `6e3ad12423e6abd178d7a722958e416b204885b859b7cf1ce5f5f9a217861f2d`.
-- First-release rule: English Magic, one card per frame; condition is operator-confirmed and price-material finish uncertainty forces review.
+- First-release rule: English Pokémon (`pokemon-en`), one card per frame; exact catalogue printing/variant and condition are operator-confirmed, and every machine result remains review or abstention.
 - Architecture rule: Phronesis owns workflow and canonical identity; a signed native agent owns scanner control; an isolated local worker owns recognition; immutable evidence remains content-addressed.
 - Safety rule: no physical scan without a connected fi-8170, explicit scan flag, owner-supplied low-value cards, and operator supervision.
 - Publication rule: recognition never publishes. TCGPLAYER Tools and Liga adapters consume `PHR-API-015` only through separate draft/import gates.
 - Current work orders: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`, `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`, `docs/prompts/PHR-API-015-recognized-asset-interchange-prompt.md`, and `docs/prompts/PHR-UX-026-multi-card-binder-capture-prompt.md`.
-- Current accountable role: Product Owner can use the tailnet-only scanner workflow and supplies/approves real English Magic corpus provenance and a representative labeled binder holdout. Engineering retains the conservative runtime boundary.
-- Current checkpoint: the isolated scanner service is live at tailnet-only `:9444` and the recurring local worker is supervised persistently. The exact 18-frame Windows bundle remains idempotent; local Vision completed all 18 jobs and the English-Magic-only policy safely abstained on all 18 Pokémon observations. Durable session reconciliation corrected the terminal badge to `REVIEW`. Evidence retrieval, existing `:9443` continuity, quiet idle polling, 390×844 no-overflow behavior, 415 repository tests, 4 Swift tests, zero-warning lint, and production build pass. Auto-accept, active binder segmentation, purchases, inventory, external consumers, publication, and public exposure remain unchanged and gated.
+- Current accountable role: Product Owner reviews one of the eight current Pokémon candidates in the private scanner workflow; corpus qualification and any auto-accept policy remain separate gated objectives.
+- Current checkpoint: the Pokémon-first work order is implemented and same-session conformance passes. The live append-only replay retains 18 historical revision-1 decisions and exposes 18 current revision-2 results: eight English Pokémon reviews and ten abstentions covering nine backs plus one Spanish card. The default worker, private UI, and persistent services are live; no result is auto-accepted or published.
 
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 

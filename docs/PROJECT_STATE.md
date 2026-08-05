@@ -3,11 +3,11 @@
 
 ## 2026-08-05 Local Card Recognition State
 
-- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree. The scanner-to-offer path is privately operational at tailnet-only `:9444`; real-corpus qualification remains gated.
+- `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree. English Pokémon is the first active lane, and the scanner-to-offer path is privately operational at tailnet-only `:9444`; real-corpus qualification remains gated.
 - `PHR-UX-026` now has benchmark-only local Vision rectangle suggestions and a sealed localization benchmark. A real smoke test exposed an internal-rectangle false localization, so automatic region adoption remains disabled pending a labeled binder holdout.
-- The Windows batch-folder watcher imports sealed bundles idempotently, the local macOS Vision worker produces OCR/feature evidence, and canonical catalogue retrieval is read-only and explicitly game-gated.
-- The exact 18-frame physical bundle replay completed 18/18 jobs with 18 safe abstentions because the batch is Pokémon and the approved first recognition lane is English Magic. A discovered Pokémon-to-Magic false-positive was corrected before review.
-- Auto-accept remains disabled until a provenance-approved English Magic corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, public deployment, and publication remain gated.
+- The Windows batch-folder watcher imports sealed bundles idempotently, the local macOS Vision worker produces OCR/feature evidence, and canonical catalogue retrieval is read-only and explicitly game- and language-gated.
+- The exact 18-frame physical bundle has an append-only second recognition revision. Current truth is eight English Pokémon faces in `REVIEW` with exact catalogue-variant candidates and ten abstentions covering nine backs plus one Spanish card; all 18 prior decisions remain auditable.
+- Auto-accept remains disabled until a provenance-approved English Pokémon corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, public deployment, and publication remain gated.
 - Persistent user LaunchAgents supervise the isolated loopback scanner app and recurring recognition worker. Existing `:9443` and public `:10000` services remain unchanged; no purchase, inventory, external repository, marketplace, or publication state changed.
 
 ## 2026-08-03 Arbitrage Recovery State

@@ -12,6 +12,9 @@
 
 ## Implementation Requirements
 
+- Activate English Pokémon as the first scanner-to-offer product line and surface labelled exact printing/variant choices instead of silently selecting the first candidate.
+- Keep candidate finish bound to the selected canonical Pokémon SKU and require explicit operator selection/confirmation.
+- Replay existing immutable session evidence append-only after the pipeline switch; current UI counts and offer lines must exclude superseded region decisions.
 - Add authenticated Node-runtime APIs for session creation, sealed-bundle import, session read, candidate resolution, material confirmation, and draft-offer assembly.
 - Add a responsive Phronesis workflow implementing Capture, Resolve, and Offer.
 - Reuse canonical pricing and offer policy; persist exact price/preset bindings.
@@ -21,8 +24,8 @@
 
 ## Constraints
 
-- No scanner-driver logic in the web app and no purchase, inventory, marketplace, or publication mutation.
+- No scanner-driver logic in the web app, no non-English or non-Pokémon recognition activation, and no purchase, inventory, marketplace, or publication mutation.
 
 ## Testing Expectations
 
-- Repository/API/workflow tests plus desktop, 390px, keyboard, reload, and fail-closed evidence.
+- Repository/API/workflow tests plus replay of the 18-frame Pokémon batch, desktop, 390px, keyboard, reload, and fail-closed evidence.

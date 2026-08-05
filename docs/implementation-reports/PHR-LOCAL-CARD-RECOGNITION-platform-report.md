@@ -30,7 +30,7 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 
 ## Remaining Evidence Gates
 
-- Curate a provenance-approved English Magic corpus and immutable powered holdout.
+- Curate a provenance-approved English Pokémon corpus and immutable powered holdout.
 - Benchmark exact-printing precision/coverage by risk stratum before activating auto-accept.
 - Product Owner reviews the visible workflow.
 - Consumer projects separately adopt conformance fixtures.
@@ -62,3 +62,14 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Real qualification requires unique source-frame and label hashes plus explicit labeling approval. Synthetic cases are counted but excluded from qualification.
 - A real edge-to-edge card scan with SHA-256 `ec25cf42ee3ebec05cc8129c55b58a163146ae2e4b24623b5081e4572ee4f637` produced one small landscape suggestion at `(0.227963, 0.220926, 0.186268, 0.142377)`, visibly corresponding to internal artwork rather than the whole card. This is retained as negative evidence; no tuning exception or production activation followed.
 - No suggestion was written to the repository and no UI, runtime, deployment, or external state changed.
+
+## 2026-08-05 Pokémon-First Operational Revision
+
+- Changed the default worker lane from English Magic to English Pokémon (`pokemon-en`). Magic retrieval remains available only when an explicit non-default category is supplied.
+- Added pre-retrieval English-language gating, Pokémon header normalization, collector-fraction extraction, and name-plus-collector catalogue queries. Card backs, Spanish Pokémon, Magic, and insufficient game/language evidence abstain before catalogue access.
+- Preserved name, set, collector number, variant, and language on each candidate. The mobile Resolve step now presents every returned catalogue SKU as an explicit labelled choice and binds the read-only finish field to that exact choice.
+- Added server-side validation that the submitted finish matches the chosen catalogue candidate.
+- Added an append-only, reason-bound session reprocessing command. Current counts, review items, resolutions, and offer drafts use only the latest active region revision; historical decisions remain auditable.
+- Reprocessed live session `phr-card-test-20260804-002` from immutable evidence. The repository now retains 18 revision-1 regions and decisions plus 18 revision-2 regions and decisions. Current truth is eight `REVIEW`, ten `ABSTAINED`, zero pending, zero accepted, and zero failed.
+- The eight review results are Alcremie, Geodude, Barbaracle, Pinsir, Pinsir, Hitmontop, Geodude, and Drowzee. Nine card backs and the Spanish Toxicroak abstained.
+- Repeating the same replay returned `ALREADY_REPROCESSED` and created zero additional regions. Auto-accept, purchases, inventory mutation, downstream publication, and active binder segmentation remain disabled.

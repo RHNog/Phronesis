@@ -48,6 +48,7 @@ Original frames are stored outside SQLite in an immutable content-addressed spoo
 
 ## Functional Requirements
 
+- The first active recognition product line is English Pokémon (`pokemon-en`). Magic remains an inactive future lane and cannot be queried by the default worker.
 - Operate offline at runtime without paid or cloud recognition.
 - Treat scanner, camera, file import, and future multi-card capture as acquisition adapters over the same frame and region model.
 - Persist every original before acknowledging frame completion.
@@ -55,6 +56,7 @@ Original frames are stored outside SQLite in an immutable content-addressed spoo
 - Use canonical Phronesis printing and physical-variant identity as source truth.
 - Retain candidate evidence, pipeline version, corpus version, confidence policy, and operator overrides.
 - Produce `ACCEPTED`, `REVIEW`, or `ABSTAINED` decisions; never force a match.
+- Gate retrieval by observed game and language. Unsupported games, card backs, non-English cards, and insufficient language evidence abstain without querying the active catalogue.
 - Keep condition and subtle finish resolution separate from identity evidence.
 - Bind commercial output to a versioned price snapshot and offer preset.
 - Export a versioned marketplace-neutral recognized-asset envelope.
@@ -116,6 +118,7 @@ Original frames are stored outside SQLite in an immutable content-addressed spoo
 - The Controlled Lane slice plan is recorded and every source-changing slice has an approved specification and work order.
 - The native acquisition protocol proves real fi-8170 behavior before production integration.
 - Recognition auto-accept remains disabled until a powered unseen holdout supports the accepted-precision target.
+- The active worker retrieves only `pokemon-en` singles, uses OCR name plus collector evidence when present, and presents distinct catalogue variants for operator selection.
 - Vendor Buying reuses current identity, pricing, and offer boundaries.
 - No downstream publisher can be called as a recognition side effect.
 
@@ -183,5 +186,5 @@ The first source-changing slice is a native capability probe with no product UI.
 - Originating brief: Product Owner-supplied `Phronesis Local Card Recognition Product Brief`.
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - First implementation prompt: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
-- Last modified: 2026-08-04.
-- Modification reason: add the approved temporary Windows/Parallels acquisition contingency without changing canonical ownership.
+- Last modified: 2026-08-05.
+- Modification reason: change the Product Owner-selected first recognition product line from English Magic to English Pokémon while preserving conservative review and publication boundaries.

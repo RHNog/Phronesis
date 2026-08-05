@@ -18,7 +18,8 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
   const [items, setItems] = useState<Array<{ frameId: string; regionId: string; status: string; decision: RecognitionDecision | null; resolved: boolean }>>([]);
   const [offer, setOffer] = useState<Array<{ regionId: string; candidate: { canonicalPrintingId: string } | null; condition: string; finish: string; quantity: number; offerCents: number; currency: string }>>([]);
   const [condition, setCondition] = useState("NEAR_MINT");
-  const [finish, setFinish] = useState("NONFOIL");
+  const [finish, setFinish] = useState("Normal");
+  const [selectedCandidateId, setSelectedCandidateId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [offerDollars, setOfferDollars] = useState("");
   const [priceSnapshotId, setPriceSnapshotId] = useState("");
@@ -38,8 +39,13 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
         const detailResponse = await fetch(`/api/card-recognition/sessions/${encodeURIComponent(nextSessions[0].id)}`, { cache: "no-store" });
         const detail = await detailResponse.json() as { items?: typeof items; offer?: typeof offer; error?: string };
         if (!detailResponse.ok) throw new Error(detail.error ?? "Session detail is unavailable.");
-        setItems(detail.items ?? []);
+        const nextItems = detail.items ?? [];
+        setItems(nextItems);
         setOffer(detail.offer ?? []);
+        const nextUnresolved = nextItems.find((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
+        const nextCandidate = nextUnresolved?.decision?.selectedCandidate ?? nextUnresolved?.decision?.candidates[0] ?? null;
+        setSelectedCandidateId(nextCandidate?.canonicalPrintingId ?? "");
+        setFinish(nextCandidate?.catalogueIdentity?.variant ?? "Normal");
       } else { setItems([]); setOffer([]); }
       setMessage("");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Session status is unavailable."); }
@@ -70,7 +76,21 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
 
   const active = sessions[0];
   const unresolved = items.find((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
-  const selectedCandidate = unresolved?.decision?.selectedCandidate ?? unresolved?.decision?.candidates[0] ?? null;
+  const candidateOptions = unresolved?.decision?.candidates ?? [];
+  const selectedCandidate = candidateOptions.find((candidate) => candidate.canonicalPrintingId === selectedCandidateId)
+    ?? unresolved?.decision?.selectedCandidate
+    ?? candidateOptions[0]
+    ?? null;
+
+  function chooseCandidate(canonicalPrintingId: string) {
+    const candidate = candidateOptions.find((option) => option.canonicalPrintingId === canonicalPrintingId);
+    if (!candidate) return;
+    setSelectedCandidateId(canonicalPrintingId);
+    setFinish(candidate.catalogueIdentity?.variant ?? "Normal");
+    setPriceSnapshotId("");
+    setPriceSnapshotAt("");
+    setReferenceCents(null);
+  }
 
   async function resolveCurrent(event: React.FormEvent) {
     event.preventDefault();
@@ -110,7 +130,7 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
     <header className="rounded-2xl border border-cyan-950 bg-zinc-900/80 p-5 sm:p-7">
       <p className="text-xs font-semibold uppercase tracking-[.22em] text-cyan-300">Local card recognition</p>
       <h1 className="mt-2 text-3xl font-semibold text-white">Scanner to offer</h1>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">Durable local intake, evidence-backed identity review, and draft offers. Recognition abstains when evidence is insufficient and never publishes.</p>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">English Pokémon is the active first-release lane. Durable local intake produces evidence-backed identity review and draft offers; recognition abstains when evidence is insufficient and never publishes.</p>
       <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="Workflow stages">{stages.map((stage, index) => <li key={stage} className={`rounded-lg border px-3 py-3 text-sm font-semibold ${index === 0 ? "border-cyan-500 bg-cyan-950/40 text-cyan-100" : "border-zinc-800 bg-zinc-950 text-zinc-500"}`}><span className="mr-2 text-xs">{index + 1}</span>{stage}</li>)}</ol>
     </header>
 
@@ -136,8 +156,8 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
           {/* eslint-disable-next-line @next/next/no-img-element -- authenticated content-addressed scan evidence is not a public optimization source. */}
           <img src={`/api/card-recognition/frames/${encodeURIComponent(unresolved.frameId)}`} alt="Current scanned card evidence" className="max-h-[32rem] w-full rounded-lg border border-zinc-800 bg-zinc-950 object-contain" />
           <form onSubmit={resolveCurrent} className="space-y-3"><div className="rounded-lg border border-zinc-800 bg-zinc-950 p-3"><p className="text-xs font-semibold uppercase tracking-wider text-amber-300">{unresolved.status}</p><p className="mt-2 break-all text-sm font-semibold text-zinc-100">{selectedCandidate?.canonicalPrintingId ?? "No machine candidate"}</p><p className="mt-1 text-xs text-zinc-500">{unresolved.decision?.reason}</p></div>
-            {selectedCandidate ? <><label className="block text-xs text-zinc-400">Condition<select value={condition} onChange={(event) => { setCondition(event.target.value); setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null); }} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white"><option value="NEAR_MINT">Near Mint</option><option value="LIGHTLY_PLAYED">Lightly Played</option><option value="MODERATELY_PLAYED">Moderately Played</option><option value="HEAVILY_PLAYED">Heavily Played</option><option value="DAMAGED">Damaged</option></select></label>
-            <label className="block text-xs text-zinc-400">Finish<input required value={finish} onChange={(event) => setFinish(event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white" /></label>
+            {selectedCandidate ? <>{candidateOptions.length ? <fieldset className="space-y-2"><legend className="text-xs font-semibold text-zinc-300">Select exact Pokémon printing and finish</legend>{candidateOptions.map((candidate) => { const identity = candidate.catalogueIdentity; return <label key={candidate.canonicalPrintingId} className={`flex min-h-11 cursor-pointer items-start gap-3 rounded-lg border p-3 ${candidate.canonicalPrintingId === selectedCandidate.canonicalPrintingId ? "border-cyan-500 bg-cyan-950/30" : "border-zinc-800 bg-zinc-950"}`}><input type="radio" name="recognition-candidate" value={candidate.canonicalPrintingId} checked={candidate.canonicalPrintingId === selectedCandidate.canonicalPrintingId} onChange={() => chooseCandidate(candidate.canonicalPrintingId)} className="mt-1 size-4 accent-cyan-300" /><span className="min-w-0 text-sm"><span className="block font-semibold text-zinc-100">{identity?.name ?? candidate.canonicalPrintingId}</span><span className="mt-1 block text-xs leading-5 text-zinc-400">{identity ? `${identity.setName} · ${identity.collectorNumber ?? "No collector number"} · ${identity.variant} · ${identity.language}` : candidate.canonicalPrintingId}</span><span className="mt-1 block text-xs text-zinc-600">Rank {candidate.rank} · OCR evidence {Math.round(candidate.score * 100)}%</span></span></label>; })}</fieldset> : null}<label className="block text-xs text-zinc-400">Condition<select value={condition} onChange={(event) => { setCondition(event.target.value); setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null); }} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white"><option value="NEAR_MINT">Near Mint</option><option value="LIGHTLY_PLAYED">Lightly Played</option><option value="MODERATELY_PLAYED">Moderately Played</option><option value="HEAVILY_PLAYED">Heavily Played</option><option value="DAMAGED">Damaged</option></select></label>
+            <label className="block text-xs text-zinc-400">Catalogue finish bound to selected SKU<input required readOnly value={finish} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-zinc-300" /></label>
             <div className="grid grid-cols-2 gap-2"><label className="block text-xs text-zinc-400">Quantity<input required type="number" min="1" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white" /></label><label className="block text-xs text-zinc-400">Offer USD<input required type="number" min="0" step="0.01" value={offerDollars} onChange={(event) => setOfferDollars(event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white" /></label></div>
             <button type="button" onClick={() => void loadPriceSnapshot()} disabled={busy} className="min-h-11 w-full rounded-lg border border-zinc-700 px-3 text-sm font-semibold text-zinc-200">Load exact-condition price evidence</button>
             {priceSnapshotId ? <div className="rounded-lg border border-emerald-900 bg-emerald-950/30 p-3 text-xs text-emerald-200"><p>Reference: {referenceCents === null ? "Unavailable" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(referenceCents / 100)}</p><p className="mt-1 break-all text-emerald-300/70">{priceSnapshotId}</p><p className="mt-1">{priceSnapshotAt}</p></div> : null}

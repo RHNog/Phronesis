@@ -44,6 +44,13 @@ export type RecognitionCandidate = {
   canonicalVariantId: string | null;
   categoryId: string;
   sku: string;
+  catalogueIdentity: {
+    name: string;
+    setName: string;
+    collectorNumber: string | null;
+    variant: string;
+    language: string;
+  };
   rank: number;
   score: number;
   evidence: RecognitionEvidence[];

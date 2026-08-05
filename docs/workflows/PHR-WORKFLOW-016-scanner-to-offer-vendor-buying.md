@@ -18,7 +18,7 @@ Workflow / Vendor Buying / UX / Identity / Pricing / Audit
 
 ## Objective
 
-Let a buyer load qualified English Magic cards, press Start, review exceptions, confirm price-material finish/condition, apply an existing buying preset, and review an evidence-backed offer without managing scan files.
+Let a buyer load qualified English Pokémon cards, press Start, review exceptions, select the exact catalogue printing/variant, confirm condition, apply an existing buying preset, and review an evidence-backed offer without managing scan files.
 
 ## Requirements
 
@@ -32,6 +32,9 @@ Let a buyer load qualified English Magic cards, press Start, review exceptions, 
 - Import sealed Windows bridge bundles without exposing filesystem management in the operator workflow.
 - Treat front/back pairing as acquisition evidence. Only the operator-selected card face enters recognition; the paired reverse remains linked evidence.
 - Require explicit condition and price-material finish confirmation before a line becomes offer-ready.
+- Present every returned Pokémon printing/finish as a labelled candidate with name, set, collector number, variant, and language; never silently bind the first SKU when multiple physical variants exist.
+- Keep card backs, non-English Pokémon, Magic cards, and insufficient game/language evidence as explicit abstentions in the first release.
+- Reprocess immutable evidence append-only when the active recognition lane or pipeline version changes. Historical decisions remain auditable but cannot inflate current counts or remain in the current offer draft.
 - Keep scan session, recognition review, and offer draft recoverable after process restart.
 - Derive the persisted session stage from durable work: `CAPTURING` with no regions, `PROCESSING` while any current job is pending or leased, `REVIEW` when terminal results still require resolution, and `OFFER_READY` only when every current region has an operator-bound resolution. Reimporting an idempotent bundle must not regress a terminal session to `PROCESSING`.
 
@@ -42,6 +45,7 @@ Let a buyer load qualified English Magic cards, press Start, review exceptions, 
 - No scan failure silently changes another card's result.
 - Keyboard and touch workflows expose equivalent actions, focus is preserved after exception resolution, and status never relies on color alone.
 - Draft creation invokes no purchase, inventory, listing, or external marketplace mutation.
+- Replaying the accepted 18-frame Pokémon batch yields review candidates for its eight English card faces and safe abstentions for nine card backs plus one Spanish card, with no automatic acceptance.
 
 ## Dependencies
 
@@ -57,7 +61,7 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Design gate: `docs/design/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying.md`.
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
 - Last modified: 2026-08-05.
-- Modification reason: define durable session-state reconciliation and prevent stale processing state after completion or idempotent reimport.
+- Modification reason: change the first product line to English Pokémon and require explicit exact-variant selection plus append-only replay semantics.
 
 ## Private Operational Activation — 2026-08-05
 

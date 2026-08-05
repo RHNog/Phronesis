@@ -22,6 +22,10 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 
 ## Requirements
 
+- Use English Pokémon (`pokemon-en`) as the first active product lane. The default worker must not query Magic.
+- Treat game and language classification as pre-retrieval gates. English Pokémon evidence may proceed; card backs, non-English Pokémon, Magic, unknown game, and unknown language abstain.
+- Build Pokémon OCR queries from the probable card-name header and collector fraction when available. Ignore structural headers such as `BASIC`, `STAGE 1`, `STAGE 2`, HP text, and evolution text as names.
+- Preserve name, set, collector number, catalogue variant, and language on every candidate so the operator can distinguish exact Pokémon printings and finishes.
 - Canonical Phronesis printing and physical-variant identity is source truth.
 - Every reference asset records source, license/provenance, checksum, language, set, collector number, finish applicability, and corpus version.
 - Derived fingerprints, embeddings, OCR indexes, and local-feature indexes are rebuildable versioned artifacts.
@@ -43,6 +47,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 - Every decision is reproducible from corpus, pipeline, model/index, and policy versions.
 - No paid or cloud recognition dependency exists at runtime.
 - Restarted jobs are lease-safe and idempotent; duplicate frame or region delivery cannot create duplicate assets.
+- A versioned pipeline change can reprocess immutable session evidence append-only; current counts and offer drafts use only the latest active region revision and its latest decision/resolution.
 - A benchmark that lacks a powered holdout reports `NOT_QUALIFIED` and cannot activate auto-accept.
 - Corpus construction copies source bytes into a content-addressed bundle, emits canonical JSON, and rejects identity leakage across train/dev/holdout partitions.
 - The executable benchmark reports top-1/top-k exact-printing recall, accepted precision, review and abstention rates, latency percentiles, pairing accuracy, and failure strata.
@@ -70,4 +75,4 @@ Runtime authority lives under `.data/card-recognition/` and is ignored by Git. S
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - Related prompt: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`.
 - Last modified: 2026-08-05.
-- Modification reason: continue the approved program with executable corpus construction and calibration evidence while keeping licensing and auto-accept gates fail closed.
+- Modification reason: make English Pokémon the first active lane and define fail-closed replay, exact-variant evidence, and latest-revision semantics.

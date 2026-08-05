@@ -4,15 +4,15 @@
 
 ## Objective
 
-Operate and verify the privately activated `PHR-WORKFLOW-016` scanner-to-offer path while preserving conservative recognition gates.
+Change and verify the privately activated `PHR-WORKFLOW-016` first product line from English Magic to English Pokémon while preserving conservative recognition gates.
 
 ## Acceptance criteria
 
-- [x] Run the scanner page on an isolated loopback service and tailnet-only HTTPS port without disturbing existing services.
-- [x] Supervise the recurring bundle watcher and local recognition worker across process restart.
-- [x] Preserve immutable evidence and complete the existing 18-frame batch with correct safe abstentions.
-- [x] Reconcile terminal session stages from durable job/resolution truth.
-- [x] Pass full tests, lint, build, route/evidence probes, idle stability, phone-width browser review, and same-session conformance.
+- [x] Activate only the English Pokémon catalogue lane in the default worker.
+- [x] Retrieve by card-name plus collector evidence and expose exact labelled variant choices.
+- [x] Reprocess the immutable 18-frame session append-only with latest-revision counts.
+- [x] Prove eight English faces reach review and nine backs plus one Spanish face abstain.
+- [x] Pass full tests, lint, build, live private-route, phone-width, and same-session conformance gates.
 
 ## Completed this session
 
@@ -24,19 +24,22 @@ Operate and verify the privately activated `PHR-WORKFLOW-016` scanner-to-offer p
 - Completed binder benchmark tooling and preserved a real internal-rectangle false localization as negative evidence.
 - Activated the conservative Scanner to Offer path at tailnet-only `:9444` with persistent user LaunchAgents.
 - Corrected the live session's stale processing badge and verified `REVIEW`, 18 abstentions, zero pending jobs, immutable evidence bytes, and existing-service continuity.
+- Changed the default worker to `pokemon-en`, added English-language and collector gates, retained full catalogue identity on candidates, and bound finish to explicit SKU selection.
+- Reprocessed the live session append-only to revision 2: eight English faces are in review and nine backs plus one Spanish face abstained. A repeat replay created no new revision.
+- Rebuilt and restarted both persistent services, verified all 416 tests plus TypeScript/lint/build, and passed live 390×844 browser and route-continuity gates.
 
 ## Remaining work
 
-- Run a real English Magic card through the operational workflow for Product Owner experience review.
+- Product Owner resolves one of the eight current English Pokémon candidates through the operational workflow for experience review.
 - Acquire a labeled real binder holdout before any segmentation activation.
-- Acquire separately licensed English Magic training and powered holdout data only after Product Owner provenance approval.
+- Acquire separately licensed English Pokémon training and powered holdout data only after Product Owner provenance approval.
 
 ## Blockers
 
 - Benchmark-tooling implementation is not blocked.
-- Real calibration and auto-accept activation remain blocked on licensed/provenance-approved English Magic reference and holdout assets.
+- Real calibration and auto-accept activation remain blocked on licensed/provenance-approved English Pokémon reference and holdout assets.
 - Production binder segmentation remains blocked on a labeled real holdout and separate Product Review.
 
 ## Exact next action
 
-Run one owner-selected English Magic card through the Windows bridge and verify the resulting evidence-backed candidate or abstention in the private scanner UI. Do not enable auto-accept or segmentation suggestions.
+Product Owner opens the private scanner route, reviews one current Pokémon result, and confirms its exact catalogue variant, condition, and price evidence. Do not enable auto-accept or segmentation suggestions.

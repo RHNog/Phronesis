@@ -16,6 +16,10 @@ Implement the local, evidence-producing recognition foundation described by `PHR
 
 ## Implementation Requirements
 
+- Make `pokemon-en` the first active recognition lane and record a Pokémon-specific pipeline version; the default worker must not query `magic-en`.
+- Gate retrieval on observed Pokémon plus English evidence, ignore Pokémon structural header/HP/evolution text as card names, and search by probable name plus collector fraction before name-only fallback.
+- Persist candidate name, set, collector number, catalogue variant, and language for exact operator review.
+- Add append-only, idempotent session reprocessing for pipeline changes and ensure summaries/offers use only the latest active region revision.
 - Add shared acquisition/region/recognition contracts and strict validators.
 - Add a durable SQLite repository and content-addressed object layout with idempotent writes, leases, revisions, and decision evidence.
 - Add manifest/checksum validation, transactional active-corpus pointer, rollback, and immutable split assignment.
@@ -28,12 +32,13 @@ Implement the local, evidence-producing recognition foundation described by `PHR
 
 ## Constraints
 
+- Preserve review-only policy; do not add Spanish or other game/language lanes in this increment.
 - No cloud or paid runtime recognition, raw evidence in Git, redistribution-right assumption, automatic condition grading, or external publication.
 - Do not mutate the live runtime database during tests.
 
 ## Testing Expectations
 
-- Contract, geometry, content-addressing, idempotency, lease recovery, manifest activation/rollback, split leakage, deterministic corpus construction, scoring, abstention, benchmark qualification, and worker-failure tests.
+- Contract, Pokémon/language gating, name/collector retrieval, exact variant evidence, append-only reprocessing, latest-revision counts/offers, geometry, content-addressing, idempotency, lease recovery, manifest activation/rollback, split leakage, deterministic corpus construction, scoring, abstention, benchmark qualification, and worker-failure tests.
 
 ## Acceptance Criteria
 

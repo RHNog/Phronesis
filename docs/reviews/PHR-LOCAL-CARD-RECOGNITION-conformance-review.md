@@ -19,19 +19,19 @@ This is a same-session conformance review and is not represented as independent 
 
 ## Findings
 
-The real Pokémon batch initially revealed a cross-game false-positive caused by the generic `BASIC` header. The pipeline correctly limited it to `REVIEW`, but that recommendation was still operationally poor. An explicit observed-game classifier now prevents unsupported Pokémon evidence from querying the Magic catalogue. Replay produced 18 safe abstentions.
+The real Pokémon batch initially revealed a cross-game false-positive caused by the generic `BASIC` header. The pipeline correctly limited it to `REVIEW`, but that recommendation was still operationally poor. An explicit observed-game classifier prevented unsupported Pokémon evidence from querying the then-active Magic catalogue. That historical replay produced 18 safe abstentions; the later Pokémon-first revision is reviewed below.
 
 No claim is made that OCR-only retrieval meets product accuracy. Apple Vision feature prints are generated and versioned, but the catalogue-scale artwork index remains disabled until source licensing/provenance and holdout gates are satisfied. Automatic binder segmentation is also not claimed; the implemented region contract and correction history are the safe extension foundation.
 
 ## Next Accountable Gate
 
-The privately activated package is ready for Product Owner use on the tailnet. Auto-accept requires a separately approved corpus and powered English Magic holdout. TCGPLAYER Tools and Liga consumer adoption, public deployment, push, and publication remain separate controlled changes.
+The privately activated package is ready for Product Owner use on the tailnet. Auto-accept requires a separately approved corpus and powered English Pokémon holdout. TCGPLAYER Tools and Liga consumer adoption, public deployment, push, and publication remain separate controlled changes.
 
 ## 2026-08-05 Private Activation Review
 
 `CONFORMS — TAILNET-ONLY OPERATIONAL PATH VERIFIED`
 
-The isolated `:9444` service and recurring recognition worker are supervised by user LaunchAgents and do not modify the existing `:9443` or public `:10000` routes. Live replay retained the correct 18/18 Pokémon abstention result, immutable evidence bytes, zero pending jobs, and quiet idle polling. Durable state reconciliation now derives `PROCESSING`, `REVIEW`, and `OFFER_READY` from current jobs and operator resolutions; the live session correctly transitioned from stale `PROCESSING` to `REVIEW`. Phone-width browser evidence shows no horizontal overflow, 44px actions, and no console warnings/errors. Full 415/415 tests, zero-warning lint, and production build pass. This is a same-session review and not independent approval.
+At the private-activation checkpoint, the isolated `:9444` service and recurring recognition worker were supervised by user LaunchAgents and did not modify the existing `:9443` or public `:10000` routes. The then-active Magic policy retained its correct 18/18 Pokémon abstention result, immutable evidence bytes, zero pending jobs, and quiet idle polling. Durable state reconciliation derives `PROCESSING`, `REVIEW`, and `OFFER_READY` from current jobs and operator resolutions; the session correctly transitioned from stale `PROCESSING` to `REVIEW`. Phone-width browser evidence showed no horizontal overflow, 44px actions, and no console warnings/errors. Full 415/415 tests, zero-warning lint, and production build passed. This historical checkpoint is superseded by the Pokémon-first revision review below and remains a same-session review, not independent approval.
 
 ## 2026-08-05 Calibration Tooling Review
 
@@ -44,3 +44,11 @@ The implementation now turns explicit local source files into checksum-verified 
 `CONFORMS AS BENCHMARK TOOLING — PRODUCTION SEGMENTATION DOES NOT CONFORM YET`
 
 The native worker and TypeScript boundary preserve local-only execution, versioned evidence, top-left normalized geometry, deterministic order, and fail-closed validation. The benchmark excludes synthetic cases from qualification and prevents reuse of frames or labels. No detector output mutates active regions. The real smoke result is a known false localization, not positive accuracy evidence. Production activation remains blocked until an approved, immutable, representative binder holdout meets all configured thresholds and returns through Designer and Product Review. Full 414/414 repository tests, 4/4 Swift tests, TypeScript, zero-warning lint, production build, and diff hygiene pass. This is a same-session review, not independent approval.
+
+## 2026-08-05 Pokémon-First Revision Review
+
+`CONFORMS FOR PRIVATE POKÉMON OPERATION — AUTO-ACCEPT AND PUBLICATION GATES REMAIN CLOSED`
+
+The default worker now has one explicit active lane, English Pokémon. Game and language classification occur before catalogue retrieval; backs, Spanish evidence, Magic, and unknown evidence fail closed. Candidate identity retains the catalogue name, set, collector number, variant, and language, and the operator must select one labelled SKU. The server rejects a finish that differs from the selected catalogue variant. Immutable replay is append-only and idempotent, while current session, review, resolution, and offer projections exclude superseded revisions.
+
+Live evidence matches the approved acceptance boundary: 36 retained regions/decisions across two revisions, with the 18 current regions producing eight reviews and ten abstentions. No result was auto-accepted and no purchase, inventory, consumer, or publication mutation occurred. Both private services are supervised and the existing private/public Tailscale routes are unchanged. Full 416/416 tests, TypeScript, zero-warning lint, production build, live API evidence, and phone-width UI evidence pass. This is a same-session conformance review and is not represented as independent approval.
