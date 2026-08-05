@@ -5,6 +5,7 @@
 - `PHR-ARCH-015` treats scanning as one acquisition adapter into immutable frames and regions, not as a Vendor Workspace-only feature.
 - Phronesis owns authorization, canonical identity, pricing, offers, and operator decisions. Native macOS/Windows agents own scanner sessions; an isolated local worker owns recognition.
 - `PHR-TECH-013` first proves the actual fi-8170/ImageCaptureCore contract with a standalone Swift probe and low-value physical gate.
+- `PHR-TECH-015` temporarily routes supported fi-8170 acquisition through Windows PaperStream, seals Windows-local frames into a hash-bound Parallels bundle, and requires a distrustful macOS import; it owns no identity or product state.
 - `PHR-TECH-014` owns the licensed versioned corpus, derived indexes, benchmark, candidate evidence, confidence calibration, and abstention.
 - `PHR-WORKFLOW-016` reuses existing Vendor identity, price snapshot, offer preset, receipt, and inventory boundaries.
 - `PHR-API-015` exports a marketplace-neutral recognized asset. TCGPLAYER Tools, LigaMagic, and LigaPokémon map from that asset; none receives publication authority from recognition.

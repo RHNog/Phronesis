@@ -4,17 +4,17 @@
 
 - Assignment: `PHR-LOCAL-CARD-RECOGNITION-20260804`
 - Document ID: `PHR-STRUCT-20260804-003`
-- Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
-- Status: `S1 SOFTWARE VERIFIED — PHYSICAL GATE PENDING`
+- Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-TECH-015`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
+- Status: `S1W COMPLETE — WINDOWS BRIDGE OPERATIONAL`
 - Objective: turn physical card observations into evidence-backed canonical Phronesis assets, beginning with a safe macOS fi-8170 capability probe and progressing through local recognition, Vendor offers, and marketplace-neutral exports.
-- Delivery lane: Controlled, six ordered slices, plan fingerprint `dbe1741ebe0bcc8e75638a441d3e75c6baa19ef4b4e35cf95c40ea66ceb6d29c`.
+- Delivery lane: Controlled, seven ordered slices including contingency S1W, plan fingerprint `027566c5714fa71d690c356714781ab95cf6c7d2867ff6ed64ee4f6494aca505`.
 - First-release rule: English Magic, one card per frame; condition is operator-confirmed and price-material finish uncertainty forces review.
 - Architecture rule: Phronesis owns workflow and canonical identity; a signed native agent owns scanner control; an isolated local worker owns recognition; immutable evidence remains content-addressed.
 - Safety rule: no physical scan without a connected fi-8170, explicit scan flag, owner-supplied low-value cards, and operator supervision.
 - Publication rule: recognition never publishes. TCGPLAYER Tools and Liga adapters consume `PHR-API-015` only through separate draft/import gates.
-- Current work order: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
-- Current accountable role: Product Owner supplies connected hardware and low-value test cards; Engineer then executes the supervised physical gate.
-- Current checkpoint: Swift build, formatting, 18/18 tests, disconnected enumeration/not-found, explicit scan denial, no-device no-write behavior, SIGINT cancellation, diff hygiene, and private-identifier review pass. Same-session Chief Architect conformance passes for software scope.
+- Current work order: `docs/prompts/PHR-TECH-015-windows-scanner-bridge-prompt.md`.
+- Current accountable role: CTO selects the next approved slice; no later source-changing slice starts implicitly.
+- Current checkpoint: Windows PaperStream acquired 18 duplex frames, the Windows seal and Mac verifier matched all hashes, repeat import was idempotent, the operator reported no damage or feed issues, and all repository gates pass.
 
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 

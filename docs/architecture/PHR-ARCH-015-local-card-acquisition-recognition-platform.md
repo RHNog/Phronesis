@@ -42,6 +42,8 @@ Create three isolated runtime boundaries:
 2. A signed native scanner agent owns device discovery, configuration, feeding, transfer, cancellation, device errors, and normalized acquisition events.
 3. A local recognition worker owns preprocessing, retrieval, OCR, geometric verification, scoring, calibration, and evidence production.
 
+Until Ricoh supports the host macOS 27 release, `PHR-TECH-015` may qualify acquisition through a temporary Windows/Parallels adapter. PaperStream remains behind the acquisition boundary; Windows-local originals cross only as sealed hash-bound bundles and are independently verified on macOS. This contingency grants Windows no canonical identity, database, recognition, commerce, or publication authority.
+
 Original frames are stored outside SQLite in an immutable content-addressed spool. SQLite stores metadata, provenance, jobs, candidates, decisions, overrides, price bindings, offer lines, and downstream intents. Recognition never publishes externally.
 
 ## Functional Requirements
@@ -135,6 +137,7 @@ Original frames are stored outside SQLite in an immutable content-addressed spoo
 - `PHR-WORKFLOW-011` Marketplace-Neutral Listing Readiness.
 - `PHR-TECH-013` fi-8170 Local Acquisition Agent.
 - `PHR-TECH-014` Local Recognition Corpus And Engine.
+- `PHR-TECH-015` Temporary Windows Scanner Bridge.
 - `PHR-WORKFLOW-016` Scanner-To-Offer Vendor Buying.
 - `PHR-API-015` Recognized Asset Interchange.
 
@@ -171,7 +174,7 @@ The first source-changing slice is a native capability probe with no product UI.
 
 ## Open Questions
 
-- Windows deployment topology is deferred to the Windows slice.
+- Production Windows deployment topology remains deferred; `PHR-TECH-015` defines only the temporary local Parallels bridge.
 - Raw scan retention defaults require Product Owner approval before production evidence storage.
 - Corpus licensing and redistribution terms must be accepted before catalogue-scale ingestion.
 
@@ -181,4 +184,4 @@ The first source-changing slice is a native capability probe with no product UI.
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - First implementation prompt: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
 - Last modified: 2026-08-04.
-- Modification reason: approved program initialization.
+- Modification reason: add the approved temporary Windows/Parallels acquisition contingency without changing canonical ownership.

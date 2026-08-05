@@ -7,6 +7,8 @@
 - Controlled plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - First implementation prompt: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
 - Scope: software-safe macOS fi-8170 capability probe; physical duplex acceptance remains separately hardware-gated.
+- Contingency prompt: `docs/prompts/PHR-TECH-015-windows-scanner-bridge-prompt.md`.
+- Contingency scope: supported Windows PaperStream capture, sealed Parallels bundle, and distrustful macOS import while macOS 27 ICA remains unsupported.
 
 ## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
 

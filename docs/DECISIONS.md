@@ -1,6 +1,16 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-04 — Use a sealed Windows bridge while macOS 27 ICA is unsupported
+
+- **Status:** Implemented; duplex evidence verified, final acceptance gates in progress.
+- **Context:** the fi-8170 enumerates correctly over USB 2.0 on macOS 27, but Ricoh's signed ICA helper 2.4.1 supports only through macOS Tahoe 26 and never opens a scanner session. The local Windows 11 VM already has the working PaperStream stack.
+- **Decision:** use PaperStream Capture's documented job command on Windows, capture to Windows-local storage, seal regular image frames into a hash-bound dedicated Parallels shared folder, and revalidate every byte during macOS import.
+- **Decision:** Windows receives no Phronesis database, identity, recognition, pricing, offer, inventory, or publication authority. No network listener is added, Windows originals remain preserved, and file order does not prove duplex side pairing.
+- **Decision:** PaperStream acquisition runs only in the logged-in interactive Windows session. Parallels session-0 execution may preflight, dispatch an interactive task, or seal completed evidence, but must not own scanner UI.
+- **Decision:** the registered job enables batch-folder output and uses `/Exit`; a missing session directory fails closed.
+- **Consequences:** physical hardware qualification can continue without downgrading the Mac. The adapter is temporary and does not satisfy the future signed platform-neutral production-agent requirement by itself.
+
 ## 2026-08-04 — Local recognition is a shared evidence platform
 
 - **Status:** Approved; `PHR-ARCH-015` Controlled Lane in progress.

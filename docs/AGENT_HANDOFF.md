@@ -1,5 +1,16 @@
 # Agent Handoff
 
+## Product Review Candidate — Windows Scanner Bridge — 2026-08-04
+
+- `PHR-TECH-015` provides an interactive Windows PaperStream capture/seal command plus a distrustful macOS inspector/importer while macOS 27 remains outside Ricoh's current ICA support.
+- The fi-8170 completed a supervised duplex run: 18 JPEG frames from nine owner-loaded low-value cards, 3,053,463 bytes total.
+- Windows originals, session-scoped source copies, sealed bundle, and Mac evidence import are preserved. Manifest SHA-256 is `723ee7e9be1b91aae5d5e97f3fe55aa8cfe966532ba89b274d27a8647614ad2b`.
+- macOS independently verified all 18 frame sizes/hashes, imported atomically, and proved unchanged-repeat idempotency.
+- PaperStream must launch in the logged-in Windows console session, not Parallels `SYSTEM` session 0. The registered job must enable batch folders and the bridge supplies `/Exit`.
+- No raw image entered Git and no application, database, recognition, pricing, offer, inventory, marketplace, deployment, or publication state changed.
+- Operator reported no damage or feed issues. Node 10/10, PowerShell 13/13, repository 393/393, lint, production build, Swift 19/19, diff hygiene, and privacy checks pass.
+- Remaining gate: commit and Handoff seal. No push is authorized.
+
 ## Product Review Candidate — Arbitrage And Regional Acquisition Recovery — 2026-08-03
 
 - `PHR-TECH-012` resolves the zero Arbitrage queue to a private runtime selecting `.data/pricing-lookup.sqlite` rather than the verified `.data/mobile-review.sqlite`; the former has zero matches and the latter has 131,869.

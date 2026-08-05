@@ -7,9 +7,9 @@
 - Canonical repository: `/Volumes/JarvisSSD/Projects/Phronesis`
 - Workflow revision: `2.20.0`
 - Delivery lane: `Controlled`
-- Plan ID: `PHR-PLAN-20260804-001`
-- Plan fingerprint input: `PHR-LOCAL-CARD-RECOGNITION-20260804|2.20.0|CONTROLLED|S1:PHR-TECH-013-A|S2:PHR-TECH-013-B|S3:PHR-TECH-014|S4:PHR-WORKFLOW-016|S5:PHR-API-015|S6:PHR-UX-026`
-- Plan fingerprint: `dbe1741ebe0bcc8e75638a441d3e75c6baa19ef4b4e35cf95c40ea66ceb6d29c`
+- Plan ID: `PHR-PLAN-20260804-002`
+- Plan fingerprint input: `PHR-LOCAL-CARD-RECOGNITION-20260804|2.20.0|CONTROLLED|S1:PHR-TECH-013-A|S1W:PHR-TECH-015|S2:PHR-TECH-013-B|S3:PHR-TECH-014|S4:PHR-WORKFLOW-016|S5:PHR-API-015|S6:PHR-UX-026`
+- Plan fingerprint: `027566c5714fa71d690c356714781ab95cf6c7d2867ff6ed64ee4f6494aca505`
 - Approved product brief: Product Owner-approved local card-recognition brief and CTO structure, 2026-08-04.
 
 ## Lane Rationale
@@ -21,6 +21,7 @@ Native signed code, valuable physical assets, raw scan privacy, high-precision r
 | Slice | Feature | Product-facing outcome | Accountable role | Dependencies | Acceptance checkpoint | Rollback boundary |
 |---|---|---|---|---|---|---|
 | S1 | `PHR-TECH-013-A` | Actual macOS/fi-8170 capabilities and evidence-safe probe | Engineer | Connected scanner only for physical gate | Swift tests, disconnected run, then supervised low-value duplex evidence | Remove standalone probe; no product/runtime state |
+| S1W | `PHR-TECH-015` | Temporary supported Windows PaperStream capture with sealed Mac import | Engineer | macOS 27 ICA compatibility blocker; working local Windows VM | cross-platform tests, VM preflight, then supervised low-value duplex evidence | remove dedicated share/tools; preserve captured evidence |
 | S2 | `PHR-TECH-013-B` | Durable signed acquisition agent and normalized session transport | Engineer | Accepted S1 | restart/disconnect/jam/duplicate delivery tests | Disable agent; retain immutable evidence spool |
 | S3 | `PHR-TECH-014` | Versioned corpus and calibrated recognition with abstention | Engineer | Accepted acquisition contract and licensed corpus | powered unseen holdout and rollback activation | return active pointer to last-good corpus/index |
 | S4 | `PHR-WORKFLOW-016` | Offline English Magic scanner-to-offer workflow | Designer then Engineer | Accepted S2/S3 | end-to-end offer with traceability and no unresolved line | feature flag/session rollback; no purchase mutation |
@@ -49,4 +50,4 @@ Return to the Product Owner only if:
 
 ## Current Slice
 
-S1 was automatically accepted because it is a reversible decomposition of the approved brief. Its software checkpoint is verified and conforms to the work order. Physical acceptance remains blocked until the scanner is connected and the Product Owner supplies low-value cards.
+S1 software is verified but its physical gate remains blocked by the unsupported macOS 27 ICA runtime. The Product Owner authorized contingency S1W on 2026-08-04. S1W is complete: Windows duplex acquisition, sealing, Mac hash/import evidence, operator handling, and repository gates pass. Later slices remain gated until the CTO explicitly advances the program.

@@ -3,11 +3,12 @@
 ## Active Controlled Program: Local Card Acquisition And Recognition
 
 1. `PHR-TECH-013-A` — macOS fi-8170 capability probe and supervised low-value hardware qualification.
-2. `PHR-TECH-013-B` — signed durable acquisition agent and Windows-neutral protocol.
-3. `PHR-TECH-014` — licensed local corpus, benchmark, calibrated recognition, and abstention.
-4. `PHR-WORKFLOW-016` — offline English Magic scanner-to-offer Vendor workflow.
-5. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters.
-6. `PHR-UX-026` — Windows parity and multi-card/binder capture expansion.
+2. `PHR-TECH-015` — temporary Windows/Parallels PaperStream bridge; duplex acquisition, sealing, and Mac hash import verified, final acceptance gates in progress.
+3. `PHR-TECH-013-B` — signed durable acquisition agent and Windows-neutral protocol.
+4. `PHR-TECH-014` — licensed local corpus, benchmark, calibrated recognition, and abstention.
+5. `PHR-WORKFLOW-016` — offline English Magic scanner-to-offer Vendor workflow.
+6. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters.
+7. `PHR-UX-026` — Windows parity and multi-card/binder capture expansion.
 
 No later slice inherits acceptance from an earlier game, platform, corpus, or driver without its own evidence.
 

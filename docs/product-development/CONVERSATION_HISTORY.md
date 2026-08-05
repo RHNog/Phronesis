@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-08-04 — Windows Bridge Duplex Acquisition
+
+The Product Owner authorized the Windows bridge while the fi-8170 macOS session remains blocked by the unsupported macOS 27 ICA boundary, prepared the PaperStream job, supplied low-value cards, corrected the job to duplex after rejecting a back-only first scan, and completed the supervised batch.
+
+`PHR-TECH-015` now contains a fail-closed PowerShell capture/seal boundary and dependency-free Mac verifier/importer. The working path requires PaperStream to run in the logged-in Windows console session because Parallels remote execution runs as `SYSTEM` in session 0. The registered job must use 300 dpi, 24-bit color, duplex, single-page JPEG, no blank-page removal, batch-folder output, and the documented `/Exit` lifecycle.
+
+The accepted evidence session acquired 18 JPEG frames from nine operator-loaded low-value cards. Windows sealing preserved originals and produced a manifest with SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8cfe966532ba89b274d27a8647614ad2b`; macOS independently matched all 18 sizes and hashes, imported atomically, and returned `already_imported` on repeat. The manifest retains observed sequence with `pairingSemantics: unknown`. The operator reported no damage or feed issues. Raw images remain outside Git, no Phronesis product state changed, and S1W conformance is complete.
+
 ## 2026-08-04 — Local Card Acquisition And Recognition Program
 
 The Product Owner supplied a local card-recognition brief, accepted the CTO implementation structure, and authorized implementation through the Canonical Autonomous Workflow. The approved outcome is an offline-first platform that converts physical card observations into evidence-backed canonical Phronesis assets for Vendor Buying, inventory, TCGPLAYER Tools, LigaMagic, LigaPokémon, and future multi-card capture.
