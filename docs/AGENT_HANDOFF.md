@@ -1,5 +1,12 @@
 # Agent Handoff
 
+## Product Review Candidate — Installed WebApp Shell Optimization — 2026-08-06
+
+- `PHR-UX-027` now treats the installed Safari application as a dynamic-viewport shell: the sidebar stays inside `100dvh`, the tool list scrolls independently, and a labelled Expand control is always visible below the brand header when collapsed.
+- Root canvas, scrollbar track/thumb, safe-area padding, horizontal containment, and standalone overscroll are dark and bounded; live Dashboard and Scanner-to-Offer review shows no white far-right strip.
+- The top bar exposes shortcut help and a real Settings link. Installed-app-only controls include `Cmd/Ctrl+B`, `G` then `D`, `G` then `1–9`, `?`, and `Escape`, with editable-target and ordinary-browser protection.
+- Verification passes at focused 8/8, full 425/425, TypeScript, warning-free lint, Next.js 16.2.12 production build, loopback health, and live installed-app interaction. Same-session conformance is not independent approval; no commit, push, merge, or public deployment occurred for this revision.
+
 ## Product Review Candidate — Physical V2 Scanner Recovery — 2026-08-06
 
 - Session `phr-pokemon-duplex-20260806-001` recovered 18 full-resolution PaperStream originals as nine authoritative reciprocal FRONT/BACK pairs; no rescan and no filename inference were used.

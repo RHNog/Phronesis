@@ -25,6 +25,7 @@
 - Retain every contributing region ID, compute group subtotals as unit value times quantity, and return totals independently per currency without rewriting append-only resolutions.
 - Keep every unresolved, stale, or failed asset out of the offer.
 - Preserve state across reload and process restart.
+- Add an authenticated, idempotent session-cancellation mutation and a confirmed Phronesis Cancel control. Cancellation must retain evidence, cancel pending or leased recognition jobs, reject late imports, expose `CANCELLED` durably, and never claim to stop PaperStream itself.
 - Reconcile the displayed session stage from durable current jobs and operator resolutions after import, job completion/failure, and resolution; an idempotent reimport cannot regress a terminal session to processing.
 - Return frame side and paired-frame identity in authenticated session detail. Resolve must render front and acquisition-proven reverse evidence with explicit labels, and a fail-closed unavailable state for legacy unpaired bundles.
 - Keep condition manual at batch scope and do not derive, recommend, or claim a grade from either image.
@@ -37,4 +38,4 @@
 
 ## Testing Expectations
 
-- Repository/API/workflow tests covering append-only batch settings, lock-after-first-resolution, server-owned condition/finish, candidate mismatch rejection, deterministic duplicate consolidation, conflicting-binding separation, overflow-safe subtotal calculation, plus replay of the 18-frame Pokémon batch, desktop, 390px, keyboard, reload, and fail-closed evidence.
+- Repository/API/workflow tests covering append-only batch settings, lock-after-first-resolution, server-owned condition/finish, candidate mismatch rejection, idempotent evidence-preserving cancellation, late-import rejection, deterministic duplicate consolidation, conflicting-binding separation, overflow-safe subtotal calculation, plus replay of the 18-frame Pokémon batch, desktop, 390px, keyboard, reload, and fail-closed evidence.

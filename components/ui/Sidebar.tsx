@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import NavItem from "@/components/ui/NavItem";
 import PhronesisMark from "@/components/ui/PhronesisMark";
 import {
@@ -17,9 +17,16 @@ export default function Sidebar({
   navigationItems?: readonly PrimaryNavigationItem[];
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const selectedItem = resolvePrimaryNavigation(pathname);
   const [collapsed, setCollapsed] = useState(false);
   const [preferenceReady, setPreferenceReady] = useState(false);
+  const navigationChordRef = useRef(false);
+  const navigationChordTimeoutRef = useRef<number | null>(null);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((current) => !current);
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -47,10 +54,67 @@ export default function Sidebar({
     }
   }, [collapsed, preferenceReady]);
 
+  useEffect(() => {
+    function isStandaloneWebApp(): boolean {
+      const navigatorWithStandalone = navigator as Navigator & { standalone?: boolean };
+      return window.matchMedia("(display-mode: standalone)").matches || navigatorWithStandalone.standalone === true;
+    }
+
+    function isEditableTarget(target: EventTarget | null): boolean {
+      return target instanceof Element && Boolean(target.closest("input, textarea, select, [contenteditable='true']"));
+    }
+
+    function clearNavigationChord() {
+      navigationChordRef.current = false;
+      if (navigationChordTimeoutRef.current !== null) {
+        window.clearTimeout(navigationChordTimeoutRef.current);
+        navigationChordTimeoutRef.current = null;
+      }
+    }
+
+    function handleWebAppShortcut(event: KeyboardEvent) {
+      if (!isStandaloneWebApp() || isEditableTarget(event.target)) {
+        clearNavigationChord();
+        return;
+      }
+      if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        toggleCollapsed();
+        return;
+      }
+      const unmodified = !event.metaKey && !event.ctrlKey && !event.altKey;
+      if (unmodified && event.key.toLowerCase() === "g") {
+        event.preventDefault();
+        clearNavigationChord();
+        navigationChordRef.current = true;
+        navigationChordTimeoutRef.current = window.setTimeout(clearNavigationChord, 1500);
+        return;
+      }
+      if (!navigationChordRef.current || !unmodified) return;
+      clearNavigationChord();
+      const toolDestinations = navigationItems.filter((item) => item.href !== "/");
+      const toolShortcut = /^Digit([1-9])$/.exec(event.code);
+      const destination = event.key.toLowerCase() === "d"
+        ? "/"
+        : toolShortcut
+          ? toolDestinations[Number(toolShortcut[1]) - 1]?.href
+          : undefined;
+      if (!destination) return;
+      event.preventDefault();
+      router.push(destination);
+    }
+
+    window.addEventListener("keydown", handleWebAppShortcut);
+    return () => {
+      window.removeEventListener("keydown", handleWebAppShortcut);
+      clearNavigationChord();
+    };
+  }, [navigationItems, router, toggleCollapsed]);
+
   return (
     <aside
       data-collapsed={collapsed ? "true" : "false"}
-      className={`hidden min-h-screen flex-none flex-col border-r border-zinc-800 bg-zinc-950 text-zinc-100 transition-[width] duration-200 md:flex ${collapsed ? "w-20" : "w-[260px]"}`}
+      className={`sticky top-0 hidden h-dvh max-h-dvh min-h-0 flex-none flex-col overflow-hidden border-r border-zinc-800 bg-zinc-950 text-zinc-100 transition-[width] duration-200 md:flex ${collapsed ? "w-20" : "w-[260px]"}`}
     >
       <div className={`flex min-h-16 items-center border-b border-zinc-800 ${collapsed ? "justify-center px-2" : "gap-3 px-4"}`}>
         <Link
@@ -67,7 +131,9 @@ export default function Sidebar({
           <button
             type="button"
             aria-label="Collapse sidebar"
+            aria-keyshortcuts="Meta+B Control+B"
             aria-expanded="true"
+            title="Collapse sidebar (⌘B / Ctrl+B in the installed app)"
             className="flex h-10 w-10 flex-none items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
             onClick={() => setCollapsed(true)}
           >
@@ -76,7 +142,22 @@ export default function Sidebar({
         ) : null}
       </div>
 
-      <nav aria-label="Primary navigation" className={`flex-1 py-5 ${collapsed ? "px-3" : "px-4"}`}>
+      {collapsed ? (
+        <button
+          type="button"
+          aria-label="Expand sidebar"
+          aria-keyshortcuts="Meta+B Control+B"
+          aria-expanded="false"
+          title="Expand sidebar (⌘B / Ctrl+B in the installed app)"
+          className="flex min-h-14 w-full flex-none flex-col items-center justify-center gap-0.5 border-b border-zinc-800 text-zinc-300 transition hover:bg-zinc-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-400"
+          onClick={() => setCollapsed(false)}
+        >
+          <span className="text-xl leading-none" aria-hidden="true">›</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wide">Expand</span>
+        </button>
+      ) : null}
+
+      <nav aria-label="Primary navigation" className={`min-h-0 flex-1 overflow-y-auto overscroll-contain py-5 ${collapsed ? "px-3" : "px-4"}`}>
         <ul className="space-y-2">
           {navigationItems.map((item) => (
             <li key={item.id}>
@@ -92,19 +173,6 @@ export default function Sidebar({
         </ul>
       </nav>
 
-      {collapsed ? (
-        <div className="border-t border-zinc-800 p-3">
-          <button
-            type="button"
-            aria-label="Expand sidebar"
-            aria-expanded="false"
-            className="flex h-12 w-full items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            onClick={() => setCollapsed(false)}
-          >
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
-      ) : null}
     </aside>
   );
 }

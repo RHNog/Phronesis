@@ -244,6 +244,22 @@ export class CardRecognitionRepository {
     if (!result.changes) throw new Error("scan session not found");
   }
 
+  cancelSession(sessionId: string, now = new Date().toISOString()): ScanSessionSummary {
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const session = this.database.prepare("SELECT state FROM recognition_session WHERE id=?").get(sessionId) as { state: string } | undefined;
+      if (!session) throw new Error("scan session not found");
+      if (session.state !== "CANCELLED") {
+        this.database.prepare(`UPDATE recognition_job SET state='CANCELLED',lease_owner=NULL,lease_expires_at=NULL,updated_at=?
+          WHERE id IN (SELECT j.id FROM recognition_job j JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id
+            WHERE f.session_id=? AND j.state IN ('PENDING','LEASED'))`).run(now, sessionId);
+        this.database.prepare("UPDATE recognition_session SET state='CANCELLED',updated_at=? WHERE id=?").run(now, sessionId);
+      }
+      this.database.exec("COMMIT");
+    } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    return this.sessionSummary(sessionId);
+  }
+
   reconcileSessionState(sessionId: string, now = new Date().toISOString()): ScanSessionState {
     const row = this.database.prepare(`SELECT s.state,
       (SELECT COUNT(*) FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
@@ -440,6 +456,9 @@ export class CardRecognitionRepository {
   addFrame(frame: ScanFrame, options: { scheduleRecognition?: boolean } = {}): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: DetectedCardRegion | null } {
     validateFrame(frame);
     const scheduleRecognition = options.scheduleRecognition ?? true;
+    const session = this.database.prepare("SELECT state FROM recognition_session WHERE id=?").get(frame.sessionId) as { state: string } | undefined;
+    if (!session) throw new Error("scan session not found");
+    if (session.state === "CANCELLED") throw new Error("cancelled scan session cannot accept frames");
     const existing = this.database.prepare("SELECT object_sha256 FROM recognition_frame WHERE id=?").get(frame.frameId) as { object_sha256: string } | undefined;
     if (existing) {
       if (existing.object_sha256 !== frame.objectSha256) throw new Error("frame identifier collision");

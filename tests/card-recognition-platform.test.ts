@@ -251,6 +251,9 @@ test("scanner review labels paired evidence and applies fail-closed batch materi
   assert.match(source, /Lot total/);
   assert.match(source, /evidenceRegionIds\.length/);
   assert.match(source, /unitOfferCents/);
+  assert.match(source, />Cancel</);
+  assert.match(source, /Existing scan evidence will be retained/);
+  assert.match(routeSource, /export async function DELETE/);
   assert.doesNotMatch(source, /value=\{condition\}/);
   assert.match(routeSource, /offerSummary: repository\.offerSummary\(sessionId\)/);
   assert.match(routeSource, /priceSnapshot\(machineCandidate\.categoryId, machineCandidate\.sku, batchMaterial\.conditionCode\)/);
@@ -275,6 +278,26 @@ test("batch material is append-only, idempotent, and locks after first resolutio
 
     const createdId = repository.createSessionWithMaterial({ label: "new batch", conditionCode: "DAMAGED", finish: "Reverse Holofoil", configuredBy: "operator-1", now: "2026-08-05T11:00:00.000Z" });
     assert.deepEqual(repository.sessionSummary(createdId).batchMaterial, { conditionCode: "DAMAGED", finish: "Reverse Holofoil", revision: 1, configuredAt: "2026-08-05T11:00:00.000Z", locked: false });
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("session cancellation is idempotent, retains evidence, cancels work, and rejects late frames", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-recognition-cancel-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const object = repository.putObject(Buffer.from("frame"));
+    const sessionId = repository.createSessionWithMaterial({ label: "cancel", conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1" });
+    const frame = { frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT" as const, objectSha256: object.sha256, mediaType: "image/jpeg" as const, byteLength: 5, capturedAt: "2026-08-06T15:00:00.000Z", pairedFrameId: null };
+    repository.addFrame(frame);
+    assert.ok(repository.acquireJob("worker-cancel", 60_000, new Date("2026-08-06T15:00:01.000Z")));
+    const cancelled = repository.cancelSession(sessionId, "2026-08-06T15:00:02.000Z");
+    assert.equal(cancelled.state, "CANCELLED");
+    assert.equal(cancelled.counts.frames, 1);
+    const job = repository.database.prepare("SELECT state FROM recognition_job").get() as { state: string };
+    assert.equal(job.state, "CANCELLED");
+    assert.equal(repository.cancelSession(sessionId, "2026-08-06T15:00:03.000Z").state, "CANCELLED");
+    assert.throws(() => repository.addFrame({ ...frame, frameId: randomUUID(), sequence: 1 }), /cancelled scan session cannot accept frames/);
+    assert.equal(repository.reconcileSessionState(sessionId), "CANCELLED");
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 

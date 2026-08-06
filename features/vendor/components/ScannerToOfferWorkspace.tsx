@@ -129,6 +129,22 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
     finally { setBusy(false); }
   }
 
+  async function cancelActiveSession() {
+    const activeSession = sessions[0];
+    if (!canOperate || !activeSession || activeSession.state === "CANCELLED") return;
+    const confirmed = window.confirm("Cancel this Phronesis scan session? Existing scan evidence will be retained. PaperStream is controlled separately and will not be stopped by this action.");
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      const response = await fetch(`/api/card-recognition/sessions/${encodeURIComponent(activeSession.id)}`, { method: "DELETE" });
+      const payload = await response.json() as { session?: ScanSessionSummary; error?: string };
+      if (!response.ok || !payload.session) throw new Error(payload.error ?? "Scan session could not be cancelled.");
+      setMessage("Phronesis session cancelled. Existing evidence was retained; start a new batch when PaperStream is ready.");
+      await load();
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Scan session could not be cancelled."); }
+    finally { setBusy(false); }
+  }
+
   const active = sessions[0];
   const unresolved = items.find((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
   const allCandidateOptions = unresolved?.decision?.candidates ?? [];
@@ -200,14 +216,14 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       </form>
       <p className="mt-3 min-h-6 text-sm text-amber-200" aria-live="polite">{message}</p>
       {active ? <div className="mt-3">
-        <div className="flex flex-wrap items-baseline justify-between gap-2"><div><p className="font-semibold text-zinc-100">{active.label}</p><p className="text-xs text-zinc-500">{active.id}</p></div><span className="rounded-full border border-zinc-700 px-3 py-1 text-xs font-semibold text-zinc-300">{active.state.replaceAll("_", " ")}</span></div>
+        <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold text-zinc-100">{active.label}</p><p className="text-xs text-zinc-500">{active.id}</p></div><div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-zinc-700 px-3 py-1 text-xs font-semibold text-zinc-300">{active.state.replaceAll("_", " ")}</span>{active.state !== "CANCELLED" ? <button type="button" onClick={() => void cancelActiveSession()} disabled={!canOperate || busy} className="min-h-11 rounded-lg border border-red-800 px-3 text-sm font-semibold text-red-200 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button> : null}</div></div>
         <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7"><Count label="Frames" value={active.counts.frames} /><Count label="Regions" value={active.counts.regions} /><Count label="Processing" value={active.counts.pending} /><Count label="Review" value={active.counts.review} /><Count label="Accepted" value={active.counts.accepted} /><Count label="Abstained" value={active.counts.abstained} /><Count label="Failed" value={active.counts.failed} /></dl>
-        <form onSubmit={configureBatchMaterial} className={`mt-4 grid gap-3 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-[minmax(10rem,1fr)_minmax(11rem,1fr)_auto] ${active.batchMaterial ? "border-emerald-900 bg-emerald-950/20" : "border-amber-900 bg-amber-950/20"}`}>
+        {active.state !== "CANCELLED" ? <form onSubmit={configureBatchMaterial} className={`mt-4 grid gap-3 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-[minmax(10rem,1fr)_minmax(11rem,1fr)_auto] ${active.batchMaterial ? "border-emerald-900 bg-emerald-950/20" : "border-amber-900 bg-amber-950/20"}`}>
           <div className="sm:col-span-2 lg:col-span-3"><p className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Batch material</p><p className="mt-1 text-xs leading-5 text-zinc-400">Every card in this session uses one condition and one finish. Split mixed cards into separate batches. Scanner images do not assign either value.</p>{active.batchMaterial ? <p className="mt-1 text-xs text-emerald-300">Revision {active.batchMaterial.revision} · {active.batchMaterial.locked ? "Locked after first resolution" : "Editable until first resolution"}</p> : <p className="mt-1 text-xs text-amber-200">Required before price evidence or resolution.</p>}</div>
           <label className="text-xs text-zinc-400" htmlFor="active-batch-condition">Batch condition<select id="active-batch-condition" required disabled={active.batchMaterial?.locked} value={batchConditionDraft} onChange={(event) => { setBatchConditionDraft(event.target.value); setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null); }} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white disabled:cursor-not-allowed disabled:opacity-60"><option value="" disabled>Select condition</option>{batchConditions.map((condition) => <option key={condition.value} value={condition.value}>{condition.label}</option>)}</select></label>
           <label className="text-xs text-zinc-400" htmlFor="active-batch-finish">Batch finish<select id="active-batch-finish" required disabled={active.batchMaterial?.locked} value={batchFinishDraft} onChange={(event) => { setBatchFinishDraft(event.target.value); setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null); }} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white disabled:cursor-not-allowed disabled:opacity-60"><option value="" disabled>Select finish</option>{batchFinishes.map((finish) => <option key={finish} value={finish}>{finish}</option>)}</select></label>
           <button disabled={!canOperate || busy || active.batchMaterial?.locked || !batchConditionDraft || !batchFinishDraft} className="min-h-11 self-end rounded-lg border border-cyan-700 px-4 text-sm font-semibold text-cyan-100 disabled:cursor-not-allowed disabled:opacity-50">{active.batchMaterial ? "Update batch" : "Set batch"}</button>
-        </form>
+        </form> : <p className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-400">This session is cancelled. Its evidence remains retained. Create a new batch above when PaperStream is ready.</p>}
       </div> : <div className="mt-3 rounded-xl border border-dashed border-zinc-700 bg-zinc-950/60 p-6 text-sm text-zinc-500">{busy ? "Loading sessions…" : "No recognition session yet. Create one, then import the sealed bridge batch."}</div>}
     </section>
 

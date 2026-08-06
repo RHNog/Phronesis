@@ -1,5 +1,41 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Installed WebApp Shell Optimization
+
+### User Intent
+
+- Restore a visible way to expand the collapsed sidebar.
+- Remove the white strip at the far-right edge of the installed application.
+- Optimize Phronesis as a standalone WebApp and add the shell controls and keyboard shortcuts needed for efficient operation.
+
+### Decision
+
+- Extend `PHR-UX-027` rather than introduce a parallel shell feature.
+- Pin the desktop sidebar to the dynamic viewport, keep Expand directly below the brand header, and make only the tool list independently scrollable.
+- Own the root canvas, scrollbar, safe-area, horizontal containment, and standalone overscroll colors in the application shell so Safari never reveals a white browser canvas.
+- Enable app-navigation shortcuts only in standalone display mode and outside editable controls. Use `Cmd/Ctrl+B` for the sidebar, `G` then `D` for Dashboard, and `G` then `1–9` for the visible authorized tools; expose the full map through an accessible `?` dialog and make the avatar a real Settings link.
+
+### Acceptance State
+
+Implemented and privately live under `PHR-UX-027`. Focused 8/8 and full 425/425 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, service health, and installed Safari WebApp validation pass. Live evidence proves Collapse/Expand reciprocity, persistent visible Expand, `Cmd+B`, `G` then `D` navigation, shortcut-help/Escape behavior, a functional Settings link, and a dark far-right scrollbar with no white strip. Same-session conformance is Product Review ready; no commit, push, merge, public deployment, or authorization behavior changed in this revision.
+
+## 2026-08-06 — Scanner Session Cancellation And Restart
+
+### User Intent
+
+- Restart a scan batch that was created before PaperStream was ready.
+- Add a Cancel button inside Phronesis so the operator can abort a scan session without database intervention.
+
+### Decision
+
+- Cancel is an authenticated, confirmed, idempotent Phronesis session transition, not remote control of PaperStream.
+- Preserve frames, decisions, material history, and offer evidence; cancel pending or leased recognition work and reject late frame imports.
+- Keep the cancelled record visible and require an explicit new batch rather than silently replacing it.
+
+### Acceptance State
+
+Implemented and privately live under `PHR-WORKFLOW-016`. Empty `Poke Test #2` was cancelled with zero frames retained, both private services restarted, and replacement `Poke Test #3` was created as Lightly Played / Holofoil with the live Cancel control visible. Full 425/425 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, diff hygiene, loopback HTTP 200, and installed-app UI verification pass. No physical scanner start, evidence deletion, purchase, inventory, auto-accept, grading, or publication occurred.
+
 ## 2026-08-05 — Authenticated Remote Scanner Recovery
 
 ### User Intent

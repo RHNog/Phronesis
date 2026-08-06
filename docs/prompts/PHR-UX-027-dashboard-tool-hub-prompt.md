@@ -32,6 +32,10 @@ Implement an entitlement-aware Dashboard at `/`, move Opportunities to `/opportu
 - Make successful event-access login land on Dashboard; preserve safe explicit callback handling for permanent login.
 - Add a Next.js App Router manifest with relative root start/scope, standalone display metadata, approved install-icon derivatives, and explicit Apple web-app metadata without claiming offline behavior.
 - Keep Event Operations adjacent to the primary Vendor workflow but remove its outer sticky positioning so it cannot cover later full-width controls.
+- Pin the desktop sidebar to the dynamic viewport, make its authorized tool list independently scrollable, and place an always-visible reciprocal expand/collapse control above that scroll region.
+- Theme the root document, scrollbar track/thumb, and standalone overscroll canvas dark; use safe-area-aware shell padding and `viewport-fit=cover` without introducing horizontal overflow.
+- Gate WebApp-specific keyboard interception behind standalone display mode. Implement search, sidebar toggle, Dashboard, and first-nine-tool shortcuts with editable-target protection, plus an accessible shortcut-help modal and visible help button.
+- Replace the inert top-bar avatar button with a Settings link.
 
 ## Constraints
 
@@ -42,6 +46,7 @@ Implement an entitlement-aware Dashboard at `/`, move Opportunities to `/opportu
 - Do not draw a substitute Phronesis brand mark.
 - Do not encode a Tailscale hostname, development hostname, or port in the manifest.
 - Do not add a service worker or claim offline support.
+- Do not override browser-native `Cmd/Ctrl+B`, `G`, or digit-key behavior in ordinary browser sessions.
 - Preserve unrelated scanner/recognition worktree changes.
 
 ## Expected Architecture
@@ -54,6 +59,7 @@ Implement an entitlement-aware Dashboard at `/`, move Opportunities to `/opportu
 - Update authorization-foundation expectations for the always-visible Dashboard destination.
 - Cover Dashboard cards, Opportunities rehoming, and event-access landing behavior.
 - Cover manifest identity/start behavior, approved icon derivatives, and absence of sticky positioning on the outer Event Operations wrapper.
+- Cover dynamic-viewport containment, independently scrollable navigation, visible reciprocal controls, standalone shortcut gating, editable-target protection, functional Settings link, shortcut help, viewport-fit metadata, and dark scrollbar/overscroll CSS.
 - Run focused and full automated tests, TypeScript, lint, and production build.
 - Validate expanded/collapsed desktop, mobile drawer, live manifest/head metadata, and Vendor Workspace scrolling at desktop width.
 

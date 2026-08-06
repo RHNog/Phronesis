@@ -145,11 +145,53 @@ test("desktop sidebar exposes persistent accessible collapse controls", () => {
     new URL("../components/ui/Sidebar.tsx", import.meta.url),
     "utf8",
   );
+  const shell = readFileSync(
+    new URL("../components/ui/AppShell.tsx", import.meta.url),
+    "utf8",
+  );
+  const topbar = readFileSync(
+    new URL("../components/ui/Topbar.tsx", import.meta.url),
+    "utf8",
+  );
+  const layout = readFileSync(
+    new URL("../app/layout.tsx", import.meta.url),
+    "utf8",
+  );
+  const globals = readFileSync(
+    new URL("../app/globals.css", import.meta.url),
+    "utf8",
+  );
 
   assert.match(sidebar, /phronesis\.sidebar\.collapsed/);
   assert.match(sidebar, /aria-label="Collapse sidebar"/);
   assert.match(sidebar, /aria-label="Expand sidebar"/);
   assert.match(sidebar, /data-collapsed=/);
+  assert.match(sidebar, /h-dvh max-h-dvh min-h-0/);
+  assert.match(sidebar, /min-h-0 flex-1 overflow-y-auto overscroll-contain/);
+  assert.match(sidebar, /display-mode: standalone/);
+  assert.match(sidebar, /Meta\+B Control\+B/);
+  assert.match(sidebar, /isEditableTarget/);
+  assert.match(sidebar, /navigationChordRef/);
+  assert.match(sidebar, /window\.setTimeout\(clearNavigationChord, 1500\)/);
+  assert.match(sidebar, /\^Digit\(\[1-9\]\)\$/);
+  assert.match(sidebar, /event\.key\.toLowerCase\(\) === "d"/);
+  assert.match(sidebar, /toolDestinations/);
+  assert.match(sidebar, />Expand</);
+  assert.match(shell, /min-h-dvh/);
+  assert.match(shell, /overflow-x-clip/);
+  assert.match(topbar, /aria-label="Keyboard shortcuts"/);
+  assert.match(topbar, /aria-label="Open Settings"/);
+  assert.match(topbar, /href="\/settings"/);
+  assert.match(topbar, /role="dialog" aria-modal="true"/);
+  assert.match(topbar, /Navigation shortcuts are active only in the installed app/);
+  assert.match(topbar, /G then D/);
+  assert.match(topbar, /G then \{index \+ 1\}/);
+  assert.match(layout, /viewportFit: "cover"/);
+  assert.match(globals, /color-scheme: dark/);
+  assert.match(globals, /scrollbar-color: #3f3f46 var\(--background\)/);
+  assert.match(globals, /::-webkit-scrollbar-track/);
+  assert.match(globals, /@media \(display-mode: standalone\)/);
+  assert.match(globals, /overscroll-behavior: none/);
 });
 
 test("the shared shell uses the approved Phronesis brand assets", () => {

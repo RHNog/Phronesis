@@ -24,6 +24,7 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 
 - Reuse current canonical identity, pricing, offer, purchase, and inventory boundaries.
 - Persist scan progress and allow safe cancel/resume.
+- Expose an operator-confirmed Cancel action inside Phronesis for every non-terminal session. Cancellation is idempotent, retains immutable frames, decisions, material declarations, and offer evidence, cancels pending or leased recognition jobs, and rejects late frame imports. It does not claim to cancel or control PaperStream's native scanner process.
 - Show accepted, review, abstained, and failed counts separately.
 - Prevent an unresolved card from entering an offer.
 - Bind each offer line to recognition evidence, price snapshot, buying preset, and operator decisions.
@@ -55,6 +56,7 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - A paired-evidence review labels front and reverse independently, remains usable at 390px without horizontal overflow, and keeps condition and finish batch-declared with no automatic grading or reflectivity-classification claim.
 - Replaying the accepted 18-frame Pokémon batch yields review candidates for its eight English card faces and safe abstentions for nine card backs plus one Spanish card, with no automatic acceptance.
 - A physical `v2` session presents each declared front with its reciprocal evidence-only back, schedules no job for any back, and truthfully supports a fully abstained batch without producing an offer.
+- Cancelling an empty or partially imported session leaves a visible `CANCELLED` record, creates no replacement automatically, accepts no late frames, and allows the operator to start a fresh homogeneous batch immediately.
 
 ## Dependencies
 
@@ -62,7 +64,7 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 
 ## UI / UX Notes
 
-The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires a condition and Pokémon finish for the homogeneous batch. A persistent summary shows the locked material declaration plus frame, accepted, review, abstained, and failed counts. The exception queue keeps front and acquisition-proven reverse evidence beside only those candidate controls whose exact catalogue variant agrees with the batch; destructive session actions require confirmation. When no proven reverse exists, the evidence panel says so instead of guessing. Small screens stack evidence below the active card and keep the primary action reachable without horizontal scrolling.
+The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires a condition and Pokémon finish for the homogeneous batch. A persistent summary shows the locked material declaration plus frame, accepted, review, abstained, and failed counts. The active-session header exposes a destructive-styled Cancel action for non-cancelled work, requires explicit confirmation, explains that retained evidence is not deleted and PaperStream remains independently controlled, and keeps New batch available after cancellation. The exception queue keeps front and acquisition-proven reverse evidence beside only those candidate controls whose exact catalogue variant agrees with the batch; destructive session actions require confirmation. When no proven reverse exists, the evidence panel says so instead of guessing. Small screens stack evidence below the active card and keep the primary action reachable without horizontal scrolling.
 
 ## Traceability
 
@@ -70,7 +72,7 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Design gate: `docs/design/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying.md`.
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
 - Last modified: 2026-08-06.
-- Modification reason: record physical reciprocal-duplex acceptance and the truthful fully abstained session boundary.
+- Modification reason: add an evidence-preserving operator Cancel boundary after a capture was started before PaperStream was ready.
 
 ## Private Operational Activation — 2026-08-05
 

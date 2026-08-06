@@ -74,3 +74,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ sessi
     return NextResponse.json({ error: error instanceof Error ? error.message : "Batch material could not be configured." }, { status: 400 });
   }
 }
+
+export async function DELETE(request: Request, context: { params: Promise<{ sessionId: string }> }) {
+  const authorization = await authorizeRequest(request, "VENDOR_WORKSPACE", "OPERATE");
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
+  try {
+    const { sessionId } = await context.params;
+    const session = getCardRecognitionRepository().cancelSession(sessionId);
+    return NextResponse.json({ session });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Scan session could not be cancelled." }, { status: 400 });
+  }
+}

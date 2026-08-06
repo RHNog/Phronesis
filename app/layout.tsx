@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: "dark",
   themeColor: "#09090b",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -23,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className="h-full bg-zinc-950 antialiased">
+      <body className="flex min-h-full min-w-0 flex-col overflow-x-hidden bg-zinc-950">{children}</body>
     </html>
   );
 }

@@ -5,8 +5,9 @@
 @source "../lib";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -16,17 +17,54 @@
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  min-width: 100%;
+  min-height: 100%;
+  background: var(--background);
+  scrollbar-color: #3f3f46 var(--background);
+  scrollbar-gutter: stable;
 }
 
 body {
+  margin: 0;
+  min-width: 100%;
+  min-height: 100%;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  scrollbar-color: #3f3f46 var(--background);
+}
+
+* {
+  scrollbar-color: #3f3f46 var(--background);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--background);
+  border-radius: 999px;
+  background: #3f3f46;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+@media (display-mode: standalone) {
+  html,
+  body {
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
 }
 
 /* Desktop browser zoom shrinks the CSS viewport while retaining a wider screen.

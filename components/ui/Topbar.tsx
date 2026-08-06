@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import CommandPalette from "@/components/search/CommandPalette";
 import type { CommandPaletteContext } from "@/components/search/CommandPaletteRouter";
 import MobileNavigation from "@/components/ui/MobileNavigation";
@@ -13,21 +14,48 @@ type TopbarProps = {
 
 export default function Topbar({ context, navigationItems }: TopbarProps) {
   const [open, setOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const shortcutCloseRef = useRef<HTMLButtonElement>(null);
+  const toolShortcuts = navigationItems.filter((item) => item.href !== "/").slice(0, 9);
 
   useEffect(() => {
     function handleShortcut(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setOpen(true);
+        return;
+      }
+      const navigatorWithStandalone = navigator as Navigator & { standalone?: boolean };
+      const standalone = window.matchMedia("(display-mode: standalone)").matches || navigatorWithStandalone.standalone === true;
+      const editable = event.target instanceof Element && Boolean(event.target.closest("input, textarea, select, [contenteditable='true']"));
+      if (standalone && !editable && event.key === "?" && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        setShortcutsOpen(true);
       }
     }
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
   }, []);
 
+  useEffect(() => {
+    if (!shortcutsOpen) return;
+    const frame = window.requestAnimationFrame(() => shortcutCloseRef.current?.focus());
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setShortcutsOpen(false);
+      }
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [shortcutsOpen]);
+
   return (
     <>
-      <header className="flex h-16 items-center gap-2 border-b border-zinc-800 bg-zinc-950 px-3 md:px-6">
+      <header className="sticky top-0 z-40 flex h-16 flex-none items-center gap-2 border-b border-zinc-800 bg-zinc-950/95 px-3 pr-[max(.75rem,env(safe-area-inset-right))] backdrop-blur md:px-6 md:pr-[max(1.5rem,env(safe-area-inset-right))]">
         <MobileNavigation navigationItems={navigationItems} />
         <button
           aria-label="Search Phronesis"
@@ -41,15 +69,50 @@ export default function Topbar({ context, navigationItems }: TopbarProps) {
           </kbd>
         </button>
 
-        {/* Simple avatar placeholder until user accounts are added. */}
         <button
           type="button"
-          aria-label="User menu"
-          className="ml-auto flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300"
+          aria-label="Keyboard shortcuts"
+          aria-haspopup="dialog"
+          aria-expanded={shortcutsOpen}
+          title="Keyboard shortcuts (?)"
+          className="ml-auto flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-sm font-semibold text-zinc-300 transition hover:border-zinc-700 hover:text-white focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300"
+          onClick={() => setShortcutsOpen(true)}
+        >
+          <span aria-hidden="true">?</span>
+        </button>
+        <Link
+          href="/settings"
+          aria-label="Open Settings"
+          title="Settings"
+          className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300"
         >
           PT
-        </button>
+        </Link>
       </header>
+      {shortcutsOpen ? (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setShortcutsOpen(false);
+          }}
+        >
+          <section role="dialog" aria-modal="true" aria-labelledby="shortcut-help-title" className="max-h-[min(42rem,calc(100dvh-2rem))] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-700 bg-zinc-950 p-5 shadow-2xl shadow-black sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div><p className="text-xs font-semibold uppercase tracking-[.2em] text-cyan-300">Installed WebApp</p><h2 id="shortcut-help-title" className="mt-1 text-xl font-semibold text-white">Keyboard shortcuts</h2></div>
+              <button ref={shortcutCloseRef} type="button" aria-label="Close keyboard shortcuts" onClick={() => setShortcutsOpen(false)} className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-zinc-700 text-xl text-zinc-300 hover:bg-zinc-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400">×</button>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-zinc-400">Navigation shortcuts are active only in the installed app, so normal browser shortcuts remain untouched.</p>
+            <dl className="mt-5 space-y-2 text-sm">
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt>Search Phronesis</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">⌘/Ctrl K</kbd></dd></div>
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt>Toggle sidebar</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">⌘/Ctrl B</kbd></dd></div>
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt>Dashboard</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">G then D</kbd></dd></div>
+              {toolShortcuts.map((item, index) => <div key={item.id} className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt className="min-w-0 truncate">{item.label}</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">G then {index + 1}</kbd></dd></div>)}
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt>Shortcut help</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">?</kbd></dd></div>
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5"><dt>Close dialog</dt><dd><kbd className="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs">Esc</kbd></dd></div>
+            </dl>
+          </section>
+        </div>
+      ) : null}
       <CommandPalette
         context={context}
         onClose={() => setOpen(false)}
