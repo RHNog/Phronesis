@@ -9,6 +9,7 @@ Phronesis now separates clean-runner project validation from committed Handoff c
 - Feature-branch commits produce one pull-request workflow execution instead of duplicate push and PR runs.
 - Missing dependencies are no longer misreported as simultaneous test, lint, and build defects.
 - Stale or dirty Handoff state remains a real failure until canonical documents are committed and bare Handoff creates a seal.
+- Official checkout and setup-node steps use their current v7 majors, keeping the workflow on the supported Node 24 action runtime without changing project or continuity semantics.
 
 ## Boundaries
 

@@ -31,6 +31,8 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Reconciled the Mac Studio hostname across the employee-login checklist, repository launch definition, project state, current structure, architecture, and agent handoff while preserving historical MacBook-era evidence.
 - Verified the host and operational boundary: Tailscale identifies `ramons-mac-studio.tailaa2d39.ts.net`; the installed private-review LaunchAgent matches the repository definition; loopback ports 3100/3101 are bound locally; private 9443 Vendor/Settings return 200; public 10000 login returns 200 and Settings returns 404.
 - Re-ran the configured project gate over the reconciled tree: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and diff hygiene pass.
+- Published implementation `66f9e6a` and seal `30605a3`; local acquire/continuity returned zero findings and hosted run `31108532122` passed continuity in 8 seconds and project validation in 1 minute 22 seconds.
+- Removed the hosted run's remaining Node 20 action-runtime deprecation by upgrading the two official checkout steps and the setup-node step to their current Node 24-compatible v7 majors without changing the exact-SHA or validation contract.
 
 ## Remaining work
 

@@ -172,6 +172,7 @@
 - Local result: 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, launch-definition validation, secret-pattern review, and diff hygiene pass.
 - First hosted result: run `30844457778` created one pull-request execution and passed `project-validation`. `continuity` reported only that exact-SHA checkout was `DETACHED`; the workflow now restores the event branch locally at that unchanged SHA and upgrades checkout to the Node 24 runtime.
 - Final hosted result: replacement run `30844716647` passed `continuity` in 5 seconds and `project-validation` in 1 minute 19 seconds. Local and remote seal SHA equality passed, and no duplicate feature-branch push run was created.
+- August 6 maintenance: Mac Studio reconciliation implementation `66f9e6a` and seal `30605a3` passed local acquire/continuity and hosted run `31108532122`; the remaining Node 20 action-runtime warning is removed by moving official checkout/setup-node steps to their current v7 majors while preserving explicit Node 24 project validation and the exact-SHA continuity contract.
 - Concurrent deployment result: a separately authorized operation activated the public event-worker Funnel after the hosted repair passed. Public login/denial probes, loopback bindings, and private 9443 continuity were independently reverified before the activation documentation was sealed.
 - Next accountable role: Event operator monitoring and explicit Funnel shutdown when the approved public window ends.
 

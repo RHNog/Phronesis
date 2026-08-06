@@ -36,8 +36,8 @@ The existing check combines project verification with continuity preparation, om
 
 Split GitHub verification into two jobs:
 
-1. `project-validation` checks out the GitHub event revision, installs pinned Node 24 with npm caching, runs `npm ci`, then executes the configured test, lint, build, and diff-hygiene commands.
-2. `continuity` checks out the exact pull-request head or push SHA with full history, restores the event branch name over that exact detached SHA, and runs only `./handoff validate-continuity --json` against committed artifacts.
+1. `project-validation` checks out the GitHub event revision with official checkout v7, installs pinned Node 24 through official setup-node v7 with npm caching, runs `npm ci`, then executes the configured test, lint, build, and diff-hygiene commands.
+2. `continuity` checks out the exact pull-request head or push SHA with official checkout v7 and full history, restores the event branch name over that exact detached SHA, and runs only `./handoff validate-continuity --json` against committed artifacts.
 
 Feature branches run through `pull_request`; `push` is restricted to `main`. Local implementation closes from a clean implementation commit with bare `./handoff`, which performs validation and creates the generated seal commit.
 
@@ -99,6 +99,7 @@ Not applicable.
 ## Acceptance Criteria
 
 - A dependency-free clean runner succeeds after `npm ci` and all project gates pass.
+- GitHub's official checkout and setup-node steps use current Node 24-compatible action runtimes without a Node 20 deprecation annotation.
 - The current implementation is committed, canonical documents reflect its actual state, and bare `./handoff` creates a valid seal.
 - `./handoff validate-continuity --json` reports zero errors from the sealed branch.
 - PR #5 reports successful `project-validation` and `continuity` checks for the repair revision.
@@ -149,5 +150,5 @@ No product UI changes. GitHub check names should clearly distinguish project val
 - Related implementation prompt: `docs/prompts/PHR-TECH-011-github-handoff-continuity-prompt.md`.
 - Related tests: `docs/testing/PHR-TECH-011-github-handoff-continuity-validation.md`.
 - Related release notes: `docs/release-notes/PHR-TECH-011.md`.
-- Last modified: 2026-08-03.
-- Modification reason: Completed the workflow repair, exact-SHA branch restoration, local seal, remote equality, and hosted project/continuity verification.
+- Last modified: 2026-08-06.
+- Modification reason: Revalidated the Mac Studio continuity seal and upgraded official GitHub actions to current v7 majors after the otherwise successful hosted run exposed a Node 20 action-runtime deprecation.

@@ -49,3 +49,6 @@ Passed.
 - Runtime boundary: Node listens only on `127.0.0.1:3100` and `127.0.0.1:3101`; private 9443 Vendor/Settings return 200; public 10000 event login returns 200 and Settings returns 404.
 - Configured repository gate: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and `git diff --check` pass.
 - Closure contract: commit the verified human-owned reconciliation first, run bare `./handoff` from the clean implementation commit, require zero JSON continuity findings, and verify ordinary remote SHA equality.
+- First closure: implementation `66f9e6a`, generation `572dc82bcf061ac36ec2`, and seal `30605a3` published with local acquire/continuity at zero findings and exact remote SHA equality.
+- Hosted run `31108532122`: continuity passed in 8 seconds and project validation passed in 1 minute 22 seconds; the only annotation was the deprecated Node 20 runtime inside `actions/setup-node@v4`.
+- Action-runtime remediation: official checkout and setup-node releases identify v7 as current; the workflow advances both official actions to v7, retains explicit `node-version: 24` and `cache: npm`, and must repeat the clean seal plus both hosted jobs without the Node 20 annotation.

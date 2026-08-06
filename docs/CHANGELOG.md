@@ -218,7 +218,7 @@
 
 ### Fixed
 
-- Repaired GitHub Handoff continuity by installing locked npm dependencies before project validation, checking the exact committed PR head, verifying rather than regenerating Handoff artifacts, and eliminating duplicate feature-branch push/PR runs (`PHR-TECH-011`).
+- Repaired GitHub Handoff continuity by installing locked npm dependencies before project validation, checking the exact committed PR head, verifying rather than regenerating Handoff artifacts, eliminating duplicate feature-branch push/PR runs, and keeping official checkout/setup-node actions on their current Node 24-compatible v7 runtimes (`PHR-TECH-011`).
 
 - Fixed catalogue-verification friction by adding a safe exact-context TCGplayer cross-check and viewport-clamped canonical artwork enlargement to Vendor Workspace results (`PHR-UX-017`).
 

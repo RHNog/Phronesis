@@ -12,4 +12,6 @@ Hosted replacement run `30844716647` passed both jobs: continuity in 5 seconds a
 
 After that hosted success, a separate process activated the already implemented public worker gateway and updated its canonical records. The live state was independently verified read-only and those user-owned edits were preserved in a subsequent clean commit and Handoff seal rather than discarded or left as a new stale worktree.
 
+On August 6, six intentional Mac Studio hostname edits again caused Handoff to reject the older clean-tree fingerprint. Reconciliation implementation `66f9e6a` and seal `30605a3` restored local/remote continuity, and hosted run `31108532122` passed both jobs. That run's sole annotation came from the obsolete Node 20 runtime embedded in `actions/setup-node@v4`. The workflow now uses official checkout v7 and setup-node v7, preserving explicit Node 24 validation and the exact-SHA continuity behavior while removing the deprecated action runtime.
+
 Verification: `docs/testing/PHR-TECH-011-github-handoff-continuity-validation.md`.
