@@ -1,5 +1,14 @@
 # Agent Handoff
 
+## Product Review Candidate — Back-First Duplex And Review Recovery — 2026-08-06
+
+- Direct evidence establishes that `Phronesis Card Duplex` is back-first: odd observations are Pokémon backs and even observations are the actual card faces.
+- Session `phr-pokemon-duplex-20260806-001` was repaired append-only through an audited, idempotent pre-resolution correction. All 18 image objects, reciprocal pairs, the sealed manifest, and nine historical card-back decisions remain retained; only the current region revisions and effective side declarations changed.
+- Nine actual-face jobs completed with eight review recommendations and one abstention. Auto-accept and every commercial/publication mutation remain closed.
+- Future Windows seals support explicit `AdjacentDuplexBackFirst`. Node importer 13/13 and Windows PowerShell 16/16 prove reciprocal front-first/back-first validation and fail-closed contradictions.
+- Scanner review now defaults by batch creation time, exposes an explicit batch selector, preserves the selected exception across a visible status refresh, and traverses all unresolved cards through Previous/Next with `Card N of M`.
+- Installed-WebApp validation proves Drowzee under FRONT EVIDENCE, the Pokémon design under PAIRED REVERSE EVIDENCE, Card 1 → Card 2 navigation, and refreshed timestamp feedback without losing Card 2. Full 429/429 tests, lint, production build, live database inspection/backup, and private-service health pass. Same-session conformance is not independent approval.
+
 ## Product Review Candidate — Installed WebApp Shell Optimization — 2026-08-06
 
 - `PHR-UX-027` now treats the installed Safari application as a dynamic-viewport shell: the sidebar stays inside `100dvh`, the tool list scrolls independently, and a labelled Expand control is always visible below the brand header when collapsed.

@@ -233,6 +233,130 @@ test("v2 duplex import schedules only fronts and preserves reciprocal reverse ev
     assert.equal(items[0].side, "FRONT");
     assert.equal(items[0].pairedFrameId, `${sessionId}:frame:2`);
     assert.equal(readFileSync(repository.frameObject(items[0].pairedFrameId!).path, "utf8"), "back-evidence");
+    const lease = repository.acquireJob("worker-before-orientation-repair", 1_000, new Date("2026-08-06T12:00:00.000Z"));
+    assert.ok(lease);
+    repository.completeJob(lease.jobId, "worker-before-orientation-repair", { decisionId: "decision-before-orientation-repair", regionId: items[0].regionId, status: "ABSTAINED", selectedCandidate: null, candidates: [], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "pokemon-v1", policyVersion: "review", decidedBy: "MACHINE", reason: "The declared front was actually the card back.", createdAt: "2026-08-06T12:00:01.000Z" });
+    repository.correctDuplexOrientation({ sessionId, correctedBy: "operator-1", reason: "Verified scanner output releases the card back before the card face.", now: "2026-08-06T12:00:02.000Z" });
+    const replayed = await ingestWindowsBundle({ bundlePath: bundle, runtimeRoot: join(root, "runtime"), repository });
+    assert.equal(replayed.bridgeStatus, "already_imported");
+    assert.deepEqual(replayed.frames.map((frame) => ({ side: frame.side, recognitionScheduled: frame.recognitionScheduled })), [
+      { side: "BACK", recognitionScheduled: false },
+      { side: "FRONT", recognitionScheduled: true },
+    ]);
+    assert.equal(repository.sessionItems(sessionId)[0].frameId, `${sessionId}:frame:2`);
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("v2 back-first duplex import recognizes the actual card face", async () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-back-first-import-"));
+  const sessionId = "phr-test-back-first";
+  const bundle = join(root, "incoming", sessionId);
+  const framesRoot = join(bundle, "frames");
+  mkdirSync(framesRoot, { recursive: true });
+  const frameBytes = [Buffer.from("pokemon-card-back"), Buffer.from("drowzee-card-face")];
+  const frames = frameBytes.map((bytes, index) => {
+    const observedSequence = index + 1;
+    const relativePath = `${String(observedSequence).padStart(3, "0")}.jpg`;
+    writeFileSync(join(framesRoot, relativePath), bytes);
+    return {
+      observedSequence,
+      relativePath,
+      byteCount: bytes.length,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+      side: observedSequence === 1 ? "BACK" : "FRONT",
+      pairedObservedSequence: observedSequence === 1 ? 2 : 1,
+    };
+  });
+  const manifest = {
+    schemaVersion: "phronesis.windows-scan-bundle/v2",
+    sessionId,
+    adapter: "paperstream-capture",
+    transport: "parallels-shared-folder",
+    profileName: "Phronesis Card Duplex",
+    pairingSemantics: "adjacent-duplex-back-first",
+    frameCount: frames.length,
+    frames,
+  };
+  const manifestBytes = Buffer.from(JSON.stringify(manifest));
+  writeFileSync(join(bundle, "manifest.json"), manifestBytes);
+  writeFileSync(join(bundle, "READY"), createHash("sha256").update(manifestBytes).digest("hex"));
+
+  const repository = new CardRecognitionRepository(":memory:", join(root, "runtime"));
+  try {
+    const imported = await ingestWindowsBundle({ bundlePath: bundle, runtimeRoot: join(root, "runtime"), repository });
+    assert.equal(imported.frames[0].recognitionScheduled, false);
+    assert.equal(imported.frames[1].recognitionScheduled, true);
+    const item = repository.sessionItems(sessionId)[0];
+    assert.equal(item.side, "FRONT");
+    assert.equal(readFileSync(repository.frameObject(item.frameId).path, "utf8"), "drowzee-card-face");
+    assert.equal(readFileSync(repository.frameObject(item.pairedFrameId!).path, "utf8"), "pokemon-card-back");
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("audited duplex correction preserves prior evidence and reschedules only the card face", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-orientation-correction-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const sessionId = repository.createSession("physical duplex", "2026-08-06T12:00:00.000Z");
+    const backObject = repository.putObject(Buffer.from("pokemon-card-back"));
+    const faceObject = repository.putObject(Buffer.from("drowzee-card-face"));
+    const backFrameId = `${sessionId}:frame:1`;
+    const faceFrameId = `${sessionId}:frame:2`;
+    const importedBack = repository.addFrame({ frameId: backFrameId, sessionId, sequence: 1, side: "FRONT", objectSha256: backObject.sha256, mediaType: "image/jpeg", byteLength: 17, capturedAt: "2026-08-06T12:00:01.000Z", pairedFrameId: faceFrameId });
+    repository.addFrame({ frameId: faceFrameId, sessionId, sequence: 2, side: "BACK", objectSha256: faceObject.sha256, mediaType: "image/jpeg", byteLength: 17, capturedAt: "2026-08-06T12:00:02.000Z", pairedFrameId: backFrameId }, { scheduleRecognition: false });
+    const lease = repository.acquireJob("worker-before-correction", 1_000, new Date("2026-08-06T12:00:03.000Z"));
+    assert.ok(lease);
+    repository.completeJob(lease.jobId, "worker-before-correction", { decisionId: "decision-card-back", regionId: importedBack.region.regionId, status: "ABSTAINED", selectedCandidate: null, candidates: [], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "pokemon-v1", policyVersion: "review", decidedBy: "MACHINE", reason: "A card back has no supported identity evidence.", createdAt: "2026-08-06T12:00:04.000Z" });
+
+    const corrected = repository.correctDuplexOrientation({ sessionId, correctedBy: "operator-1", reason: "Verified physical scanner releases the rear sensor before the card face.", now: "2026-08-06T12:00:05.000Z" });
+    assert.equal(corrected.status, "CORRECTED");
+    assert.equal(corrected.session.orientationCorrection?.correction, "SWAP_FRONT_BACK");
+    assert.deepEqual(corrected.session.counts, { frames: 2, regions: 1, pending: 1, review: 0, accepted: 0, abstained: 0, failed: 0 });
+    const item = repository.sessionItems(sessionId)[0];
+    assert.equal(item.frameId, faceFrameId);
+    assert.equal(item.side, "FRONT");
+    assert.equal(item.pairedFrameId, backFrameId);
+    assert.equal(readFileSync(repository.frameObject(item.frameId).path, "utf8"), "drowzee-card-face");
+    assert.equal(readFileSync(repository.frameObject(item.pairedFrameId!).path, "utf8"), "pokemon-card-back");
+    const preserved = repository.database.prepare("SELECT COUNT(*) count FROM recognition_decision WHERE id='decision-card-back'").get() as { count: number };
+    assert.equal(preserved.count, 1);
+    const replacementLease = repository.acquireJob("worker-after-correction", 1_000, new Date("2026-08-06T12:00:06.000Z"));
+    assert.ok(replacementLease);
+    assert.equal(replacementLease.regionId, item.regionId);
+    repository.failJob(replacementLease.jobId, "worker-after-correction", "test cleanup", "2026-08-06T12:00:07.000Z");
+    const replay = repository.correctDuplexOrientation({ sessionId, correctedBy: "operator-1", reason: "Verified physical scanner releases the rear sensor before the card face." });
+    assert.equal(replay.status, "ALREADY_CORRECTED");
+    assert.equal(repository.database.prepare("SELECT COUNT(*) count FROM recognition_session_orientation_correction WHERE session_id=?").get(sessionId).count, 1);
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("duplex orientation fails closed after an operator resolution", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-orientation-locked-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const sessionId = repository.createSessionWithMaterial({ label: "resolved duplex", conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1", now: "2026-08-06T12:00:00.000Z" });
+    const object = repository.putObject(Buffer.from("card-evidence"));
+    const firstFrameId = `${sessionId}:frame:1`;
+    const secondFrameId = `${sessionId}:frame:2`;
+    const imported = repository.addFrame({ frameId: firstFrameId, sessionId, sequence: 1, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 13, capturedAt: "2026-08-06T12:00:01.000Z", pairedFrameId: secondFrameId });
+    repository.addFrame({ frameId: secondFrameId, sessionId, sequence: 2, side: "BACK", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 13, capturedAt: "2026-08-06T12:00:02.000Z", pairedFrameId: firstFrameId }, { scheduleRecognition: false });
+    const lease = repository.acquireJob("worker-resolved", 1_000, new Date("2026-08-06T12:00:03.000Z"));
+    assert.ok(lease);
+    repository.completeJob(lease.jobId, "worker-resolved", { decisionId: "decision-resolved", regionId: imported.region.regionId, status: "REVIEW", selectedCandidate: candidate(0.9), candidates: [candidate(0.9)], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "pokemon-v1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-06T12:00:04.000Z" });
+    repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 1, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-06T12:00:04.000Z", buyingPresetId: "preset-1", offerCents: 100, currency: "USD", resolvedBy: "operator-1", now: "2026-08-06T12:00:05.000Z" });
+    assert.throws(() => repository.correctDuplexOrientation({ sessionId, correctedBy: "operator-1", reason: "Scanner side declaration was verified as inverted." }), /cannot change after an operator resolution/);
+    assert.equal(repository.sessionSummary(sessionId).orientationCorrection, null);
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("session list remains in batch creation order when background work updates an older batch", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-session-order-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const older = repository.createSession("older", "2026-08-06T12:00:00.000Z");
+    const newer = repository.createSession("newer", "2026-08-06T13:00:00.000Z");
+    repository.setSessionState(older, "REVIEW", "2026-08-06T14:00:00.000Z");
+    assert.deepEqual(repository.listSessions().map((session) => session.id), [newer, older]);
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
@@ -252,6 +376,13 @@ test("scanner review labels paired evidence and applies fail-closed batch materi
   assert.match(source, /evidenceRegionIds\.length/);
   assert.match(source, /unitOfferCents/);
   assert.match(source, />Cancel</);
+  assert.match(source, /Review batch/);
+  assert.match(source, /Refresh status/);
+  assert.match(source, /Status refreshed at/);
+  assert.match(source, /Previous unresolved card/);
+  assert.match(source, /Next unresolved card/);
+  assert.match(source, /Card \{unresolvedIndex \+ 1\} of \{reviewItems\.length\}/);
+  assert.match(source, /Duplex orientation repaired/);
   assert.match(source, /Existing scan evidence will be retained/);
   assert.match(routeSource, /export async function DELETE/);
   assert.doesNotMatch(source, /value=\{condition\}/);

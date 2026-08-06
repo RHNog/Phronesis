@@ -62,7 +62,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - Emit secret-free JSON Lines events with schema, session, monotonic sequence, event type, and typed evidence.
 - Make repeated seal and import operations idempotent for an unchanged session and fail closed on conflicting content.
 - Preserve legacy `v1` bundles as unpaired evidence. Do not infer side or pairing from filenames, profile names, or alternating sequence.
-- Add an opt-in `v2` manifest for an operator-declared adjacent duplex, front-first PaperStream release. The bridge must reject an odd frame count or any non-reciprocal side/pair declaration before publishing READY.
+- Add an opt-in `v2` manifest for an operator-declared adjacent duplex release with explicit first-side semantics. The bridge must support front-first and back-first profiles, reject an odd frame count or any non-reciprocal side/pair declaration before publishing READY, and never derive the first side from the profile name alone. The physically verified `Phronesis Card Duplex` profile is back-first.
 - Persist each verified `v2` front/back relation as acquisition evidence. Only the front schedules recognition; the back remains immutable linked evidence for operator review.
 
 ## Non-Functional Requirements
@@ -74,7 +74,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 
 ### Scalability
 
-- Legacy manifests support ordered frames without assuming front/back pairing. The `v2` contract adds pairing only when the operator explicitly selects the adjacent-duplex-front-first mode and the complete batch satisfies that grammar.
+- Legacy manifests support ordered frames without assuming front/back pairing. The `v2` contract adds pairing only when the operator explicitly selects adjacent-duplex front-first or back-first mode and the complete batch satisfies the declared grammar.
 - Production batching, recognition queues, and unbounded sessions remain deferred.
 
 ### Maintainability
@@ -126,7 +126,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - A 2–4 low-value-card duplex run produces a sealed bundle and a Mac import with matching per-frame hashes and no private identifiers in events.
 - The evidence report states the observed file count and order without inferring front/back pairing.
 - A synthetic `v2` duplex bundle proves reciprocal front/back pairing, rejects odd and contradictory declarations, imports only fronts into the recognition queue, and exposes each paired reverse as linked evidence.
-- A physical `v2` adjacent-duplex-front-first batch preserves every Windows original, seals an even reciprocal relation, imports only fronts into recognition, and exposes the paired backs as evidence.
+- A physical `v2` adjacent-duplex batch preserves every Windows original, seals an even reciprocal relation using the verified profile order, imports only effective fronts into recognition, and exposes paired backs as evidence. For `Phronesis Card Duplex`, odd observations are backs and even observations are fronts.
 - Existing `v1` bundles remain byte-for-byte valid and are displayed as unpaired rather than retroactively upgraded.
 - No source image enters Git and no Windows original is deleted. The bridge itself performs no commercial or network mutation; an explicitly authorized downstream recognition import may create only immutable evidence/session/job state under `PHR-TECH-014` and `PHR-WORKFLOW-016`.
 
@@ -152,7 +152,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 
 ## Technical Notes
 
-Schema names: `phronesis.windows-scan-bundle/v1` and `phronesis.windows-scan-bundle/v2`. Event schema: `phronesis.windows-bridge-event/v1`. Version 1 records observed sequence only. Version 2 is emitted only for the explicit `adjacent-duplex-front-first` mode and seals each frame's side plus reciprocal paired sequence. The importer validates the full relation before any repository mutation.
+Schema names: `phronesis.windows-scan-bundle/v1` and `phronesis.windows-scan-bundle/v2`. Event schema: `phronesis.windows-bridge-event/v1`. Version 1 records observed sequence only. Version 2 is emitted only for an explicit `adjacent-duplex-front-first` or `adjacent-duplex-back-first` mode and seals each frame's side plus reciprocal paired sequence. The importer validates the complete declared relation before any repository mutation.
 
 The dedicated shared root is runtime evidence and remains ignored. The repository stores tools and synthetic fixtures only.
 

@@ -28,14 +28,17 @@
 - Add an authenticated, idempotent session-cancellation mutation and a confirmed Phronesis Cancel control. Cancellation must retain evidence, cancel pending or leased recognition jobs, reject late imports, expose `CANCELLED` durably, and never claim to stop PaperStream itself.
 - Reconcile the displayed session stage from durable current jobs and operator resolutions after import, job completion/failure, and resolution; an idempotent reimport cannot regress a terminal session to processing.
 - Return frame side and paired-frame identity in authenticated session detail. Resolve must render front and acquisition-proven reverse evidence with explicit labels, and a fail-closed unavailable state for legacy unpaired bundles.
+- Add an audited, idempotent duplex-orientation repair that may run only before operator resolution. Retain immutable image objects, manifest evidence, prior decisions, and jobs; append rejected region revisions for formerly active backs, schedule effective fronts, and expose the corrected orientation in session state.
+- Sort sessions by immutable creation time, add explicit session selection, and retain the selected session across refreshes while it exists. Background reconciliation of an older session must not make it active.
+- Replace the visually inert refresh behavior with an observable status reload that announces success/time/unresolved count and preserves the current exception. Add Previous/Next and queue-position controls rather than making Refresh implicitly rotate cards.
 - Keep condition manual at batch scope and do not derive, recommend, or claim a grade from either image.
 - Treat finish as a batch constraint rather than a qualified reflectivity classifier. Do not infer or claim `Normal`, `Holofoil`, or `Reverse Holofoil` from the current fixed-light scanner capture.
 - Require batch material during session creation, allow explicit configuration for legacy imported sessions, and block exact-condition pricing and submission until it exists.
 
 ## Constraints
 
-- No scanner-driver logic in the web app, no inferred pairing from sequence or filenames, no non-English or non-Pokémon recognition activation, and no purchase, inventory, marketplace, or publication mutation.
+- No scanner-driver logic in the web app, no undeclared pairing from sequence or filenames, no deletion or rewriting of immutable scan objects/manifest evidence, no non-English or non-Pokémon recognition activation, and no purchase, inventory, marketplace, or publication mutation.
 
 ## Testing Expectations
 
-- Repository/API/workflow tests covering append-only batch settings, lock-after-first-resolution, server-owned condition/finish, candidate mismatch rejection, idempotent evidence-preserving cancellation, late-import rejection, deterministic duplicate consolidation, conflicting-binding separation, overflow-safe subtotal calculation, plus replay of the 18-frame Pokémon batch, desktop, 390px, keyboard, reload, and fail-closed evidence.
+- Repository/API/workflow tests covering append-only batch settings, lock-after-first-resolution, server-owned condition/finish, candidate mismatch rejection, idempotent evidence-preserving cancellation, late-import rejection, explicit back-first import, idempotent pre-resolution orientation repair, rejection after operator resolution, creation-time session ordering, observable refresh, queue navigation, deterministic duplicate consolidation, conflicting-binding separation, overflow-safe subtotal calculation, plus replay of the 18-frame Pokémon batch, desktop, 390px, keyboard, reload, and fail-closed evidence.

@@ -7,7 +7,7 @@ import test from "node:test";
 
 import { BridgeError, importBundle, verifyBundle } from "../bridge-import.mjs";
 
-async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "002.jpg"], duplex = false } = {}) {
+async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "002.jpg"], duplex = false, firstSide = "FRONT" } = {}) {
   const root = await mkdtemp(path.join(os.tmpdir(), "phr-windows-bridge-"));
   const bundle = path.join(root, sessionId);
   const framesRoot = path.join(bundle, "frames");
@@ -23,7 +23,7 @@ async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "0
       byteCount: bytes.length,
       sha256: createHash("sha256").update(bytes).digest("hex"),
       ...(duplex ? {
-        side: observedSequence % 2 === 1 ? "FRONT" : "BACK",
+        side: observedSequence % 2 === 1 ? firstSide : firstSide === "FRONT" ? "BACK" : "FRONT",
         pairedObservedSequence: observedSequence % 2 === 1 ? observedSequence + 1 : observedSequence - 1,
       } : {}),
     });
@@ -34,7 +34,7 @@ async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "0
     adapter: "paperstream-capture",
     transport: "parallels-shared-folder",
     profileName: "Phronesis Card Duplex",
-    pairingSemantics: duplex ? "adjacent-duplex-front-first" : "unknown",
+    pairingSemantics: duplex ? firstSide === "FRONT" ? "adjacent-duplex-front-first" : "adjacent-duplex-back-first" : "unknown",
     frameCount: frames.length,
     frames,
   };
@@ -61,6 +61,16 @@ test("verifies explicit reciprocal adjacent duplex pairs", async () => {
   assert.deepEqual(result.manifest.frames.map(({ side, pairedObservedSequence }) => ({ side, pairedObservedSequence })), [
     { side: "FRONT", pairedObservedSequence: 2 },
     { side: "BACK", pairedObservedSequence: 1 },
+  ]);
+});
+
+test("verifies the physically observed back-first reciprocal pairs", async () => {
+  const { bundle } = await fixture({ sessionId: "phr-test-duplex-back-first", duplex: true, firstSide: "BACK" });
+  const result = await verifyBundle(bundle);
+  assert.equal(result.manifest.pairingSemantics, "adjacent-duplex-back-first");
+  assert.deepEqual(result.manifest.frames.map(({ side, pairedObservedSequence }) => ({ side, pairedObservedSequence })), [
+    { side: "BACK", pairedObservedSequence: 2 },
+    { side: "FRONT", pairedObservedSequence: 1 },
   ]);
 });
 

@@ -22,6 +22,14 @@ export type ScanBatchMaterial = {
   locked: boolean;
 };
 
+export type ScanOrientationCorrection = {
+  revision: number;
+  correction: "SWAP_FRONT_BACK";
+  reason: string;
+  correctedBy: string;
+  correctedAt: string;
+};
+
 export type ScanSessionSummary = {
   id: string;
   label: string;
@@ -29,6 +37,7 @@ export type ScanSessionSummary = {
   createdAt: string;
   updatedAt: string;
   batchMaterial: ScanBatchMaterial | null;
+  orientationCorrection: ScanOrientationCorrection | null;
   counts: { frames: number; regions: number; pending: number; review: number; accepted: number; abstained: number; failed: number };
 };
 
@@ -116,6 +125,13 @@ export class CardRecognitionRepository {
         condition_code TEXT NOT NULL, finish TEXT NOT NULL,
         configured_by TEXT NOT NULL, configured_at TEXT NOT NULL,
         UNIQUE(session_id, revision), FOREIGN KEY(session_id) REFERENCES recognition_session(id)
+      );
+      CREATE TABLE IF NOT EXISTS recognition_session_orientation_correction (
+        id TEXT PRIMARY KEY, session_id TEXT NOT NULL, revision INTEGER NOT NULL,
+        correction TEXT NOT NULL, reason TEXT NOT NULL,
+        corrected_by TEXT NOT NULL, corrected_at TEXT NOT NULL,
+        UNIQUE(session_id, revision), UNIQUE(session_id, correction),
+        FOREIGN KEY(session_id) REFERENCES recognition_session(id)
       );
       CREATE TABLE IF NOT EXISTS recognition_region (
         id TEXT PRIMARY KEY, frame_id TEXT NOT NULL, region_order INTEGER NOT NULL,
@@ -239,6 +255,20 @@ export class CardRecognitionRepository {
     };
   }
 
+  private sessionOrientationCorrection(sessionId: string): ScanOrientationCorrection | null {
+    const row = this.database.prepare(`SELECT revision,correction,reason,corrected_by,corrected_at
+      FROM recognition_session_orientation_correction WHERE session_id=? ORDER BY revision DESC LIMIT 1`)
+      .get(sessionId) as { revision: number; correction: string; reason: string; corrected_by: string; corrected_at: string } | undefined;
+    if (!row) return null;
+    return {
+      revision: row.revision,
+      correction: row.correction as "SWAP_FRONT_BACK",
+      reason: row.reason,
+      correctedBy: row.corrected_by,
+      correctedAt: row.corrected_at,
+    };
+  }
+
   setSessionState(sessionId: string, state: ScanSessionState, now = new Date().toISOString()): void {
     const result = this.database.prepare("UPDATE recognition_session SET state=?, updated_at=? WHERE id=?").run(state, now, sessionId);
     if (!result.changes) throw new Error("scan session not found");
@@ -287,7 +317,7 @@ export class CardRecognitionRepository {
 
   listSessions(limit = 20): ScanSessionSummary[] {
     const safeLimit = Math.max(1, Math.min(100, Math.trunc(limit)));
-    const rows = this.database.prepare("SELECT id FROM recognition_session ORDER BY updated_at DESC,id DESC LIMIT ?").all(safeLimit) as Array<{ id: string }>;
+    const rows = this.database.prepare("SELECT id FROM recognition_session ORDER BY created_at DESC,id DESC LIMIT ?").all(safeLimit) as Array<{ id: string }>;
     return rows.map((row) => this.sessionSummary(row.id));
   }
 
@@ -315,8 +345,96 @@ export class CardRecognitionRepository {
       id: String(row.id), label: String(row.label), state: String(row.state) as ScanSessionState,
       createdAt: String(row.created_at), updatedAt: String(row.updated_at),
       batchMaterial: this.sessionBatchMaterial(sessionId),
+      orientationCorrection: this.sessionOrientationCorrection(sessionId),
       counts: { frames: Number(row.frames), regions: Number(row.regions), pending: Number(row.pending), review: Number(row.review_count), accepted: Number(row.accepted), abstained: Number(row.abstained), failed: Number(row.failed) },
     };
+  }
+
+  correctDuplexOrientation(input: { sessionId: string; correctedBy: string; reason: string; now?: string }): { status: "CORRECTED" | "ALREADY_CORRECTED"; session: ScanSessionSummary } {
+    const correctedBy = input.correctedBy.trim();
+    const reason = input.reason.trim();
+    if (!correctedBy || correctedBy.length > 200) throw new Error("orientation correction operator is invalid");
+    if (reason.length < 10 || reason.length > 500) throw new Error("orientation correction reason must contain 10 to 500 characters");
+    const now = input.now ?? new Date().toISOString();
+    let status: "CORRECTED" | "ALREADY_CORRECTED" = "CORRECTED";
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const session = this.database.prepare("SELECT state FROM recognition_session WHERE id=?").get(input.sessionId) as { state: string } | undefined;
+      if (!session) throw new Error("scan session not found");
+      const existing = this.database.prepare(`SELECT 1 present FROM recognition_session_orientation_correction
+        WHERE session_id=? AND correction='SWAP_FRONT_BACK'`).get(input.sessionId) as { present: number } | undefined;
+      if (existing) {
+        status = "ALREADY_CORRECTED";
+        this.database.exec("COMMIT");
+        return { status, session: this.sessionSummary(input.sessionId) };
+      }
+      if (session.state === "CANCELLED") throw new Error("cancelled scan session cannot be orientation-corrected");
+      const resolution = this.database.prepare(`SELECT 1 present FROM recognition_resolution x
+        JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=? LIMIT 1`).get(input.sessionId) as { present: number } | undefined;
+      if (resolution) throw new Error("duplex orientation cannot change after an operator resolution");
+      const activeWork = this.database.prepare(`SELECT COUNT(*) count FROM recognition_job j
+        JOIN recognition_region r ON r.id=j.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=? AND j.state IN ('PENDING','LEASED')`).get(input.sessionId) as { count: number };
+      if (activeWork.count > 0) throw new Error("duplex orientation cannot change while recognition work is active");
+      const frames = this.database.prepare(`SELECT id,sequence,side,paired_frame_id FROM recognition_frame
+        WHERE session_id=? ORDER BY sequence`).all(input.sessionId) as Array<{ id: string; sequence: number; side: ScanFrame["side"]; paired_frame_id: string | null }>;
+      if (!frames.length || frames.length % 2 !== 0 || frames.some((frame) => frame.side === "UNKNOWN" || !frame.paired_frame_id)) {
+        throw new Error("scan session does not contain complete declared duplex pairs");
+      }
+      const framesById = new Map(frames.map((frame) => [frame.id, frame]));
+      for (const frame of frames) {
+        const paired = frame.paired_frame_id ? framesById.get(frame.paired_frame_id) : undefined;
+        if (!paired || paired.paired_frame_id !== frame.id || paired.side === frame.side) throw new Error("scan session duplex pairs are not reciprocal");
+      }
+      const latestRegions = this.database.prepare(`SELECT r.*,f.side FROM recognition_region r
+        JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=? AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+        ORDER BY f.sequence,r.region_order`).all(input.sessionId) as Array<Record<string, string | number | null>>;
+      if (latestRegions.some((row) => row.side === "BACK" && row.state === "ACTIVE")) throw new Error("evidence-only side already contains active recognition regions");
+      for (const prior of latestRegions.filter((row) => row.side === "FRONT" && row.state === "ACTIVE")) {
+        const revision = Number(prior.revision) + 1;
+        const rejected: DetectedCardRegion = {
+          regionId: `${String(prior.frame_id)}:region:${Number(prior.region_order)}:r${revision}`,
+          frameId: String(prior.frame_id),
+          order: Number(prior.region_order),
+          revision,
+          state: "REJECTED",
+          geometry: JSON.parse(String(prior.geometry_json)),
+          parentRegionId: String(prior.id),
+          correctionReason: reason,
+        };
+        this.insertRegion(rejected, now);
+        this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)")
+          .run(randomUUID(), rejected.regionId, "CANCELLED", now);
+      }
+      for (const frame of frames.filter((candidate) => candidate.side === "BACK")) {
+        const prior = latestRegions.find((row) => row.frame_id === frame.id && Number(row.region_order) === 0);
+        const revision = prior ? Number(prior.revision) + 1 : 1;
+        const region: DetectedCardRegion = {
+          ...fullFrameRegion(frame.id),
+          regionId: `${frame.id}:region:0:r${revision}`,
+          revision,
+          parentRegionId: prior ? String(prior.id) : null,
+          correctionReason: reason,
+        };
+        this.insertRegion(region, now);
+        this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)")
+          .run(randomUUID(), region.regionId, "PENDING", now);
+      }
+      this.database.prepare(`UPDATE recognition_frame SET side=CASE side WHEN 'FRONT' THEN 'BACK' WHEN 'BACK' THEN 'FRONT' ELSE side END
+        WHERE session_id=?`).run(input.sessionId);
+      const revisionRow = this.database.prepare(`SELECT COALESCE(MAX(revision),0)+1 revision
+        FROM recognition_session_orientation_correction WHERE session_id=?`).get(input.sessionId) as { revision: number };
+      this.database.prepare(`INSERT INTO recognition_session_orientation_correction(id,session_id,revision,correction,reason,corrected_by,corrected_at)
+        VALUES(?,?,?,?,?,?,?)`).run(randomUUID(), input.sessionId, revisionRow.revision, "SWAP_FRONT_BACK", reason, correctedBy, now);
+      this.database.prepare("UPDATE recognition_session SET state='PROCESSING',updated_at=? WHERE id=?").run(now, input.sessionId);
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+    return { status, session: this.sessionSummary(input.sessionId) };
   }
 
   sessionItems(sessionId: string): Array<{ frameId: string; pairedFrameId: string | null; side: ScanFrame["side"]; regionId: string; objectSha256: string; status: string; decision: RecognitionDecision | null; resolved: boolean }> {

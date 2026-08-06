@@ -39,6 +39,8 @@ function Count({ label, value }: { label: string; value: number }) {
 
 export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: boolean }) {
   const [sessions, setSessions] = useState<ScanSessionSummary[]>([]);
+  const [selectedSessionId, setSelectedSessionId] = useState("");
+  const [selectedRegionId, setSelectedRegionId] = useState("");
   const [label, setLabel] = useState("");
   const [newBatchCondition, setNewBatchCondition] = useState("");
   const [newBatchFinish, setNewBatchFinish] = useState("");
@@ -56,7 +58,7 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
   const [buyingPresetId, setBuyingPresetId] = useState("custom");
   const [referenceCents, setReferenceCents] = useState<number | null>(null);
 
-  async function load() {
+  async function load(options: { sessionId?: string; announce?: boolean; initial?: boolean } = {}) {
     setBusy(true);
     try {
       const response = await fetch("/api/card-recognition/sessions", { cache: "no-store" });
@@ -64,30 +66,44 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       if (!response.ok) throw new Error(payload.error ?? "Session status is unavailable.");
       const nextSessions = payload.sessions ?? [];
       setSessions(nextSessions);
-      if (nextSessions[0]) {
-        const activeSession = nextSessions[0];
+      const requestedSessionId = options.sessionId ?? selectedSessionId;
+      const activeSession = nextSessions.find((session) => session.id === requestedSessionId) ?? nextSessions[0];
+      if (activeSession) {
+        setSelectedSessionId(activeSession.id);
         setBatchConditionDraft(activeSession.batchMaterial?.conditionCode ?? "");
         setBatchFinishDraft(activeSession.batchMaterial?.finish ?? "");
-        const detailResponse = await fetch(`/api/card-recognition/sessions/${encodeURIComponent(nextSessions[0].id)}`, { cache: "no-store" });
+        const detailResponse = await fetch(`/api/card-recognition/sessions/${encodeURIComponent(activeSession.id)}`, { cache: "no-store" });
         const detail = await detailResponse.json() as { items?: typeof items; offerSummary?: RecognitionOfferSummary; error?: string };
         if (!detailResponse.ok) throw new Error(detail.error ?? "Session detail is unavailable.");
         const nextItems = detail.items ?? [];
         setItems(nextItems);
         setOfferSummary(detail.offerSummary ?? emptyOfferSummary);
-        const nextUnresolved = nextItems.find((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
+        const nextReviewItems = nextItems.filter((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
+        const preserveRegion = activeSession.id === selectedSessionId
+          ? nextReviewItems.find((item) => item.regionId === selectedRegionId)
+          : undefined;
+        const nextUnresolved = preserveRegion ?? nextReviewItems[0];
+        setSelectedRegionId(nextUnresolved?.regionId ?? "");
         const nextCandidate = activeSession.batchMaterial
           ? nextUnresolved?.decision?.candidates.find((candidate) => sameFinish(candidate.catalogueIdentity?.variant, activeSession.batchMaterial?.finish)) ?? null
           : null;
         setSelectedCandidateId(nextCandidate?.canonicalPrintingId ?? "");
         setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null);
-      } else { setItems([]); setOfferSummary(emptyOfferSummary); setBatchConditionDraft(""); setBatchFinishDraft(""); setSelectedCandidateId(""); }
-      setMessage("");
+        if (options.announce) {
+          const timestamp = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(new Date());
+          setMessage(`Status refreshed at ${timestamp}. ${nextReviewItems.length} unresolved ${nextReviewItems.length === 1 ? "card" : "cards"}.`);
+        } else if (options.initial) setMessage("");
+      } else {
+        setSelectedSessionId(""); setSelectedRegionId(""); setItems([]); setOfferSummary(emptyOfferSummary); setBatchConditionDraft(""); setBatchFinishDraft(""); setSelectedCandidateId("");
+        if (options.announce) setMessage("Status refreshed. No recognition sessions are available.");
+        else if (options.initial) setMessage("");
+      }
     } catch (error) { setMessage(error instanceof Error ? error.message : "Session status is unavailable."); }
     finally { setBusy(false); }
   }
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => { void load(); }, 0);
+    const timeout = window.setTimeout(() => { void load({ initial: true }); }, 0);
     return () => window.clearTimeout(timeout);
     // Initial session hydration is intentionally consumed once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +118,8 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       const payload = await response.json() as { session?: ScanSessionSummary; error?: string };
       if (!response.ok || !payload.session) throw new Error(payload.error ?? "Session could not be created.");
       setSessions((current) => [payload.session!, ...current]);
+      setSelectedSessionId(payload.session.id);
+      setSelectedRegionId("");
       setLabel("");
       setNewBatchCondition(""); setNewBatchFinish("");
       setBatchConditionDraft(payload.session.batchMaterial?.conditionCode ?? ""); setBatchFinishDraft(payload.session.batchMaterial?.finish ?? "");
@@ -113,7 +131,7 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
 
   async function configureBatchMaterial(event: React.FormEvent) {
     event.preventDefault();
-    const activeSession = sessions[0];
+    const activeSession = sessions.find((session) => session.id === selectedSessionId) ?? sessions[0];
     if (!canOperate || !activeSession) return;
     setBusy(true);
     try {
@@ -124,13 +142,13 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       const payload = await response.json() as { session?: ScanSessionSummary; error?: string };
       if (!response.ok || !payload.session) throw new Error(payload.error ?? "Batch material could not be configured.");
       setMessage("Batch condition and finish applied. Every resolved card must match this declaration.");
-      await load();
+      await load({ sessionId: activeSession.id });
     } catch (error) { setMessage(error instanceof Error ? error.message : "Batch material could not be configured."); }
     finally { setBusy(false); }
   }
 
   async function cancelActiveSession() {
-    const activeSession = sessions[0];
+    const activeSession = sessions.find((session) => session.id === selectedSessionId) ?? sessions[0];
     if (!canOperate || !activeSession || activeSession.state === "CANCELLED") return;
     const confirmed = window.confirm("Cancel this Phronesis scan session? Existing scan evidence will be retained. PaperStream is controlled separately and will not be stopped by this action.");
     if (!confirmed) return;
@@ -140,13 +158,15 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       const payload = await response.json() as { session?: ScanSessionSummary; error?: string };
       if (!response.ok || !payload.session) throw new Error(payload.error ?? "Scan session could not be cancelled.");
       setMessage("Phronesis session cancelled. Existing evidence was retained; start a new batch when PaperStream is ready.");
-      await load();
+      await load({ sessionId: activeSession.id });
     } catch (error) { setMessage(error instanceof Error ? error.message : "Scan session could not be cancelled."); }
     finally { setBusy(false); }
   }
 
-  const active = sessions[0];
-  const unresolved = items.find((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
+  const active = sessions.find((session) => session.id === selectedSessionId) ?? sessions[0];
+  const reviewItems = items.filter((item) => !item.resolved && item.decision && (item.status === "REVIEW" || item.status === "ABSTAINED"));
+  const unresolved = reviewItems.find((item) => item.regionId === selectedRegionId) ?? reviewItems[0];
+  const unresolvedIndex = unresolved ? reviewItems.findIndex((item) => item.regionId === unresolved.regionId) : -1;
   const allCandidateOptions = unresolved?.decision?.candidates ?? [];
   const candidateOptions = active?.batchMaterial
     ? allCandidateOptions.filter((candidate) => sameFinish(candidate.catalogueIdentity?.variant, active.batchMaterial?.finish))
@@ -164,6 +184,17 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
     setReferenceCents(null);
   }
 
+  function chooseReviewItem(index: number) {
+    const item = reviewItems[index];
+    if (!item) return;
+    setSelectedRegionId(item.regionId);
+    const candidate = active?.batchMaterial
+      ? item.decision?.candidates.find((option) => sameFinish(option.catalogueIdentity?.variant, active.batchMaterial?.finish))
+      : null;
+    setSelectedCandidateId(candidate?.canonicalPrintingId ?? "");
+    setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null);
+  }
+
   async function resolveCurrent(event: React.FormEvent) {
     event.preventDefault();
     if (!active || !unresolved || !selectedCandidate) return;
@@ -178,7 +209,7 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       if (!response.ok) throw new Error(payload.error ?? "Exception could not be resolved.");
       setMessage("Identity confirmed against the batch material. The card is now in the local offer draft.");
       setQuantity(1); setOfferDollars(""); setPriceSnapshotId(""); setPriceSnapshotAt(""); setReferenceCents(null);
-      await load();
+      await load({ sessionId: active.id });
     } catch (error) { setMessage(error instanceof Error ? error.message : "Exception could not be resolved."); }
     finally { setBusy(false); }
   }
@@ -216,7 +247,16 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
       </form>
       <p className="mt-3 min-h-6 text-sm text-amber-200" aria-live="polite">{message}</p>
       {active ? <div className="mt-3">
-        <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold text-zinc-100">{active.label}</p><p className="text-xs text-zinc-500">{active.id}</p></div><div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-zinc-700 px-3 py-1 text-xs font-semibold text-zinc-300">{active.state.replaceAll("_", " ")}</span>{active.state !== "CANCELLED" ? <button type="button" onClick={() => void cancelActiveSession()} disabled={!canOperate || busy} className="min-h-11 rounded-lg border border-red-800 px-3 text-sm font-semibold text-red-200 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button> : null}</div></div>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <label className="min-w-0 flex-1 text-xs text-zinc-400" htmlFor="active-scan-session">Review batch
+            <select id="active-scan-session" value={active.id} onChange={(event) => void load({ sessionId: event.target.value, announce: true })} disabled={busy} className="mt-1 min-h-11 w-full max-w-xl rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-white disabled:cursor-wait disabled:opacity-60">
+              {sessions.map((session) => <option key={session.id} value={session.id}>{session.label} · {session.state.replaceAll("_", " ")} · {new Date(session.createdAt).toLocaleString()}</option>)}
+            </select>
+          </label>
+          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-zinc-700 px-3 py-1 text-xs font-semibold text-zinc-300">{active.state.replaceAll("_", " ")}</span>{active.state !== "CANCELLED" ? <button type="button" onClick={() => void cancelActiveSession()} disabled={!canOperate || busy} className="min-h-11 rounded-lg border border-red-800 px-3 text-sm font-semibold text-red-200 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button> : null}</div>
+        </div>
+        <p className="mt-2 break-all text-xs text-zinc-500">{active.id}</p>
+        {active.orientationCorrection ? <p className="mt-3 rounded-lg border border-cyan-900 bg-cyan-950/25 px-3 py-2 text-xs leading-5 text-cyan-100">Duplex orientation repaired from verified scanner evidence on {new Date(active.orientationCorrection.correctedAt).toLocaleString()}. The card face is now the front evidence; the Pokémon design is retained as the paired reverse.</p> : null}
         <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7"><Count label="Frames" value={active.counts.frames} /><Count label="Regions" value={active.counts.regions} /><Count label="Processing" value={active.counts.pending} /><Count label="Review" value={active.counts.review} /><Count label="Accepted" value={active.counts.accepted} /><Count label="Abstained" value={active.counts.abstained} /><Count label="Failed" value={active.counts.failed} /></dl>
         {active.state !== "CANCELLED" ? <form onSubmit={configureBatchMaterial} className={`mt-4 grid gap-3 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-[minmax(10rem,1fr)_minmax(11rem,1fr)_auto] ${active.batchMaterial ? "border-emerald-900 bg-emerald-950/20" : "border-amber-900 bg-amber-950/20"}`}>
           <div className="sm:col-span-2 lg:col-span-3"><p className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Batch material</p><p className="mt-1 text-xs leading-5 text-zinc-400">Every card in this session uses one condition and one finish. Split mixed cards into separate batches. Scanner images do not assign either value.</p>{active.batchMaterial ? <p className="mt-1 text-xs text-emerald-300">Revision {active.batchMaterial.revision} · {active.batchMaterial.locked ? "Locked after first resolution" : "Editable until first resolution"}</p> : <p className="mt-1 text-xs text-amber-200">Required before price evidence or resolution.</p>}</div>
@@ -228,7 +268,12 @@ export default function ScannerToOfferWorkspace({ canOperate }: { canOperate: bo
     </section>
 
     <section className="grid gap-4 lg:grid-cols-2">
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Resolve exceptions</h2><p className="mt-2 text-sm leading-6 text-zinc-400">Machine identity candidates remain review-only. Condition and finish come from the declared homogeneous batch, not from automatic grading.</p></div><button type="button" onClick={() => void load()} disabled={busy} className="min-h-11 rounded-lg border border-zinc-700 px-3 text-sm text-zinc-300">Refresh</button></div>
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-5"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Resolve exceptions</h2><p className="mt-2 text-sm leading-6 text-zinc-400">Machine identity candidates remain review-only. Condition and finish come from the declared homogeneous batch, not from automatic grading.</p></div><button type="button" onClick={() => void load({ sessionId: active?.id, announce: true })} disabled={busy} className="min-h-11 rounded-lg border border-zinc-700 px-3 text-sm font-semibold text-zinc-200 disabled:cursor-wait disabled:opacity-50">{busy ? "Loading…" : "Refresh status"}</button></div>
+        {reviewItems.length > 0 ? <nav className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-zinc-950 p-2" aria-label="Exception review queue">
+          <button type="button" onClick={() => chooseReviewItem(unresolvedIndex - 1)} disabled={busy || unresolvedIndex <= 0} className="min-h-11 rounded-md border border-zinc-700 px-3 text-sm font-semibold text-zinc-200 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Previous unresolved card">← Previous</button>
+          <p className="px-2 text-sm font-semibold tabular-nums text-zinc-300" aria-live="polite">Card {unresolvedIndex + 1} of {reviewItems.length}</p>
+          <button type="button" onClick={() => chooseReviewItem(unresolvedIndex + 1)} disabled={busy || unresolvedIndex < 0 || unresolvedIndex >= reviewItems.length - 1} className="min-h-11 rounded-md border border-zinc-700 px-3 text-sm font-semibold text-zinc-200 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Next unresolved card">Next →</button>
+        </nav> : null}
         {unresolved ? <div className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
           <div className="grid content-start gap-3" aria-label="Duplex scan evidence">
             <figure className="rounded-lg border border-zinc-800 bg-zinc-950 p-2">

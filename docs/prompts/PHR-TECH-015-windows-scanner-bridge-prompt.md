@@ -30,7 +30,7 @@ Implement and physically qualify a fail-closed Windows-local PaperStream capture
 - Implement a dependency-free Node macOS CLI to inspect and import ready bundles with strict schema/path/hash/size/count/uniqueness verification and atomic destination promotion.
 - Emit redacted deterministic JSONL events from both sides.
 - Preserve Windows originals and sealed bundles; never delete or overwrite conflicting evidence.
-- Preserve `v1` as unpaired legacy evidence and add an explicit `v2` adjacent-duplex-front-first mode with reciprocal side/pair fields, even-count validation, and no filename/profile-name inference.
+- Preserve `v1` as unpaired legacy evidence and support explicit `v2` adjacent-duplex-front-first and adjacent-duplex-back-first modes with reciprocal side/pair fields, even-count validation, and no filename/profile-name inference. Use back-first for the physically verified `Phronesis Card Duplex` profile.
 - Import `v2` backs as linked immutable evidence without scheduling them for recognition; schedule only declared fronts.
 - Require batch folders and **Release after scan** in the operator-reviewed PaperStream profile. If scanning completes without output files, inspect PaperStream's supported retained-batch evidence, preserve every original, and do not trigger a rescan until manual-release state is excluded.
 - Provide synthetic cross-platform tests and a Windows VM preflight test before physical execution.

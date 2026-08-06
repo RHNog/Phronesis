@@ -9,7 +9,7 @@ param(
   [string]$CaptureRoot = "C:\PhronesisScannerBridge\capture",
   [Parameter(Mandatory = $true)]
   [string]$SharedRoot,
-  [ValidateSet("Unknown", "AdjacentDuplexFrontFirst")]
+  [ValidateSet("Unknown", "AdjacentDuplexFrontFirst", "AdjacentDuplexBackFirst")]
   [string]$PairingMode = "Unknown",
   [string]$PaperStreamPath = "C:\Program Files (x86)\fiScanner\PaperStream Capture\PFU.PaperStream.Capture.exe",
   [ValidateRange(1, 64)]
@@ -24,6 +24,17 @@ $ErrorActionPreference = "Stop"
 $script:Sequence = 0
 $script:EventSession = if ($SessionId) { $SessionId } else { "preflight" }
 $script:AllowedExtensions = @(".jpg", ".jpeg", ".png", ".tif", ".tiff")
+$script:IsDuplexPairing = $PairingMode -ne "Unknown"
+$script:PairingSemantics = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } elseif ($PairingMode -eq "AdjacentDuplexBackFirst") { "adjacent-duplex-back-first" } else { "unknown" }
+$script:FirstDuplexSide = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "FRONT" } elseif ($PairingMode -eq "AdjacentDuplexBackFirst") { "BACK" } else { "UNKNOWN" }
+
+function Get-DeclaredDuplexSide {
+  param([Parameter(Mandatory = $true)][int]$ObservedSequence)
+  if (-not $script:IsDuplexPairing) { return "UNKNOWN" }
+  if ($ObservedSequence % 2 -eq 1) { return $script:FirstDuplexSide }
+  if ($script:FirstDuplexSide -eq "FRONT") { return "BACK" }
+  return "FRONT"
+}
 
 function Write-BridgeEvent {
   param(
@@ -174,8 +185,8 @@ function Test-ExistingBundle {
     return $false
   }
   $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-  $expectedSchema = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
-  $expectedPairing = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } else { "unknown" }
+  $expectedSchema = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
+  $expectedPairing = $script:PairingSemantics
   if ($manifest.schemaVersion -ne $expectedSchema -or $manifest.sessionId -ne $SessionId -or $manifest.pairingSemantics -ne $expectedPairing) {
     return $false
   }
@@ -188,9 +199,9 @@ function Test-ExistingBundle {
     if ($existing.relativePath -ne $source.relativePath -or [int64]$existing.byteCount -ne $source.byteCount -or $existing.sha256 -ne $source.sha256) {
       return $false
     }
-    if ($PairingMode -eq "AdjacentDuplexFrontFirst") {
-      $expectedSide = if ($source.observedSequence % 2 -eq 1) { "FRONT" } else { "BACK" }
-      $expectedPair = if ($expectedSide -eq "FRONT") { $source.observedSequence + 1 } else { $source.observedSequence - 1 }
+    if ($script:IsDuplexPairing) {
+      $expectedSide = Get-DeclaredDuplexSide -ObservedSequence $source.observedSequence
+      $expectedPair = if ($source.observedSequence % 2 -eq 1) { $source.observedSequence + 1 } else { $source.observedSequence - 1 }
       if ($existing.side -ne $expectedSide -or [int]$existing.pairedObservedSequence -ne $expectedPair) {
         return $false
       }
@@ -267,7 +278,7 @@ function Invoke-Seal {
   Assert-SafeJobName $JobName
   $sourceDirectory = Join-Path $CaptureRoot $SessionId
   $frames = @(Get-FrameRecords -SourceDirectory $sourceDirectory)
-  if ($PairingMode -eq "AdjacentDuplexFrontFirst" -and $frames.Count % 2 -ne 0) {
+  if ($script:IsDuplexPairing -and $frames.Count % 2 -ne 0) {
     throw "Adjacent duplex capture must contain a complete even number of front/back frames."
   }
   $readyRoot = Join-Path $SharedRoot "ready"
@@ -306,9 +317,9 @@ function Invoke-Seal {
         byteCount = $frame.byteCount
         sha256 = $frame.sha256
       }
-      if ($PairingMode -eq "AdjacentDuplexFrontFirst") {
-        $manifestFrame["side"] = if ($frame.observedSequence % 2 -eq 1) { "FRONT" } else { "BACK" }
-        $manifestFrame["pairedObservedSequence"] = if ($manifestFrame["side"] -eq "FRONT") { $frame.observedSequence + 1 } else { $frame.observedSequence - 1 }
+      if ($script:IsDuplexPairing) {
+        $manifestFrame["side"] = Get-DeclaredDuplexSide -ObservedSequence $frame.observedSequence
+        $manifestFrame["pairedObservedSequence"] = if ($frame.observedSequence % 2 -eq 1) { $frame.observedSequence + 1 } else { $frame.observedSequence - 1 }
       }
       $manifestFrames += $manifestFrame
       Write-BridgeEvent -Type "frame.copied" -Details @{
@@ -320,12 +331,12 @@ function Invoke-Seal {
     }
 
     $manifest = [ordered]@{
-      schemaVersion = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
+      schemaVersion = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
       sessionId = $SessionId
       adapter = "paperstream-capture"
       transport = "parallels-shared-folder"
       profileName = $JobName
-      pairingSemantics = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } else { "unknown" }
+      pairingSemantics = $script:PairingSemantics
       frameCount = $manifestFrames.Count
       frames = $manifestFrames
     }

@@ -113,11 +113,22 @@
 
 ## 2026-08-06 Physical V2 Import And Vision Recovery
 
-- Physical session `phr-pokemon-duplex-20260806-001` imported 18 frames: nine FRONT and nine BACK. Exactly nine front jobs were scheduled; all backs remain evidence-only.
+- Physical session `phr-pokemon-duplex-20260806-001` imported 18 frames under an initially incorrect front-first declaration. Nine odd Pokémon-back observations were first scheduled while the nine even card faces remained evidence-only; the orientation correction checkpoint below supersedes that interpretation.
 - The first local analysis exposed a macOS 27 beta Vision stall while compiling text recognition for the Apple Neural Engine. Sampling located the wait in `VNRecognizeTextRequest` → ANE compilation.
 - Both Vision requests now bind their main compute stage to an available CPU. A real-frame smoke completed in 34.03 seconds inside the existing 60-second worker boundary.
 - Session-scoped recovery requeued only failed or expired active jobs, preserved attempts/error history, and did not alter completed work.
-- Final durable truth: session `REVIEW`; nine completed jobs; zero pending, leased, or failed jobs; nine conservative abstentions because no candidate met the review threshold.
-- Authenticated live browser verification shows 18 frames, nine active front regions, zero processing/review/accepted/failed, nine abstained, labelled front and paired-reverse evidence, and no console warnings or errors.
+- Historical pre-correction truth: session `REVIEW`; nine completed card-back jobs; zero pending, leased, or failed jobs; nine conservative abstentions because no candidate met the review threshold.
+- Historical authenticated browser verification showed the inverted labels. The orientation correction checkpoint below records the current durable and visual truth.
 - Full repository tests: 424/424. Swift tests: 5/5. Standalone TypeScript, zero-warning ESLint, production build (56 pages), release worker build, and diff hygiene pass.
 - Auto-accept, purchasing, inventory, consumer adoption, and publication remain closed.
+
+## 2026-08-06 Back-First Orientation And Review Recovery
+
+- Direct inspection of the first reciprocal pair confirms observation 1 is the Pokémon card back and observation 2 is the Drowzee card face. The verified PaperStream profile order is therefore back-first.
+- The live SQLite store was backed up before repair to `card-recognition-before-duplex-orientation-20260806T1606.sqlite`; `PRAGMA integrity_check` returned `ok`.
+- The audited correction retained all 18 content-addressed objects, the sealed manifest, reciprocal pair IDs, nine prior decisions, and job history. It appended rejected revisions for the previously active odd observations, flipped the durable side declarations, and created exactly nine new jobs for the even card faces. Repeating the correction is idempotent; a first-time correction after operator resolution fails closed.
+- Current durable truth for `phr-pokemon-duplex-20260806-001`: `REVIEW`, 18 frames, nine active FRONT regions on observations 2–18 even, nine completed jobs, eight `REVIEW`, one `ABSTAINED`, zero pending/leased/accepted/failed. Every active front retains the preceding odd observation as reciprocal BACK evidence.
+- Original-manifest replay honors the recorded correction and remains `already_imported`; it cannot re-activate the old side assignment or crash the watcher.
+- Focused recognition-platform tests: 32/32. Full repository tests: 429/429. Node bridge tests: 13/13. Windows PowerShell bridge self-tests: 16/16 in the active VM console context. Warning-free ESLint, TypeScript through Next.js, production build, and diff hygiene pass.
+- The rebuilt private services report running. In the installed Safari WebApp, batches default by creation time, explicit selection restores the physical batch, `Card 1 of 9` advances to `Card 2 of 9`, and `Refresh status` changes the visible completion timestamp while preserving Card 2.
+- Visual evidence verifies Drowzee under `FRONT EVIDENCE` and the Pokémon design under `PAIRED REVERSE EVIDENCE`. Auto-accept, automatic grading/finish inference, offer creation, purchasing, inventory, publication, and public exposure remain closed.

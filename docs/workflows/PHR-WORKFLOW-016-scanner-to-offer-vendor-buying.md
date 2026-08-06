@@ -34,6 +34,8 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - Complete a Designer gate before product UI implementation.
 - Import sealed Windows bridge bundles without exposing filesystem management in the operator workflow.
 - Treat front/back pairing as acquisition evidence. Only the operator-selected card face enters recognition; the paired reverse remains linked evidence.
+- Treat duplex sensor order as an explicit acquisition property, not a universal front-first assumption. The verified `Phronesis Card Duplex` PaperStream profile releases the rear/card-back observation first and the card face second. Future paired bundles must declare either front-first or back-first semantics and the importer must validate the complete reciprocal relation before scheduling only effective fronts.
+- Preserve an audited, idempotent session-orientation correction for a sealed duplex batch that was declared with the wrong first side. Correction is allowed only before any operator resolution, must retain original objects, manifests, regions, jobs, and decisions, must reject the previously processed backs through append-only region revisions, and must schedule the newly authoritative card faces for recognition.
 - Display the acquisition-proven reverse beside the active front during identity/material review. If the source is a legacy unpaired bundle, show an explicit unavailable state and never infer a reverse from file order.
 - Require an explicit batch condition and batch finish before intake or resolution. Supported first-release Pokémon finishes are `Normal`, `Holofoil`, and `Reverse Holofoil`; a mixed-condition or mixed-finish intake must be split into separate sessions.
 - Apply the declared condition and finish to every resolution in the batch. Preserve batch-setting revisions append-only, and lock both fields after the first card resolution so one offer cannot silently mix material assumptions.
@@ -43,6 +45,8 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - Keep card backs, non-English Pokémon, Magic cards, and insufficient game/language evidence as explicit abstentions in the first release.
 - Reprocess immutable evidence append-only when the active recognition lane or pipeline version changes. Historical decisions remain auditable but cannot inflate current counts or remain in the current offer draft.
 - Keep scan session, recognition review, and offer draft recoverable after process restart.
+- Order session selection by immutable creation time rather than background-updated time, keep the operator's selected session stable across reloads, and expose prior batches through an explicit session selector.
+- Make status refresh observable: show a busy label while loading, announce the completion time and current unresolved count, preserve the selected exception when it still exists, and expose Previous/Next plus `Card N of M` controls for the unresolved queue. Refresh must not masquerade as queue navigation.
 - Derive the persisted session stage from durable work: `CAPTURING` with no regions, `PROCESSING` while any current job is pending or leased, `REVIEW` when terminal results still require resolution, and `OFFER_READY` only when every current region has an operator-bound resolution. Reimporting an idempotent bundle must not regress a terminal session to `PROCESSING`.
 
 ## Acceptance Criteria
@@ -56,6 +60,8 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - A paired-evidence review labels front and reverse independently, remains usable at 390px without horizontal overflow, and keeps condition and finish batch-declared with no automatic grading or reflectivity-classification claim.
 - Replaying the accepted 18-frame Pokémon batch yields review candidates for its eight English card faces and safe abstentions for nine card backs plus one Spanish card, with no automatic acceptance.
 - A physical `v2` session presents each declared front with its reciprocal evidence-only back, schedules no job for any back, and truthfully supports a fully abstained batch without producing an offer.
+- The existing physical session whose first/second observations were mislabeled is repaired without changing either image object or its reciprocal pair: the Drowzee image becomes front evidence, the Pokémon-back image becomes reverse evidence, the nine prior back decisions remain auditable but inactive, and nine actual card faces receive new recognition jobs.
+- Manual Refresh produces visible status feedback, session selection does not jump because a worker updated an older batch, and the operator can inspect every unresolved card with keyboard- and touch-operable Previous/Next controls.
 - Cancelling an empty or partially imported session leaves a visible `CANCELLED` record, creates no replacement automatically, accepts no late frames, and allows the operator to start a fresh homogeneous batch immediately.
 
 ## Dependencies
@@ -64,7 +70,7 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 
 ## UI / UX Notes
 
-The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires a condition and Pokémon finish for the homogeneous batch. A persistent summary shows the locked material declaration plus frame, accepted, review, abstained, and failed counts. The active-session header exposes a destructive-styled Cancel action for non-cancelled work, requires explicit confirmation, explains that retained evidence is not deleted and PaperStream remains independently controlled, and keeps New batch available after cancellation. The exception queue keeps front and acquisition-proven reverse evidence beside only those candidate controls whose exact catalogue variant agrees with the batch; destructive session actions require confirmation. When no proven reverse exists, the evidence panel says so instead of guessing. Small screens stack evidence below the active card and keep the primary action reachable without horizontal scrolling.
+The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires a condition and Pokémon finish for the homogeneous batch and exposes an explicit session selector when history exists. A persistent summary shows the locked material declaration plus frame, accepted, review, abstained, and failed counts. The active-session header exposes a destructive-styled Cancel action for non-cancelled work, requires explicit confirmation, explains that retained evidence is not deleted and PaperStream remains independently controlled, and keeps New batch available after cancellation. The exception queue keeps front and acquisition-proven reverse evidence beside only those candidate controls whose exact catalogue variant agrees with the batch; it shows queue position, Previous/Next actions, a distinct status-refresh action, and visible refresh feedback. Destructive session actions require confirmation. When no proven reverse exists, the evidence panel says so instead of guessing. Small screens stack evidence below the active card and keep the primary action reachable without horizontal scrolling.
 
 ## Traceability
 
@@ -72,7 +78,7 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Design gate: `docs/design/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying.md`.
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
 - Last modified: 2026-08-06.
-- Modification reason: add an evidence-preserving operator Cancel boundary after a capture was started before PaperStream was ready.
+- Modification reason: correct the physically observed back-first PaperStream order, preserve an audited recovery path for the already imported inverted session, and make session refresh/exception navigation observable.
 
 ## Private Operational Activation — 2026-08-05
 

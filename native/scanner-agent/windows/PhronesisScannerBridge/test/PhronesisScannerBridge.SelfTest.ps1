@@ -76,6 +76,15 @@ try {
   $duplexManifest = Get-Content -LiteralPath (Join-Path (Join-Path (Join-Path $sharedRoot "ready") $duplexSession) "manifest.json") -Raw | ConvertFrom-Json
   Assert-Test "declared duplex seals v2 reciprocal pairs" ($duplexSeal.ExitCode -eq 0 -and $duplexManifest.schemaVersion -eq "phronesis.windows-scan-bundle/v2" -and $duplexManifest.frames[0].side -eq "FRONT" -and $duplexManifest.frames[0].pairedObservedSequence -eq 2 -and $duplexManifest.frames[1].side -eq "BACK" -and $duplexManifest.frames[1].pairedObservedSequence -eq 1)
 
+  $backFirstSession = "phr-test-duplex-back-first"
+  $backFirstRoot = Join-Path $captureRoot $backFirstSession
+  [System.IO.Directory]::CreateDirectory($backFirstRoot) | Out-Null
+  [System.IO.File]::WriteAllBytes((Join-Path $backFirstRoot "001.jpg"), [byte[]](3, 3, 3, 3))
+  [System.IO.File]::WriteAllBytes((Join-Path $backFirstRoot "002.jpg"), [byte[]](4, 4, 4, 4))
+  $backFirstSeal = Invoke-BridgeChild @("-Command", "Seal", "-SessionId", $backFirstSession, "-CaptureRoot", $captureRoot, "-SharedRoot", $sharedRoot, "-PairingMode", "AdjacentDuplexBackFirst")
+  $backFirstManifest = Get-Content -LiteralPath (Join-Path (Join-Path (Join-Path $sharedRoot "ready") $backFirstSession) "manifest.json") -Raw | ConvertFrom-Json
+  Assert-Test "declared back-first duplex seals reciprocal faces" ($backFirstSeal.ExitCode -eq 0 -and $backFirstManifest.pairingSemantics -eq "adjacent-duplex-back-first" -and $backFirstManifest.frames[0].side -eq "BACK" -and $backFirstManifest.frames[0].pairedObservedSequence -eq 2 -and $backFirstManifest.frames[1].side -eq "FRONT" -and $backFirstManifest.frames[1].pairedObservedSequence -eq 1)
+
   $oddSession = "phr-test-duplex-odd"
   $oddRoot = Join-Path $captureRoot $oddSession
   [System.IO.Directory]::CreateDirectory($oddRoot) | Out-Null

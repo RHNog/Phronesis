@@ -5,7 +5,7 @@ export type VerifiedWindowsBundle = {
     schemaVersion: "phronesis.windows-scan-bundle/v1" | "phronesis.windows-scan-bundle/v2";
     sessionId: string;
     profileName: string;
-    pairingSemantics: "unknown" | "adjacent-duplex-front-first";
+    pairingSemantics: "unknown" | "adjacent-duplex-front-first" | "adjacent-duplex-back-first";
     frames: Array<{ observedSequence: number; relativePath: string; byteCount: number; sha256: string; side: "FRONT" | "BACK" | "UNKNOWN"; pairedObservedSequence: number | null }>;
   };
 };

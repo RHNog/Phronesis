@@ -16,6 +16,7 @@ export async function ingestWindowsBundle(input: { bundlePath: string; runtimeRo
   const imported = await importBundle(input.bundlePath, join(input.runtimeRoot, "bundles"), { maxFiles: 64 });
   try { input.repository.createSessionWithId(imported.manifest.sessionId, imported.manifest.profileName || "Windows scanner intake"); }
   catch (error) { if (!(error instanceof Error) || !error.message.includes("UNIQUE constraint failed")) throw error; }
+  const orientationCorrection = input.repository.sessionSummary(imported.manifest.sessionId).orientationCorrection;
   const frames = [];
   for (const frame of imported.manifest.frames) {
     const sourcePath = join(input.runtimeRoot, "bundles", imported.manifest.sessionId, "frames", ...frame.relativePath.split("/"));
@@ -26,22 +27,25 @@ export async function ingestWindowsBundle(input: { bundlePath: string; runtimeRo
     const pairedFrameId = frame.pairedObservedSequence === null
       ? null
       : `${imported.manifest.sessionId}:frame:${frame.pairedObservedSequence}`;
+    const effectiveSide = orientationCorrection?.correction === "SWAP_FRONT_BACK"
+      ? frame.side === "FRONT" ? "BACK" : frame.side === "BACK" ? "FRONT" : "UNKNOWN"
+      : frame.side;
     const scanFrame = {
       frameId,
       sessionId: imported.manifest.sessionId,
       sequence: frame.observedSequence - 1,
-      side: frame.side,
+      side: effectiveSide,
       objectSha256: frame.sha256,
       mediaType: mediaType(sourcePath),
       byteLength: frame.byteCount,
       capturedAt: new Date().toISOString(),
       pairedFrameId,
     } as const;
-    const scheduleRecognition = frame.side !== "BACK";
+    const scheduleRecognition = effectiveSide !== "BACK";
     const result = scheduleRecognition
       ? input.repository.addFrame(scanFrame, { scheduleRecognition: true })
       : input.repository.addFrame(scanFrame, { scheduleRecognition: false });
-    frames.push({ sequence: frame.observedSequence, side: frame.side, pairedFrameId, recognitionScheduled: scheduleRecognition, status: result.status, sha256: frame.sha256 });
+    frames.push({ sequence: frame.observedSequence, side: effectiveSide, pairedFrameId, recognitionScheduled: scheduleRecognition, status: result.status, sha256: frame.sha256 });
   }
   input.repository.reconcileSessionState(imported.manifest.sessionId);
   return { schemaVersion: "phronesis.recognition-import.v1" as const, bridgeStatus: imported.status, manifestSha256: imported.manifestSha256, session: input.repository.sessionSummary(imported.manifest.sessionId), frames };

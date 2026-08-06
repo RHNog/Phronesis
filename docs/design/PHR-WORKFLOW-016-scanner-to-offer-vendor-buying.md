@@ -9,7 +9,7 @@ The 2026-08-05 Product Owner revision makes English Pokémon the first operation
 ## Information Architecture
 
 1. **Capture** declares the homogeneous batch condition and finish, starts or resumes a session, and reports durable frame intake.
-2. **Resolve** presents one unresolved region at a time with image evidence, ranked batch-compatible candidates, and explicit accept, replace, or abstain controls.
+2. **Resolve** presents one unresolved region at a time with image evidence, queue position, Previous/Next navigation, an explicit status reload, ranked batch-compatible candidates, and explicit accept, replace, or abstain controls.
 3. **Offer** shows only operator-resolved assets with condition, finish, price snapshot, preset, per-unit draft value, consolidated quantity, subtotal, retained scan count, and lot total.
 
 A persistent status strip distinguishes received, processing, review, abstained, failed, and offer-ready counts with text and numerals. It never collapses review and failure into a single warning state.
@@ -22,6 +22,9 @@ A persistent status strip distinguishes received, processing, review, abstained,
 - Every Pokémon candidate shows name, set, collector number, catalogue variant, language, rank, and evidence score. Only candidates whose catalogue variant agrees with the declared batch finish are actionable. A mismatch fails closed with instructions to move the card to a matching batch or use a later canonical exception flow.
 - Mixed conditions or finishes require separate sessions. The UI does not offer a `Mixed` escape hatch that would weaken exact-condition pricing or exact-SKU identity.
 - A linked reverse is evidence, not a recognition input or grading result. Legacy unpaired frames render a text-labelled unavailable state and never borrow an adjacent image.
+- The current PaperStream profile is back-first. An explicit acquisition declaration determines which side is recognition input; the UI never treats the first released image as front merely because it is first.
+- Session history is selected explicitly and ordered by creation time. Background processing may update status but may not silently replace the operator's selected batch.
+- Status reload and exception navigation are separate controls. Reload announces completion and preserves the current exception; Previous/Next changes the current exception and reports `Card N of M`.
 - Accepting a candidate advances focus to the next exception and is reversible until the offer draft is finalized.
 - Abstention is a successful safe outcome, not an error.
 - No control on this surface purchases, adds inventory, or publishes.
@@ -41,6 +44,7 @@ A persistent status strip distinguishes received, processing, review, abstained,
 - Worker unavailable: preserve frames and expose pending recognition count.
 - Stale price: keep identity resolved but block offer readiness.
 - Missing batch material or a candidate/batch finish mismatch: keep the card in Resolve and block price evidence and offer submission.
+- Incorrect declared duplex orientation before operator resolution: retain every object and historical decision, append an audited correction, reject the previously active regions, schedule the effective fronts, and resume at `PROCESSING`. After a resolution exists, fail closed and require a separately adjudicated recovery.
 - Cancel requires confirmation and never deletes immutable evidence.
 
 ## Visual Direction
@@ -52,5 +56,6 @@ Reuse the current Phronesis dark surface, typography, spacing, controls, status 
 - Desktop and 390px viewport screenshots.
 - Keyboard-only exception resolution.
 - Reload recovery with the same active exception.
+- Explicit session selection, visible refresh completion, and complete Previous/Next traversal of the unresolved queue.
 - Separate empty, processing, review, abstained, failed, and offer-ready states.
 - Proof that no purchase or publication mutation occurred.

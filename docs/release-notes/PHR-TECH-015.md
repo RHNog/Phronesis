@@ -16,12 +16,14 @@ PaperStream must run in the logged-in Windows session, use batch-folder output, 
 
 ## 2026-08-05 — Explicit Duplex Evidence Contract
 
-Added an opt-in `phronesis.windows-scan-bundle/v2` mode for a physically verified adjacent, front-first PaperStream release. The bridge seals each side and reciprocal pair, rejects odd or contradictory batches before READY, and leaves the default `v1` mode unpaired.
+Added an opt-in `phronesis.windows-scan-bundle/v2` mode for a physically verified adjacent PaperStream release with explicit front-first or back-first order. The bridge seals each side and reciprocal pair, rejects odd or contradictory batches before READY, and leaves the default `v1` mode unpaired.
 
-On import, declared fronts enter the recognition queue while backs remain content-addressed linked evidence. Existing `v1` bundles are not migrated or guessed. The new Node contract passes 12/12 tests and the extended Windows PowerShell bridge passes 15/15; one supervised physical `v2` pair remains pending.
+On import, declared fronts enter the recognition queue while backs remain content-addressed linked evidence. Existing `v1` bundles are not migrated or guessed. The profile order is never inferred from its name.
 
 ## 2026-08-06 — Physical V2 Acquisition
 
-The first physical `v2` session completed with 18 images across nine reciprocal FRONT/BACK pairs. Phronesis imported only the nine fronts into recognition and retained every back as linked immutable evidence.
+The first physical `v2` session completed with 18 images across nine reciprocal pairs. Direct image inspection established that `Phronesis Card Duplex` releases the Pokémon back from its rear sensor first and the card face second. The first manifest was incorrectly declared front-first; Phronesis repaired the imported session append-only without changing that sealed acquisition record or any image object. Future bridge seals use `AdjacentDuplexBackFirst`, so odd observations are BACK and even observations are FRONT.
 
 PaperStream initially held the completed batch for manual release, so the requested capture folder remained empty. Phronesis recovered and byte-verified the retained originals without deleting any copy, then sealed manifest `75c0670a8e49d000ea81fb04f63d46b18c9463a276df76538a9361b2e1d50f88`. Future routine captures require **Release after scan** enabled in the PaperStream UI.
+
+The expanded contract passes 13/13 Node importer tests and 16/16 PowerShell bridge self-tests in the running Windows VM, including reciprocal back-first sealing and fail-closed contradictory-pair handling.

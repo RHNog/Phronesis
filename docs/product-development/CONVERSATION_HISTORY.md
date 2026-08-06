@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Back-First Duplex Correction And Review Controls
+
+### User Intent
+
+- Correct the Scanner-to-Offer evidence labels because the Pokémon design is always the card back and the actual card face was being shown as the reverse.
+- Make Refresh perform an observable, useful action.
+
+### Diagnosis And Decision
+
+- The physical `Phronesis Card Duplex` profile releases its rear sensor first. The bridge had sealed the batch as front-first, so recognition ran on nine Pokémon backs and left the nine actual faces as evidence-only.
+- Preserve the sealed manifest and every immutable object/history record. Add one audited, idempotent pre-resolution orientation correction that supersedes active regions append-only, flips effective sides, and schedules only the actual faces. Make the correction govern later idempotent replays of the original manifest.
+- Order batches by immutable creation time, expose an explicit batch selector, preserve the selected batch/card across reload, announce refresh completion/time/count, and provide Previous/Next plus `Card N of M` independently from Refresh.
+
+### Acceptance State
+
+Implemented, repaired in the live private store, and privately deployed under `PHR-TECH-015` and `PHR-WORKFLOW-016`. Current physical-session truth is nine even FRONT observations, nine odd paired BACK observations, eight review recommendations, one abstention, and zero pending/failed work. Installed-WebApp evidence shows Drowzee as FRONT and the Pokémon design as PAIRED REVERSE; Next advances Card 1 to Card 2, and Refresh changes the visible timestamp while retaining Card 2. Full 429/429 tests, importer 13/13, Windows bridge 16/16, warning-free lint, TypeScript/production build, backup integrity, service health, and same-session conformance pass. Auto-accept, grading/finish inference, purchasing, inventory, publication, and public exposure remain closed.
+
 ## 2026-08-06 — Installed WebApp Shell Optimization
 
 ### User Intent

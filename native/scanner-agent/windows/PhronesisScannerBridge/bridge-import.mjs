@@ -69,8 +69,9 @@ function parseManifest(bytes, maxFiles) {
   assert(manifest.adapter === "paperstream-capture", "INVALID_ADAPTER", "Bundle adapter is unsupported.");
   assert(manifest.transport === "parallels-shared-folder", "INVALID_TRANSPORT", "Bundle transport is unsupported.");
   const duplex = manifest.schemaVersion === DUPLEX_BUNDLE_SCHEMA;
+  const duplexPairingSemantics = new Set(["adjacent-duplex-front-first", "adjacent-duplex-back-first"]);
   assert(
-    manifest.pairingSemantics === (duplex ? "adjacent-duplex-front-first" : "unknown"),
+    duplex ? duplexPairingSemantics.has(manifest.pairingSemantics) : manifest.pairingSemantics === "unknown",
     "INVALID_PAIRING",
     duplex ? "Duplex bundle pairing semantics are invalid." : "Legacy bundle must not claim side pairing.",
   );
@@ -94,9 +95,10 @@ function parseManifest(bytes, maxFiles) {
     if (!duplex) {
       return { observedSequence: frame.observedSequence, relativePath, byteCount: frame.byteCount, sha256: frame.sha256, side: "UNKNOWN", pairedObservedSequence: null };
     }
-    const expectedSide = frame.observedSequence % 2 === 1 ? "FRONT" : "BACK";
-    const expectedPair = expectedSide === "FRONT" ? frame.observedSequence + 1 : frame.observedSequence - 1;
-    assert(frame.side === expectedSide, "INVALID_PAIRING", "Duplex frame side contradicts front-first sequence.");
+    const firstSide = manifest.pairingSemantics === "adjacent-duplex-front-first" ? "FRONT" : "BACK";
+    const expectedSide = frame.observedSequence % 2 === 1 ? firstSide : firstSide === "FRONT" ? "BACK" : "FRONT";
+    const expectedPair = frame.observedSequence % 2 === 1 ? frame.observedSequence + 1 : frame.observedSequence - 1;
+    assert(frame.side === expectedSide, "INVALID_PAIRING", "Duplex frame side contradicts the declared first-side sequence.");
     assert(Number.isSafeInteger(frame.pairedObservedSequence) && frame.pairedObservedSequence === expectedPair, "INVALID_PAIRING", "Duplex frame pair is not adjacent and reciprocal.");
     return { observedSequence: frame.observedSequence, relativePath, byteCount: frame.byteCount, sha256: frame.sha256, side: frame.side, pairedObservedSequence: frame.pairedObservedSequence };
   });
