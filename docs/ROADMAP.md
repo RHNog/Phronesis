@@ -1,5 +1,12 @@
 # Roadmap
 
+## Product Review Candidate: Past Event Ledger Reports
+
+- Implemented and privately live: one-click closed-event archive inside Event Ledger, newest-first summary cards, local search, exact report deep links, browser history, and current-event return (`PHR-UX-028`).
+- Preserved: one canonical Event Ledger, workspace-scoped `EVENT_LEDGER:VIEW`, immutable closeout/activity evidence, and read-only historical presentation.
+- Verified: focused Event Cash Ledger coverage, full 438/438 suite, TypeScript, lint, production build, live active/report navigation, direct URL/Back restoration, desktop/phone no-overflow checks, 44-pixel controls, and zero console errors.
+- Next: Product Owner reviews the live archive. Pagination beyond 100, PDF/print closeout packets, accounting exports, and cross-event comparison remain separate future enhancements.
+
 ## Product Review Candidate: Trusted Accounts And Restricted Custom Domain
 
 - Implemented and privately live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, and auditable approval/rejection (`PHR-ARCH-016`).

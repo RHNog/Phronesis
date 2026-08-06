@@ -16,6 +16,7 @@ import {
   type EventCashAdjustmentDraft,
   type EventCurrency,
   type EventLedgerEntry,
+  type EventLedgerReportIndex,
   type EventLedgerEntryType,
   type EventLedgerSnapshot,
   type EventLedgerSummary,
@@ -270,6 +271,49 @@ export class PurchaseLedgerRepository {
       };
     }
     return this.snapshotForEvent(principal, event);
+  }
+
+  getClosedEventLedgerSnapshot(
+    principal: PurchasePrincipal,
+    eventId: string,
+  ): EventLedgerSnapshot {
+    const normalizedEventId = eventId.trim();
+    if (!normalizedEventId || normalizedEventId.length > 120) {
+      throw new Error("Event report was not found.");
+    }
+    const event = this.getEventById(principal.workspaceId, normalizedEventId);
+    if (!event || event.status !== "CLOSED") {
+      throw new Error("Event report was not found.");
+    }
+    return this.snapshotForEvent(principal, event);
+  }
+
+  listClosedEventReports(
+    principal: PurchasePrincipal,
+    limit = 100,
+  ): EventLedgerReportIndex {
+    const boundedLimit = Math.min(Math.max(Math.trunc(limit), 1), 100);
+    const rows = this.database
+      .prepare(
+        `
+        SELECT * FROM phronesis_purchase_event
+        WHERE workspace_id=? AND status='CLOSED'
+        ORDER BY event_date DESC, created_at DESC, id DESC
+        LIMIT ?
+      `,
+      )
+      .all(principal.workspaceId, boundedLimit + 1) as SqlRow[];
+    const truncated = rows.length > boundedLimit;
+    return {
+      reports: rows.slice(0, boundedLimit).map((row) => {
+        const event = this.eventFromRow(row);
+        return {
+          event,
+          summary: this.summarizeEvent(principal.workspaceId, event),
+        };
+      }),
+      truncated,
+    };
   }
 
   recordSale(

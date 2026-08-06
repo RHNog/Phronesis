@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Past Event Ledger Reports
+
+- Assignment: `PHR-PAST-EVENT-REPORTS-20260806`
+- Feature: `PHR-UX-028`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: make every closed Event Ledger report discoverable and reopenable from Event Ledger without a hidden route or duplicate ledger.
+- Discovery rule: the header exposes `Past event reports`; the latest 100 closed workspace events appear newest first with local name/location/date search and sales, purchases, and variance previews.
+- Truth rule: repository-derived summaries, preserved close fields, Event Stock evidence, report downloads, and immutable activity remain canonical; the browser calculates no financial result.
+- Security rule: archive and exact selection require `EVENT_LEDGER:VIEW`, exact IDs are workspace-scoped, and active/unknown/foreign IDs fail with one generic boundary.
+- UX rule: selected reports are explicitly read-only, suppress all writes and event start, carry a durable `eventId` URL, restore through browser history, and return to the current event in one action.
+- Work order: `docs/prompts/PHR-UX-028-past-event-ledger-reports-prompt.md`.
+- Verification: focused Event Cash Ledger coverage, full 438/438 tests, TypeScript, warning-free lint, production build, live Battlezone active/archive/report navigation, direct link and Back restoration, 1440×900 and 390×844 no-overflow checks, 44-pixel archive controls, and zero console errors pass.
+- Runtime: rebuilt implementation is live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/event-ledger` in the existing detached scanner-review service. The previously documented reboot-persistence gate remains.
+- Next accountable role: Product Owner reviews the past report from Event Ledger; same-session conformance is not independent approval.
+
 ## Active Revision — Trusted Accounts And Restricted Public Domain
 
 - Assignment: `PHR-TRUSTED-ACCOUNT-ACCESS-20260806`

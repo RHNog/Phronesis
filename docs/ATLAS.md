@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Past Event Ledger Reports
+
+- `PHR-UX-028` makes closed Event Ledger evidence discoverable from the Event Ledger header instead of exposing only the active or latest closed event.
+- `PurchaseLedgerRepository` remains authoritative: it returns a newest-first, latest-100 workspace index and one exact workspace-scoped closed-event snapshot; no duplicate report persistence exists.
+- Historical reports reuse canonical cash summaries, preserved close reconciliation, Event Stock reports, and immutable activity while suppressing all write/start controls.
+- Direct `eventId` URLs and browser history make a report returnable and shareable inside the authenticated private application.
+
 ## Dashboard Tool Hub And Shared Navigation
 
 - `PHR-UX-027` reserves `/` for an authenticated, entitlement-aware Dashboard and moves Opportunities to `/opportunities` without changing the `INTELLIGENCE` gate.

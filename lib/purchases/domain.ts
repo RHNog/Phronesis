@@ -174,6 +174,16 @@ export type EventLedgerSnapshot = {
   canStartNewEvent: boolean;
 };
 
+export type EventLedgerReportSummary = {
+  event: PurchaseEvent;
+  summary: EventLedgerSummary;
+};
+
+export type EventLedgerReportIndex = {
+  reports: EventLedgerReportSummary[];
+  truncated: boolean;
+};
+
 export function validateEventCurrency(value: unknown): EventCurrency {
   if (
     typeof value !== "string" ||

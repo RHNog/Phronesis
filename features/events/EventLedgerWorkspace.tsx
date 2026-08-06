@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import EventInventoryControl from "@/features/events/EventInventoryControl";
 import EventSaleItemsEditor, {
   newEventSaleItem,
@@ -10,6 +11,7 @@ import {
   EVENT_PAYMENT_METHODS,
   type EventCurrency,
   type EventLedgerEntry,
+  type EventLedgerReportSummary,
   type EventLedgerSnapshot,
   type EventPaymentMethod,
 } from "@/lib/purchases/domain";
@@ -230,10 +232,16 @@ function StartEventForm({
 
 export default function EventLedgerWorkspace({
   canOperate,
+  initialEventId,
 }: {
   canOperate: boolean;
+  initialEventId: string | null;
 }) {
+  const router = useRouter();
   const [snapshot, setSnapshot] = useState<EventLedgerSnapshot | null>(null);
+  const [reports, setReports] = useState<EventLedgerReportSummary[]>([]);
+  const [reportsTruncated, setReportsTruncated] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(Boolean(initialEventId));
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -262,16 +270,26 @@ export default function EventLedgerWorkspace({
 
   useEffect(() => {
     let cancelled = false;
-    void fetch("/api/event-ledger", { cache: "no-store" })
+    const query = initialEventId
+      ? `?eventId=${encodeURIComponent(initialEventId)}`
+      : "";
+    void fetch(`/api/event-ledger${query}`, { cache: "no-store" })
       .then(async (response) => {
         const body = (await response.json().catch(() => ({}))) as {
           snapshot?: EventLedgerSnapshot;
+          reports?: EventLedgerReportSummary[];
+          reportsTruncated?: boolean;
           error?: string;
         };
         if (!response.ok || !body.snapshot) {
           throw new Error(body.error ?? "Event ledger could not load.");
         }
-        if (!cancelled) setSnapshot(body.snapshot);
+        if (!cancelled) {
+          setSnapshot(body.snapshot);
+          setReports(body.reports ?? []);
+          setReportsTruncated(Boolean(body.reportsTruncated));
+          setError(null);
+        }
       })
       .catch((reason) => {
         if (!cancelled)
@@ -287,7 +305,20 @@ export default function EventLedgerWorkspace({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialEventId]);
+
+  function openReport(eventId: string) {
+    setArchiveOpen(false);
+    setLoading(true);
+    router.push(`/event-ledger?eventId=${encodeURIComponent(eventId)}`, {
+      scroll: false,
+    });
+  }
+
+  function returnToCurrentEvent() {
+    setLoading(true);
+    router.push("/event-ledger", { scroll: false });
+  }
 
   function operationKey(scope: string): string {
     const existing = idempotencyKeys.current.get(scope);
@@ -309,12 +340,18 @@ export default function EventLedgerWorkspace({
       });
       const result = (await response.json().catch(() => ({}))) as {
         snapshot?: EventLedgerSnapshot;
+        reports?: EventLedgerReportSummary[];
+        reportsTruncated?: boolean;
         error?: string;
       };
       if (!response.ok || !result.snapshot) {
         throw new Error(result.error ?? "Event ledger operation failed.");
       }
       setSnapshot(result.snapshot);
+      if (result.reports) setReports(result.reports);
+      if (result.reportsTruncated !== undefined) {
+        setReportsTruncated(result.reportsTruncated);
+      }
       return true;
     } catch (reason) {
       setError(
@@ -472,6 +509,7 @@ export default function EventLedgerWorkspace({
   const summary = snapshot?.summary ?? null;
   const entries = snapshot?.entries ?? [];
   const canStartNewEvent = snapshot?.canStartNewEvent ?? false;
+  const viewingPastReport = Boolean(initialEventId);
   const currency = event?.currency ?? null;
   const heroExpected =
     event?.status === "CLOSED"
@@ -508,17 +546,31 @@ export default function EventLedgerWorkspace({
               the physical drawer.
             </p>
           </div>
-          {event ? (
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-right">
-              <p className="text-sm font-semibold text-zinc-100">
-                {event.name}
-              </p>
-              <p className="mt-1 text-xs text-zinc-500">
-                {eventDateLabel(event.eventDate)}
-                {event.location ? ` · ${event.location}` : ""}
-              </p>
-            </div>
-          ) : null}
+          <div className="flex flex-wrap items-stretch justify-end gap-2">
+            <button
+              type="button"
+              aria-expanded={archiveOpen}
+              aria-controls="past-event-reports"
+              onClick={() => setArchiveOpen((current) => !current)}
+              className="min-h-11 rounded-xl border border-cyan-800 bg-cyan-950/20 px-4 text-sm font-semibold text-cyan-200 transition hover:border-cyan-600"
+            >
+              Past event reports
+              {reports.length
+                ? ` · ${reports.length}${reportsTruncated ? "+" : ""}`
+                : ""}
+            </button>
+            {event ? (
+              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-right">
+                <p className="text-sm font-semibold text-zinc-100">
+                  {event.name}
+                </p>
+                <p className="mt-1 text-xs text-zinc-500">
+                  {eventDateLabel(event.eventDate)}
+                  {event.location ? ` · ${event.location}` : ""}
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -537,6 +589,36 @@ export default function EventLedgerWorkspace({
         >
           {message}
         </p>
+      ) : null}
+
+      {archiveOpen ? (
+        <PastEventReports
+          reports={reports}
+          truncated={reportsTruncated}
+          selectedEventId={initialEventId}
+          onSelect={openReport}
+          onClose={() => setArchiveOpen(false)}
+        />
+      ) : null}
+
+      {viewingPastReport && event ? (
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-800/70 bg-violet-950/20 p-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-300">
+              Past event report
+            </p>
+            <p className="mt-1 text-sm text-zinc-300">
+              Read-only closeout evidence for {event.name}.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={returnToCurrentEvent}
+            className="min-h-11 rounded-lg border border-violet-700 px-4 text-sm font-semibold text-violet-200"
+          >
+            Back to current event
+          </button>
+        </section>
       ) : null}
 
       {!event ? (
@@ -987,7 +1069,9 @@ export default function EventLedgerWorkspace({
             </section>
           </div>
 
-          {event.status === "CLOSED" && canStartNewEvent ? (
+          {event.status === "CLOSED" &&
+          canStartNewEvent &&
+          !viewingPastReport ? (
             <StartEventForm
               compact
               pending={pending}
@@ -998,6 +1082,152 @@ export default function EventLedgerWorkspace({
         </>
       ) : null}
     </div>
+  );
+}
+
+function PastEventReports({
+  reports,
+  truncated,
+  selectedEventId,
+  onSelect,
+  onClose,
+}: {
+  reports: EventLedgerReportSummary[];
+  truncated: boolean;
+  selectedEventId: string | null;
+  onSelect: (eventId: string) => void;
+  onClose: () => void;
+}) {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
+  const filteredReports = useMemo(
+    () =>
+      normalizedQuery
+        ? reports.filter(({ event }) =>
+            [event.name, event.location ?? "", event.eventDate].some((value) =>
+              value.toLocaleLowerCase("en-US").includes(normalizedQuery),
+            ),
+          )
+        : reports,
+    [normalizedQuery, reports],
+  );
+
+  return (
+    <section
+      id="past-event-reports"
+      aria-labelledby="past-event-reports-heading"
+      className="rounded-2xl border border-cyan-900/70 bg-zinc-900/80 p-4 sm:p-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+            Closed event archive
+          </p>
+          <h2
+            id="past-event-reports-heading"
+            className="mt-2 text-xl font-semibold text-white"
+          >
+            Past event reports
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            {reports.length
+              ? `${reports.length}${truncated ? "+" : ""} preserved report${reports.length === 1 ? "" : "s"}, newest first.`
+              : "Closed events will appear here with their preserved reconciliation and activity."}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="min-h-11 rounded-lg border border-zinc-700 px-4 text-sm font-semibold text-zinc-300"
+        >
+          Close archive
+        </button>
+      </div>
+
+      {reports.length ? (
+        <>
+          <label className="mt-4 block text-xs font-medium text-zinc-400">
+            Find an event report
+            <input
+              type="search"
+              maxLength={200}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Event name, location, or date"
+              className="mt-2 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-zinc-100 outline-none focus:border-cyan-400"
+            />
+          </label>
+          <p className="mt-3 text-xs text-zinc-500" role="status">
+            {filteredReports.length} matching report
+            {filteredReports.length === 1 ? "" : "s"}
+            {truncated ? " · showing the latest 100" : ""}
+          </p>
+          {filteredReports.length ? (
+            <ol className="mt-3 grid gap-3 lg:grid-cols-2">
+              {filteredReports.map(({ event, summary }) => (
+                <li key={event.id}>
+                  <button
+                    type="button"
+                    aria-current={selectedEventId === event.id ? "page" : undefined}
+                    onClick={() => onSelect(event.id)}
+                    className={`min-h-11 w-full rounded-xl border p-4 text-left transition hover:border-cyan-700 ${selectedEventId === event.id ? "border-cyan-500 bg-cyan-950/20" : "border-zinc-800 bg-zinc-950/60"}`}
+                  >
+                    <span className="flex flex-wrap items-start justify-between gap-2">
+                      <span>
+                        <span className="block font-semibold text-zinc-100">
+                          {event.name}
+                        </span>
+                        <span className="mt-1 block text-xs text-zinc-500">
+                          {eventDateLabel(event.eventDate)}
+                          {event.location ? ` · ${event.location}` : ""}
+                        </span>
+                      </span>
+                      <span className="text-xs font-semibold text-cyan-300">
+                        Open report →
+                      </span>
+                    </span>
+                    <span className="mt-4 grid grid-cols-3 gap-2 border-t border-zinc-800 pt-3">
+                      <ReportMetric
+                        label="Sales"
+                        value={money(summary.grossSalesCents, event.currency)}
+                      />
+                      <ReportMetric
+                        label="Purchases"
+                        value={money(summary.purchaseSpendCents, event.currency)}
+                      />
+                      <ReportMetric
+                        label="Variance"
+                        value={money(
+                          summary.closingVarianceCents,
+                          event.currency,
+                        )}
+                      />
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-3 rounded-xl border border-dashed border-zinc-800 px-4 py-8 text-center text-sm text-zinc-500">
+              No reports match that search.
+            </p>
+          )}
+        </>
+      ) : null}
+    </section>
+  );
+}
+
+function ReportMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="min-w-0">
+      <span className="block text-[10px] font-medium uppercase tracking-wider text-zinc-600">
+        {label}
+      </span>
+      <span className="mt-1 block truncate text-xs font-semibold tabular-nums text-zinc-300">
+        {value}
+      </span>
+    </span>
   );
 }
 

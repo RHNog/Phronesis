@@ -1122,3 +1122,22 @@ Product Owner authorization received. Final application, native-worker, build, c
 ### Acceptance State
 
 Implementation and same-session conformance are Product Review ready. Live replay reports 9/9 observed identities and 8/8 exact candidate coverage for supported English cards; this is not a powered holdout or auto-accept qualification. Repository publication is required on the existing `codex/phr-local-card-recognition-20260804` branch.
+
+## 2026-08-06 — Past Event Ledger Reports
+
+### User Intent
+
+- Find past Event Ledger reports without knowing a hidden route.
+- Make historical report access obvious and easy directly from Event Ledger.
+
+### Decision And Implementation
+
+- Assigned `PHR-UX-028` and added a prominent `Past event reports` archive to the Event Ledger header.
+- Added bounded newest-first closed-event discovery, local name/location/date search, and sales/purchase/variance previews over canonical repository summaries.
+- Added exact workspace-scoped closed-event reopening through a durable `eventId` URL, browser history restoration, and one-click return to the current event.
+- Reused canonical summary, preserved close reconciliation, Event Stock evidence/reports, and immutable activity; a selected historical report suppresses all write and event-start controls.
+- Rebuilt and restarted the existing private production service. Live read-only validation reopened the prior Battlezone report while preserving the active Battlezone ledger.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. Focused Event Cash Ledger coverage, full 438/438 tests, TypeScript, warning-free lint, production build, live archive/search/direct-link/Back behavior, desktop/phone no-overflow checks, 44-pixel controls, private HTTP 200, and zero console errors pass. No ledger evidence was mutated during validation; independent Product Owner acceptance remains pending.

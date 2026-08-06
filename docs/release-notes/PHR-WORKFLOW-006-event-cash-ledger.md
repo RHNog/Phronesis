@@ -9,6 +9,7 @@
 - Reasoned Cash In/Out adjustments, non-destructive manual reversal, physical closing count, and over/short variance.
 - Dedicated Event Ledger navigation and a canonical path from Vendor Checkout.
 - Vendor Workspace Event station with a Lite Quick Sale mode that records into the same active Event Ledger and returns its updated cash summary.
+- `PHR-UX-028` closed-event archive inside Event Ledger with search, summary previews, exact read-only report URLs, and current-event return.
 
 ## Reliability And Evidence
 

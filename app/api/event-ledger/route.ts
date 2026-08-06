@@ -43,11 +43,29 @@ export async function GET(request: Request) {
     "VIEW",
   );
   if (!authorization.allowed) return authorizationErrorResponse(authorization);
-  return Response.json({
-    snapshot: getPurchaseLedgerRepository().getEventLedgerSnapshot(
-      principalFor(authorization),
-    ),
-  });
+  const eventId = new URL(request.url).searchParams.get("eventId");
+  const principal = principalFor(authorization);
+  const ledger = getPurchaseLedgerRepository();
+  try {
+    const reportIndex = ledger.listClosedEventReports(principal);
+    return Response.json({
+      snapshot: eventId
+        ? ledger.getClosedEventLedgerSnapshot(principal, eventId)
+        : ledger.getEventLedgerSnapshot(principal),
+      reports: reportIndex.reports,
+      reportsTruncated: reportIndex.truncated,
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Event Ledger report could not load.",
+      },
+      { status: 404 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -120,12 +138,16 @@ export async function POST(request: Request) {
         requiredString(body.idempotencyKey, "Reversal identity is required."),
       );
     } else if (body.action === "close-event") {
+      const snapshot = ledger.closeEvent(
+        principal,
+        eventId,
+        requiredNonNegativeCents(body.closingCashCents, "Closing cash"),
+      );
+      const reportIndex = ledger.listClosedEventReports(principal);
       return Response.json({
-        snapshot: ledger.closeEvent(
-          principal,
-          eventId,
-          requiredNonNegativeCents(body.closingCashCents, "Closing cash"),
-        ),
+        snapshot,
+        reports: reportIndex.reports,
+        reportsTruncated: reportIndex.truncated,
       });
     } else {
       return Response.json(

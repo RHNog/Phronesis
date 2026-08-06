@@ -348,6 +348,94 @@ test("legacy event rows remain readable without invented opening cash", () => {
   database.close();
 });
 
+test("closed Event Ledger reports are discoverable, ordered, and workspace scoped", () => {
+  const database = new DatabaseSync(":memory:");
+  const ledger = new PurchaseLedgerRepository(database);
+  const older = ledger.createEvent(principal, {
+    name: "Spring Regional",
+    eventDate: "2026-04-12",
+    location: "Orlando",
+    currency: "USD",
+    openingCashCents: 10_000,
+  });
+  ledger.recordSale(
+    principal,
+    older.id,
+    validateEventSaleDraft({
+      amountCents: 4_000,
+      paymentMethod: "CASH",
+      items: [{ description: "Vintage single", quantity: 1 }],
+    }),
+    "sale:archive-older",
+  );
+  ledger.closeEvent(principal, older.id, 14_000);
+
+  const newer = ledger.createEvent(principal, {
+    name: "Summer Regional",
+    eventDate: "2026-07-18",
+    location: "Miami",
+    currency: "USD",
+    openingCashCents: 20_000,
+  });
+  ledger.recordManualPurchase(
+    principal,
+    newer.id,
+    validateEventManualPurchaseDraft({
+      amountCents: 2_500,
+      paymentMethod: "CASH",
+      description: "Collection purchase",
+    }),
+    "purchase:archive-newer",
+  );
+  ledger.closeEvent(principal, newer.id, 17_500);
+
+  const active = ledger.createEvent(principal, {
+    name: "Current Event",
+    eventDate: "2026-08-06",
+    currency: "USD",
+    openingCashCents: 30_000,
+  });
+  const foreignPrincipal = {
+    workspaceId: "workspace-b",
+    operatorUserId: "operator-b",
+  };
+  const foreign = ledger.createEvent(foreignPrincipal, {
+    name: "Foreign Event",
+    eventDate: "2026-08-01",
+    currency: "USD",
+    openingCashCents: 1_000,
+  });
+  ledger.closeEvent(foreignPrincipal, foreign.id, 1_000);
+
+  const index = ledger.listClosedEventReports(principal);
+  assert.equal(index.truncated, false);
+  assert.deepEqual(
+    index.reports.map((report) => report.event.id),
+    [newer.id, older.id],
+  );
+  assert.equal(index.reports[0]?.summary.purchaseSpendCents, 2_500);
+  assert.equal(index.reports[1]?.summary.grossSalesCents, 4_000);
+  assert.doesNotMatch(
+    JSON.stringify(index),
+    /Foreign Event|Current Event/,
+  );
+
+  const reopened = ledger.getClosedEventLedgerSnapshot(principal, older.id);
+  assert.equal(reopened.event?.name, "Spring Regional");
+  assert.equal(reopened.entries.length, 1);
+  assert.equal(reopened.summary?.closingVarianceCents, 0);
+  assert.throws(
+    () => ledger.getClosedEventLedgerSnapshot(principal, active.id),
+    /report was not found/i,
+  );
+  assert.throws(
+    () => ledger.getClosedEventLedgerSnapshot(principal, foreign.id),
+    /report was not found/i,
+  );
+
+  database.close();
+});
+
 test("the production surface exposes authorized multi-item entry and canonical event setup", () => {
   const route = readFileSync(
     new URL("../app/api/event-ledger/route.ts", import.meta.url),
@@ -376,8 +464,16 @@ test("the production surface exposes authorized multi-item entry and canonical e
   assert.match(route, /"EVENT_LEDGER",\s*"VIEW"/);
   assert.match(route, /"EVENT_LEDGER",\s*"OPERATE"/);
   assert.match(route, /validateEventSaleDraft/);
+  assert.match(route, /searchParams\.get\("eventId"\)/);
+  assert.match(route, /listClosedEventReports/);
+  assert.match(route, /getClosedEventLedgerSnapshot/);
   assert.match(page, /EventLedgerWorkspace/);
+  assert.match(page, /initialEventId/);
   assert.match(workspace, /EventSaleItemsEditor/);
+  assert.match(workspace, /Past event reports/);
+  assert.match(workspace, /Back to current event/);
+  assert.match(workspace, /router\.push\(`\/event-ledger\?eventId=/);
+  assert.match(workspace, /!viewingPastReport/);
   assert.match(saleEditor, /What was actually sold\?/);
   assert.match(saleEditor, /Add untracked item/);
   assert.match(workspace, /Record sale/);

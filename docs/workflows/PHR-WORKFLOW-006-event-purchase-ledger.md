@@ -50,6 +50,7 @@ The active Event Ledger shows opening cash, cash sales, cash purchases, cash adj
 - Reverse eligible manual entries by appending a reasoned reversal; never delete the original. A linked purchase must be corrected through its receipt-void workflow so Inventory and cash evidence remain atomic.
 - Close an active event with a non-negative physical closing count, calculate expected cash and over/short variance, and lock ordinary entry.
 - Keep a closed event summary visible after reload and permit a new event only after the current event is closed.
+- Expose closed-event reports from the full Event Ledger through the `PHR-UX-028` newest-first archive, exact read-only selection, and current-event return; do not create a second report store.
 - Scope every read and mutation to the authorized workspace. Mutations require `VENDOR_WORKSPACE:OPERATE` and remain retry-safe through idempotency keys.
 - Expose a Lite Quick Sale mode inside Vendor Workspace that records through the same active event ID, Route Handler, repository, summaries, and audit trail as `/event-ledger`.
 - Keep event start, full activity, adjustment, reversal, close, and reconciliation exclusively in the full Event Ledger; the Lite surface may only summarize and record manual Sales.
@@ -99,6 +100,7 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - As a buyer, I want Vendor Workspace purchases to affect the same event ledger without entering them twice.
 - As a buyer who makes an incidental Sale, I want to record it without leaving Vendor Workspace or creating a second event record.
 - As an owner, I want a closing cash variance and immutable audit trail so discrepancies are visible.
+- As an owner, I want to reopen any past Event Ledger report from the ledger itself so older closeouts never become hidden behind a newer event.
 
 ## Acceptance Criteria
 
@@ -108,6 +110,7 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - An evaluated receipt checkout creates exactly one linked Purchase ledger entry and one Inventory intake, atomically and idempotently.
 - A manual-entry reversal preserves the original and restores its cash effect exactly once.
 - Closing stores actual cash and displays exact expected/actual variance while preventing further ordinary entries.
+- Every returned closed event can be selected from the authorized Event Ledger archive and reopened read-only through an exact workspace-scoped URL.
 - The UI is fast, keyboard-accessible, and complete at 390px.
 - A Sale recorded through Vendor Workspace Quick Sale updates the same expected-cash/gross-sales summary and appears in the same full Event Ledger as a Sale recorded directly there.
 - Vendor Workspace purchase intake remains the default Event station mode and retains its existing receipt/Inventory behavior.
@@ -123,6 +126,7 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - A manual line does not decrement event stock or global Inventory even if its description resembles a known product; only an explicit validated `PHR-WORKFLOW-012` option link moves event stock.
 - Voiding a linked purchase receipt appends the corresponding cash reversal and preserves both histories.
 - Legacy events with unknown opening cash remain historical and are not silently assigned a balance.
+- Active, unknown, and foreign-workspace IDs cannot be opened as historical reports and expose no event metadata.
 
 ## Dependencies
 
@@ -145,6 +149,7 @@ Use additive columns on `phronesis_purchase_event` plus normalized ledger-entry 
 ## UI / UX Notes
 
 - Make `/event-ledger` a primary operational destination.
+- Keep `Past event reports` visible in the Event Ledger header and open selected closeouts in the same canonical report presentation.
 - Present Vendor Workspace event operations as one Event station with default `Purchase intake` and secondary `Quick sale` modes.
 - Keep the Lite Quick Sale to current expected cash, gross sales, manual Sale entry, and a link to the full Event Ledger.
 - Start view contains only event identity, currency, and opening cash.
