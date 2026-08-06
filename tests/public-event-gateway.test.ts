@@ -63,7 +63,8 @@ test("public ingress fails closed before optional compatibility and lands worker
   const route = readFileSync(new URL("../app/api/auth/event-access/route.ts", import.meta.url), "utf8");
   const login = readFileSync(new URL("../components/auth/EventAccessLogin.tsx", import.meta.url), "utf8");
   const proxy = readFileSync(new URL("../proxy.ts", import.meta.url), "utf8");
-  assert.ok(authorization.indexOf("isPublicEventIngress(requestHeaders)") < authorization.indexOf("const status = getAuthRuntimeStatus()"));
+  const publicIngress = authorization.indexOf("if (isPublicEventIngress(requestHeaders))");
+  assert.ok(publicIngress < authorization.indexOf("const status = getAuthRuntimeStatus()", publicIngress));
   assert.match(authorization, /deniedDecision\(module, requiredAccess, "UNAUTHENTICATED"\)/);
   assert.match(route, /const destination = "\/"/);
   assert.match(route, /x-phronesis-public-event/);

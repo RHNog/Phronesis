@@ -41,6 +41,19 @@ export type MemberDirectoryEntry = MembershipProfile & {
   email: string | null;
 };
 
+export type AccessRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type AccessRequestRecord = {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  name: string | null;
+  email: string;
+  status: AccessRequestStatus;
+  requestedAt: string;
+  reviewedAt: string | null;
+};
+
 function normalizeEmail(email: string): string {
   const normalized = email.trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
@@ -142,6 +155,21 @@ export class AuthorizationRepository {
       );
       CREATE INDEX IF NOT EXISTS phronesis_authorization_audit_time
         ON phronesis_authorization_audit(created_at DESC);
+      CREATE TABLE IF NOT EXISTS phronesis_access_request (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT NOT NULL,
+        user_id TEXT NOT NULL UNIQUE,
+        name TEXT,
+        email TEXT NOT NULL,
+        status TEXT NOT NULL CHECK(status IN ('PENDING','APPROVED','REJECTED')),
+        requested_at TEXT NOT NULL,
+        reviewed_at TEXT,
+        reviewed_by_user_id TEXT,
+        review_note TEXT,
+        FOREIGN KEY(workspace_id) REFERENCES phronesis_workspace(id) ON DELETE CASCADE
+      );
+      CREATE INDEX IF NOT EXISTS phronesis_access_request_queue
+        ON phronesis_access_request(workspace_id, status, requested_at);
       CREATE TABLE IF NOT EXISTS phronesis_activation_attempt (
         bucket_hash TEXT PRIMARY KEY,
         attempts INTEGER NOT NULL,
@@ -208,6 +236,193 @@ export class AuthorizationRepository {
       "INSERT INTO phronesis_workspace(id, slug, name, created_at, updated_at) VALUES(?, ?, ?, ?, ?)",
     ).run(id, slug, name, now, now);
     return id;
+  }
+
+  requestAccess(input: {
+    userId: string;
+    email: string;
+    name?: string | null;
+    workspaceId?: string;
+    now?: Date;
+  }): AccessRequestRecord | null {
+    const userId = input.userId.trim();
+    if (!userId) throw new Error("A valid account identity is required.");
+    const email = normalizeEmail(input.email);
+    const name = input.name?.trim() || null;
+    const workspaceId = input.workspaceId ?? this.ensureWorkspace();
+    const membership = this.database.prepare(
+      "SELECT id FROM phronesis_membership WHERE workspace_id = ? AND user_id = ?",
+    ).get(workspaceId, userId) as SqlRow | undefined;
+    if (membership) return null;
+    const now = (input.now ?? new Date()).toISOString();
+    const id = randomUUID();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.prepare(`
+        INSERT INTO phronesis_access_request(
+          id, workspace_id, user_id, name, email, status, requested_at
+        ) VALUES(?, ?, ?, ?, ?, 'PENDING', ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+          name = excluded.name,
+          email = excluded.email
+        WHERE phronesis_access_request.status = 'PENDING'
+      `).run(id, workspaceId, userId, name, email, now);
+      const record = this.accessRequestForUser(userId);
+      if (!record) throw new Error("Access request could not be recorded.");
+      if (record.id === id) {
+        this.insertAudit({
+          workspaceId,
+          actorUserId: userId,
+          action: "ACCESS_REQUEST_CREATED",
+          resourceType: "ACCESS_REQUEST",
+          resourceId: id,
+          details: {},
+        });
+      }
+      this.database.exec("COMMIT");
+      return record;
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+  }
+
+  getAccessRequest(userId: string): AccessRequestRecord | null {
+    return this.accessRequestForUser(userId);
+  }
+
+  listAccessRequests(actorUserId: string, status: AccessRequestStatus = "PENDING"): readonly AccessRequestRecord[] {
+    const actor = this.authorize(actorUserId, "ADMINISTRATION", "VIEW");
+    if (!actor.allowed || !actor.workspaceId) throw new Error("Administration permission is required.");
+    if (!(["PENDING", "APPROVED", "REJECTED"] as const).includes(status)) throw new Error("Unknown access-request status.");
+    const rows = this.database.prepare(`
+      SELECT id, workspace_id, user_id, name, email, status, requested_at, reviewed_at
+      FROM phronesis_access_request
+      WHERE workspace_id = ? AND status = ?
+      ORDER BY requested_at, id
+    `).all(actor.workspaceId, status) as SqlRow[];
+    return rows.map((row) => this.accessRequestFromRow(row));
+  }
+
+  approveAccessRequest(input: {
+    actorUserId: string;
+    requestId: string;
+    role: MembershipRole;
+    entitlements: readonly ModuleEntitlement[];
+  }): MembershipProfile {
+    assertRole(input.role);
+    if (input.role === "OWNER") throw new Error("Access requests cannot create another owner.");
+    assertEntitlements(input.entitlements);
+    if (!input.entitlements.length) throw new Error("Assign at least one module before approving access.");
+    const actor = this.authorize(input.actorUserId, "ADMINISTRATION", "ADMIN");
+    if (!actor.allowed || !actor.workspaceId) throw new Error("Administration permission is required.");
+    const request = this.database.prepare(`
+      SELECT id, workspace_id, user_id, status
+      FROM phronesis_access_request WHERE id = ?
+    `).get(input.requestId) as SqlRow | undefined;
+    if (!request || String(request.workspace_id) !== actor.workspaceId) throw new Error("Access request is outside the actor workspace.");
+    if (String(request.status) !== "PENDING") throw new Error("Access request is no longer pending.");
+    const hasAuthUsers = Boolean(this.database.prepare(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'user'",
+    ).get());
+    if (hasAuthUsers && !this.database.prepare("SELECT 1 FROM user WHERE id = ?").get(String(request.user_id))) {
+      throw new Error("The requested account no longer exists.");
+    }
+    const membershipId = randomUUID();
+    const now = new Date().toISOString();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.prepare(`
+        INSERT INTO phronesis_membership(id, workspace_id, user_id, role, status, created_at, updated_at)
+        VALUES(?, ?, ?, ?, 'ACTIVE', ?, ?)
+      `).run(membershipId, actor.workspaceId, String(request.user_id), input.role, now, now);
+      const insert = this.database.prepare(
+        "INSERT INTO phronesis_entitlement(membership_id, module, access, updated_at) VALUES(?, ?, ?, ?)",
+      );
+      for (const entitlement of input.entitlements) {
+        insert.run(membershipId, entitlement.module, entitlement.access, now);
+      }
+      const reviewed = this.database.prepare(`
+        UPDATE phronesis_access_request
+        SET status = 'APPROVED', reviewed_at = ?, reviewed_by_user_id = ?, review_note = NULL
+        WHERE id = ? AND status = 'PENDING'
+      `).run(now, input.actorUserId, input.requestId);
+      if (Number(reviewed.changes) !== 1) throw new Error("Access request changed during approval.");
+      this.insertAudit({
+        workspaceId: actor.workspaceId,
+        actorUserId: input.actorUserId,
+        action: "ACCESS_REQUEST_APPROVED",
+        resourceType: "MEMBERSHIP",
+        resourceId: membershipId,
+        details: { requestId: input.requestId, role: input.role, entitlements: input.entitlements },
+      });
+      this.database.exec("COMMIT");
+      return {
+        id: membershipId,
+        workspaceId: actor.workspaceId,
+        role: input.role,
+        status: "ACTIVE",
+        entitlements: input.entitlements,
+      };
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+  }
+
+  rejectAccessRequest(input: { actorUserId: string; requestId: string }): void {
+    const actor = this.authorize(input.actorUserId, "ADMINISTRATION", "ADMIN");
+    if (!actor.allowed || !actor.workspaceId) throw new Error("Administration permission is required.");
+    const request = this.database.prepare(
+      "SELECT workspace_id, status FROM phronesis_access_request WHERE id = ?",
+    ).get(input.requestId) as SqlRow | undefined;
+    if (!request || String(request.workspace_id) !== actor.workspaceId) throw new Error("Access request is outside the actor workspace.");
+    if (String(request.status) !== "PENDING") throw new Error("Access request is no longer pending.");
+    const now = new Date().toISOString();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const reviewed = this.database.prepare(`
+        UPDATE phronesis_access_request
+        SET status = 'REJECTED', reviewed_at = ?, reviewed_by_user_id = ?, review_note = 'Owner rejected access.'
+        WHERE id = ? AND status = 'PENDING'
+      `).run(now, input.actorUserId, input.requestId);
+      if (Number(reviewed.changes) !== 1) throw new Error("Access request changed during rejection.");
+      this.insertAudit({
+        workspaceId: actor.workspaceId,
+        actorUserId: input.actorUserId,
+        action: "ACCESS_REQUEST_REJECTED",
+        resourceType: "ACCESS_REQUEST",
+        resourceId: input.requestId,
+        details: {},
+      });
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+  }
+
+  private accessRequestForUser(userId: string): AccessRequestRecord | null {
+    const row = this.database.prepare(`
+      SELECT id, workspace_id, user_id, name, email, status, requested_at, reviewed_at
+      FROM phronesis_access_request WHERE user_id = ?
+    `).get(userId) as SqlRow | undefined;
+    return row ? this.accessRequestFromRow(row) : null;
+  }
+
+  private accessRequestFromRow(row: SqlRow): AccessRequestRecord {
+    const status = String(row.status);
+    if (status !== "PENDING" && status !== "APPROVED" && status !== "REJECTED") throw new Error(`Unknown access-request status: ${status}`);
+    return {
+      id: String(row.id),
+      workspaceId: String(row.workspace_id),
+      userId: String(row.user_id),
+      name: row.name ? String(row.name) : null,
+      email: String(row.email),
+      status,
+      requestedAt: String(row.requested_at),
+      reviewedAt: row.reviewed_at ? String(row.reviewed_at) : null,
+    };
   }
 
   createInvitation(input: {
@@ -415,6 +630,11 @@ export class AuthorizationRepository {
         WHERE id = ? AND status = 'PENDING'
       `).run(userId, now, invitation.id);
       if (Number(accepted.changes) !== 1) throw new Error("Invitation was already consumed.");
+      this.database.prepare(`
+        UPDATE phronesis_access_request
+        SET status = 'APPROVED', reviewed_at = ?, reviewed_by_user_id = ?, review_note = 'Provisioned through an activated direct invitation.'
+        WHERE user_id = ? AND status = 'PENDING'
+      `).run(now, userId, userId);
       this.insertAudit({
         workspaceId: invitation.workspaceId,
         actorUserId: userId,

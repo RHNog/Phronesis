@@ -1,5 +1,12 @@
 # Roadmap
 
+## Product Review Candidate: Trusted Accounts And Restricted Custom Domain
+
+- Implemented and privately live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, and auditable approval/rejection (`PHR-ARCH-016`).
+- Implemented and activation-gated: loopback custom-domain gateway, strict permanent-session authorization, Host/forwarding normalization, and transport blocking for owner, administration, developer, activation, and timed-worker routes (`PHR-TECH-016`).
+- Verified: 437/437 tests, TypeScript, warning-free lint, production build, isolated end-to-end account approval, responsive phone/desktop layouts, live additive migration/private deployment, and actual Next gateway probes.
+- Next: owner experience review with one real trusted person. Resolve macOS launchd access to the external-volume runtime (privacy authorization or internal-volume deployment) before relying on reboot persistence. Separately activate `access.phronesis.com` through Cloudflare Tunnel/Access only after provider credentials and DNS authority are available. Verified email, password reset, passkeys, and MFA remain future security slices.
+
 ## Active Controlled Program: Local Card Acquisition And Recognition
 
 1. `PHR-TECH-013-A` — macOS fi-8170 capability probe and supervised low-value hardware qualification.

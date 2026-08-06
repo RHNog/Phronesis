@@ -5,6 +5,14 @@ import { EVENT_ACCESS_COOKIE } from "@/lib/auth/constants";
 
 export function proxy(request: NextRequest) {
   const eventSession = request.cookies.get(EVENT_ACCESS_COOKIE)?.value;
+  if (request.headers.get("x-phronesis-restricted-public") === "1") {
+    if (!getAuthRuntimeStatus().readyForRequiredMode || !getSessionCookie(request)) {
+      const url = new URL("/sign-in", request.url);
+      url.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
   if (request.headers.get("x-phronesis-public-event") === "1") {
     if (request.nextUrl.pathname === "/event-access") return NextResponse.next();
     if (!eventSession) return NextResponse.redirect(new URL("/event-access", request.url));

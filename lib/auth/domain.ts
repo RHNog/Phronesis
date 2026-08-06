@@ -23,6 +23,11 @@ export type ModuleEntitlement = {
   access: ModuleAccessLevel;
 };
 
+export type AccountSummary = {
+  name: string;
+  email: string;
+};
+
 export type AuthorizationDecision = {
   allowed: boolean;
   reason:

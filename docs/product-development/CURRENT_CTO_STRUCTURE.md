@@ -1,5 +1,21 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Trusted Accounts And Restricted Public Domain
+
+- Assignment: `PHR-TRUSTED-ACCOUNT-ACCESS-20260806`
+- Features: `PHR-ARCH-016`, `PHR-TECH-016`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY; SUPERVISOR PERSISTENCE AND PUBLIC ACTIVATION GATED`
+- Objective: let trustworthy people create permanent accounts, hold every new account at zero access until owner approval, assign exact modules in Settings, and prepare a strict custom-domain gateway for `access.phronesis.com`.
+- Identity rule: Better Auth owns account credentials and sessions; Phronesis owns pending requests, memberships, explicit module entitlements, and authorization audit.
+- Approval rule: account creation never creates a membership or entitlement. Owner/Admin approval requires at least one exact module/access pair and an out-of-band identity check until verified email is installed.
+- Public rule: restricted-public ingress rejects compatibility and timed-worker authorization, transport-blocks Settings/administration/developer paths, and accepts only permanent authenticated memberships.
+- Domain rule: Tailscale Funnel retains `*.ts.net`; a separate custom-domain tunnel may route `access.phronesis.com` only through the dedicated loopback restricted gateway.
+- Work orders: `docs/prompts/PHR-ARCH-016-trusted-account-registration-prompt.md` and `docs/prompts/PHR-TECH-016-restricted-public-custom-domain-ingress-prompt.md`.
+- Authorization: repository documentation/code/database migration, deterministic tests/build, isolated browser validation, private-service restart, commit, and push are authorized by the Product Owner's standing delivery instruction. External account/DNS/tunnel/certificate mutation and public activation remain gated.
+- Verification: full 437/437 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, isolated account→pending→exact-module approval browser lifecycle, 390×844 and 1440×900 no-overflow checks, gateway/actual-Next probes, online live database backup/integrity/additive migration, private service restart, tailnet `/sign-up` 200, identity-required administration 401, and live phone-width sign-up review pass.
+- Runtime: trusted account registration is live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/sign-up` in named detached screen session `phronesis-scanner-review`. The final rebuild exposed a macOS 27 launchd stall before external-volume application access; the retained LaunchAgent is booted out for this login session. Reboot persistence requires a separate privacy permission or internal-volume runtime decision. The restricted gateway is implementation-ready, but `access.phronesis.com`, Cloudflare Tunnel/DNS/Access, and its unattended gateway service remain inactive.
+- Next accountable role: Product Owner creates/reviews the first real trusted account. A separately approved external deployment action may activate the custom hostname using `docs/technical/PHR-TECH-016-restricted-public-custom-domain-runbook.md`; no independent approval is claimed.
+
 ## Active Revision — Dashboard Tool Hub And Collapsible Navigation
 
 - Assignment: `PHR-DASHBOARD-HUB-20260806`

@@ -128,12 +128,14 @@
 
 ## Internal Identity And Module Authorization
 
+- `PHR-ARCH-016` adds Better Auth email/password registration without conflating identity with authority. New users receive one Phronesis-owned pending request and no membership; an authorized administrator verifies the person out of band and grants exact role/module/access pairs atomically. Pending and rejected accounts cannot enter protected modules.
+- `PHR-TECH-016` prepares `access.phronesis.com` through a loopback custom-domain gateway. Restricted-public requests require permanent authenticated membership before optional compatibility or timed-worker evaluation and cannot transport-reach Settings, administration, developer, activation, or worker-login paths. Cloudflare/DNS activation remains gated; Tailscale private and event-worker transports remain unchanged.
 - `PHR-UX-025` centralizes Phronesis copy actions behind an awaited modern Clipboard API, a direct-tap compatibility fallback, and an explicit selectable manual recovery field. Current worker-code, public-link, and activation-link controls never fail silently or log/persist copied values.
-- `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.
+- `PHR-ARCH-011` uses Better Auth database sessions and permanent identity while keeping Phronesis workspace membership and module authorization application-owned. Email/password is enabled by `PHR-ARCH-016`; GitHub remains optional.
 - `PHR-ARCH-014` permits account-free timed workers to receive only explicit operational modules. `ARTWORK_REVIEW` is independent from `ADMINISTRATION`: worker `OPERATE` covers manual candidate/gallery decisions, while refresh and assisted recovery remain permanent-identity `ADMIN` operations. Artwork Review alone creates an event-independent timed `TASK`; any transactional module forces active-event `EVENT` scope. Browser-only workers enter through an isolated public Funnel on port 10000 and a loopback gateway; owner Settings/permanent authentication are transport-blocked, public authorization accepts only valid timed sessions, and private owner Serve remains tailnet-only on 9443.
 - `AuthorizationRepository` owns the single workspace, memberships, explicit entitlements, local invitations, and append-only audit records in ignored SQLite storage.
 - Secure page, Route Handler, and mutation checks live in the server Data Access Layer. Next.js Proxy and filtered navigation are optimistic/user-experience controls only.
-- Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Required mode fails closed unless base URL, secret, GitHub credentials, migration, and owner invitation are ready.
+- Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Email/password-required readiness needs a base URL and secret; GitHub remains optional. Restricted-public ingress is strict regardless of private mode.
 - Activation remains gated by credentials/owner identity, live callback verification, and disposition of remaining Next transitive advisories.
 
 ## Green Verification Baseline

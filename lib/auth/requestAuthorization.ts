@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuthMode, getAuthRuntimeStatus } from "@/lib/auth/config";
 import type {
+  AccountSummary,
   AuthorizationDecision,
   ModuleAccessLevel,
   PhronesisModule,
@@ -18,6 +19,10 @@ function cookieValue(headers: Headers, name: string): string | null {
 
 function isPublicEventIngress(requestHeaders: Headers): boolean {
   return requestHeaders.get("x-phronesis-public-event") === "1";
+}
+
+function isRestrictedPublicIngress(requestHeaders: Headers): boolean {
+  return requestHeaders.get("x-phronesis-restricted-public") === "1";
 }
 
 function compatibilityDecision(
@@ -60,6 +65,15 @@ export async function authorizeHeaders(
   module: PhronesisModule,
   requiredAccess: ModuleAccessLevel,
 ): Promise<AuthorizationDecision> {
+  if (isRestrictedPublicIngress(requestHeaders)) {
+    const status = getAuthRuntimeStatus();
+    if (!status.readyForRequiredMode) {
+      return deniedDecision(module, requiredAccess, "AUTH_NOT_CONFIGURED");
+    }
+    const session = await getAuthServer().api.getSession({ headers: requestHeaders });
+    if (!session?.user.id) return deniedDecision(module, requiredAccess, "UNAUTHENTICATED");
+    return getAuthorizationRepository().authorize(session.user.id, module, requiredAccess);
+  }
   if (isPublicEventIngress(requestHeaders)) {
     const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
     if (eventToken) {
@@ -133,14 +147,33 @@ export async function requirePageModule(
   if (!decision.allowed) {
     const destination = decision.reason === "UNAUTHENTICATED" || decision.reason === "AUTH_NOT_CONFIGURED"
       ? "/sign-in"
-      : "/access-denied";
+      : decision.reason === "NO_ACTIVE_MEMBERSHIP"
+        ? "/access-pending"
+        : "/access-denied";
     redirect(destination);
   }
   return decision;
 }
 
+export async function getAccountSummary(): Promise<AccountSummary | null> {
+  const status = getAuthRuntimeStatus();
+  if (!status.readyForRequiredMode) return null;
+  const session = await getAuthServer().api.getSession({ headers: await headers() });
+  if (!session?.user.id) return null;
+  return { name: session.user.name, email: session.user.email };
+}
+
 export async function getVisibleModules(): Promise<readonly PhronesisModule[]> {
   const requestHeaders = await headers();
+  if (isRestrictedPublicIngress(requestHeaders)) {
+    const status = getAuthRuntimeStatus();
+    if (!status.readyForRequiredMode) return [];
+    const session = await getAuthServer().api.getSession({ headers: requestHeaders });
+    if (!session?.user.id) return [];
+    const profile = getAuthorizationRepository().getMembershipProfile(session.user.id);
+    if (!profile || profile.status !== "ACTIVE") return [];
+    return profile.entitlements.map((entitlement) => entitlement.module);
+  }
   if (isPublicEventIngress(requestHeaders)) {
     const eventToken = cookieValue(requestHeaders, EVENT_ACCESS_COOKIE);
     if (!eventToken) return [];

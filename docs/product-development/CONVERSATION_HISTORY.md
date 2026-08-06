@@ -1,5 +1,23 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Trusted Account Registration And Restricted Custom Domain
+
+### User Intent
+
+- Let trustworthy people create their own Phronesis accounts, then let the owner assign whichever modules each person should use.
+- Replace the conspicuous Tailscale hostname with a normal restricted-public address under the owner-controlled `phronesis.com` domain.
+
+### Decision
+
+- Separate authenticated identity from Phronesis authority. Registration creates a Better Auth account plus one pending request and zero memberships/entitlements.
+- Require the owner or Administration Admin to verify the person out of band, choose a non-Owner role, select at least one exact module/access pair, and explicitly approve or reject.
+- Use `access.phronesis.com` through a dedicated loopback restricted gateway and custom-domain tunnel. Tailscale Funnel cannot supply a custom-domain certificate/name; private Serve and the separate worker gateway stay unchanged.
+- Restricted-public ingress always requires a permanent Better Auth session and active membership, regardless of private optional compatibility, and blocks Settings, administration, developer, activation, and event-worker paths at transport.
+
+### Acceptance State
+
+Implemented and privately live under `PHR-ARCH-016`; `PHR-TECH-016` is implemented with external activation gated. Full 437/437 tests, TypeScript, warning-free lint, production build, isolated end-to-end registration/pending/owner-exact-module approval, phone/desktop no-overflow checks, gateway probes, live database backup/integrity/additive migration, tailnet sign-up, API denial, and live browser evidence pass. A macOS 27 launchd external-volume stall appeared on the final rebuild; database integrity stayed `ok`, and the private runtime was recovered in named detached screen session `phronesis-scanner-review` with loopback/tailnet `200`. Reboot persistence now requires a separate privacy-permission or internal-runtime decision. The first real trusted-person review is next. Cloudflare/DNS/tunnel/Access activation, verified email, password reset, passkeys, and MFA remain outside this acceptance.
+
 ## 2026-08-06 — Back-First Duplex Correction And Review Controls
 
 ### User Intent

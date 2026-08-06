@@ -185,6 +185,11 @@ test("visible Pokémon identities produce bounded independent artwork queries", 
 
 test("employee activation codes are hashed, single-use, and preserve assigned modules", () => {
   const repository = new AuthorizationRepository();
+  repository.requestAccess({
+    userId: "employee-user",
+    email: "employee@example.com",
+    name: "Existing Employee Account",
+  });
   const invitation = repository.createInvitation({
     email: "employee@example.com",
     role: "OPERATOR",
@@ -209,6 +214,7 @@ test("employee activation codes are hashed, single-use, and preserve assigned mo
     repository.authorize("employee-user", "MARKET_WATCH", "VIEW").allowed,
     false,
   );
+  assert.equal(repository.getAccessRequest("employee-user")?.status, "APPROVED");
   repository.close();
 });
 
@@ -440,6 +446,8 @@ test("Settings owns provider health and owner-only encrypted credential registra
   assert.match(providers, /type="password"/);
   assert.match(providers, /administration\/provider-credentials/);
   assert.match(providers, /Save securely/);
-  assert.match(access, /api\/auth\/callback\/github/);
+  assert.match(access, /Pending accounts/);
+  assert.match(access, /Approve and assign modules/);
+  assert.match(access, /Verify this person outside Phronesis/);
   assert.match(access, /PHRONESIS_AUTH_MODE=OPTIONAL/);
 });

@@ -173,7 +173,7 @@ test("existing owners and admins receive Artwork Review admin during module migr
   database.close();
 });
 
-test("auth rollout defaults to disabled and required readiness needs every server secret", () => {
+test("auth rollout defaults to disabled and email/password readiness does not require GitHub", () => {
   assert.equal(getAuthMode({}), "DISABLED");
   assert.equal(getAuthMode({ PHRONESIS_AUTH_MODE: "required" }), "REQUIRED");
   assert.equal(
@@ -186,9 +186,65 @@ test("auth rollout defaults to disabled and required readiness needs every serve
       PHRONESIS_AUTH_MODE: "REQUIRED",
       BETTER_AUTH_URL: "https://private.example",
       BETTER_AUTH_SECRET: "not-logged-test-secret",
-      GITHUB_CLIENT_ID: "client",
-      GITHUB_CLIENT_SECRET: "secret",
     }).readyForRequiredMode,
     true,
   );
+  assert.equal(getAuthRuntimeStatus({}).emailPasswordEnabled, true);
+  assert.equal(getAuthRuntimeStatus({}).githubConfigured, false);
+});
+
+test("self-registration stays pending and owner approval grants only selected modules", () => {
+  const repository = new AuthorizationRepository();
+  repository.createInvitation({ email: "owner@example.com", role: "OWNER" });
+  repository.provisionInvitedUser("owner@example.com", "owner-user");
+
+  const request = repository.requestAccess({
+    userId: "trusted-user",
+    email: "Trusted@Example.com",
+    name: "Trusted Person",
+    now: new Date("2026-08-06T12:00:00.000Z"),
+  });
+  assert.equal(request?.status, "PENDING");
+  assert.equal(request?.email, "trusted@example.com");
+  assert.equal(repository.getMembershipProfile("trusted-user"), null);
+  assert.equal(repository.authorize("trusted-user", "VENDOR_WORKSPACE", "VIEW").reason, "NO_ACTIVE_MEMBERSHIP");
+  assert.deepEqual(repository.listAccessRequests("owner-user").map((entry) => entry.id), [request?.id]);
+
+  const membership = repository.approveAccessRequest({
+    actorUserId: "owner-user",
+    requestId: request?.id as string,
+    role: "VIEWER",
+    entitlements: [{ module: "ARTWORK_REVIEW", access: "VIEW" }],
+  });
+  assert.deepEqual(membership.entitlements, [{ module: "ARTWORK_REVIEW", access: "VIEW" }]);
+  assert.equal(repository.authorize("trusted-user", "ARTWORK_REVIEW", "VIEW").allowed, true);
+  assert.equal(repository.authorize("trusted-user", "VENDOR_WORKSPACE", "VIEW").reason, "MODULE_NOT_ASSIGNED");
+  assert.equal(repository.getAccessRequest("trusted-user")?.status, "APPROVED");
+  repository.close();
+});
+
+test("access requests reject unsafe approval and rejection creates no membership", () => {
+  const repository = new AuthorizationRepository();
+  repository.createInvitation({ email: "owner@example.com", role: "OWNER" });
+  repository.provisionInvitedUser("owner@example.com", "owner-user");
+  const request = repository.requestAccess({ userId: "pending-user", email: "pending@example.com" });
+  assert.ok(request);
+  assert.throws(() => repository.approveAccessRequest({ actorUserId: "owner-user", requestId: request.id, role: "OWNER", entitlements: [{ module: "INTELLIGENCE", access: "VIEW" }] }), /cannot create another owner/i);
+  assert.throws(() => repository.approveAccessRequest({ actorUserId: "owner-user", requestId: request.id, role: "VIEWER", entitlements: [] }), /at least one module/i);
+  repository.rejectAccessRequest({ actorUserId: "owner-user", requestId: request.id });
+  assert.equal(repository.getAccessRequest("pending-user")?.status, "REJECTED");
+  assert.equal(repository.getMembershipProfile("pending-user"), null);
+  assert.throws(() => repository.rejectAccessRequest({ actorUserId: "owner-user", requestId: request.id }), /no longer pending/i);
+  repository.close();
+});
+
+test("repeat access request refreshes identity details without duplicate audit", () => {
+  const repository = new AuthorizationRepository();
+  const first = repository.requestAccess({ userId: "pending-user", email: "first@example.com", name: "First" });
+  const count = repository.auditCount();
+  const second = repository.requestAccess({ userId: "pending-user", email: "second@example.com", name: "Second" });
+  assert.equal(second?.id, first?.id);
+  assert.equal(second?.email, "second@example.com");
+  assert.equal(repository.auditCount(), count);
+  repository.close();
 });

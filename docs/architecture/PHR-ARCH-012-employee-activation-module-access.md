@@ -22,7 +22,7 @@ Allow an owner to provision an employee with only the assigned Phronesis modules
 
 ## Proposed Solution
 
-Extend `PHR-ARCH-011` with module selection at invitation time and a single-use, short-lived activation code. Store only a cryptographic hash of the code. Redemption identifies the pending invitation and continues through the configured private identity provider; the code is never a durable credential. Preserve GitHub OAuth as the currently installed identity ceremony and keep passkey-first login as the next activation method once its credential lifecycle is installed and verified. Authentication remains disabled until the owner completes the documented activation gate.
+Extend `PHR-ARCH-011` with module selection at invitation time and a single-use, short-lived activation code. Store only a cryptographic hash of the code. Redemption identifies the pending invitation and continues through the configured private identity provider; the code is never a durable credential. GitHub OAuth and email/password are supported identity ceremonies; `PHR-ARCH-016` separately governs account-first registration and owner approval. Passkey-first login remains a future method once its credential lifecycle is installed and verified.
 
 ## Functional Requirements
 
@@ -63,7 +63,7 @@ Extend `PHR-ARCH-011` with module selection at invitation time and a single-use,
 
 ## Non-Goals
 
-- Public registration.
+- Account-first registration is outside this direct-invitation flow and is governed by `PHR-ARCH-016`.
 - Treating an activation code as a permanent password.
 - Removing Tailscale.
 
@@ -72,5 +72,5 @@ Extend `PHR-ARCH-011` with module selection at invitation time and a single-use,
 - Origin: Product Owner employee-access request, 2026-07-30.
 - Related implementation prompt: `docs/prompts/PHR-ARCH-012-employee-activation-module-access-prompt.md`.
 - Related tests: `docs/testing/PHR-CARD-SHOW-OPERATIONS-20260730-validation.md`.
-- Last modified: 2026-07-31.
-- Modification reason: Add independently selectable Event Ledger and Event Flip employee permissions while preserving existing access.
+- Last modified: 2026-08-06.
+- Modification reason: Preserve direct invitation semantics while acknowledging the separate `PHR-ARCH-016` account-first flow.

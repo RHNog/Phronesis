@@ -2,10 +2,9 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
 import { AuthorizationRepository } from "@/lib/auth/AuthorizationRepository";
 import { EventAccessRepository } from "@/lib/auth/EventAccessRepository";
-import { getAuthDatabasePath, getAuthRuntimeStatus } from "@/lib/auth/config";
+import { getAuthDatabasePath, getAuthRuntimeStatus, getRestrictedPublicOrigin } from "@/lib/auth/config";
 
 let database: DatabaseSync | undefined;
 let authorizationRepository: AuthorizationRepository | undefined;
@@ -52,7 +51,19 @@ export function createAuthServer(
     database: authDatabase,
     baseURL: process.env.BETTER_AUTH_URL,
     secret: process.env.BETTER_AUTH_SECRET,
-    emailAndPassword: { enabled: false },
+    trustedOrigins: [getRestrictedPublicOrigin()].filter((origin): origin is string => Boolean(origin)),
+    emailAndPassword: {
+      enabled: true,
+      minPasswordLength: 12,
+      maxPasswordLength: 128,
+      autoSignIn: true,
+      requireEmailVerification: false,
+    },
+    account: {
+      accountLinking: {
+        disableImplicitLinking: true,
+      },
+    },
     socialProviders: github,
     rateLimit: { enabled: true },
     session: {
@@ -62,16 +73,12 @@ export function createAuthServer(
     databaseHooks: {
       user: {
         create: {
-          before: async (user) => {
-            if (!repository.findPendingInvitation(user.email)) {
-              throw new APIError("FORBIDDEN", {
-                message: "This GitHub identity has no active Phronesis invitation.",
-              });
-            }
-            return { data: user };
-          },
           after: async (user) => {
-            repository.provisionInvitedUser(user.email, user.id);
+            if (repository.findPendingInvitation(user.email)) {
+              repository.provisionInvitedUser(user.email, user.id);
+              return;
+            }
+            repository.requestAccess({ userId: user.id, email: user.email, name: user.name });
           },
         },
       },

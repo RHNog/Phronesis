@@ -6,7 +6,7 @@
 
 ## Status
 
-Implemented — Activation Pending
+Implemented — Compatibility Mode Active
 
 ## Priority
 
@@ -18,13 +18,13 @@ Architecture / Security / Authentication / Authorization
 
 ## Objective
 
-Give Phronesis durable app-level user identity, invite-only access, workspace membership, and server-enforced module entitlements while retaining Tailscale as the private network perimeter.
+Give Phronesis durable app-level user identity, workspace membership, and server-enforced module entitlements while retaining Tailscale as the private network perimeter.
 
 ## Proposed Solution
 
-Introduce self-hosted authentication backed by the existing local database, a single initial Phronesis workspace, memberships with coarse roles, and explicit per-module entitlements. GitHub OAuth is the initial sign-in path; public registration remains disabled. Authorization is enforced in server routes and mutations as well as reflected in navigation.
+Introduce self-hosted authentication backed by the existing local database, a single initial Phronesis workspace, memberships with coarse roles, and explicit per-module entitlements. GitHub OAuth was the initial sign-in path; `PHR-ARCH-016` now adds email/password registration while preserving the same application-owned membership boundary. Authorization is enforced in server routes and mutations as well as reflected in navigation.
 
-Rollout is explicit: `DISABLED` preserves the existing tailnet-only review service, `OPTIONAL` supports a reversible compatibility period, and `REQUIRED` enforces authenticated membership. Required mode fails closed unless the base URL, session secret, GitHub credentials, database migration, and initial owner invitation are present.
+Rollout is explicit: `DISABLED` preserves the existing tailnet-only review service, `OPTIONAL` supports a reversible compatibility period, and `REQUIRED` enforces authenticated membership. Required mode fails closed unless the base URL, session secret, database migration, and initial owner are present. GitHub credentials are optional when email/password is enabled.
 
 ## Functional Requirements
 
@@ -63,7 +63,7 @@ Authentication-provider identity is separate from Phronesis membership and modul
 
 ## Non-Goals
 
-- Public signup.
+- Self-registration was outside the original feature scope and is now governed by `PHR-ARCH-016`.
 - Billing, subscriptions, enterprise SSO, or customer tenancy.
 - Replacing Tailscale.
 
@@ -76,4 +76,5 @@ Authentication-provider identity is separate from Phronesis membership and modul
 - Engineer report: `docs/implementation-reports/PHR-ARCH-011-internal-identity-module-authorization-report.md`.
 - Conformance review: `docs/reviews/PHR-ARCH-011-internal-identity-module-authorization-conformance-review.md`.
 - Release notes: `docs/release-notes/PHR-ARCH-011.md`.
-- Last modified: 2026-07-30.
+- Last modified: 2026-08-06.
+- Modification reason: record the `PHR-ARCH-016` email/password extension without rewriting the original authorization boundary.

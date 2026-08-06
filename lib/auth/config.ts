@@ -7,6 +7,7 @@ export type AuthRuntimeStatus = {
   databasePath: string;
   baseUrlConfigured: boolean;
   secretConfigured: boolean;
+  emailPasswordEnabled: boolean;
   githubConfigured: boolean;
   readyForRequiredMode: boolean;
 };
@@ -35,6 +36,18 @@ export function getPublicEventAccessOrigin(environment: AuthEnvironment = proces
   }
 }
 
+export function getRestrictedPublicOrigin(environment: AuthEnvironment = process.env): string | null {
+  const value = environment.PHRONESIS_RESTRICTED_PUBLIC_ORIGIN?.trim();
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash || (url.pathname !== "/" && url.pathname !== "")) return null;
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
 export function getAuthRuntimeStatus(environment: AuthEnvironment = process.env): AuthRuntimeStatus {
   const baseUrlConfigured = Boolean(environment.BETTER_AUTH_URL?.trim());
   const secretConfigured = Boolean(environment.BETTER_AUTH_SECRET?.trim());
@@ -46,7 +59,8 @@ export function getAuthRuntimeStatus(environment: AuthEnvironment = process.env)
     databasePath: getAuthDatabasePath(environment),
     baseUrlConfigured,
     secretConfigured,
+    emailPasswordEnabled: true,
     githubConfigured,
-    readyForRequiredMode: baseUrlConfigured && secretConfigured && githubConfigured,
+    readyForRequiredMode: baseUrlConfigured && secretConfigured,
   };
 }
