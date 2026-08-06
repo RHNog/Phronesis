@@ -7,7 +7,7 @@ import test from "node:test";
 
 import { BridgeError, importBundle, verifyBundle } from "../bridge-import.mjs";
 
-async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "002.jpg"] } = {}) {
+async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "002.jpg"], duplex = false } = {}) {
   const root = await mkdtemp(path.join(os.tmpdir(), "phr-windows-bridge-"));
   const bundle = path.join(root, sessionId);
   const framesRoot = path.join(bundle, "frames");
@@ -16,20 +16,25 @@ async function fixture({ sessionId = "phr-test-001", frameNames = ["001.jpg", "0
   for (const [index, name] of frameNames.entries()) {
     const bytes = Buffer.from(`synthetic-frame-${index + 1}`);
     await writeFile(path.join(framesRoot, name), bytes);
+    const observedSequence = index + 1;
     frames.push({
-      observedSequence: index + 1,
+      observedSequence,
       relativePath: name,
       byteCount: bytes.length,
       sha256: createHash("sha256").update(bytes).digest("hex"),
+      ...(duplex ? {
+        side: observedSequence % 2 === 1 ? "FRONT" : "BACK",
+        pairedObservedSequence: observedSequence % 2 === 1 ? observedSequence + 1 : observedSequence - 1,
+      } : {}),
     });
   }
   const manifest = {
-    schemaVersion: "phronesis.windows-scan-bundle/v1",
+    schemaVersion: duplex ? "phronesis.windows-scan-bundle/v2" : "phronesis.windows-scan-bundle/v1",
     sessionId,
     adapter: "paperstream-capture",
     transport: "parallels-shared-folder",
     profileName: "Phronesis Card Duplex",
-    pairingSemantics: "unknown",
+    pairingSemantics: duplex ? "adjacent-duplex-front-first" : "unknown",
     frameCount: frames.length,
     frames,
   };
@@ -47,6 +52,28 @@ test("verifies a valid sealed bundle", async () => {
   const { bundle } = await fixture();
   const result = await verifyBundle(bundle);
   assert.equal(result.manifest.frameCount, 2);
+});
+
+test("verifies explicit reciprocal adjacent duplex pairs", async () => {
+  const { bundle } = await fixture({ sessionId: "phr-test-duplex", duplex: true });
+  const result = await verifyBundle(bundle);
+  assert.equal(result.manifest.schemaVersion, "phronesis.windows-scan-bundle/v2");
+  assert.deepEqual(result.manifest.frames.map(({ side, pairedObservedSequence }) => ({ side, pairedObservedSequence })), [
+    { side: "FRONT", pairedObservedSequence: 2 },
+    { side: "BACK", pairedObservedSequence: 1 },
+  ]);
+});
+
+test("rejects incomplete or contradictory duplex pairs", async () => {
+  const odd = await fixture({ sessionId: "phr-test-duplex-odd", frameNames: ["001.jpg"], duplex: true });
+  await expectCode(verifyBundle(odd.bundle), "INVALID_PAIRING");
+
+  const contradictory = await fixture({ sessionId: "phr-test-duplex-wrong", duplex: true });
+  contradictory.manifest.frames[1].side = "FRONT";
+  const bytes = Buffer.from(JSON.stringify(contradictory.manifest));
+  await writeFile(path.join(contradictory.bundle, "manifest.json"), bytes);
+  await writeFile(path.join(contradictory.bundle, "READY"), createHash("sha256").update(bytes).digest("hex"));
+  await expectCode(verifyBundle(contradictory.bundle), "INVALID_PAIRING");
 });
 
 test("imports atomically and repeats idempotently", async () => {

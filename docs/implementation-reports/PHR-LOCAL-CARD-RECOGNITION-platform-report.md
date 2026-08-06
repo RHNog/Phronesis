@@ -36,6 +36,15 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Consumer projects separately adopt conformance fixtures.
 - Public deployment, push, and publication require their own authority.
 
+## 2026-08-06 Physical V2 Processing Recovery
+
+- Imported `phr-pokemon-duplex-20260806-001` as nine declared fronts plus nine linked evidence-only backs.
+- Diagnosed a repeatable macOS 27 beta Vision stall in Apple Neural Engine compilation and bound both native request main stages to the available CPU.
+- Added a session-scoped recovery command that requeues only failed or expired active jobs while preserving attempts, errors, completed work, and cancellation boundaries.
+- Recovered seven failed/expired jobs, restarted the supervised worker, and completed all nine front jobs.
+- Final session state is `REVIEW` with nine abstentions and zero pending, leased, failed, review-candidate, accepted, purchased, inventoried, or published results.
+- Verification passes: repository 424/424, Swift 5/5, TypeScript, zero-warning lint, production build, release worker build, and diff hygiene.
+
 ## 2026-08-05 Private Operational Activation
 
 - Built and installed a persistent local recognition worker and an isolated loopback Next.js scanner-review service under user LaunchAgents.
@@ -73,3 +82,37 @@ The exact sealed bundle with manifest SHA-256 `723ee7e9be1b91aae5d5e97f3fe55aa8c
 - Reprocessed live session `phr-card-test-20260804-002` from immutable evidence. The repository now retains 18 revision-1 regions and decisions plus 18 revision-2 regions and decisions. Current truth is eight `REVIEW`, ten `ABSTAINED`, zero pending, zero accepted, and zero failed.
 - The eight review results are Alcremie, Geodude, Barbaracle, Pinsir, Pinsir, Hitmontop, Geodude, and Drowzee. Nine card backs and the Spanish Toxicroak abstained.
 - Repeating the same replay returned `ALREADY_REPROCESSED` and created zero additional regions. Auto-accept, purchases, inventory mutation, downstream publication, and active binder segmentation remain disabled.
+
+## 2026-08-05 Acquisition-Proven Reverse Evidence
+
+- Added a backward-compatible Windows bundle `v2` contract for explicit adjacent, front-first duplex pairs. `v1` remains unpaired and cannot be upgraded by file order.
+- Added evidence-only frame imports so a validated back is durable and addressable without creating a region or recognition job.
+- Added side and paired-frame identity to authenticated session detail and rendered labelled front/reverse evidence in Resolve. Missing legacy pairing is explicit, and condition remains manual with no automatic grading.
+- Removed the implicit Near Mint default and cross-card condition persistence. Each review starts unselected and blocks exact-condition pricing until the operator chooses a grade.
+- Rebuilt and restarted the isolated private services. Full 418/418 tests, TypeScript, zero-warning lint, production build, live API continuity, and browser semantic review pass. The legacy live batch was not rewritten and no offer/purchase/inventory/publication mutation occurred.
+- The interactive Windows self-test passes 15/15. Physical acceptance of the new `v2` path remains gated only on one supervised owner-approved low-value pair.
+
+## 2026-08-05 Batch Condition And Finish Contract
+
+- Replaced per-card material entry with an explicit homogeneous-session declaration for condition and Pokémon finish (`Normal`, `Holofoil`, or `Reverse Holofoil`). New sessions require both fields; existing imported sessions can be configured before their first resolution.
+- Added an append-only `recognition_session_material` ledger. Corrections create a new revision, identical requests are idempotent, and the first card resolution permanently locks the declaration.
+- Removed client authority over resolution condition and finish. The authenticated server derives both from the current batch, re-verifies the exact-condition price snapshot, and rejects a selected candidate whose catalogue variant differs from the batch finish.
+- Updated Capture and Resolve to explain homogeneous batching, expose the current revision/lock state, filter actionable candidates by finish, and direct mismatches to a separate batch without claiming scanner-based finish recognition.
+- Rebuilt and restarted both private LaunchAgents. The additive table migrated successfully, loopback and tailnet-only routes return HTTP 200, and the legacy session remains unmodified and intentionally unconfigured. Live 390×844 inspection shows no horizontal overflow, 44px actions, the required batch controls, and no per-card finish control.
+- Full 419/419 tests, standalone TypeScript, warning-free lint, and production build pass. Automatic condition grading and automatic finish classification remain explicitly unqualified.
+
+## 2026-08-05 Exact Offer Consolidation
+
+- Added a server-authoritative offer summary over the existing append-only resolution ledger. Exact matches consolidate into quantities; every contributing region ID remains attached as evidence.
+- The consolidation key includes canonical printing and variant, catalogue category and SKU, condition, finish, price snapshot identity and timestamp, buying preset, per-unit offer, and currency. Any commercial or material difference remains visible as a separate line.
+- Added safe-integer validation for per-resolution extension, grouped quantities/subtotals, total unit count, and currency-specific lot totals.
+- Updated Scanner to Offer to show grouped line/unit/scan counts, per-unit values, subtotals, and lot totals. The commercial decision boundary remains manual: this increment does not invent or activate a buying preset.
+- Full 419/419 tests, TypeScript, warning-free lint, Next.js production build, and diff hygiene pass.
+- Rebuilt and restarted the private application and worker. Loopback/tailnet routes return HTTP 200, the live API exposes the new empty summary, and 390×844 browser inspection passes without changing the unconfigured legacy session.
+
+## 2026-08-05 Authenticated Scanner Runtime Recovery
+
+- Diagnosed phone error digest `1507235227` as an isolated-runtime authorization database split: the scanner service inherited its worktree-relative auth store, which lacked the purchase-event table used by the temporary-access authorization query.
+- Bound the persistent scanner LaunchAgent to the canonical authorization store alongside its existing canonical pricing and recognition bindings, then fully re-registered and restarted the job.
+- Hardened task-scoped temporary authorization so an absent optional purchase-event module cannot crash task authorization; event-bound operations still fail closed.
+- Added focused regression coverage and passed 420/420 full tests, TypeScript, lint, production build, authenticated browser verification, loopback/tailnet health, and zero new service-error lines.

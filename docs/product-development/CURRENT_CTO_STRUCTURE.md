@@ -1,20 +1,37 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Dashboard Tool Hub And Collapsible Navigation
+
+- Assignment: `PHR-DASHBOARD-HUB-20260806`
+- Feature: `PHR-UX-027`
+- Status: `IMPLEMENTED — PRODUCT REVIEW READY`
+- Objective: make Dashboard the authenticated Phronesis home, expose every authorized tool as a card, and add a collapsible desktop navigation rail while preserving the phone drawer.
+- Authorization rule: Dashboard admission requires an authenticated identity with at least one visible module; cards and shell destinations come from the same server-filtered module set.
+- Route rule: `/` is Dashboard; `/opportunities` retains the existing Opportunities workspace and `INTELLIGENCE` gate.
+- Brand rule: Dashboard, desktop/mobile shell, favicon, and Apple home-screen metadata use the exact approved assets from canonical commit `8d655f5`; substitutes are prohibited.
+- Installation rule: the manifest uses relative `/` identity/start/scope and approved derivatives; no tailnet hostname or port may enter application code, and standalone mode does not claim offline operation.
+- Containment rule: Vendor Workspace Event Operations remains in normal flow and cannot cover Buying Decision or certificate controls.
+- Work order: `docs/prompts/PHR-UX-027-dashboard-tool-hub-prompt.md`.
+- Verification: focused 8/8, full 423/423, TypeScript, full lint, production build, desktop expanded/collapsed review, 390×844 review, approved-asset hash proof, live manifest/head inspection, 1280-pixel zero-overlap scroll geometry, and zero browser console errors pass.
+- Runtime: the isolated review service currently resolves at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/`. Tailscale still lists the MacBook-name Serve alias, but that DNS name does not currently resolve; install/open the web app only from the live origin.
+- Next accountable role: Product Owner visual review from the live private runtime. Repository commit, branch push, and private deployment were authorized on 2026-08-06; merge/canonical-main adoption remains a separate gate.
+
 ## Active Revision — Local Card Acquisition And Recognition
 
 - Assignment: `PHR-LOCAL-CARD-RECOGNITION-20260804`
 - Document ID: `PHR-STRUCT-20260804-003`
 - Features: `PHR-ARCH-015`, `PHR-TECH-013`, `PHR-TECH-014`, `PHR-TECH-015`, `PHR-WORKFLOW-016`, `PHR-API-015`, `PHR-UX-026`
-- Status: `POKÉMON-FIRST REVISION IMPLEMENTED AND PRIVATELY OPERATIONAL — PRODUCT REVIEW READY; AUTO-ACCEPT AND PUBLICATION GATED`
+- Status: `POKÉMON-FIRST REVISION PRIVATELY OPERATIONAL; PHYSICAL DUPLEX V2 AND VISION RECOVERY VERIFIED; HOMOGENEOUS BATCH MATERIAL AND EXACT OFFER CONSOLIDATION IMPLEMENTED; AUTO-ACCEPT AND PUBLICATION GATED`
 - Objective: turn physical card observations into evidence-backed canonical Phronesis assets, beginning with a safe macOS fi-8170 capability probe and progressing through local recognition, Vendor offers, and marketplace-neutral exports.
 - Delivery lane: Controlled, seven ordered slices including contingency S1W, plan fingerprint `6e3ad12423e6abd178d7a722958e416b204885b859b7cf1ce5f5f9a217861f2d`.
-- First-release rule: English Pokémon (`pokemon-en`), one card per frame; exact catalogue printing/variant and condition are operator-confirmed, and every machine result remains review or abstention.
+- First-release rule: English Pokémon (`pokemon-en`), one physical card per declared front/reverse pair, and one operator-declared condition plus exact Pokémon finish per homogeneous session. The server admits only catalogue variants matching that finish; every machine result remains review or abstention.
 - Architecture rule: Phronesis owns workflow and canonical identity; a signed native agent owns scanner control; an isolated local worker owns recognition; immutable evidence remains content-addressed.
 - Safety rule: no physical scan without a connected fi-8170, explicit scan flag, owner-supplied low-value cards, and operator supervision.
 - Publication rule: recognition never publishes. TCGPLAYER Tools and Liga adapters consume `PHR-API-015` only through separate draft/import gates.
 - Current work orders: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`, `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`, `docs/prompts/PHR-API-015-recognized-asset-interchange-prompt.md`, and `docs/prompts/PHR-UX-026-multi-card-binder-capture-prompt.md`.
-- Current accountable role: Product Owner reviews one of the eight current Pokémon candidates in the private scanner workflow; corpus qualification and any auto-accept policy remain separate gated objectives.
-- Current checkpoint: the Pokémon-first work order is implemented and same-session conformance passes. The live append-only replay retains 18 historical revision-1 decisions and exposes 18 current revision-2 results: eight English Pokémon reviews and ten abstentions covering nine backs plus one Spanish card. The default worker, private UI, and persistent services are live; no result is auto-accepted or published.
+- Current accountable role: Product Owner reviews the recovered physical batch and, after declaring its homogeneous condition/finish, may resolve a future current Pokémon candidate with both sides visible. Corpus qualification and any auto-accept policy remain separate gated objectives.
+- Current checkpoint: physical session `phr-pokemon-duplex-20260806-001` sealed 18 images as nine reciprocal front/back pairs. Only fronts entered recognition; backs remain evidence-only. A macOS 27 beta ANE compilation stall was removed by deterministic CPU execution, and session-scoped recovery completed all nine front jobs. All nine safely abstained below the review threshold. Full 424/424, Swift 5/5, TypeScript, lint, production/release builds, durable-store inspection, and service health pass. PaperStream must enable **Release after scan** through its supported UI before the next routine capture.
+- Publication checkpoint: the Product Owner authorized commit, push of the current feature branch, and deployment to the existing private tailnet runtime on 2026-08-06. Auto-accept, purchasing, inventory mutation, marketplace publication, and merge to canonical `main` remain outside that authorization.
 
 ## Active Revision — Arbitrage And Regional Acquisition Recovery
 
@@ -112,7 +129,7 @@
 - Remote-safety rule: build, validate, install, and health-check the gateway before Funnel activation. Any failure leaves 9443 operational. Do not switch the global auth mode while the owner is remote.
 - Acceptance: module-correct worker landing, Secure cookie behind TLS termination, public no-cookie fail-closed behavior, owner-only path blocking, private-path continuity, durable launch service, Funnel verification, full gates, and explicit shutdown instructions.
 - Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
-- Live result: `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access` is public through Funnel and requires a valid single-use event code. Settings, permanent authentication, and unassigned modules remain denied. The owner-only `:9443` route remains tailnet-only and returns HTTP 200.
+- Live result: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/event-access` is public through Funnel and requires a valid single-use event code. Settings, permanent authentication, and unassigned modules remain denied. The owner-only `:9443` route remains tailnet-only and returns HTTP 200 when the private-review backend is running.
 - Runtime result: Phronesis and its gateway listen only on `127.0.0.1:3100` and `127.0.0.1:3101`. Named detached `screen` sessions supervise the locked/remote Mac runtime; validated LaunchAgent definitions are installed for the next normal login.
 - Verification: public login 200; public Settings and permanent auth 404; uncredentialed Artwork Review redirects to event login; private Settings 200; full 376/376 tests pass. Public shutdown is `tailscale funnel --https=10000 off`.
 
@@ -982,7 +999,7 @@ Engineer implementation, Designer review, and same-session Chief Architect confo
 
 ### Operational Result
 
-- Private URL: `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`
+- Private URL: `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`
 - Validation: `docs/testing/PHR-TECH-005-private-mobile-review-access-validation.md`
 - Conformance/report: `docs/implementation-reports/PHR-TECH-005-private-mobile-review-access-report.md`
 - Service is operational; canonical adoption remains coupled to the outstanding PHR-WORKFLOW-004 Product Review acceptance.

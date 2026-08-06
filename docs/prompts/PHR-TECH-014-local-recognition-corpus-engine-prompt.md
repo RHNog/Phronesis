@@ -28,6 +28,8 @@ Implement the local, evidence-producing recognition foundation described by `PHR
 - Add an executable calibration runner with sealed reports for top-1/top-k recall, accepted precision, review/abstention, latency, pairing accuracy, and failure strata.
 - Expose corpus and benchmark commands without bundling real card images or weakening provenance requirements.
 - Add a local macOS Vision worker boundary for OCR and feature evidence; worker errors abstain.
+- Bind Apple Vision request compute stages to an available CPU device so macOS 27 beta cannot strand the queue in ANE model compilation; retain the bounded process timeout and fail closed when CPU execution is unavailable.
+- Add an explicit session-scoped recovery command for failed or expired recognition jobs. Preserve attempt counts and immutable evidence, reject completed jobs, and never mutate jobs outside the named session.
 - Default all machine output to review or abstention until a qualified policy is explicitly activated.
 
 ## Constraints
@@ -38,7 +40,7 @@ Implement the local, evidence-producing recognition foundation described by `PHR
 
 ## Testing Expectations
 
-- Contract, Pokémon/language gating, name/collector retrieval, exact variant evidence, append-only reprocessing, latest-revision counts/offers, geometry, content-addressing, idempotency, lease recovery, manifest activation/rollback, split leakage, deterministic corpus construction, scoring, abstention, benchmark qualification, and worker-failure tests.
+- Contract, Pokémon/language gating, name/collector retrieval, exact variant evidence, append-only reprocessing, latest-revision counts/offers, geometry, content-addressing, idempotency, lease recovery, session-scoped failed-job recovery, CPU compute-device selection, manifest activation/rollback, split leakage, deterministic corpus construction, scoring, abstention, benchmark qualification, and worker-failure tests.
 
 ## Acceptance Criteria
 

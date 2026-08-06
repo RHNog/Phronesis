@@ -9,14 +9,75 @@ import { fullFrameRegion, validateFrame, validateRegionGeometry } from "@/lib/ca
 
 export type ScanSessionState = "CAPTURING" | "PROCESSING" | "REVIEW" | "OFFER_READY" | "CANCELLED";
 
+export const scanBatchConditionCodes = ["NEAR_MINT", "LIGHTLY_PLAYED", "MODERATELY_PLAYED", "HEAVILY_PLAYED", "DAMAGED"] as const;
+export const pokemonBatchFinishes = ["Normal", "Holofoil", "Reverse Holofoil"] as const;
+export type ScanBatchConditionCode = typeof scanBatchConditionCodes[number];
+export type PokemonBatchFinish = typeof pokemonBatchFinishes[number];
+
+export type ScanBatchMaterial = {
+  conditionCode: ScanBatchConditionCode;
+  finish: PokemonBatchFinish;
+  revision: number;
+  configuredAt: string;
+  locked: boolean;
+};
+
 export type ScanSessionSummary = {
   id: string;
   label: string;
   state: ScanSessionState;
   createdAt: string;
   updatedAt: string;
+  batchMaterial: ScanBatchMaterial | null;
   counts: { frames: number; regions: number; pending: number; review: number; accepted: number; abstained: number; failed: number };
 };
+
+export type RecognitionOfferDraftLine = {
+  regionId: string;
+  candidate: RecognitionDecision["selectedCandidate"];
+  condition: string;
+  finish: string;
+  quantity: number;
+  priceSnapshotId: string;
+  priceSnapshotAt: string;
+  buyingPresetId: string;
+  offerCents: number;
+  currency: string;
+  resolvedBy: string;
+  resolvedAt: string;
+};
+
+export type RecognitionOfferGroup = {
+  groupId: string;
+  candidate: RecognitionDecision["selectedCandidate"];
+  condition: string;
+  finish: string;
+  quantity: number;
+  priceSnapshotId: string;
+  priceSnapshotAt: string;
+  buyingPresetId: string;
+  unitOfferCents: number;
+  subtotalCents: number;
+  currency: string;
+  evidenceRegionIds: string[];
+};
+
+export type RecognitionOfferSummary = {
+  lines: RecognitionOfferDraftLine[];
+  groups: RecognitionOfferGroup[];
+  totals: Array<{ currency: string; totalCents: number }>;
+  lineCount: number;
+  groupCount: number;
+  unitCount: number;
+};
+
+function normalizeBatchMaterial(conditionCode: string, finish: string): { conditionCode: ScanBatchConditionCode; finish: PokemonBatchFinish } {
+  const normalizedCondition = conditionCode.trim().toUpperCase();
+  const normalizedFinish = pokemonBatchFinishes.find((value) => value.localeCompare(finish.trim(), undefined, { sensitivity: "base" }) === 0);
+  if (!scanBatchConditionCodes.includes(normalizedCondition as ScanBatchConditionCode)) throw new Error("batch condition is invalid");
+  if (!normalizedFinish) throw new Error("batch finish is invalid");
+  return { conditionCode: normalizedCondition as ScanBatchConditionCode, finish: normalizedFinish };
+}
 
 export class CardRecognitionRepository {
   readonly database: DatabaseSync;
@@ -49,6 +110,12 @@ export class CardRecognitionRepository {
         side TEXT NOT NULL, object_sha256 TEXT NOT NULL, media_type TEXT NOT NULL,
         byte_length INTEGER NOT NULL, captured_at TEXT NOT NULL, paired_frame_id TEXT,
         UNIQUE(session_id, sequence, side), FOREIGN KEY(session_id) REFERENCES recognition_session(id)
+      );
+      CREATE TABLE IF NOT EXISTS recognition_session_material (
+        id TEXT PRIMARY KEY, session_id TEXT NOT NULL, revision INTEGER NOT NULL,
+        condition_code TEXT NOT NULL, finish TEXT NOT NULL,
+        configured_by TEXT NOT NULL, configured_at TEXT NOT NULL,
+        UNIQUE(session_id, revision), FOREIGN KEY(session_id) REFERENCES recognition_session(id)
       );
       CREATE TABLE IF NOT EXISTS recognition_region (
         id TEXT PRIMARY KEY, frame_id TEXT NOT NULL, region_order INTEGER NOT NULL,
@@ -108,11 +175,68 @@ export class CardRecognitionRepository {
     return this.createSessionWithId(randomUUID(), label, now);
   }
 
+  createSessionWithMaterial(input: { label: string; conditionCode: string; finish: string; configuredBy: string; now?: string }): string {
+    const material = normalizeBatchMaterial(input.conditionCode, input.finish);
+    const configuredBy = input.configuredBy.trim();
+    if (!configuredBy) throw new Error("batch material operator is required");
+    const id = randomUUID();
+    const now = input.now ?? new Date().toISOString();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.prepare("INSERT INTO recognition_session(id,label,state,created_at,updated_at) VALUES(?,?,?,?,?)")
+        .run(id, input.label.trim() || "Card recognition session", "CAPTURING", now, now);
+      this.database.prepare(`INSERT INTO recognition_session_material(id,session_id,revision,condition_code,finish,configured_by,configured_at)
+        VALUES(?,?,?,?,?,?,?)`).run(randomUUID(), id, 1, material.conditionCode, material.finish, configuredBy, now);
+      this.database.exec("COMMIT");
+    } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    return id;
+  }
+
   createSessionWithId(id: string, label: string, now = new Date().toISOString()): string {
     if (!/^[A-Za-z0-9][A-Za-z0-9:._-]{0,127}$/.test(id)) throw new Error("scan session identifier is invalid");
     this.database.prepare("INSERT INTO recognition_session(id,label,state,created_at,updated_at) VALUES(?,?,?,?,?)")
       .run(id, label.trim() || "Card recognition session", "CAPTURING", now, now);
     return id;
+  }
+
+  setSessionMaterial(input: { sessionId: string; conditionCode: string; finish: string; configuredBy: string; now?: string }): ScanSessionSummary {
+    const material = normalizeBatchMaterial(input.conditionCode, input.finish);
+    const configuredBy = input.configuredBy.trim();
+    if (!configuredBy) throw new Error("batch material operator is required");
+    const now = input.now ?? new Date().toISOString();
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const session = this.database.prepare("SELECT id FROM recognition_session WHERE id=?").get(input.sessionId);
+      if (!session) throw new Error("scan session not found");
+      const current = this.database.prepare(`SELECT revision,condition_code,finish FROM recognition_session_material
+        WHERE session_id=? ORDER BY revision DESC LIMIT 1`).get(input.sessionId) as { revision: number; condition_code: string; finish: string } | undefined;
+      const resolution = this.database.prepare(`SELECT 1 present FROM recognition_resolution x
+        JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id
+        WHERE f.session_id=? LIMIT 1`).get(input.sessionId) as { present: number } | undefined;
+      const unchanged = current?.condition_code === material.conditionCode && current.finish === material.finish;
+      if (resolution && !unchanged) throw new Error("batch material is locked after the first card resolution");
+      if (!unchanged) {
+        this.database.prepare(`INSERT INTO recognition_session_material(id,session_id,revision,condition_code,finish,configured_by,configured_at)
+          VALUES(?,?,?,?,?,?,?)`).run(randomUUID(), input.sessionId, (current?.revision ?? 0) + 1, material.conditionCode, material.finish, configuredBy, now);
+        this.database.prepare("UPDATE recognition_session SET updated_at=? WHERE id=?").run(now, input.sessionId);
+      }
+      this.database.exec("COMMIT");
+    } catch (error) { this.database.exec("ROLLBACK"); throw error; }
+    return this.sessionSummary(input.sessionId);
+  }
+
+  private sessionBatchMaterial(sessionId: string): ScanBatchMaterial | null {
+    const row = this.database.prepare(`SELECT revision,condition_code,finish,configured_at,
+      EXISTS(SELECT 1 FROM recognition_resolution x JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id WHERE f.session_id=m.session_id) locked
+      FROM recognition_session_material m WHERE session_id=? ORDER BY revision DESC LIMIT 1`).get(sessionId) as { revision: number; condition_code: string; finish: string; configured_at: string; locked: number } | undefined;
+    if (!row) return null;
+    return {
+      conditionCode: row.condition_code as ScanBatchConditionCode,
+      finish: row.finish as PokemonBatchFinish,
+      revision: row.revision,
+      configuredAt: row.configured_at,
+      locked: Boolean(row.locked),
+    };
   }
 
   setSessionState(sessionId: string, state: ScanSessionState, now = new Date().toISOString()): void {
@@ -174,20 +298,21 @@ export class CardRecognitionRepository {
     return {
       id: String(row.id), label: String(row.label), state: String(row.state) as ScanSessionState,
       createdAt: String(row.created_at), updatedAt: String(row.updated_at),
+      batchMaterial: this.sessionBatchMaterial(sessionId),
       counts: { frames: Number(row.frames), regions: Number(row.regions), pending: Number(row.pending), review: Number(row.review_count), accepted: Number(row.accepted), abstained: Number(row.abstained), failed: Number(row.failed) },
     };
   }
 
-  sessionItems(sessionId: string): Array<{ frameId: string; regionId: string; objectSha256: string; status: string; decision: RecognitionDecision | null; resolved: boolean }> {
-    const rows = this.database.prepare(`SELECT f.id frame_id,r.id region_id,f.object_sha256,
+  sessionItems(sessionId: string): Array<{ frameId: string; pairedFrameId: string | null; side: ScanFrame["side"]; regionId: string; objectSha256: string; status: string; decision: RecognitionDecision | null; resolved: boolean }> {
+    const rows = this.database.prepare(`SELECT f.id frame_id,f.paired_frame_id,f.side,r.id region_id,f.object_sha256,
       (SELECT d.payload_json FROM recognition_decision d WHERE d.region_id=r.id ORDER BY d.rowid DESC LIMIT 1) decision_json,
       EXISTS(SELECT 1 FROM recognition_resolution x WHERE x.region_id=r.id) resolved
       FROM recognition_region r JOIN recognition_frame f ON f.id=r.frame_id
       WHERE f.session_id=? AND r.state='ACTIVE' AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
-      ORDER BY f.sequence,r.region_order`).all(sessionId) as Array<{ frame_id: string; region_id: string; object_sha256: string; decision_json: string | null; resolved: number }>;
+      ORDER BY f.sequence,r.region_order`).all(sessionId) as Array<{ frame_id: string; paired_frame_id: string | null; side: ScanFrame["side"]; region_id: string; object_sha256: string; decision_json: string | null; resolved: number }>;
     return rows.map((row) => {
       const decision = row.decision_json ? JSON.parse(row.decision_json) as RecognitionDecision : null;
-      return { frameId: row.frame_id, regionId: row.region_id, objectSha256: row.object_sha256, status: decision?.status ?? "PROCESSING", decision, resolved: Boolean(row.resolved) };
+      return { frameId: row.frame_id, pairedFrameId: row.paired_frame_id, side: row.side, regionId: row.region_id, objectSha256: row.object_sha256, status: decision?.status ?? "PROCESSING", decision, resolved: Boolean(row.resolved) };
     });
   }
 
@@ -201,8 +326,13 @@ export class CardRecognitionRepository {
     const allowedConditions = new Set(["NEAR_MINT", "LIGHTLY_PLAYED", "MODERATELY_PLAYED", "HEAVILY_PLAYED", "DAMAGED"]);
     if (!allowedConditions.has(input.condition)) throw new Error("condition is invalid");
     if (!input.finish.trim() || !input.priceSnapshotId.trim() || !input.buyingPresetId.trim()) throw new Error("finish, price snapshot, and buying preset are required");
-    if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || !Number.isSafeInteger(input.offerCents) || input.offerCents < 0) throw new Error("quantity or offer is invalid");
+    if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || !Number.isSafeInteger(input.offerCents) || input.offerCents < 0 || !Number.isSafeInteger(input.quantity * input.offerCents)) throw new Error("quantity or offer is invalid");
+    const currency = input.currency.trim().toUpperCase();
+    if (!/^[A-Z]{3}$/.test(currency)) throw new Error("currency is invalid");
     if (!Number.isFinite(Date.parse(input.priceSnapshotAt))) throw new Error("price snapshot timestamp is invalid");
+    const batchMaterial = this.sessionBatchMaterial(input.sessionId);
+    if (!batchMaterial) throw new Error("batch condition and finish must be configured before resolution");
+    if (batchMaterial.conditionCode !== input.condition || batchMaterial.finish !== input.finish.trim()) throw new Error("resolution material must match the configured batch");
     const row = this.database.prepare(`SELECT d.payload_json FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id
       WHERE d.region_id=? AND f.session_id=? AND r.state='ACTIVE'
         AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
@@ -219,14 +349,14 @@ export class CardRecognitionRepository {
     try {
       this.database.prepare("INSERT INTO recognition_decision(id,region_id,status,payload_json,created_at) VALUES(?,?,?,?,?)").run(decision.decisionId, decision.regionId, decision.status, JSON.stringify(decision), now);
       this.database.prepare(`INSERT INTO recognition_resolution(id,region_id,revision,decision_id,condition_code,finish,quantity,price_snapshot_id,price_snapshot_at,buying_preset_id,offer_cents,currency,resolved_by,resolved_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(randomUUID(), input.regionId, revisionRow.revision, decision.decisionId, input.condition, input.finish.trim(), input.quantity, input.priceSnapshotId.trim(), input.priceSnapshotAt, input.buyingPresetId.trim(), input.offerCents, input.currency.trim().toUpperCase(), input.resolvedBy, now);
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(randomUUID(), input.regionId, revisionRow.revision, decision.decisionId, input.condition, input.finish.trim(), input.quantity, input.priceSnapshotId.trim(), input.priceSnapshotAt, input.buyingPresetId.trim(), input.offerCents, currency, input.resolvedBy, now);
       this.database.exec("COMMIT");
     } catch (error) { this.database.exec("ROLLBACK"); throw error; }
     this.reconcileSessionState(input.sessionId, now);
     return decision;
   }
 
-  offerDraft(sessionId: string) {
+  offerDraft(sessionId: string): RecognitionOfferDraftLine[] {
     return this.database.prepare(`SELECT r.id region_id,d.payload_json,x.condition_code,x.finish,x.quantity,x.price_snapshot_id,x.price_snapshot_at,x.buying_preset_id,x.offer_cents,x.currency,x.resolved_by,x.resolved_at
       FROM recognition_resolution x JOIN recognition_region r ON r.id=x.region_id JOIN recognition_frame f ON f.id=r.frame_id JOIN recognition_decision d ON d.id=x.decision_id
       WHERE f.session_id=? AND r.state='ACTIVE'
@@ -239,22 +369,95 @@ export class CardRecognitionRepository {
       });
   }
 
-  addFrame(frame: ScanFrame): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: DetectedCardRegion } {
+  offerSummary(sessionId: string): RecognitionOfferSummary {
+    const lines = this.offerDraft(sessionId);
+    const groupsByBinding = new Map<string, RecognitionOfferGroup>();
+    for (const line of lines) {
+      if (!line.candidate) throw new Error("resolved offer line is missing its canonical candidate");
+      const binding = JSON.stringify([
+        line.candidate.canonicalPrintingId,
+        line.candidate.canonicalVariantId,
+        line.candidate.categoryId,
+        line.candidate.sku,
+        line.condition,
+        line.finish,
+        line.priceSnapshotId,
+        line.priceSnapshotAt,
+        line.buyingPresetId,
+        line.offerCents,
+        line.currency,
+      ]);
+      const subtotalCents = line.offerCents * line.quantity;
+      if (!Number.isSafeInteger(subtotalCents)) throw new Error("offer subtotal exceeds the supported integer range");
+      const current = groupsByBinding.get(binding);
+      if (current) {
+        const quantity = current.quantity + line.quantity;
+        const subtotal = current.subtotalCents + subtotalCents;
+        if (!Number.isSafeInteger(quantity) || !Number.isSafeInteger(subtotal)) throw new Error("consolidated offer exceeds the supported integer range");
+        current.quantity = quantity;
+        current.subtotalCents = subtotal;
+        current.evidenceRegionIds.push(line.regionId);
+        continue;
+      }
+      groupsByBinding.set(binding, {
+        groupId: createHash("sha256").update(binding).digest("hex").slice(0, 24),
+        candidate: line.candidate,
+        condition: line.condition,
+        finish: line.finish,
+        quantity: line.quantity,
+        priceSnapshotId: line.priceSnapshotId,
+        priceSnapshotAt: line.priceSnapshotAt,
+        buyingPresetId: line.buyingPresetId,
+        unitOfferCents: line.offerCents,
+        subtotalCents,
+        currency: line.currency,
+        evidenceRegionIds: [line.regionId],
+      });
+    }
+    const groups = [...groupsByBinding.values()];
+    const totalsByCurrency = new Map<string, number>();
+    let unitCount = 0;
+    for (const group of groups) {
+      unitCount += group.quantity;
+      if (!Number.isSafeInteger(unitCount)) throw new Error("offer unit count exceeds the supported integer range");
+      const total = (totalsByCurrency.get(group.currency) ?? 0) + group.subtotalCents;
+      if (!Number.isSafeInteger(total)) throw new Error("lot total exceeds the supported integer range");
+      totalsByCurrency.set(group.currency, total);
+    }
+    return {
+      lines,
+      groups,
+      totals: [...totalsByCurrency.entries()].sort(([left], [right]) => left.localeCompare(right)).map(([currency, totalCents]) => ({ currency, totalCents })),
+      lineCount: lines.length,
+      groupCount: groups.length,
+      unitCount,
+    };
+  }
+
+  addFrame(frame: ScanFrame): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: DetectedCardRegion };
+  addFrame(frame: ScanFrame, options: { scheduleRecognition: true }): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: DetectedCardRegion };
+  addFrame(frame: ScanFrame, options: { scheduleRecognition: false }): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: null };
+  addFrame(frame: ScanFrame, options: { scheduleRecognition?: boolean } = {}): { status: "IMPORTED" | "ALREADY_IMPORTED"; region: DetectedCardRegion | null } {
     validateFrame(frame);
+    const scheduleRecognition = options.scheduleRecognition ?? true;
     const existing = this.database.prepare("SELECT object_sha256 FROM recognition_frame WHERE id=?").get(frame.frameId) as { object_sha256: string } | undefined;
     if (existing) {
       if (existing.object_sha256 !== frame.objectSha256) throw new Error("frame identifier collision");
-      return { status: "ALREADY_IMPORTED", region: this.activeRegions(frame.frameId)[0] };
+      const region = this.activeRegions(frame.frameId)[0] ?? null;
+      if (scheduleRecognition && !region) throw new Error("frame was imported as evidence-only");
+      return { status: "ALREADY_IMPORTED", region: scheduleRecognition ? region : null };
     }
     if (!existsSync(this.objectPath(frame.objectSha256))) throw new Error("frame object is not durable");
-    const region = fullFrameRegion(frame.frameId);
+    const region = scheduleRecognition ? fullFrameRegion(frame.frameId) : null;
     const now = new Date().toISOString();
     this.database.exec("BEGIN IMMEDIATE");
     try {
       this.database.prepare(`INSERT INTO recognition_frame(id,session_id,sequence,side,object_sha256,media_type,byte_length,captured_at,paired_frame_id)
         VALUES(?,?,?,?,?,?,?,?,?)`).run(frame.frameId, frame.sessionId, frame.sequence, frame.side, frame.objectSha256, frame.mediaType, frame.byteLength, frame.capturedAt, frame.pairedFrameId);
-      this.insertRegion(region, now);
-      this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)").run(randomUUID(), region.regionId, "PENDING", now);
+      if (region) {
+        this.insertRegion(region, now);
+        this.database.prepare("INSERT INTO recognition_job(id,region_id,state,updated_at) VALUES(?,?,?,?)").run(randomUUID(), region.regionId, "PENDING", now);
+      }
       this.database.exec("COMMIT");
     } catch (error) { this.database.exec("ROLLBACK"); throw error; }
     return { status: "IMPORTED", region };
@@ -364,6 +567,28 @@ export class CardRecognitionRepository {
       .run(message.slice(0, 500), now, jobId, owner);
     if (!result.changes) throw new Error("job lease is not owned");
     if (context) this.reconcileSessionState(context.session_id, now);
+  }
+
+  recoverSessionJobs(sessionId: string, now = new Date().toISOString()): { requeued: number } {
+    const session = this.database.prepare("SELECT state FROM recognition_session WHERE id=?").get(sessionId) as { state: string } | undefined;
+    if (!session) throw new Error("scan session not found");
+    if (session.state === "CANCELLED") throw new Error("cancelled scan session cannot be recovered");
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const result = this.database.prepare(`UPDATE recognition_job SET
+          state='PENDING',lease_owner=NULL,lease_expires_at=NULL,updated_at=?
+        WHERE id IN (
+          SELECT j.id FROM recognition_job j
+          JOIN recognition_region r ON r.id=j.region_id
+          JOIN recognition_frame f ON f.id=r.frame_id
+          WHERE f.session_id=? AND r.state='ACTIVE'
+            AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
+            AND (j.state='FAILED' OR (j.state='LEASED' AND j.lease_expires_at<=?))
+        )`).run(now, sessionId, now);
+      if (result.changes) this.database.prepare("UPDATE recognition_session SET state='PROCESSING',updated_at=? WHERE id=?").run(now, sessionId);
+      this.database.exec("COMMIT");
+      return { requeued: Number(result.changes) };
+    } catch (error) { this.database.exec("ROLLBACK"); throw error; }
   }
 
   completeJob(jobId: string, owner: string, decision: RecognitionDecision): void {

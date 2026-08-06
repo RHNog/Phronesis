@@ -161,6 +161,14 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
   assert.match(component, /event\.key === "Escape"/);
   assert.match(component, /min-h-11/);
   assert.match(component, /grid min-w-0 items-start gap-5/);
+  assert.match(
+    component,
+    /data-vendor-event-operations className="order-2 min-w-0"/,
+  );
+  assert.doesNotMatch(
+    component,
+    /data-vendor-event-operations[^>]*sticky/,
+  );
   assert.doesNotMatch(component, /function evaluatePurchase/);
   const statusRoute = readFileSync(
     new URL("../app/api/pricing/status/route.ts", import.meta.url),

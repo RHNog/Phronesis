@@ -16,7 +16,8 @@ import { createReadStream } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const BUNDLE_SCHEMA = "phronesis.windows-scan-bundle/v1";
+const LEGACY_BUNDLE_SCHEMA = "phronesis.windows-scan-bundle/v1";
+const DUPLEX_BUNDLE_SCHEMA = "phronesis.windows-scan-bundle/v2";
 const EVENT_SCHEMA = "phronesis.windows-bridge-event/v1";
 const SESSION_PATTERN = /^phr-[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?$/;
 const HASH_PATTERN = /^[a-f0-9]{64}$/;
@@ -63,11 +64,16 @@ function parseManifest(bytes, maxFiles) {
     throw new BridgeError("INVALID_MANIFEST", "Bundle manifest is not valid JSON.");
   }
   assert(manifest && typeof manifest === "object" && !Array.isArray(manifest), "INVALID_MANIFEST", "Bundle manifest must be an object.");
-  assert(manifest.schemaVersion === BUNDLE_SCHEMA, "SCHEMA_MISMATCH", "Bundle schema is unsupported.");
+  assert(manifest.schemaVersion === LEGACY_BUNDLE_SCHEMA || manifest.schemaVersion === DUPLEX_BUNDLE_SCHEMA, "SCHEMA_MISMATCH", "Bundle schema is unsupported.");
   assert(typeof manifest.sessionId === "string" && SESSION_PATTERN.test(manifest.sessionId), "INVALID_SESSION", "Bundle session ID is invalid.");
   assert(manifest.adapter === "paperstream-capture", "INVALID_ADAPTER", "Bundle adapter is unsupported.");
   assert(manifest.transport === "parallels-shared-folder", "INVALID_TRANSPORT", "Bundle transport is unsupported.");
-  assert(manifest.pairingSemantics === "unknown", "INVALID_PAIRING", "Bundle must not claim unproven side pairing.");
+  const duplex = manifest.schemaVersion === DUPLEX_BUNDLE_SCHEMA;
+  assert(
+    manifest.pairingSemantics === (duplex ? "adjacent-duplex-front-first" : "unknown"),
+    "INVALID_PAIRING",
+    duplex ? "Duplex bundle pairing semantics are invalid." : "Legacy bundle must not claim side pairing.",
+  );
   assert(Array.isArray(manifest.frames), "INVALID_FRAMES", "Bundle frames must be an array.");
   assert(manifest.frames.length >= 1 && manifest.frames.length <= maxFiles, "FRAME_LIMIT", "Bundle frame count is outside the allowed range.");
   assert(manifest.frameCount === manifest.frames.length, "FRAME_COUNT_MISMATCH", "Bundle frame count does not match its manifest.");
@@ -85,8 +91,22 @@ function parseManifest(bytes, maxFiles) {
     seenSequences.add(frame.observedSequence);
     assert(Number.isSafeInteger(frame.byteCount) && frame.byteCount > 0, "INVALID_SIZE", "Frame byte count is invalid.");
     assert(typeof frame.sha256 === "string" && HASH_PATTERN.test(frame.sha256), "INVALID_HASH", "Frame hash is invalid.");
-    return { observedSequence: frame.observedSequence, relativePath, byteCount: frame.byteCount, sha256: frame.sha256 };
+    if (!duplex) {
+      return { observedSequence: frame.observedSequence, relativePath, byteCount: frame.byteCount, sha256: frame.sha256, side: "UNKNOWN", pairedObservedSequence: null };
+    }
+    const expectedSide = frame.observedSequence % 2 === 1 ? "FRONT" : "BACK";
+    const expectedPair = expectedSide === "FRONT" ? frame.observedSequence + 1 : frame.observedSequence - 1;
+    assert(frame.side === expectedSide, "INVALID_PAIRING", "Duplex frame side contradicts front-first sequence.");
+    assert(Number.isSafeInteger(frame.pairedObservedSequence) && frame.pairedObservedSequence === expectedPair, "INVALID_PAIRING", "Duplex frame pair is not adjacent and reciprocal.");
+    return { observedSequence: frame.observedSequence, relativePath, byteCount: frame.byteCount, sha256: frame.sha256, side: frame.side, pairedObservedSequence: frame.pairedObservedSequence };
   });
+  if (duplex) {
+    assert(frames.length % 2 === 0, "INVALID_PAIRING", "Duplex bundle must contain complete front/back pairs.");
+    for (const frame of frames) {
+      const paired = frames[frame.pairedObservedSequence - 1];
+      assert(paired?.pairedObservedSequence === frame.observedSequence && paired.side !== frame.side, "INVALID_PAIRING", "Duplex pair is not reciprocal.");
+    }
+  }
   return { ...manifest, frames };
 }
 

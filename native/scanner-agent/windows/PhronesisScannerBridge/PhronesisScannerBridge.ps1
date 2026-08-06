@@ -9,6 +9,8 @@ param(
   [string]$CaptureRoot = "C:\PhronesisScannerBridge\capture",
   [Parameter(Mandatory = $true)]
   [string]$SharedRoot,
+  [ValidateSet("Unknown", "AdjacentDuplexFrontFirst")]
+  [string]$PairingMode = "Unknown",
   [string]$PaperStreamPath = "C:\Program Files (x86)\fiScanner\PaperStream Capture\PFU.PaperStream.Capture.exe",
   [ValidateRange(1, 64)]
   [int]$MaxFiles = 16,
@@ -172,7 +174,9 @@ function Test-ExistingBundle {
     return $false
   }
   $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-  if ($manifest.schemaVersion -ne "phronesis.windows-scan-bundle/v1" -or $manifest.sessionId -ne $SessionId) {
+  $expectedSchema = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
+  $expectedPairing = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } else { "unknown" }
+  if ($manifest.schemaVersion -ne $expectedSchema -or $manifest.sessionId -ne $SessionId -or $manifest.pairingSemantics -ne $expectedPairing) {
     return $false
   }
   if (@($manifest.frames).Count -ne $SourceFrames.Count) {
@@ -183,6 +187,13 @@ function Test-ExistingBundle {
     $source = $SourceFrames[$index]
     if ($existing.relativePath -ne $source.relativePath -or [int64]$existing.byteCount -ne $source.byteCount -or $existing.sha256 -ne $source.sha256) {
       return $false
+    }
+    if ($PairingMode -eq "AdjacentDuplexFrontFirst") {
+      $expectedSide = if ($source.observedSequence % 2 -eq 1) { "FRONT" } else { "BACK" }
+      $expectedPair = if ($expectedSide -eq "FRONT") { $source.observedSequence + 1 } else { $source.observedSequence - 1 }
+      if ($existing.side -ne $expectedSide -or [int]$existing.pairedObservedSequence -ne $expectedPair) {
+        return $false
+      }
     }
     $bundleFramePath = Join-Path (Join-Path $BundleDirectory "frames") ($existing.relativePath.Replace('/', '\'))
     if (-not (Test-Path -LiteralPath $bundleFramePath -PathType Leaf)) {
@@ -256,6 +267,9 @@ function Invoke-Seal {
   Assert-SafeJobName $JobName
   $sourceDirectory = Join-Path $CaptureRoot $SessionId
   $frames = @(Get-FrameRecords -SourceDirectory $sourceDirectory)
+  if ($PairingMode -eq "AdjacentDuplexFrontFirst" -and $frames.Count % 2 -ne 0) {
+    throw "Adjacent duplex capture must contain a complete even number of front/back frames."
+  }
   $readyRoot = Join-Path $SharedRoot "ready"
   $stagingRoot = Join-Path $SharedRoot ".staging"
   [System.IO.Directory]::CreateDirectory($readyRoot) | Out-Null
@@ -286,12 +300,17 @@ function Invoke-Seal {
       if ($destinationItem.Length -ne $frame.byteCount -or $destinationHash -ne $frame.sha256) {
         throw "A copied frame failed byte or hash verification."
       }
-      $manifestFrames += [ordered]@{
+      $manifestFrame = [ordered]@{
         observedSequence = $frame.observedSequence
         relativePath = $frame.relativePath
         byteCount = $frame.byteCount
         sha256 = $frame.sha256
       }
+      if ($PairingMode -eq "AdjacentDuplexFrontFirst") {
+        $manifestFrame["side"] = if ($frame.observedSequence % 2 -eq 1) { "FRONT" } else { "BACK" }
+        $manifestFrame["pairedObservedSequence"] = if ($manifestFrame["side"] -eq "FRONT") { $frame.observedSequence + 1 } else { $frame.observedSequence - 1 }
+      }
+      $manifestFrames += $manifestFrame
       Write-BridgeEvent -Type "frame.copied" -Details @{
         observedSequence = $frame.observedSequence
         fileName = [System.IO.Path]::GetFileName($frame.relativePath)
@@ -301,12 +320,12 @@ function Invoke-Seal {
     }
 
     $manifest = [ordered]@{
-      schemaVersion = "phronesis.windows-scan-bundle/v1"
+      schemaVersion = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
       sessionId = $SessionId
       adapter = "paperstream-capture"
       transport = "parallels-shared-folder"
       profileName = $JobName
-      pairingSemantics = "unknown"
+      pairingSemantics = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } else { "unknown" }
       frameCount = $manifestFrames.Count
       frames = $manifestFrames
     }

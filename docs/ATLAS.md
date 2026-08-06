@@ -1,5 +1,13 @@
 # Project Atlas
 
+## Dashboard Tool Hub And Shared Navigation
+
+- `PHR-UX-027` reserves `/` for an authenticated, entitlement-aware Dashboard and moves Opportunities to `/opportunities` without changing the `INTELLIGENCE` gate.
+- `PHR-UX-027` also owns origin-relative standalone installation metadata, approved browser/install/iOS icons, and non-overlapping Event Operations placement in Vendor Workspace.
+- Dashboard cards and shared navigation derive from one server-filtered `ProductNavigation` model; Dashboard is a shell destination and never a substitute authorization module.
+- Desktop navigation collapses to a persistent local icon rail while the phone retains the accessible modal drawer.
+- The approved `PHR-UI-001` application artwork is byte-identical to canonical commit `8d655f5` and supplies Dashboard, desktop/mobile shell, favicon, and Apple home-screen identity. CSS or generated substitutes are prohibited.
+
 ## Local Card Acquisition And Recognition
 
 - `PHR-ARCH-015` treats scanning as one acquisition adapter into immutable frames and regions, not as a Vendor Workspace-only feature.

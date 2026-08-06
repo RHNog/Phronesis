@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
@@ -11,7 +12,8 @@ test("primary navigation contains only operational product destinations", () => 
   assert.deepEqual(
     primaryNavigation.map(({ label, href }) => ({ label, href })),
     [
-      { label: "Opportunities", href: "/" },
+      { label: "Dashboard", href: "/" },
+      { label: "Opportunities", href: "/opportunities" },
       { label: "Vendor Workspace", href: "/vendor" },
       { label: "Event Ledger", href: "/event-ledger" },
       { label: "Event Flip", href: "/event-flip" },
@@ -26,11 +28,12 @@ test("primary navigation contains only operational product destinations", () => 
     primaryNavigation.map(({ href }) => String(href)).includes("#"),
     false,
   );
-  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 9);
+  assert.equal(new Set(primaryNavigation.map(({ id }) => id)).size, 10);
 });
 
 test("contextual routes resolve to their owning product area", () => {
-  assert.equal(resolvePrimaryNavigation("/")?.area, "Discover");
+  assert.equal(resolvePrimaryNavigation("/")?.area, "Home");
+  assert.equal(resolvePrimaryNavigation("/opportunities")?.area, "Discover");
   assert.equal(
     resolvePrimaryNavigation("/opportunities/example")?.area,
     "Discover",
@@ -59,6 +62,7 @@ test("module filtering preserves every authorized destination and no others", ()
       href,
     })),
     [
+      { label: "Dashboard", href: "/" },
       { label: "Vendor Workspace", href: "/vendor" },
       { label: "Event Ledger", href: "/event-ledger" },
     ],
@@ -69,7 +73,8 @@ test("module filtering preserves every authorized destination and no others", ()
       ({ label, href }) => ({ label, href }),
     ),
     [
-      { label: "Opportunities", href: "/" },
+      { label: "Dashboard", href: "/" },
+      { label: "Opportunities", href: "/opportunities" },
       { label: "Event Flip", href: "/event-flip" },
       { label: "Display Case", href: "/display-case" },
       { label: "General Inventory", href: "/inventory" },
@@ -78,8 +83,32 @@ test("module filtering preserves every authorized destination and no others", ()
 
   assert.deepEqual(
     navigationForModules(["ARTWORK_REVIEW"]).map(({ label, href }) => ({ label, href })),
-    [{ label: "Artwork Review", href: "/artwork-review" }],
+    [
+      { label: "Dashboard", href: "/" },
+      { label: "Artwork Review", href: "/artwork-review" },
+    ],
   );
+});
+
+test("dashboard is the shared authenticated hub and opportunities has its own route", () => {
+  const dashboard = readFileSync(
+    new URL("../app/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const opportunities = readFileSync(
+    new URL("../app/opportunities/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const dashboardHub = readFileSync(
+    new URL("../components/dashboard/DashboardHub.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(dashboard, /<AppShell>/);
+  assert.match(dashboard, /item\.id !== "dashboard"/);
+  assert.match(opportunities, /requiredModule="INTELLIGENCE"/);
+  assert.match(dashboardHub, /tools\.map/);
+  assert.match(dashboardHub, /Access is filtered by your assigned role/);
 });
 
 test("the shared shell gives mobile navigation the server-filtered list", () => {
@@ -109,4 +138,86 @@ test("the shared shell gives mobile navigation the server-filtered list", () => 
   assert.match(mobileNavigation, /document\.body\.style\.overflow = "hidden"/);
   assert.match(mobileNavigation, /matchMedia\("\(min-width: 768px\)"\)/);
   assert.match(mobileNavigation, /navigationItems\.map/);
+});
+
+test("desktop sidebar exposes persistent accessible collapse controls", () => {
+  const sidebar = readFileSync(
+    new URL("../components/ui/Sidebar.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(sidebar, /phronesis\.sidebar\.collapsed/);
+  assert.match(sidebar, /aria-label="Collapse sidebar"/);
+  assert.match(sidebar, /aria-label="Expand sidebar"/);
+  assert.match(sidebar, /data-collapsed=/);
+});
+
+test("the shared shell uses the approved Phronesis brand assets", () => {
+  const sidebar = readFileSync(
+    new URL("../components/ui/Sidebar.tsx", import.meta.url),
+    "utf8",
+  );
+  const mobileNavigation = readFileSync(
+    new URL("../components/ui/MobileNavigation.tsx", import.meta.url),
+    "utf8",
+  );
+  const mark = readFileSync(
+    new URL("../components/ui/PhronesisMark.tsx", import.meta.url),
+    "utf8",
+  );
+  const layout = readFileSync(
+    new URL("../app/layout.tsx", import.meta.url),
+    "utf8",
+  );
+  const manifest = readFileSync(
+    new URL("../app/manifest.ts", import.meta.url),
+    "utf8",
+  );
+  const sha256 = (path: string) =>
+    createHash("sha256")
+      .update(readFileSync(new URL(path, import.meta.url)))
+      .digest("hex");
+  const pngSize = (path: string) => {
+    const bytes = readFileSync(new URL(path, import.meta.url));
+    return {
+      width: bytes.readUInt32BE(16),
+      height: bytes.readUInt32BE(20),
+    };
+  };
+
+  assert.match(sidebar, /<PhronesisMark size=\{36\} priority/);
+  assert.match(mobileNavigation, /<PhronesisMark size=\{38\}/);
+  assert.match(mark, /src="\/brand\/phronesis-app-icon\.png"/);
+  assert.match(layout, /manifest: "\/manifest\.webmanifest"/);
+  assert.match(layout, /appleWebApp:/);
+  assert.match(layout, /themeColor: "#09090b"/);
+  assert.match(manifest, /start_url: "\/"/);
+  assert.match(manifest, /scope: "\/"/);
+  assert.match(manifest, /display: "standalone"/);
+  assert.doesNotMatch(manifest, /https?:\/\//);
+  assert.doesNotMatch(manifest, /tailaa2d39|localhost|9444/);
+  assert.equal(
+    sha256("../app/favicon.ico"),
+    "4ed3a7ecdb376d54aec6bd5bb2054874f1c718a2733c3debfbb5f59deb7c237e",
+  );
+  assert.equal(
+    sha256("../app/apple-icon.png"),
+    "5e149948b3a4b92fc0cd5694d831931f4703fdd453739134025887abe9b9bdfe",
+  );
+  assert.equal(
+    sha256("../public/brand/phronesis-app-icon.png"),
+    "0fc335597c0f7fbe7407d6d8faec0b1d084a12b8937ec052405820565b5e0dbb",
+  );
+  assert.deepEqual(pngSize("../public/brand/phronesis-app-icon-192.png"), {
+    width: 192,
+    height: 192,
+  });
+  assert.deepEqual(pngSize("../public/brand/phronesis-app-icon-512.png"), {
+    width: 512,
+    height: 512,
+  });
+  assert.equal(
+    sha256("../app/icon.png"),
+    sha256("../public/brand/phronesis-app-icon-512.png"),
+  );
 });

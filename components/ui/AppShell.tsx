@@ -9,7 +9,7 @@ import { navigationForModules } from "@/lib/navigation/ProductNavigation";
 type AppShellProps = {
   children: ReactNode;
   commandPaletteContext?: CommandPaletteContext;
-  requiredModule: PhronesisModule;
+  requiredModule?: PhronesisModule;
   requiredAccess?: ModuleAccessLevel;
 };
 
@@ -19,8 +19,14 @@ export default async function AppShell({
   requiredModule,
   requiredAccess = "VIEW",
 }: AppShellProps) {
-  await requirePageModule(requiredModule, requiredAccess);
-  const navigationItems = navigationForModules(await getVisibleModules());
+  if (requiredModule) {
+    await requirePageModule(requiredModule, requiredAccess);
+  }
+  const visibleModules = await getVisibleModules();
+  if (!requiredModule && visibleModules.length === 0) {
+    await requirePageModule("INTELLIGENCE", "VIEW");
+  }
+  const navigationItems = navigationForModules(visibleModules);
   return (
     <div className="flex min-h-screen bg-zinc-950 text-white">
       <Sidebar navigationItems={navigationItems} />

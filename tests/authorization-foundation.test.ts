@@ -107,11 +107,11 @@ test("module assignments filter navigation with independent event surfaces", () 
   const items = navigationForModules(["VENDOR_WORKSPACE", "EVENT_FLIP", "MARKET_WATCH"]);
   assert.deepEqual(
     items.map((item) => item.id),
-    ["vendor-workspace", "event-flip", "market-watch"],
+    ["dashboard", "vendor-workspace", "event-flip", "market-watch"],
   );
   assert.deepEqual(
     items.map((item) => item.href),
-    ["/vendor", "/event-flip", "/watchlists"],
+    ["/", "/vendor", "/event-flip", "/watchlists"],
   );
 });
 

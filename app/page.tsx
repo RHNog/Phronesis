@@ -1,35 +1,16 @@
+import DashboardHub from "@/components/dashboard/DashboardHub";
 import AppShell from "@/components/ui/AppShell";
-import HotOpportunitiesWorkspace from "@/components/opportunities/HotOpportunitiesWorkspace";
-import OpportunityHeader from "@/components/opportunities/OpportunityHeader";
-import {
-  defaultStrategyId,
-  seedStrategies,
-  seedStrategyProfiles,
-} from "@/data/seedStrategies";
-import { generateOpportunity } from "@/lib/engines/opportunity/generateOpportunity";
-import { MockMarketProvider } from "@/lib/providers/market/MockMarketProvider";
-import RegionalArbitrageWorkspace from "@/components/opportunities/RegionalArbitrageWorkspace";
+import { getVisibleModules } from "@/lib/auth/requestAuthorization";
+import { navigationForModules } from "@/lib/navigation/ProductNavigation";
 
-export default async function Home() {
-  const provider = new MockMarketProvider();
-  const opportunity = await generateOpportunity(
-    provider,
-    "store-championship-urzas-saga-textless",
+export default async function DashboardPage() {
+  const tools = navigationForModules(await getVisibleModules()).filter(
+    (item) => item.id !== "dashboard",
   );
-  const opportunities = opportunity ? [opportunity] : [];
 
   return (
-    <AppShell requiredModule="INTELLIGENCE">
-      <div className="w-full space-y-6">
-        <OpportunityHeader />
-        <RegionalArbitrageWorkspace />
-        <HotOpportunitiesWorkspace
-          opportunities={opportunities}
-          strategies={seedStrategies}
-          strategyProfiles={seedStrategyProfiles}
-          defaultStrategyId={defaultStrategyId}
-        />
-      </div>
+    <AppShell>
+      <DashboardHub tools={tools} />
     </AppShell>
   );
 }

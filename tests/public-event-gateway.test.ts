@@ -58,14 +58,14 @@ test("loopback public gateway marks forwarded traffic and blocks owner-only path
   }
 });
 
-test("public ingress fails closed before optional compatibility and lands workers by module", () => {
+test("public ingress fails closed before optional compatibility and lands workers on Dashboard", () => {
   const authorization = readFileSync(new URL("../lib/auth/requestAuthorization.ts", import.meta.url), "utf8");
   const route = readFileSync(new URL("../app/api/auth/event-access/route.ts", import.meta.url), "utf8");
   const login = readFileSync(new URL("../components/auth/EventAccessLogin.tsx", import.meta.url), "utf8");
   const proxy = readFileSync(new URL("../proxy.ts", import.meta.url), "utf8");
   assert.ok(authorization.indexOf("isPublicEventIngress(requestHeaders)") < authorization.indexOf("const status = getAuthRuntimeStatus()"));
   assert.match(authorization, /deniedDecision\(module, requiredAccess, "UNAUTHENTICATED"\)/);
-  assert.match(route, /ARTWORK_REVIEW: "\/artwork-review"/);
+  assert.match(route, /const destination = "\/"/);
   assert.match(route, /x-phronesis-public-event/);
   assert.match(route, /secure: secureRequest\(request\)/);
   assert.match(login, /body\.destination\?\?callbackURL/);

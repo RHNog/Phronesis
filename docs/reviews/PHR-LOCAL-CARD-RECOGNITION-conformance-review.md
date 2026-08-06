@@ -52,3 +52,43 @@ The native worker and TypeScript boundary preserve local-only execution, version
 The default worker now has one explicit active lane, English Pokémon. Game and language classification occur before catalogue retrieval; backs, Spanish evidence, Magic, and unknown evidence fail closed. Candidate identity retains the catalogue name, set, collector number, variant, and language, and the operator must select one labelled SKU. The server rejects a finish that differs from the selected catalogue variant. Immutable replay is append-only and idempotent, while current session, review, resolution, and offer projections exclude superseded revisions.
 
 Live evidence matches the approved acceptance boundary: 36 retained regions/decisions across two revisions, with the 18 current regions producing eight reviews and ten abstentions. No result was auto-accepted and no purchase, inventory, consumer, or publication mutation occurred. Both private services are supervised and the existing private/public Tailscale routes are unchanged. Full 416/416 tests, TypeScript, zero-warning lint, production build, live API evidence, and phone-width UI evidence pass. This is a same-session conformance review and is not represented as independent approval.
+
+## 2026-08-05 Duplex Evidence Increment Review
+
+`CONFORMS FOR SOFTWARE AND PRIVATE LEGACY REVIEW — WINDOWS V2 PHYSICAL GATE REMAINS OPEN`
+
+The increment closes the prior evidence gap at the correct boundary. Pairing is accepted only from a versioned, fully validated acquisition declaration; legacy sequence and filenames cannot supply it. A declared back is stored without a recognition region/job and reaches the UI only as linked evidence. Condition remains operator-owned: it begins unselected on every card, blocks pricing until chosen, and the UI makes no grade recommendation. The existing live bundle and all commercial state remain unchanged.
+
+Node 12/12, Windows PowerShell 15/15, focused 25/25, full 418/418, TypeScript, zero-warning lint, production build, live API, loopback/tailnet health, and browser semantic checks pass. One real `v2` pair remains required before physical-path acceptance. This is a same-session review and is not independent Product Owner approval.
+
+## 2026-08-05 Homogeneous Batch Material Review
+
+`CONFORMS FOR PRIVATE OPERATOR-DECLARED MATERIAL — AUTOMATIC GRADING AND FINISH CLASSIFICATION REMAIN CLOSED`
+
+The Product Owner's batch rule is implemented at the durable boundary, not only in presentation. Batch material revisions are append-only and auditable; the first resolution locks the session. The server ignores client-supplied material during resolution, uses the stored condition for price verification, and requires the selected exact catalogue variant to agree with the stored finish. Legacy imports fail closed until configured, and mixed batches have no permissive setting.
+
+The current duplex CIS capture does not provide validated multi-angle reflectance or defect evidence, and no labeled, set-stratified holdout qualifies condition or finish predictions. The UI therefore makes neither claim. Focused 26/26, full 419/419, TypeScript, warning-free lint, production build, additive live migration, loopback/tailnet health, and a no-overflow 390×844 browser check pass. The legacy batch remains unconfigured and commercially unchanged. This is a same-session conformance review and is not represented as independent approval.
+
+## 2026-08-05 Offer Consolidation Review
+
+`CONFORMS AS A READ-ONLY DRAFT PROJECTION — AUTOMATIC OFFER POLICY REMAINS UNDEFINED`
+
+Consolidation is deliberately stricter than canonical-card identity: it requires the complete material, pricing, preset, unit-offer, and currency binding to match. This prevents visually identical cards priced under different evidence or policy from being silently merged. The underlying append-only resolutions remain the audit authority, and grouped lines retain every contributing region ID. Currency totals remain separate rather than introducing an implicit conversion.
+
+Full 419/419 tests, TypeScript, warning-free lint, Next.js production build, diff hygiene, private-service restart, live API continuity, and 390×844 no-overflow browser evidence pass. No buying preset was inferred from unrelated Business Profile defaults, and no purchase, inventory, publication, or external consumer state changed. This is a same-session conformance review and is not independent Product Owner approval.
+
+## 2026-08-05 Authenticated Runtime Recovery Review
+
+`CONFORMS — CANONICAL AUTHORITY RESTORED; EVENT SCOPE REMAINS FAIL-CLOSED`
+
+The scanner service now explicitly consumes the canonical authorization database instead of deriving authority from its worktree directory. The repository fallback is narrowly bounded: only independently scoped tasks remain functional without the optional purchase-event table, while event-bound grant creation and authorization cannot become active. This removes the uncaught rendering failure without weakening transactional authorization.
+
+Focused 10/10 and full 420/420 tests, TypeScript, warning-free lint, production build, loaded LaunchAgent environment inspection, authenticated browser verification, loopback/tailnet HTTP 200, and unchanged error-log length pass. This is a same-session conformance review and not independent Product Owner approval.
+
+## 2026-08-06 Physical V2 And Vision Runtime Review
+
+`CONFORMS FOR PRIVATE REVIEW — AUTO-ACCEPT AND COMMERCIAL GATES REMAIN CLOSED`
+
+The acquisition record now carries authoritative reciprocal FRONT/BACK declarations from PaperStream metadata; no pairing was inferred from filenames. Only fronts entered recognition, every back remains immutable linked evidence, and all source copies were preserved through non-destructive manual-release recovery. The native CPU binding is a deterministic compatibility boundary for the observed macOS 27 beta ANE compilation stall. Session recovery is narrowly scoped to failed or expired active jobs and cannot rewrite completed work.
+
+All nine front jobs completed and safely abstained because no candidate crossed the review threshold. Repository 424/424, Swift 5/5, TypeScript, zero-warning lint, production build, release worker build, durable database inspection, and service health pass. This is a same-session review, not independent Product Owner approval.

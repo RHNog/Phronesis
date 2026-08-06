@@ -22,18 +22,26 @@ export async function ingestWindowsBundle(input: { bundlePath: string; runtimeRo
     const bytes = readFileSync(sourcePath);
     const object = input.repository.putObject(bytes);
     if (object.sha256 !== frame.sha256 || createHash("sha256").update(bytes).digest("hex") !== frame.sha256) throw new Error("verified bundle changed before repository import");
-    const result = input.repository.addFrame({
-      frameId: `${imported.manifest.sessionId}:frame:${frame.observedSequence}`,
+    const frameId = `${imported.manifest.sessionId}:frame:${frame.observedSequence}`;
+    const pairedFrameId = frame.pairedObservedSequence === null
+      ? null
+      : `${imported.manifest.sessionId}:frame:${frame.pairedObservedSequence}`;
+    const scanFrame = {
+      frameId,
       sessionId: imported.manifest.sessionId,
       sequence: frame.observedSequence - 1,
-      side: "UNKNOWN",
+      side: frame.side,
       objectSha256: frame.sha256,
       mediaType: mediaType(sourcePath),
       byteLength: frame.byteCount,
       capturedAt: new Date().toISOString(),
-      pairedFrameId: null,
-    });
-    frames.push({ sequence: frame.observedSequence, status: result.status, sha256: frame.sha256 });
+      pairedFrameId,
+    } as const;
+    const scheduleRecognition = frame.side !== "BACK";
+    const result = scheduleRecognition
+      ? input.repository.addFrame(scanFrame, { scheduleRecognition: true })
+      : input.repository.addFrame(scanFrame, { scheduleRecognition: false });
+    frames.push({ sequence: frame.observedSequence, side: frame.side, pairedFrameId, recognitionScheduled: scheduleRecognition, status: result.status, sha256: frame.sha256 });
   }
   input.repository.reconcileSessionState(imported.manifest.sessionId);
   return { schemaVersion: "phronesis.recognition-import.v1" as const, bridgeStatus: imported.status, manifestSha256: imported.manifestSha256, session: input.repository.sessionSummary(imported.manifest.sessionId), frames };

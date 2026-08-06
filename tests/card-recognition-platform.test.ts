@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { fullFrameRegion, validateRegionGeometry, type RecognitionCandidate } from "@/lib/cardRecognition/contracts";
 import { benchmarkRecognition, conservativePolicy, decideCandidates } from "@/lib/cardRecognition/policy";
 import { CardRecognitionRepository } from "@/lib/cardRecognition/repository";
@@ -14,6 +14,7 @@ import { DatabaseSync } from "node:sqlite";
 import { assessCorpusReadiness, buildCorpusBundle, corpusObjectPath, verifyCorpusManifest, type CorpusManifest } from "@/lib/cardRecognition/corpus";
 import { runCalibration } from "@/lib/cardRecognition/calibration";
 import { benchmarkRegionDetection, regionIntersectionOverUnion, validateRegionDetection, type RegionDetectionResult } from "@/lib/cardRecognition/regionDetection";
+import { ingestWindowsBundle } from "@/lib/cardRecognition/windowsBundle";
 
 function candidate(score: number, id = "printing-1"): RecognitionCandidate {
   return { canonicalPrintingId: id, canonicalVariantId: null, categoryId: "1", sku: "sku-1", catalogueIdentity: { name: "Fixture", setName: "Fixture Set", collectorNumber: "1/1", variant: "Normal", language: "English" }, rank: 1, score, evidence: [] };
@@ -187,6 +188,96 @@ test("repository stores content once, imports frames idempotently, and revisions
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
+test("v2 duplex import schedules only fronts and preserves reciprocal reverse evidence", async () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-duplex-import-"));
+  const sessionId = "phr-test-duplex";
+  const bundle = join(root, "incoming", sessionId);
+  const framesRoot = join(bundle, "frames");
+  mkdirSync(framesRoot, { recursive: true });
+  const frameBytes = [Buffer.from("front-evidence"), Buffer.from("back-evidence")];
+  const frames = frameBytes.map((bytes, index) => {
+    const observedSequence = index + 1;
+    const relativePath = `${String(observedSequence).padStart(3, "0")}.jpg`;
+    writeFileSync(join(framesRoot, relativePath), bytes);
+    return {
+      observedSequence,
+      relativePath,
+      byteCount: bytes.length,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+      side: observedSequence === 1 ? "FRONT" : "BACK",
+      pairedObservedSequence: observedSequence === 1 ? 2 : 1,
+    };
+  });
+  const manifest = {
+    schemaVersion: "phronesis.windows-scan-bundle/v2",
+    sessionId,
+    adapter: "paperstream-capture",
+    transport: "parallels-shared-folder",
+    profileName: "Phronesis Card Duplex",
+    pairingSemantics: "adjacent-duplex-front-first",
+    frameCount: frames.length,
+    frames,
+  };
+  const manifestBytes = Buffer.from(JSON.stringify(manifest));
+  writeFileSync(join(bundle, "manifest.json"), manifestBytes);
+  writeFileSync(join(bundle, "READY"), createHash("sha256").update(manifestBytes).digest("hex"));
+
+  const repository = new CardRecognitionRepository(":memory:", join(root, "runtime"));
+  try {
+    const imported = await ingestWindowsBundle({ bundlePath: bundle, runtimeRoot: join(root, "runtime"), repository });
+    assert.deepEqual(imported.session.counts, { frames: 2, regions: 1, pending: 1, review: 0, accepted: 0, abstained: 0, failed: 0 });
+    assert.equal(imported.frames[0].recognitionScheduled, true);
+    assert.equal(imported.frames[1].recognitionScheduled, false);
+    const items = repository.sessionItems(sessionId);
+    assert.equal(items.length, 1);
+    assert.equal(items[0].side, "FRONT");
+    assert.equal(items[0].pairedFrameId, `${sessionId}:frame:2`);
+    assert.equal(readFileSync(repository.frameObject(items[0].pairedFrameId!).path, "utf8"), "back-evidence");
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("scanner review labels paired evidence and applies fail-closed batch material", () => {
+  const source = readFileSync(new URL("../features/vendor/components/ScannerToOfferWorkspace.tsx", import.meta.url), "utf8");
+  const routeSource = readFileSync(new URL("../app/api/card-recognition/sessions/[sessionId]/route.ts", import.meta.url), "utf8");
+  assert.match(source, /Paired reverse evidence/);
+  assert.match(source, /Paired reverse unavailable/);
+  assert.match(source, /will not infer one from filename or scan order/);
+  assert.match(source, /no automatic grading/);
+  assert.match(source, /Batch condition/);
+  assert.match(source, /Batch finish/);
+  assert.match(source, /Split mixed cards into separate batches/);
+  assert.match(source, /Scanner images do not assign either value/);
+  assert.match(source, /No candidate matches the/);
+  assert.match(source, /Lot total/);
+  assert.match(source, /evidenceRegionIds\.length/);
+  assert.match(source, /unitOfferCents/);
+  assert.doesNotMatch(source, /value=\{condition\}/);
+  assert.match(routeSource, /offerSummary: repository\.offerSummary\(sessionId\)/);
+  assert.match(routeSource, /priceSnapshot\(machineCandidate\.categoryId, machineCandidate\.sku, batchMaterial\.conditionCode\)/);
+  assert.match(routeSource, /selected candidate does not match the configured batch finish/);
+  assert.doesNotMatch(routeSource, /condition:\s*String\(input\.condition\s*\?\?/);
+});
+
+test("batch material is append-only, idempotent, and locks after first resolution", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-batch-material-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const sessionId = repository.createSession("legacy import");
+    assert.equal(repository.sessionSummary(sessionId).batchMaterial, null);
+    const first = repository.setSessionMaterial({ sessionId, conditionCode: "lightly_played", finish: "holofoil", configuredBy: "operator-1", now: "2026-08-05T10:00:00.000Z" });
+    assert.deepEqual(first.batchMaterial, { conditionCode: "LIGHTLY_PLAYED", finish: "Holofoil", revision: 1, configuredAt: "2026-08-05T10:00:00.000Z", locked: false });
+    const second = repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1", now: "2026-08-05T10:01:00.000Z" });
+    assert.equal(second.batchMaterial?.revision, 2);
+    repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1", now: "2026-08-05T10:02:00.000Z" });
+    const revisions = repository.database.prepare("SELECT COUNT(*) count FROM recognition_session_material WHERE session_id=?").get(sessionId) as { count: number };
+    assert.equal(revisions.count, 2);
+    assert.throws(() => repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Foil", configuredBy: "operator-1" }), /batch finish is invalid/);
+
+    const createdId = repository.createSessionWithMaterial({ label: "new batch", conditionCode: "DAMAGED", finish: "Reverse Holofoil", configuredBy: "operator-1", now: "2026-08-05T11:00:00.000Z" });
+    assert.deepEqual(repository.sessionSummary(createdId).batchMaterial, { conditionCode: "DAMAGED", finish: "Reverse Holofoil", revision: 1, configuredAt: "2026-08-05T11:00:00.000Z", locked: false });
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
 test("corpus activation verifies objects and rolls back transactionally", () => {
   const root = mkdtempSync(join(tmpdir(), "phronesis-corpus-"));
   const repository = new CardRecognitionRepository(":memory:", root);
@@ -210,6 +301,35 @@ test("expired recognition leases are recoverable by a new worker", () => {
     repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:00.000Z", pairedFrameId: null });
     assert.ok(repository.acquireJob("worker-a", 1, new Date("2026-08-04T00:00:00.000Z")));
     assert.ok(repository.acquireJob("worker-b", 1000, new Date("2026-08-04T00:00:01.000Z")));
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("session recovery requeues only failed or expired active jobs and preserves attempts", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-recognition-recovery-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const object = repository.putObject(Buffer.from("frame"));
+    const sessionId = repository.createSession("recovery");
+    repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:00.000Z", pairedFrameId: null });
+    const failed = repository.acquireJob("worker-failed", 1000, new Date("2026-08-04T00:00:00.000Z"));
+    assert.ok(failed);
+    repository.failJob(failed.jobId, "worker-failed", "compatibility timeout", "2026-08-04T00:00:01.000Z");
+
+    repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 1, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:02.000Z", pairedFrameId: null });
+    const expired = repository.acquireJob("worker-expired", 1000, new Date("2026-08-04T00:00:02.000Z"));
+    assert.ok(expired);
+
+    repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 2, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:02.500Z", pairedFrameId: null });
+    const active = repository.acquireJob("worker-active", 10_000, new Date("2026-08-04T00:00:02.500Z"));
+    assert.ok(active);
+
+    assert.deepEqual(repository.recoverSessionJobs(sessionId, "2026-08-04T00:00:04.000Z"), { requeued: 2 });
+    const states = repository.database.prepare("SELECT state,attempts,last_error FROM recognition_job ORDER BY updated_at,id").all() as Array<{ state: string; attempts: number; last_error: string | null }>;
+    assert.equal(states.filter((row) => row.state === "PENDING").length, 2);
+    assert.equal(states.filter((row) => row.state === "LEASED").length, 1);
+    assert.equal(states.every((row) => row.attempts === 1), true);
+    assert.equal(states.some((row) => row.last_error === "compatibility timeout"), true);
+    assert.deepEqual(repository.recoverSessionJobs(sessionId, "2026-08-04T00:00:04.500Z"), { requeued: 0 });
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
@@ -244,17 +364,47 @@ test("operator resolution is append-only and creates a bound local offer line", 
   try {
     const object = repository.putObject(Buffer.from("frame"));
     const sessionId = repository.createSession("offer");
+    repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1", now: "2026-08-04T00:00:00.000Z" });
     const imported = repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: "2026-08-04T00:00:00.000Z", pairedFrameId: null });
     const lease = repository.acquireJob("worker", 1000, new Date("2026-08-04T00:00:00.000Z"));
     assert.ok(lease);
     repository.completeJob(lease.jobId, "worker", { decisionId: "decision-1", regionId: imported.region.regionId, status: "REVIEW", selectedCandidate: candidate(0.9), candidates: [candidate(0.9)], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-04T00:00:01.000Z" });
-    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Reverse Holofoil", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /finish must match/);
+    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Reverse Holofoil", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /configured batch/);
+    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: Number.MAX_SAFE_INTEGER, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 2, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /quantity or offer is invalid/);
+    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 1, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "US", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /currency is invalid/);
     repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" });
+    const addResolvedFrame = (sequence: number, quantity: number, buyingPresetId: string, offerCents: number, currency = "USD") => {
+      const next = repository.addFrame({ frameId: randomUUID(), sessionId, sequence, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 5, capturedAt: `2026-08-04T00:00:0${sequence + 2}.000Z`, pairedFrameId: null });
+      const nextLease = repository.acquireJob(`worker-${sequence}`, 1000, new Date(`2026-08-04T00:00:0${sequence + 2}.000Z`));
+      assert.ok(nextLease);
+      repository.completeJob(nextLease.jobId, `worker-${sequence}`, { decisionId: `decision-${sequence + 1}`, regionId: next.region.regionId, status: "REVIEW", selectedCandidate: candidate(0.9), candidates: [candidate(0.9)], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: `2026-08-04T00:00:0${sequence + 3}.000Z` });
+      repository.resolveRegion({ sessionId, regionId: next.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId, offerCents, currency, resolvedBy: "operator-1", now: `2026-08-04T00:00:0${sequence + 4}.000Z` });
+    };
+    addResolvedFrame(1, 3, "preset-1", 125);
+    addResolvedFrame(2, 1, "preset-2", 100);
+    addResolvedFrame(3, 2, "preset-1", 500, "BRL");
     const offer = repository.offerDraft(sessionId);
-    assert.equal(offer.length, 1);
+    assert.equal(offer.length, 4);
     assert.equal(offer[0].quantity, 2);
     assert.equal(offer[0].candidate?.canonicalPrintingId, "printing-1");
+    const summary = repository.offerSummary(sessionId);
+    assert.equal(summary.lineCount, 4);
+    assert.equal(summary.groupCount, 3);
+    assert.equal(summary.unitCount, 8);
+    assert.deepEqual(summary.totals, [{ currency: "BRL", totalCents: 1000 }, { currency: "USD", totalCents: 725 }]);
+    assert.equal(summary.groups[0].quantity, 5);
+    assert.equal(summary.groups[0].unitOfferCents, 125);
+    assert.equal(summary.groups[0].subtotalCents, 625);
+    assert.equal(summary.groups[0].evidenceRegionIds.length, 2);
+    assert.equal(summary.groups[1].quantity, 1);
+    assert.equal(summary.groups[1].subtotalCents, 100);
+    assert.equal(summary.groups[1].buyingPresetId, "preset-2");
+    assert.equal(summary.groups[2].currency, "BRL");
+    assert.equal(summary.groups[2].subtotalCents, 1000);
     assert.equal(repository.sessionItems(sessionId)[0].resolved, true);
+    assert.equal(repository.sessionSummary(sessionId).batchMaterial?.locked, true);
+    assert.throws(() => repository.setSessionMaterial({ sessionId, conditionCode: "LIGHTLY_PLAYED", finish: "Normal", configuredBy: "operator-1" }), /locked after the first card resolution/);
+    assert.equal(repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1" }).batchMaterial?.revision, 1);
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 

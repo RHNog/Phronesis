@@ -1,5 +1,73 @@
 # CTO Product Development Conversation History
 
+## 2026-08-05 — Authenticated Remote Scanner Recovery
+
+### User Intent
+
+- Restore the remote Scanner-to-Offer page after iPhone Safari displayed server error `1507235227`.
+
+### Diagnosis And Decision
+
+- The isolated scanner service correctly bound pricing and recognition stores but omitted the canonical authorization database. Its worktree-relative auth store lacked the purchase-event table used by the worker-session authorization path, so anonymous probes passed while the authenticated phone request crashed.
+- Persistently bind the scanner LaunchAgent to the canonical authorization database and re-register the job.
+- Harden independent task authorization against an absent optional event module, while keeping every transactional/event scope fail-closed.
+
+### Acceptance State
+
+Recovered and privately live. Focused 10/10 and full 420/420 tests, TypeScript, warning-free lint, production build, loaded-environment inspection, authenticated browser verification, loopback/tailnet HTTP 200, and unchanged error-log length pass. The scanner session data and authorization grants were not rewritten.
+
+## 2026-08-05 — Exact Offer Consolidation And Lot Totals
+
+### User Intent
+
+- Continue the approved vision implementation without delay after establishing batch-scoped condition and finish.
+
+### Decision
+
+- Close the next unblocked Scanner-to-Offer brief gap by consolidating exact duplicate resolutions into quantities while preserving per-scan evidence.
+- Treat an offer amount as per-unit and require canonical identity, material, price snapshot, buying preset, unit offer, and currency to match before grouping.
+- Calculate subtotals and lot totals on the server, keep currencies separate, and fail closed on unsafe integer arithmetic.
+- Preserve the current manual buying-preset and offer boundary because no scanner-specific authoritative preset policy has been approved; do not repurpose unrelated Business Profile defaults.
+
+### Acceptance State
+
+Implemented and privately activated through same-session architecture, engineering, and conformance gates under `PHR-WORKFLOW-016`. Full 419/419 tests, TypeScript, warning-free lint, Next.js production build, diff hygiene, private-service restart, live API continuity, and 390×844 browser evidence pass. The offer projection remains draft-only and creates no purchase, inventory, consumer, or publication mutation.
+
+## 2026-08-05 — Homogeneous Batch Condition And Finish
+
+### User Intent
+
+- Set condition once for a complete scan batch instead of repeating it per card, and determine whether current recognition can reliably grade condition or distinguish Pokémon Normal, Holofoil, and Reverse Holofoil.
+
+### Decision
+
+- Automatic condition grading is not viable as a trusted operational result from the current fixed-light duplex scans. Keep condition operator-declared at batch scope.
+- Finish classification is more tractable than grading but is not qualified on the present capture and evidence set. Treat finish as an exact operator-declared batch constraint and require separate homogeneous batches.
+- Persist batch material revisions append-only, lock both values after the first resolved card, derive resolution material and price verification server-side, and fail closed when the candidate's catalogue variant differs.
+- A future finish suggestion may be evaluated only against a labeled, set/era/finish-stratified holdout. Condition automation remains a distinct, higher-evidence objective requiring controlled surface-defect capture and validation.
+
+### Acceptance State
+
+Implemented and privately activated through same-session architecture, engineering, and conformance gates under `PHR-WORKFLOW-016`. Focused 26/26, full 419/419, TypeScript, warning-free lint, production build, additive live migration, loopback/tailnet HTTP 200, and 390×844 no-overflow browser evidence pass. The existing legacy batch remains unchanged and explicitly requires configuration; no current scan was assigned a condition or finish, and no automatic grading, finish classification, auto-accept, purchase, inventory, consumer, or publication gate opened.
+
+## 2026-08-05 — Acquisition-Proven Duplex Review Evidence
+
+### User Intent
+
+- Resume the local vision implementation from its prior Product Review boundary and continue making it operational with progress updates.
+
+### Decision
+
+- Treat the missing reverse image in Resolve as an acquisition-contract problem, not a UI inference opportunity.
+- Preserve the accepted 18-frame `v1` bundle and its `pairingSemantics: unknown` truth. Do not relabel adjacent legacy frames.
+- Add an opt-in `v2` adjacent-duplex-front-first manifest that seals explicit sides and reciprocal pairs, rejects incomplete/contradictory pairs before READY, schedules only fronts for recognition, and keeps backs as linked immutable evidence.
+- Show front and acquisition-proven reverse evidence during manual material review. If no proven reverse exists, render a labelled unavailable state. Condition remains operator-confirmed and no automatic grading claim is introduced.
+- Remove the implicit Near Mint default and any cross-card condition carryover; exact-condition pricing stays disabled until the operator makes a fresh per-card selection.
+
+### Acceptance State
+
+Implemented and privately activated for software review. Node bridge 12/12, Windows PowerShell 15/15, focused recognition 25/25, full repository 418/418, TypeScript, warning-free lint, production build, loopback/tailnet HTTP 200, live API, and browser semantic gates pass. The current legacy session remains unchanged at 18 frames, eight reviews, ten abstentions, zero pending/accepted/failed, displays `Paired reverse unavailable`, begins with `Select condition`, and keeps exact-condition pricing disabled. One supervised physical `v2` duplex pair still requires the interactive Windows scanner session; no auto-accept, grading, purchase, inventory, consumer, or publication gate opened.
+
 ## 2026-08-05 — Pokémon-First Recognition Revision
 
 ### User Intent
@@ -905,3 +973,60 @@ Implemented and live for Product Owner phone review. Focused 16/16 and full 386/
 ### Acceptance State
 
 Implementation and same-session conformance are Product Review ready. Full repository gates pass. The private supervisor is consolidated to one wrapper/observer/Next listener and returns 50 ranked identity-verified rows instead of zero. The 03:00 agent is loaded; LigaMagic remains `REAUTHENTICATION_REQUIRED`. LigaPokemon is authenticated and pilot-verified; Lote 10 now carries explicit Product Owner export authority, while full recurrence remains fail-closed on the separately unauthorized Lote 4 mismatch. The external TCG scheduler remains.
+
+## 2026-08-06 — Dashboard Tool Hub And Approved Brand Identity
+
+### User Intent
+
+- Make Dashboard the first authenticated page.
+- Present every authorized Phronesis tool as a card in a landing-page hub.
+- Add a collapsible desktop sidebar while preserving mobile navigation.
+- Correct the new shell to use the recently approved Phronesis icon, favicon, and iOS identity.
+
+### Decision And Implementation
+
+- Assigned `PHR-UX-027` and reserved `/` for Dashboard; Opportunities moved to `/opportunities` with its existing authorization unchanged.
+- Centralized tool descriptions and identity in the server-filtered navigation model, making Dashboard cards entitlement-aware by construction.
+- Added a persistent accessible desktop icon rail and preserved the modal mobile drawer.
+- Changed temporary worker login success to enter Dashboard; explicit safe permanent-login callbacks remain supported.
+- A first-pass CSS `P` substitute was rejected after Product Owner review. The feature worktree predated canonical brand commit `8d655f5`; the exact favicon, Apple icon, and PNG mark were recovered, hash-bound in tests, and applied to Dashboard plus desktop/mobile shell.
+- Follow-up Product Owner review showed that the installed Safari copy still targeted the retired `ramons-mac-studio…:9444` origin, the toolbar retained stale icon state, and Event Operations persisted over later Vendor content. The application had no web-app manifest at installation time, while the outer Vendor checkout wrapper was explicitly sticky.
+- The approved remediation adds an origin-relative standalone manifest, approved 192/512 icon derivatives, explicit Apple web-app metadata, and a 512-pixel application icon route. It removes sticky positioning only from the outer Event Operations wrapper so later full-width controls remain unobstructed.
+- Tailscale identified the current node as `ramons-macbook-pro` while its old `:9444` rule still used `ramons-mac-studio`. The isolated scanner-review mapping was restored at `https://ramons-macbook-pro.tailaa2d39.ts.net:9444/` without changing the canonical port-3100 runtime or public worker gateway.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready. Focused 8/8, full 423/423, TypeScript, full lint, Next.js 16.2.12 build, approved-asset SHA-256 proof, desktop expanded/collapsed review, 390×844 review, live manifest/head inspection, and 1280-pixel Event Operations zero-overlap geometry pass. The prior Safari application must be removed and reinstalled once because its retired start URL is stored locally. Commit, push, and canonical deployment were not requested in this turn.
+
+## 2026-08-06 — Physical Duplex File Recovery And Vision Completion
+
+### User Intent
+
+- Determine why the cards visibly scanned but no files were created.
+- Recover the batch and continue the private Pokémon recognition workflow without an unnecessary rescan.
+
+### Decision And Implementation
+
+- PaperStream's retained batch metadata proved 18 full-resolution pages in nine authoritative FRONT/BACK pairs. The profile had batch folders enabled but automatic release disabled, so the completed scan remained in manual-release storage.
+- Copied rather than moved every retained original, byte-compared the Windows copies, and sealed/imported physical `v2` session `phr-pokemon-duplex-20260806-001` with manifest SHA-256 `75c0670a8e49d000ea81fb04f63d46b18c9463a276df76538a9361b2e1d50f88`.
+- Diagnosed a macOS 27 beta Apple Neural Engine compilation stall in local Vision OCR, bound native request main stages to CPU, and added narrowly scoped failed/expired session-job recovery.
+
+### Acceptance State
+
+Physical `v2` acquisition and processing are complete: nine front jobs completed, nine backs remain linked evidence-only, and all nine results safely abstained below the review threshold. Full 424/424 repository tests, Swift 5/5, TypeScript, lint, production/release builds, durable-store inspection, and service health pass. Enable **Release after scan** in PaperStream's supported UI before another routine batch. Auto-accept, commercial mutation, commit, push, and deployment remain gated.
+
+## 2026-08-06 — Repository Publication And Private Deployment Authorization
+
+### User Intent
+
+- Commit, push, and deploy the complete accumulated implementation properly.
+
+### Decision
+
+- The entire approved feature worktree is in scope: Dashboard/PWA identity, timed-access continuity, Scanner-to-Offer duplex and batch workflow, Windows acquisition bridge, and macOS recognition recovery.
+- Publish the existing `codex/phr-local-card-recognition-20260804` branch with a clean implementation commit followed by the repository-required Handoff seal commit.
+- Deploy only to the existing private tailnet runtime and recurring recognition worker. This does not authorize auto-accept, purchase/inventory mutation, marketplace publication, or merge into canonical `main`.
+
+### Acceptance State
+
+Product Owner authorization received. Final application, native-worker, build, continuity, remote-SHA, and private-runtime health evidence must pass before the deployment is represented as complete.

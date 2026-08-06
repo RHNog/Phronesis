@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import PhronesisMark from "@/components/ui/PhronesisMark";
 import {
   resolvePrimaryNavigation,
   type PrimaryNavigationItem,
@@ -155,16 +156,19 @@ export default function MobileNavigation({
             className="flex h-full w-[min(21rem,calc(100vw-3rem))] flex-col border-r border-zinc-800 bg-zinc-950 shadow-2xl shadow-black"
           >
             <div className="flex min-h-16 items-center justify-between border-b border-zinc-800 px-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300">
-                  Workspace
-                </p>
-                <h2
-                  id="mobile-navigation-title"
-                  className="text-lg font-semibold tracking-tight text-white"
-                >
-                  Phronesis
-                </h2>
+              <div className="flex min-w-0 items-center gap-3">
+                <PhronesisMark size={38} />
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300">
+                    Workspace
+                  </p>
+                  <h2
+                    id="mobile-navigation-title"
+                    className="truncate text-lg font-semibold tracking-tight text-white"
+                  >
+                    Phronesis
+                  </h2>
+                </div>
               </div>
               <button
                 ref={closeRef}

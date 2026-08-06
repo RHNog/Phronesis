@@ -58,6 +58,18 @@ test("Artwork Review can be a timed task without an event or system administrati
   assert.equal(repository.authorize(session.token,"ARTWORK_REVIEW","VIEW"), null);
 });
 
+test("task authorization remains available without the purchase-event module while event access fails closed", () => {
+  const database = new DatabaseSync(":memory:");
+  const authorization = new AuthorizationRepository(database);
+  const workspaceId = authorization.ensureWorkspace();
+  const repository = new EventAccessRepository(database);
+  const grant = repository.createGrant({ workspaceId, workerLabel: "Isolated scanner", durationHours: 1, actorUserId: "owner", entitlements: [{ module: "ARTWORK_REVIEW", access: "VIEW" }] });
+  const session = repository.redeem(grant.code!, "isolated-scanner");
+  assert.equal(repository.authorize(session.token, "ARTWORK_REVIEW", "VIEW")?.allowed, true);
+  assert.equal(repository.listGrants(workspaceId)[0]?.scopeType, "TASK");
+  assert.throws(() => repository.createGrant({ workspaceId, eventId: "missing-event", workerLabel: "Transactional scanner", durationHours: 1, actorUserId: "owner", entitlements: [{ module: "VENDOR_WORKSPACE", access: "VIEW" }] }), /active Event Ledger event/i);
+});
+
 test("revocation, expiry, and event closure invalidate sessions immediately", () => {
   const { repository, workspaceId, database } = fixture();
   const now=new Date("2026-07-31T12:00:00Z");

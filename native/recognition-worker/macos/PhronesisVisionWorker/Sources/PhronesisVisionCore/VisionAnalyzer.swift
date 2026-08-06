@@ -1,4 +1,5 @@
 import Foundation
+import CoreML
 import Vision
 
 public struct TextEvidence: Codable, Equatable, Sendable {
@@ -67,12 +68,14 @@ public struct VisionRegionDetection: Codable, Equatable, Sendable {
 
 public enum VisionAnalyzerError: Error, CustomStringConvertible {
     case imageNotReadable
+    case cpuComputeDeviceUnavailable
     case featurePrintUnavailable
     case featurePrintArchiveInvalid
 
     public var description: String {
         switch self {
         case .imageNotReadable: return "image could not be read"
+        case .cpuComputeDeviceUnavailable: return "CPU compute device is unavailable"
         case .featurePrintUnavailable: return "Vision did not produce a feature print"
         case .featurePrintArchiveInvalid: return "feature print archive is invalid"
         }
@@ -89,6 +92,8 @@ public final class VisionAnalyzer: @unchecked Sendable {
         textRequest.usesLanguageCorrection = false
         textRequest.recognitionLanguages = ["en-US"]
         let featureRequest = VNGenerateImageFeaturePrintRequest()
+        try Self.configureCpuExecution(textRequest)
+        try Self.configureCpuExecution(featureRequest)
         let handler = VNImageRequestHandler(url: imageURL, orientation: .up)
         try handler.perform([textRequest, featureRequest])
 
@@ -137,6 +142,18 @@ public final class VisionAnalyzer: @unchecked Sendable {
             )
         }
         return VisionRegionDetection(regions: Self.filterAndOrderRegions(candidates))
+    }
+
+    @discardableResult
+    static func configureCpuExecution(_ request: VNRequest) throws -> MLComputeDevice {
+        guard let cpu = MLComputeDevice.allComputeDevices.first(where: { device in
+            if case .cpu = device { return true }
+            return false
+        }) else {
+            throw VisionAnalyzerError.cpuComputeDeviceUnavailable
+        }
+        request.setComputeDevice(cpu, for: .main)
+        return cpu
     }
 
     public static func filterAndOrderRegions(_ candidates: [CardRegionSuggestion]) -> [CardRegionSuggestion] {

@@ -1,5 +1,13 @@
 # Prompt History
 
+## 2026-08-06 — Dashboard Tool Hub And Collapsible Navigation
+
+- Source: Product Owner request for a landing-page hub, one card per Phronesis tool, collapsible sidebar, and Dashboard-first login.
+- Feature: `PHR-UX-027`.
+- Implementation prompt: `docs/prompts/PHR-UX-027-dashboard-tool-hub-prompt.md`.
+- Product Owner remediation on 2026-08-06 extended the same work order with a relative-origin web-app manifest, install-icon metadata, and static Event Operations containment.
+- Result: authorized Dashboard cards, `/opportunities` route split, persistent desktop icon rail, preserved mobile drawer, Dashboard-first temporary access, and exact recovery of the approved Phronesis favicon/iOS/shell assets.
+
 ## 2026-08-04 — Local Card Acquisition And Recognition
 
 - Source: Product Owner-approved local card-recognition brief and CTO implementation structure.

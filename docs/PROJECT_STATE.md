@@ -9,6 +9,8 @@
 - The exact 18-frame physical bundle has an append-only second recognition revision. Current truth is eight English Pokémon faces in `REVIEW` with exact catalogue-variant candidates and ten abstentions covering nine backs plus one Spanish card; all 18 prior decisions remain auditable.
 - Auto-accept remains disabled until a provenance-approved English Pokémon corpus and powered unseen holdout qualify the policy. Automatic binder segmentation, consumer-project adoption, public deployment, and publication remain gated.
 - Persistent user LaunchAgents supervise the isolated loopback scanner app and recurring recognition worker. Existing `:9443` and public `:10000` services remain unchanged; no purchase, inventory, external repository, marketplace, or publication state changed.
+- Physical `v2` session `phr-pokemon-duplex-20260806-001` preserves nine reciprocal front/back pairs. Nine front jobs completed and nine backs remain evidence-only; all nine recognition decisions safely abstained. PaperStream had retained the files because automatic release was disabled, so future routine scans require **Release after scan** enabled through its supported UI.
+- The macOS 27 beta ANE compilation stall is contained by CPU-bound Vision requests. Session-scoped recovery changes only failed or expired active jobs and preserves completed evidence and attempt history.
 
 ## 2026-08-03 Arbitrage Recovery State
 
@@ -52,8 +54,8 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - Receipt-backed inventory intake, locations, physical counts, and append-only disposition evidence.
 - LigaMagic snapshot evidence crossed against TCGplayer: 71,954 exact plus 14,438 qualifier-preserving alias mappings, 86,392 matched identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
 - Official Banco Central do Brasil PTAX buy/sell evidence and two-way US/Brazil arbitrage calculations with explicit truth gates.
-- Persistent private review service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
-- Persistent tailnet-only Scanner to Offer service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9444/vendor/scanner` with a recurring Windows-bundle recognition worker.
+- Persistent private review service at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
+- Persistent tailnet-only Scanner to Offer service at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor/scanner` with a recurring Windows-bundle recognition worker. Tailscale retains a MacBook-name Serve alias, but the live tailnet DNS identity is currently `ramons-mac-studio`; install/open the web app only from the resolving origin.
 - Local content-addressed scan evidence, recoverable recognition jobs, Apple Vision evidence, review/abstention, operator material confirmation, exact-condition price binding, local offer drafts, recognized-asset envelopes, and pure TCGplayer/Liga draft adapters.
 
 ## Current constraints

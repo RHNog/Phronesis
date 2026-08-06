@@ -67,6 +67,22 @@ try {
   Assert-Test "manifest published" (Test-Path -LiteralPath (Join-Path $bundle "manifest.json") -PathType Leaf)
   Assert-Test "ready marker published" (Test-Path -LiteralPath (Join-Path $bundle "READY") -PathType Leaf)
 
+  $duplexSession = "phr-test-duplex"
+  $duplexRoot = Join-Path $captureRoot $duplexSession
+  [System.IO.Directory]::CreateDirectory($duplexRoot) | Out-Null
+  [System.IO.File]::WriteAllBytes((Join-Path $duplexRoot "001.jpg"), [byte[]](1, 1, 1, 1))
+  [System.IO.File]::WriteAllBytes((Join-Path $duplexRoot "002.jpg"), [byte[]](2, 2, 2, 2))
+  $duplexSeal = Invoke-BridgeChild @("-Command", "Seal", "-SessionId", $duplexSession, "-CaptureRoot", $captureRoot, "-SharedRoot", $sharedRoot, "-PairingMode", "AdjacentDuplexFrontFirst")
+  $duplexManifest = Get-Content -LiteralPath (Join-Path (Join-Path (Join-Path $sharedRoot "ready") $duplexSession) "manifest.json") -Raw | ConvertFrom-Json
+  Assert-Test "declared duplex seals v2 reciprocal pairs" ($duplexSeal.ExitCode -eq 0 -and $duplexManifest.schemaVersion -eq "phronesis.windows-scan-bundle/v2" -and $duplexManifest.frames[0].side -eq "FRONT" -and $duplexManifest.frames[0].pairedObservedSequence -eq 2 -and $duplexManifest.frames[1].side -eq "BACK" -and $duplexManifest.frames[1].pairedObservedSequence -eq 1)
+
+  $oddSession = "phr-test-duplex-odd"
+  $oddRoot = Join-Path $captureRoot $oddSession
+  [System.IO.Directory]::CreateDirectory($oddRoot) | Out-Null
+  [System.IO.File]::WriteAllBytes((Join-Path $oddRoot "001.jpg"), [byte[]](1, 2, 3, 4))
+  $oddDuplex = Invoke-BridgeChild @("-Command", "Seal", "-SessionId", $oddSession, "-CaptureRoot", $captureRoot, "-SharedRoot", $sharedRoot, "-PairingMode", "AdjacentDuplexFrontFirst")
+  Assert-Test "incomplete duplex pair rejected" ($oddDuplex.ExitCode -eq 1)
+
   $repeat = Invoke-BridgeChild @("-Command", "Seal", "-SessionId", $session, "-CaptureRoot", $captureRoot, "-SharedRoot", $sharedRoot)
   Assert-Test "repeat seal is idempotent" ($repeat.ExitCode -eq 0 -and (($repeat.Output -join "`n") -match "bundle.already_ready"))
 

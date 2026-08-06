@@ -817,26 +817,30 @@ export default function SnapshotVendorWorkspace({
           )}
         </section> : null}
 
-        <div className="order-2 min-w-0 xl:sticky xl:top-5"><VendorCheckout
-          canOperate={canOperate}
-          condition={condition}
-          marketReferenceCents={reference.cents}
-          match={selectedMatch}
-          price={price}
-          offer={
-            offerEvaluation?.status === "READY"
-              ? {
-                  recommendedOffer: offerEvaluation.recommendedOffer,
-                  openingOffer: offerEvaluation.negotiationLadder.openingOffer,
-                  targetOffer: offerEvaluation.negotiationLadder.targetOffer,
-                  maximumBuyPrice: offerEvaluation.negotiationLadder.maximumBuyPrice,
-                  tcgLowCents: price?.listingPriceCents ?? null,
-                  tcgMarketCents: price?.marketPriceCents ?? null,
-                  tcgDirectLowCents: price?.directLowCents ?? null,
-                }
-              : null
-          }
-        /></div>
+        <div data-vendor-event-operations className="order-2 min-w-0">
+          <VendorCheckout
+            canOperate={canOperate}
+            condition={condition}
+            marketReferenceCents={reference.cents}
+            match={selectedMatch}
+            price={price}
+            offer={
+              offerEvaluation?.status === "READY"
+                ? {
+                    recommendedOffer: offerEvaluation.recommendedOffer,
+                    openingOffer:
+                      offerEvaluation.negotiationLadder.openingOffer,
+                    targetOffer: offerEvaluation.negotiationLadder.targetOffer,
+                    maximumBuyPrice:
+                      offerEvaluation.negotiationLadder.maximumBuyPrice,
+                    tcgLowCents: price?.listingPriceCents ?? null,
+                    tcgMarketCents: price?.marketPriceCents ?? null,
+                    tcgDirectLowCents: price?.directLowCents ?? null,
+                  }
+                : null
+            }
+          />
+        </div>
         <section
           aria-labelledby="snapshot-evidence-heading"
           className={`${selectedMatch ? "order-1" : "order-3 xl:col-span-1"} min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/70 p-4`}

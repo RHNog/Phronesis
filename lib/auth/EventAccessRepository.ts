@@ -45,6 +45,10 @@ function assertEntitlements(values: readonly ModuleEntitlement[]): void {
 export class EventAccessRepository {
   constructor(private readonly database: DatabaseSync) { this.migrate(); }
 
+  private hasPurchaseEventTable(): boolean {
+    return Boolean(this.database.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='phronesis_purchase_event'").get());
+  }
+
   migrate(): void {
     this.database.exec(`
       CREATE TABLE IF NOT EXISTS phronesis_event_access_grant (
@@ -82,7 +86,7 @@ export class EventAccessRepository {
     const eventBound = input.entitlements.some((entitlement) => EVENT_BOUND_MODULES.includes(entitlement.module as (typeof EVENT_BOUND_MODULES)[number]));
     const scopeType = eventBound ? "EVENT" : "TASK";
     const eventId = eventBound ? input.eventId?.trim() ?? "" : "";
-    const event = eventBound
+    const event = eventBound && this.hasPurchaseEventTable()
       ? this.database.prepare("SELECT id, name, status FROM phronesis_purchase_event WHERE id=? AND workspace_id=?").get(eventId, input.workspaceId) as SqlRow | undefined
       : undefined;
     if (eventBound && (!event || event.status !== "ACTIVE")) throw new Error("An active Event Ledger event is required for transactional access.");
@@ -99,26 +103,28 @@ export class EventAccessRepository {
   }
 
   listGrants(workspaceId: string, at = new Date()): EventAccessGrant[] {
-    const rows = this.database.prepare(`SELECT g.*, e.name event_name, e.status event_status FROM phronesis_event_access_grant g LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE g.workspace_id=? ORDER BY g.created_at DESC`).all(workspaceId) as SqlRow[];
+    const rows = this.database.prepare(this.hasPurchaseEventTable()
+      ? `SELECT g.*, e.name event_name, e.status event_status FROM phronesis_event_access_grant g LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE g.workspace_id=? ORDER BY g.created_at DESC`
+      : `SELECT g.*, NULL event_name, NULL event_status FROM phronesis_event_access_grant g WHERE g.workspace_id=? ORDER BY g.created_at DESC`).all(workspaceId) as SqlRow[];
     return rows.map((row) => this.mapGrant(row, at));
   }
 
   rotateGrantCode(workspaceId: string, grantId: string, actorUserId: string, at = new Date()): EventAccessGrant {
-    const row = this.database.prepare(`SELECT g.*, e.name event_name, e.status event_status
-      FROM phronesis_event_access_grant g
-      LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id
-      WHERE g.id=? AND g.workspace_id=?`).get(grantId, workspaceId) as SqlRow | undefined;
+    const hasPurchaseEvents = this.hasPurchaseEventTable();
+    const row = this.database.prepare(hasPurchaseEvents
+      ? `SELECT g.*, e.name event_name, e.status event_status FROM phronesis_event_access_grant g LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE g.id=? AND g.workspace_id=?`
+      : `SELECT g.*, NULL event_name, NULL event_status FROM phronesis_event_access_grant g WHERE g.id=? AND g.workspace_id=?`).get(grantId, workspaceId) as SqlRow | undefined;
     if (!row || this.mapGrant(row, at).status !== "ACTIVE") throw new Error("Only an unused, unexpired worker code can be replaced.");
 
     const plaintext = code();
     const salt = randomBytes(16).toString("hex");
     const codeHash = scryptSync(normalizeCode(plaintext), salt, 32).toString("hex");
-    const updated = this.database.prepare(`UPDATE phronesis_event_access_grant
-      SET code_hash=?, code_salt=?
-      WHERE id=? AND workspace_id=? AND status='ACTIVE' AND expires_at>?
-        AND (scope_type='TASK' OR EXISTS (
-          SELECT 1 FROM phronesis_purchase_event e WHERE e.id=phronesis_event_access_grant.event_id AND e.workspace_id=? AND e.status='ACTIVE'
-        ))`).run(codeHash, salt, grantId, workspaceId, at.toISOString(), workspaceId);
+    const updated = hasPurchaseEvents
+      ? this.database.prepare(`UPDATE phronesis_event_access_grant SET code_hash=?, code_salt=?
+          WHERE id=? AND workspace_id=? AND status='ACTIVE' AND expires_at>?
+            AND (scope_type='TASK' OR EXISTS (SELECT 1 FROM phronesis_purchase_event e WHERE e.id=phronesis_event_access_grant.event_id AND e.workspace_id=? AND e.status='ACTIVE'))`).run(codeHash, salt, grantId, workspaceId, at.toISOString(), workspaceId)
+      : this.database.prepare(`UPDATE phronesis_event_access_grant SET code_hash=?, code_salt=?
+          WHERE id=? AND workspace_id=? AND status='ACTIVE' AND expires_at>? AND scope_type='TASK'`).run(codeHash, salt, grantId, workspaceId, at.toISOString());
     if (Number(updated.changes) !== 1) throw new Error("Only an unused, unexpired worker code can be replaced.");
 
     this.audit(workspaceId, actorUserId, "EVENT_ACCESS_CODE_ROTATED", grantId, { previousCodeInvalidated: true });
@@ -129,7 +135,9 @@ export class EventAccessRepository {
     this.assertRateLimit(bucketHash, at);
     const candidate = normalizeCode(value);
     if (candidate.length !== 16) { this.recordAttempt(bucketHash, false, at); throw new Error("Worker access code is invalid or expired."); }
-    const rows = this.database.prepare(`SELECT g.*, e.name event_name, e.status event_status FROM phronesis_event_access_grant g LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE g.status='ACTIVE' AND g.expires_at>? AND (g.scope_type='TASK' OR (g.scope_type='EVENT' AND e.status='ACTIVE'))`).all(at.toISOString()) as SqlRow[];
+    const rows = this.database.prepare(this.hasPurchaseEventTable()
+      ? `SELECT g.*, e.name event_name, e.status event_status FROM phronesis_event_access_grant g LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE g.status='ACTIVE' AND g.expires_at>? AND (g.scope_type='TASK' OR (g.scope_type='EVENT' AND e.status='ACTIVE'))`
+      : `SELECT g.*, NULL event_name, NULL event_status FROM phronesis_event_access_grant g WHERE g.status='ACTIVE' AND g.expires_at>? AND g.scope_type='TASK'`).all(at.toISOString()) as SqlRow[];
     const row = rows.find((entry) => {
       const expected = Buffer.from(String(entry.code_hash), "hex");
       const actual = scryptSync(candidate, String(entry.code_salt), 32);
@@ -152,7 +160,9 @@ export class EventAccessRepository {
 
   authorize(token: string, module: PhronesisModule, requiredAccess: ModuleAccessLevel, at = new Date()): AuthorizationDecision | null {
     if (!token || token.length > 128) return null;
-    const row = this.database.prepare(`SELECT g.*, s.id session_id, s.expires_at session_expires_at, e.status event_status FROM phronesis_event_access_session s JOIN phronesis_event_access_grant g ON g.id=s.grant_id LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE s.token_hash=? AND s.revoked_at IS NULL`).get(hashSession(token)) as SqlRow | undefined;
+    const row = this.database.prepare(this.hasPurchaseEventTable()
+      ? `SELECT g.*, s.id session_id, s.expires_at session_expires_at, e.status event_status FROM phronesis_event_access_session s JOIN phronesis_event_access_grant g ON g.id=s.grant_id LEFT JOIN phronesis_purchase_event e ON e.id=g.event_id WHERE s.token_hash=? AND s.revoked_at IS NULL`
+      : `SELECT g.*, s.id session_id, s.expires_at session_expires_at, NULL event_status FROM phronesis_event_access_session s JOIN phronesis_event_access_grant g ON g.id=s.grant_id WHERE s.token_hash=? AND s.revoked_at IS NULL`).get(hashSession(token)) as SqlRow | undefined;
     if (!row) return null;
     const assigned = (JSON.parse(String(row.entitlements_json)) as ModuleEntitlement[]).find((entry) => entry.module === module)?.access ?? null;
     const scopeActive = row.scope_type === "TASK" || (row.scope_type === "EVENT" && row.event_status === "ACTIVE");

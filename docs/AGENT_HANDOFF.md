@@ -1,5 +1,14 @@
 # Agent Handoff
 
+## Product Review Candidate — Physical V2 Scanner Recovery — 2026-08-06
+
+- Session `phr-pokemon-duplex-20260806-001` recovered 18 full-resolution PaperStream originals as nine authoritative reciprocal FRONT/BACK pairs; no rescan and no filename inference were used.
+- PaperStream completed scanning but created no requested batch-folder files because its profile had automatic release disabled. Every retained original was copied non-destructively and byte-compared before sealing.
+- Manifest SHA-256 is `75c0670a8e49d000ea81fb04f63d46b18c9463a276df76538a9361b2e1d50f88`. Nine fronts entered recognition; nine backs remain evidence-only.
+- The macOS 27 beta Vision ANE compilation stall was removed by CPU-bound main stages. Failed/expired jobs were requeued session-locally; all nine jobs completed as safe abstentions with zero pending/leased/failed work.
+- Repository 424/424, Swift 5/5, TypeScript, warning-free lint, production build, release worker build, and service health pass.
+- Before another routine batch, enable **Release after scan** in the supported PaperStream UI. Auto-accept, purchasing, inventory, and marketplace publication remain closed. The Product Owner authorized repository commit, branch push, and private runtime deployment on 2026-08-06.
+
 ## Product Review Candidate — Windows Scanner Bridge — 2026-08-04
 
 - `PHR-TECH-015` provides an interactive Windows PaperStream capture/seal command plus a distrustful macOS inspector/importer while macOS 27 remains outside Ricoh's current ICA support.
@@ -133,7 +142,7 @@
 - `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, and `PHR-API-004` are implemented under `PHR-STRUCT-20260730-005`.
 - Full verification is green: 232/232 tests, standalone TypeScript, warning-free lint, production build, observer one-shot, diff hygiene, and private runtime checks.
 - The existing Urza's Saga watch now refreshes from the verified catalogue at `$469.04`; its cross-provider set-label discrepancy reconciles only because the remaining physical identity is unique.
-- Private review is `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Five catalogues are current; Riftbound remains outside feature work despite a retained upstream receipt.
+- Private review is `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Five catalogues are current; Riftbound remains outside feature work despite a retained upstream receipt.
 - JustTCG is configured but disabled by feature flag. eBay client credentials and CardTrader token are absent. Required employee authentication remains gated.
 - Local feature-branch checkpoint is `6c38c1f`. No push or publication occurred.
 
@@ -169,7 +178,7 @@
 ## Current Product Review Gate — PHR-API-002 + PHR-UX-008
 
 - Unified five-category search, artwork-first grouping, Finish-before-Condition selection, and Pokémon/TCGdex artwork are implemented and locally operational.
-- Private review URL remains `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac is awake/online and the phone is on the same Tailscale tailnet.
+- Private review URL remains `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor` while the Mac is awake/online and the phone is on the same Tailscale tailnet.
 - Current data: Magic, Pokémon, and One Piece July 29 receipts. Lorcana/Riftbound are registered and await an upstream completed receipt.
 - Verification at that gate: 18/18 focused, 7/7 identity, lint/build/diff pass; the newer Bandai/cache gate above supersedes those counts.
 - External gate remaining after the authorized revision: Riftbound thumbnails need Riot approval/app key.
@@ -177,11 +186,11 @@
 
 ## 2026-07-29 Event Readiness
 
-`PHR-TECH-006` activated July 29 18:20 Magic, Pokémon, and One Piece catalogues in `.data/mobile-review.sqlite`; source evidence is preserved under `.data/pricing-catalogues/20260729_182153/`. The persistent observer watches every ten seconds and archives future verified receipts before import. At that gate, `PHR-UI-002` provided only Magic thumbnails; the current `PHR-API-002` gate above supersedes that provider limitation. Review at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Do not trigger an extra upstream run, mutate Pricing Update Tool, or delete archives before the event.
+`PHR-TECH-006` activated July 29 18:20 Magic, Pokémon, and One Piece catalogues in `.data/mobile-review.sqlite`; source evidence is preserved under `.data/pricing-catalogues/20260729_182153/`. The persistent observer watches every ten seconds and archives future verified receipts before import. At that gate, `PHR-UI-002` provided only Magic thumbnails; the current `PHR-API-002` gate above supersedes that provider limitation. Review at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Do not trigger an extra upstream run, mutate Pricing Update Tool, or delete archives before the event.
 
 ## 2026-07-29 Private Phone Review
 
-`PHR-TECH-005` provides a persistent tailnet-only Product Review URL at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Check it with `npm run review:phone:status`. The user LaunchAgent is `com.phronesis.private-review`; Tailscale Serve port 9443 is dedicated to it. Never use Funnel or replace handlers 443/8443. The Mac must remain awake and online.
+`PHR-TECH-005` provides a persistent tailnet-only Product Review URL at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Check it with `npm run review:phone:status`. The user LaunchAgent is `com.phronesis.private-review`; Tailscale Serve port 9443 is dedicated to it. Never use Funnel or replace handlers 443/8443. The Mac must remain awake and online.
 
 ## 2026-07-29 PHR-WORKFLOW-004 Handoff
 

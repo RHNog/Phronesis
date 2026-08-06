@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function EventAccessLogin({ callbackURL = "/vendor" }: { callbackURL?: string }) {
+export default function EventAccessLogin({ callbackURL = "/" }: { callbackURL?: string }) {
   const [code, setCode] = useState(""); const [message, setMessage] = useState<string | null>(null); const [busy, setBusy] = useState(false);
   async function submit(event: React.FormEvent) { event.preventDefault(); setBusy(true); setMessage(null); const response=await fetch("/api/auth/event-access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})}); const body=await response.json().catch(()=>({})) as {destination?:string;error?:string}; if(response.ok){window.location.assign(body.destination??callbackURL);return;} setMessage(body.error??"Code could not be accepted.");setBusy(false); }
   return <form onSubmit={submit} className="mt-5 border-t border-zinc-800 pt-5">

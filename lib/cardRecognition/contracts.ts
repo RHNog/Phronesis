@@ -91,6 +91,9 @@ export function validateRegionGeometry(region: NormalizedRegion): void {
 
 export function validateFrame(frame: ScanFrame): void {
   if (!frame.frameId || !frame.sessionId) throw new Error("frame and session identifiers are required");
+  if (!["FRONT", "BACK", "UNKNOWN"].includes(frame.side)) throw new Error("frame side is invalid");
+  if (frame.pairedFrameId === frame.frameId) throw new Error("frame cannot pair with itself");
+  if (frame.pairedFrameId !== null && !/^[A-Za-z0-9][A-Za-z0-9:._-]{0,255}$/.test(frame.pairedFrameId)) throw new Error("paired frame identifier is invalid");
   if (!Number.isSafeInteger(frame.sequence) || frame.sequence < 0) throw new Error("frame sequence must be a non-negative integer");
   if (!Number.isSafeInteger(frame.byteLength) || frame.byteLength <= 0) throw new Error("frame byte length must be positive");
   assertSha256(frame.objectSha256, "objectSha256");

@@ -43,3 +43,17 @@ The operator reported no damage or feed issues after the completed duplex batch.
 ## Remaining Gate
 
 Commit the verified implementation and generate the repository Handoff seal. Push and deployment remain unauthorized.
+
+## 2026-08-05 Duplex Evidence Increment
+
+The Scanner-to-Offer review exposed that the original repository model had `side` and `paired_frame_id`, but the accepted Windows bundle intentionally sealed every frame as unknown. The increment adds an explicit `v2` manifest rather than inferring from alternating filenames. Its operator-selected adjacent-duplex-front-first mode requires an even count, seals each side and reciprocal pair, and is rejected before import when the relation is incomplete or contradictory.
+
+The Mac importer validates the complete manifest before repository mutation. It schedules recognition only for fronts and stores backs as immutable linked evidence. Legacy `v1` behavior remains byte-compatible and unpaired. Node validation passes 12/12, and the updated Windows PowerShell self-test passes 15/15 through the VM current-user context. One new physical pair remains pending in the interactive Windows scanner session.
+
+## 2026-08-06 Physical V2 Completion And Manual-Release Recovery
+
+The supervised physical gate completed as session `phr-pokemon-duplex-20260806-001`: PaperStream retained 18 full-resolution JPEG originals representing nine strict FRONT/BACK pairs. Its own `BackupData.xml` supplied the authoritative alternating page declarations. The bridge did not guess from filenames.
+
+No requested batch-folder files appeared because the registered profile was configured with batch folders enabled but automatic release disabled (`ReleaseAfterScan=0`). Recovery copied—not moved—the 18 retained originals into the Windows session folder and byte-compared every copy before sealing. The resulting reciprocal `v2` manifest has SHA-256 `75c0670a8e49d000ea81fb04f63d46b18c9463a276df76538a9361b2e1d50f88`. macOS imported nine recognition fronts and nine evidence-only backs. All retained, local, sealed, and imported evidence copies remain preserved.
+
+The physical `v2` acquisition gate is passed. The supported PaperStream UI must enable **Release after scan** before the next routine capture. Direct edits to PaperStream internal configuration remain prohibited.

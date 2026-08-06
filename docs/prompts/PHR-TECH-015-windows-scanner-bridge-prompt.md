@@ -30,6 +30,9 @@ Implement and physically qualify a fail-closed Windows-local PaperStream capture
 - Implement a dependency-free Node macOS CLI to inspect and import ready bundles with strict schema/path/hash/size/count/uniqueness verification and atomic destination promotion.
 - Emit redacted deterministic JSONL events from both sides.
 - Preserve Windows originals and sealed bundles; never delete or overwrite conflicting evidence.
+- Preserve `v1` as unpaired legacy evidence and add an explicit `v2` adjacent-duplex-front-first mode with reciprocal side/pair fields, even-count validation, and no filename/profile-name inference.
+- Import `v2` backs as linked immutable evidence without scheduling them for recognition; schedule only declared fronts.
+- Require batch folders and **Release after scan** in the operator-reviewed PaperStream profile. If scanning completes without output files, inspect PaperStream's supported retained-batch evidence, preserve every original, and do not trigger a rescan until manual-release state is excluded.
 - Provide synthetic cross-platform tests and a Windows VM preflight test before physical execution.
 
 ## Constraints
@@ -37,8 +40,9 @@ Implement and physically qualify a fail-closed Windows-local PaperStream capture
 - Do not modify Phronesis application code, databases, runtime, recognition, corpus, pricing, offers, inventory, UI, or marketplace adapters.
 - Do not add a network listener or Windows database access.
 - Do not reverse-engineer or edit PaperStream internal configuration files.
+- Do not repair release behavior by modifying PaperStream internal XML. Profile correction belongs in the supported PaperStream UI.
 - Do not automate credentials, logins, or Windows desktop interaction.
-- Do not assume alternating files prove front/back pairing.
+- Do not assume alternating files prove front/back pairing. Pair only a `v2` bundle whose operator-selected mode, frame count, side values, and reciprocal pair references all validate.
 - Do not scan valuable, irreplaceable, damaged, curled, sleeved, or rigid cards.
 - Do not commit runtime images, VM files, manifests containing private paths, or hardware identifiers.
 
@@ -63,7 +67,8 @@ The Windows side owns acquisition and sealing. The macOS side owns distrustful v
 - PowerShell self-tests for session grammar, allowed extensions, empty source, source mutation, copy/hash mismatch, conflicting bundle, and idempotent repeat.
 - Windows VM preflight proves supported tools and the dedicated share without scanning.
 - Physical gate uses only 2–4 owner-approved low-value cards under direct supervision.
-- Record exact observed frame count/order and matching hashes; do not infer side semantics.
+- Prove the physical profile actually releases files into the requested session folder; a scanner-complete signal alone is insufficient.
+- Record exact observed frame count/order and matching hashes. For `v1`, do not infer side semantics. For `v2`, test the declared pairing grammar and reject partial or contradictory pairs before import.
 - Run repository diff hygiene and secret/private-identifier review.
 
 ## Documentation Updates

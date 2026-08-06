@@ -1,4 +1,5 @@
 import XCTest
+import Vision
 @testable import PhronesisVisionCore
 
 final class VisionAnalyzerTests: XCTestCase {
@@ -10,6 +11,12 @@ final class VisionAnalyzerTests: XCTestCase {
 
     func testInvalidFeatureArchiveFailsClosed() {
         XCTAssertThrowsError(try VisionAnalyzer().distance(queryArchive: "not-base64", referenceArchive: "also-invalid"))
+    }
+
+    func testVisionRequestsBindTheirMainStageToCpu() throws {
+        let request = VNRecognizeTextRequest()
+        let cpu = try VisionAnalyzer.configureCpuExecution(request)
+        XCTAssertEqual(request.computeDevice(for: .main), cpu)
     }
 
     func testRegionSuggestionsSuppressDuplicatesAndContainingPage() {

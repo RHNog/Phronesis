@@ -10,7 +10,7 @@ Temporary Windows/Parallels fi-8170 Acquisition Bridge
 
 ## Status
 
-Implemented — S1W Conformance Verified
+Implemented — S1W Conformance Verified; Duplex Evidence Physical Gate Passed; PaperStream Release Configuration Required Before Next Capture
 
 ## Priority
 
@@ -61,6 +61,9 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - Preserve Windows-local originals and the sealed shared bundle after import during Slice S1W.
 - Emit secret-free JSON Lines events with schema, session, monotonic sequence, event type, and typed evidence.
 - Make repeated seal and import operations idempotent for an unchanged session and fail closed on conflicting content.
+- Preserve legacy `v1` bundles as unpaired evidence. Do not infer side or pairing from filenames, profile names, or alternating sequence.
+- Add an opt-in `v2` manifest for an operator-declared adjacent duplex, front-first PaperStream release. The bridge must reject an odd frame count or any non-reciprocal side/pair declaration before publishing READY.
+- Persist each verified `v2` front/back relation as acquisition evidence. Only the front schedules recognition; the back remains immutable linked evidence for operator review.
 
 ## Non-Functional Requirements
 
@@ -71,7 +74,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 
 ### Scalability
 
-- The manifest supports ordered frames without assuming front/back pairing.
+- Legacy manifests support ordered frames without assuming front/back pairing. The `v2` contract adds pairing only when the operator explicitly selects the adjacent-duplex-front-first mode and the complete batch satisfies that grammar.
 - Production batching, recognition queues, and unbounded sessions remain deferred.
 
 ### Maintainability
@@ -122,7 +125,10 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - The scanner is explicitly reassigned to Windows only for the supervised test.
 - A 2–4 low-value-card duplex run produces a sealed bundle and a Mac import with matching per-frame hashes and no private identifiers in events.
 - The evidence report states the observed file count and order without inferring front/back pairing.
-- No source image enters Git, no Windows original is deleted, and no product/database/network state changes.
+- A synthetic `v2` duplex bundle proves reciprocal front/back pairing, rejects odd and contradictory declarations, imports only fronts into the recognition queue, and exposes each paired reverse as linked evidence.
+- A physical `v2` adjacent-duplex-front-first batch preserves every Windows original, seals an even reciprocal relation, imports only fronts into recognition, and exposes the paired backs as evidence.
+- Existing `v1` bundles remain byte-for-byte valid and are displayed as unpaired rather than retroactively upgraded.
+- No source image enters Git and no Windows original is deleted. The bridge itself performs no commercial or network mutation; an explicitly authorized downstream recognition import may create only immutable evidence/session/job state under `PHR-TECH-014` and `PHR-WORKFLOW-016`.
 
 ## Edge Cases
 
@@ -146,7 +152,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 
 ## Technical Notes
 
-Schema name: `phronesis.windows-scan-bundle/v1`. Event schema: `phronesis.windows-bridge-event/v1`. The bridge records an observed sequence only. Duplex side semantics remain unknown until physical evidence proves them.
+Schema names: `phronesis.windows-scan-bundle/v1` and `phronesis.windows-scan-bundle/v2`. Event schema: `phronesis.windows-bridge-event/v1`. Version 1 records observed sequence only. Version 2 is emitted only for the explicit `adjacent-duplex-front-first` mode and seals each frame's side plus reciprocal paired sequence. The importer validates the full relation before any repository mutation.
 
 The dedicated shared root is runtime evidence and remains ignored. The repository stores tools and synthetic fixtures only.
 
@@ -162,8 +168,8 @@ The PaperStream job is a one-time operator-reviewed setup. Routine bridge execut
 
 ## Open Questions
 
-- PaperStream emitted alternating front/back-looking frames in the supervised run, but the bridge intentionally records only observed order and does not assert side pairing.
-- The temporary PaperStream job must keep batch-folder output enabled; a future native Windows agent should own session directories directly.
+- The accepted 2026-08-04 batch remains a legacy `v1` bundle. PaperStream emitted alternating front/back-looking frames, but its immutable manifest intentionally records only observed order; the application must not relabel it without a separate operator attestation or a new `v2` capture.
+- The temporary PaperStream job must keep batch-folder output enabled and enable **Release after scan** through the supported PaperStream UI. A scan that remains in manual-release state is not a bridge failure and must not be represented as a completed acquisition until its retained originals are recovered and sealed. A future native Windows agent should own session directories directly.
 
 ## Traceability
 
@@ -172,5 +178,5 @@ The PaperStream job is a one-time operator-reviewed setup. Routine bridge execut
 - Related implementation prompt: `docs/prompts/PHR-TECH-015-windows-scanner-bridge-prompt.md`.
 - Related tests: `docs/testing/PHR-TECH-015-windows-scanner-bridge-validation.md`.
 - Related release notes: `docs/release-notes/PHR-TECH-015.md`.
-- Last modified: 2026-08-04.
-- Modification reason: record the verified duplex acquisition, interactive-session requirement, and documented `/Exit` lifecycle.
+- Last modified: 2026-08-06.
+- Modification reason: record the successful physical `v2` acquisition, the manual-release recovery boundary, and the supported-UI configuration gate for subsequent runs.

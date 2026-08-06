@@ -41,6 +41,7 @@
     "recognition:watch": "node --import ./tests/register-test-hooks.mjs scripts/watch-card-recognition.ts",
     "recognition:once": "node --import ./tests/register-test-hooks.mjs scripts/watch-card-recognition.ts --once",
     "recognition:reprocess": "node --import ./tests/register-test-hooks.mjs scripts/reprocess-card-recognition-session.ts",
+    "recognition:recover": "node --import ./tests/register-test-hooks.mjs scripts/recover-card-recognition-session.ts",
     "recognition:corpus:build": "node --import ./tests/register-test-hooks.mjs scripts/build-card-recognition-corpus.ts",
     "recognition:benchmark": "node --import ./tests/register-test-hooks.mjs scripts/benchmark-card-recognition.ts",
     "recognition:regions:benchmark": "node --import ./tests/register-test-hooks.mjs scripts/benchmark-card-regions.ts",

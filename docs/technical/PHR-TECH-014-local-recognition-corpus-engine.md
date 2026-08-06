@@ -30,6 +30,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 - Every reference asset records source, license/provenance, checksum, language, set, collector number, finish applicability, and corpus version.
 - Derived fingerprints, embeddings, OCR indexes, and local-feature indexes are rebuildable versioned artifacts.
 - Recognition stages include validation, region detection, normalization, high-recall retrieval, OCR, geometric verification, game-specific constraints, evidence fusion, and abstention.
+- Local Apple Vision requests must bind their main compute stage to an available CPU device. This deterministic compatibility mode avoids a confirmed macOS 27 beta Apple Neural Engine model-compilation deadlock; the existing bounded process timeout remains the final fail-closed guard.
 - An immutable ground-truth manifest fixes train/dev/holdout allocation before tuning.
 - Condition and price-material finish uncertainty do not silently inherit aggregate identity confidence.
 - Auto-accept remains disabled until an unseen holdout supports the approved precision and stratum policy.
@@ -47,6 +48,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 - Every decision is reproducible from corpus, pipeline, model/index, and policy versions.
 - No paid or cloud recognition dependency exists at runtime.
 - Restarted jobs are lease-safe and idempotent; duplicate frame or region delivery cannot create duplicate assets.
+- A failed or expired job may be explicitly requeued only through a session-scoped recovery operation that preserves its attempt history and immutable evidence. Recovery must never requeue completed work or another session.
 - A versioned pipeline change can reprocess immutable session evidence append-only; current counts and offer drafts use only the latest active region revision and its latest decision/resolution.
 - A benchmark that lacks a powered holdout reports `NOT_QUALIFIED` and cannot activate auto-accept.
 - Corpus construction copies source bytes into a content-addressed bundle, emits canonical JSON, and rejects identity leakage across train/dev/holdout partitions.
@@ -66,7 +68,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 
 ## Technical Notes
 
-The first implementation uses a transport-neutral TypeScript domain and repository plus a local macOS Vision worker for OCR and image feature evidence. The Windows bridge continues to supply sealed frames; recognition runs after Mac import. Platform-specific worker failure is represented as failed evidence, never as a guessed identity.
+The first implementation uses a transport-neutral TypeScript domain and repository plus a local macOS Vision worker for OCR and image feature evidence. The Windows bridge continues to supply sealed frames; recognition runs after Mac import. Platform-specific worker failure is represented as failed evidence, never as a guessed identity. On macOS 27 beta, ANE-backed text-model compilation was observed to block inside Vision until the 60-second worker timeout. CPU-bound Vision requests are the approved compatibility path because they keep recognition local and deterministic while preserving the same OCR and feature-print contract.
 
 Runtime authority lives under `.data/card-recognition/` and is ignored by Git. Source-controlled fixtures contain synthetic or explicitly permitted data only.
 
@@ -74,5 +76,5 @@ Runtime authority lives under `.data/card-recognition/` and is ignored by Git. S
 
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - Related prompt: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`.
-- Last modified: 2026-08-05.
-- Modification reason: make English Pokémon the first active lane and define fail-closed replay, exact-variant evidence, and latest-revision semantics.
+- Last modified: 2026-08-06.
+- Modification reason: require deterministic CPU-bound Vision execution and session-scoped failed-job recovery after a macOS 27 beta ANE deadlock was reproduced against immutable duplex evidence.
