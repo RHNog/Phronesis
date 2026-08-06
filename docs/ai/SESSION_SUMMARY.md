@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T13:58:25Z","generation_id":"572dc82bcf061ac36ec2","head":"66f9e6a9ab3c385dd36cb9c1764da851320f1592","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T14:03:10Z","generation_id":"5e357f98b22e03cf40a4","head":"55731ca853c27118d85a44b81e53bfffcebbcbb1","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -18,12 +18,14 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Reconciled the Mac Studio hostname across the employee-login checklist, repository launch definition, project state, current structure, architecture, and agent handoff while preserving historical MacBook-era evidence.
 - Verified the host and operational boundary: Tailscale identifies `ramons-mac-studio.tailaa2d39.ts.net`; the installed private-review LaunchAgent matches the repository definition; loopback ports 3100/3101 are bound locally; private 9443 Vendor/Settings return 200; public 10000 login returns 200 and Settings returns 404.
 - Re-ran the configured project gate over the reconciled tree: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and diff hygiene pass.
+- Published implementation `66f9e6a` and seal `30605a3`; local acquire/continuity returned zero findings and hosted run `31108532122` passed continuity in 8 seconds and project validation in 1 minute 22 seconds.
+- Removed the hosted run's remaining Node 20 action-runtime deprecation by upgrading the two official checkout steps and the setup-node step to their current Node 24-compatible v7 majors without changing the exact-SHA or validation contract.
 
 ## State left behind
 
-- Branch `codex/phr-price-monitoring-20260730` at `66f9e6a9ab3c385dd36cb9c1764da851320f1592`.
+- Branch `codex/phr-price-monitoring-20260730` at `55731ca853c27118d85a44b81e53bfffcebbcbb1`.
 - Implementation worktree is clean.
-- Continuity generation `572dc82bcf061ac36ec2` was prepared successfully.
+- Continuity generation `5e357f98b22e03cf40a4` was prepared successfully.
 
 ## Remaining work
 
