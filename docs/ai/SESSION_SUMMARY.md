@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-05T19:51:26Z","generation_id":"5c12817f1ef90b71f483","head":"8d655f54982d8de118ad13e68844d4f5d375e481","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T13:58:25Z","generation_id":"572dc82bcf061ac36ec2","head":"66f9e6a9ab3c385dd36cb9c1764da851320f1592","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -14,12 +14,16 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Created implementation commit `7474790` and Handoff seal `27af62a`; local continuity passed with zero errors/warnings and remote SHA equality passed.
 - Hosted run `30844457778` created only one pull-request execution and passed dependency-backed project validation. Continuity exposed the exact-SHA checkout's detached branch identity, so the workflow now restores the event branch locally at the unchanged SHA.
 - Hosted replacement run `30844716647` passed continuity and project validation. The local and remote seal SHA matched, and no duplicate feature-branch push run was created.
+- Diagnosed the August 6 continuity failure as one expected stale-worktree condition: six intentional Mac Studio hostname edits changed the implementation fingerprint after generation `5c12817f1ef90b71f483`; no Handoff runtime or manifest algorithm defect was found.
+- Reconciled the Mac Studio hostname across the employee-login checklist, repository launch definition, project state, current structure, architecture, and agent handoff while preserving historical MacBook-era evidence.
+- Verified the host and operational boundary: Tailscale identifies `ramons-mac-studio.tailaa2d39.ts.net`; the installed private-review LaunchAgent matches the repository definition; loopback ports 3100/3101 are bound locally; private 9443 Vendor/Settings return 200; public 10000 login returns 200 and Settings returns 404.
+- Re-ran the configured project gate over the reconciled tree: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and diff hygiene pass.
 
 ## State left behind
 
-- Branch `codex/phr-price-monitoring-20260730` at `8d655f54982d8de118ad13e68844d4f5d375e481`.
+- Branch `codex/phr-price-monitoring-20260730` at `66f9e6a9ab3c385dd36cb9c1764da851320f1592`.
 - Implementation worktree is clean.
-- Continuity generation `5c12817f1ef90b71f483` was prepared successfully.
+- Continuity generation `572dc82bcf061ac36ec2` was prepared successfully.
 
 ## Remaining work
 
