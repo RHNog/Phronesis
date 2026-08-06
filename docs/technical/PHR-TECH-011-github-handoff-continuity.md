@@ -81,7 +81,9 @@ Local Handoff verification remains repository-native after dependencies are inst
 
 ### Security
 
-The workflow uses read-only checkout behavior and requires no repository secret beyond GitHub's standard token. It must not commit, push, expose credentials, or activate public infrastructure.
+The workflow declares `contents: read`, uses read-only checkout behavior and
+requires no repository secret beyond GitHub's standard token. It must not
+commit, push, expose credentials, or activate public infrastructure.
 
 ### Extensibility
 
@@ -151,4 +153,6 @@ No product UI changes. GitHub check names should clearly distinguish project val
 - Related tests: `docs/testing/PHR-TECH-011-github-handoff-continuity-validation.md`.
 - Related release notes: `docs/release-notes/PHR-TECH-011.md`.
 - Last modified: 2026-08-06.
-- Modification reason: Revalidated the Mac Studio continuity seal and upgraded official GitHub actions to current v7 majors after the otherwise successful hosted run exposed a Node 20 action-runtime deprecation.
+- Modification reason: Revalidated the Mac Studio continuity seal, upgraded
+  official GitHub actions to current v7 majors, aligned the portable runtime to
+  Handoff 0.5.1 and made workflow permissions explicitly read-only.

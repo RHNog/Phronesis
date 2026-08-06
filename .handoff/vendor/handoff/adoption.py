@@ -52,7 +52,7 @@ The repository is authoritative; conversation history is disposable.
 {CONTRACT_END}
 """
 
-CI_WORKFLOW = """\
+LEGACY_CI_WORKFLOW = """\
 name: Handoff continuity
 
 on:
@@ -68,6 +68,35 @@ jobs:
         run: |
           ./handoff prepare-handoff
           ./handoff validate-continuity
+"""
+
+
+CI_WORKFLOW = """\
+name: Handoff continuity
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Restore Handoff branch identity
+        env:
+          HANDOFF_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: git switch --force-create "$HANDOFF_BRANCH"
+      - name: Validate committed Handoff
+        run: ./handoff validate-continuity --json
 """
 
 
@@ -189,6 +218,24 @@ def _has_handoff_ci(root: Path) -> bool:
     return False
 
 
+def _install_or_upgrade_ci(root: Path, *, enabled: bool) -> tuple[bool, bool]:
+    """Install missing CI or replace only the exact unsafe legacy template."""
+
+    if not enabled:
+        return False, False
+    ci_path = root / ".github/workflows/handoff-continuity.yml"
+    if ci_path.is_file():
+        current = ci_path.read_text(encoding="utf-8")
+        if current == LEGACY_CI_WORKFLOW:
+            write_text_atomic(ci_path, CI_WORKFLOW)
+            return False, True
+        return False, False
+    if _has_handoff_ci(root):
+        return False, False
+    write_text_atomic(ci_path, CI_WORKFLOW)
+    return True, False
+
+
 def adopt_repository(
     root: Path,
     *,
@@ -216,11 +263,7 @@ def adopt_repository(
             metadata_updated.append(relative)
     contract_updated = _merge_agent_contract(root / mappings["agents"])
 
-    ci_path = root / ".github/workflows/handoff-continuity.yml"
-    ci_created = False
-    if ci and not _has_handoff_ci(root):
-        write_text_atomic(ci_path, CI_WORKFLOW)
-        ci_created = True
+    ci_created, ci_upgraded = _install_or_upgrade_ci(root, enabled=ci)
 
     config = load_config(root)
     return CommandOutcome(
@@ -233,6 +276,7 @@ def adopt_repository(
             "metadata_updated": metadata_updated,
             "agent_contract_updated": contract_updated,
             "ci_created": ci_created,
+            "ci_upgraded": ci_upgraded,
         },
     )
 
@@ -244,11 +288,7 @@ def upgrade_repository(root: Path, *, ci: bool = True) -> CommandOutcome:
     previous = version_path.read_text(encoding="utf-8").strip() if version_path.exists() else "missing"
     files = _install_portable_runtime(root)
     contract_updated = _merge_agent_contract(config.path(config.document("agents")))
-    ci_path = root / ".github/workflows/handoff-continuity.yml"
-    ci_created = False
-    if ci and not _has_handoff_ci(root):
-        write_text_atomic(ci_path, CI_WORKFLOW)
-        ci_created = True
+    ci_created, ci_upgraded = _install_or_upgrade_ci(root, enabled=ci)
     return CommandOutcome(
         f"Upgraded Handoff from {previous} to {__version__} in {root.name}.",
         {
@@ -258,5 +298,6 @@ def upgrade_repository(root: Path, *, ci: bool = True) -> CommandOutcome:
             "portable_runtime": files,
             "agent_contract_updated": contract_updated,
             "ci_created": ci_created,
+            "ci_upgraded": ci_upgraded,
         },
     )

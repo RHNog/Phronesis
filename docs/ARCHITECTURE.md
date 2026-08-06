@@ -5,6 +5,9 @@
 
 `handoff.toml` maps canonical human-owned project truth to `PROJECT_STATE`, `ARCHITECTURE`, `DECISIONS`, `CHANGELOG`, `BACKLOG`, and `ACTIVE_TASK`. Generated continuity documents under `docs/ai/` are derived only after verified human-owned state is committed. Bare `./handoff` runs the configured test, lint, build, and diff checks, creates the generated operational package, validates it, and seals it in a separate commit. Conversation state and the rollback checkout are never continuity authority.
 
+The portable runtime is Handoff 0.5.1. Its wrapper suppresses Python bytecode
+so verifier execution cannot create repository dirt.
+
 `PHR-TECH-011` separates GitHub responsibilities. The `project-validation` job installs the locked npm dependency graph under pinned Node 24 and independently runs test, lint, build, and diff hygiene. The `continuity` job checks out the exact pull-request head or push SHA with full history and validates the already-committed Handoff package. GitHub never calls `prepare-handoff`; CI verifies repository truth and cannot manufacture a transient replacement for a missing local seal.
 
 ## 2026-07-30 Card-Show Operations Boundaries

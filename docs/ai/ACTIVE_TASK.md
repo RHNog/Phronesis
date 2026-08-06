@@ -33,6 +33,9 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Re-ran the configured project gate over the reconciled tree: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and diff hygiene pass.
 - Published implementation `66f9e6a` and seal `30605a3`; local acquire/continuity returned zero findings and hosted run `31108532122` passed continuity in 8 seconds and project validation in 1 minute 22 seconds.
 - Removed the hosted run's remaining Node 20 action-runtime deprecation by upgrading the two official checkout steps and the setup-node step to their current Node 24-compatible v7 majors without changing the exact-SHA or validation contract.
+- Aligned the portable runtime to Handoff 0.5.1, adopted shared workflow 2.20.0,
+  and made hosted permissions explicitly read-only without changing the public
+  ingress or product runtime.
 
 ## Remaining work
 

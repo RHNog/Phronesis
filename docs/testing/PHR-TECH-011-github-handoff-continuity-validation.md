@@ -52,3 +52,7 @@ Passed.
 - First closure: implementation `66f9e6a`, generation `572dc82bcf061ac36ec2`, and seal `30605a3` published with local acquire/continuity at zero findings and exact remote SHA equality.
 - Hosted run `31108532122`: continuity passed in 8 seconds and project validation passed in 1 minute 22 seconds; the only annotation was the deprecated Node 20 runtime inside `actions/setup-node@v4`.
 - Action-runtime remediation: official checkout and setup-node releases identify v7 as current; the workflow advances both official actions to v7, retains explicit `node-version: 24` and `cache: npm`, and must repeat the clean seal plus both hosted jobs without the Node 20 annotation.
+- Fleet alignment: Handoff 0.5.1 reports the expected version, portable execution
+  creates no `__pycache__`, workflow permissions are read-only, and the configured
+  404/404 tests, warning-free lint, Next.js production build, and diff hygiene pass.
+  The fresh seal must again return zero local and hosted continuity findings.

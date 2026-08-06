@@ -10,6 +10,8 @@ Phronesis now separates clean-runner project validation from committed Handoff c
 - Missing dependencies are no longer misreported as simultaneous test, lint, and build defects.
 - Stale or dirty Handoff state remains a real failure until canonical documents are committed and bare Handoff creates a seal.
 - Official checkout and setup-node steps use their current v7 majors, keeping the workflow on the supported Node 24 action runtime without changing project or continuity semantics.
+- The repository carries Handoff 0.5.1, suppresses portable Python bytecode and
+  declares read-only hosted permissions.
 
 ## Boundaries
 

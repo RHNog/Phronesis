@@ -66,7 +66,8 @@ for HANDOFF_PYTHON in python3.13 python3.12 python3.11 python3; do
   if command -v "$HANDOFF_PYTHON" >/dev/null 2>&1 &&
      "$HANDOFF_PYTHON" -c 'import sys; raise SystemExit(sys.version_info < (3, 11))'
   then
-    PYTHONPATH="$HANDOFF_ROOT/.handoff/vendor${PYTHONPATH:+:$PYTHONPATH}" \\
+    PYTHONDONTWRITEBYTECODE=1 \\
+      PYTHONPATH="$HANDOFF_ROOT/.handoff/vendor${PYTHONPATH:+:$PYTHONPATH}" \\
       exec "$HANDOFF_PYTHON" -m handoff "$@"
   fi
 done

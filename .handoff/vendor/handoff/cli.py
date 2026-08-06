@@ -24,6 +24,7 @@ from handoff.adoption import adopt_repository, upgrade_repository
 from handoff.config import ConfigError
 from handoff.fleet import fleet_status, fleet_upgrade, initialize_fleet
 from handoff.git import GitError
+from handoff import __version__
 
 
 COMMANDS: dict[str, Callable[[str], CommandOutcome]] = {
@@ -43,7 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="handoff",
         description="Repository-native AI continuity framework",
     )
-    parser.add_argument("--version", action="version", version="handoff 0.5.0")
+    parser.add_argument("--version", action="version", version=f"handoff {__version__}")
     subparsers = parser.add_subparsers(dest="command")
 
     init_parser = subparsers.add_parser(

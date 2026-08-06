@@ -69,6 +69,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - Independently assignable `ARTWORK_REVIEW` authorization for permanent employees and timed workers, with manual `OPERATE` separated from system-wide `ADMIN` refresh/recovery powers.
 - A dedicated loopback public event-worker gateway that overwrites its ingress marker, blocks owner-only and permanent-authentication paths, and requires a valid timed event session before Phronesis authorization. Its durable launch definition is implemented but public Funnel activation remains gated.
 - GitHub pull-request validation separated into dependency-backed project gates and exact committed Handoff continuity verification; GitHub does not prepare or mutate Handoff state.
+- Portable continuity is Handoff 0.5.1 and suppresses Python bytecode writes.
 - Editable employee-owned Vendor purchase carts with exact unit value/quantity correction, Bulk total/count correction, visible removal, unsaved-change protection, and downstream receipt integrity.
 - Sealed-only PkmnPrices ingestion with newest-release-first scheduling, an exact 100-credit UTC-day local ceiling, durable restart-safe progress, exact artwork adoption, and Settings/provider health.
 - Compact recommended-offer disclosure immediately above the Vendor Workspace cart, showing TCG Low/Market evidence and expandable opening/target/walk-away values.
