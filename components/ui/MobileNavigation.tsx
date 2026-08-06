@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { createPortal } from "react-dom";
 import {
   useCallback,
   useEffect,
@@ -138,7 +139,7 @@ export default function MobileNavigation({
         </svg>
       </button>
 
-      {isOpen ? (
+      {isOpen ? createPortal(
         <div
           className="fixed inset-0 z-[60] bg-black/75 md:hidden"
           onMouseDown={(event) => {
@@ -153,7 +154,7 @@ export default function MobileNavigation({
             role="dialog"
             aria-modal="true"
             aria-labelledby="mobile-navigation-title"
-            className="flex h-full w-[min(21rem,calc(100vw-3rem))] flex-col border-r border-zinc-800 bg-zinc-950 shadow-2xl shadow-black"
+            className="app-safe-area-panel flex h-full w-[min(21rem,calc(100vw-3rem))] flex-col border-r border-zinc-800 bg-zinc-950 shadow-2xl shadow-black"
           >
             <div className="flex min-h-16 items-center justify-between border-b border-zinc-800 px-4">
               <div className="flex min-w-0 items-center gap-3">
@@ -223,7 +224,8 @@ export default function MobileNavigation({
               )}
             </nav>
           </section>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </>
   );

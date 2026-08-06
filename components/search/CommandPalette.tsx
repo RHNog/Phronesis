@@ -228,7 +228,7 @@ export default function CommandPalette({ context, open, onClose }: CommandPalett
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-4 pt-[10vh] backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+    <div className="app-command-palette-safe fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-4 pt-[10vh] backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section aria-label="Global command palette" aria-modal="true" className="w-full max-w-2xl overflow-hidden rounded-xl border border-zinc-700 bg-zinc-950 shadow-2xl shadow-black" onKeyDown={handleKeyDown} role="dialog">
         <div className="flex items-center gap-3 border-b border-zinc-800 px-4">
           <span className="text-zinc-400" aria-hidden="true">⌕</span>

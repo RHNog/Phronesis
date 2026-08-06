@@ -81,7 +81,7 @@ export default function Topbar({ context, navigationItems, account }: TopbarProp
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-16 flex-none items-center gap-2 border-b border-zinc-800 bg-zinc-950/95 px-3 pr-[max(.75rem,env(safe-area-inset-right))] backdrop-blur md:px-6 md:pr-[max(1.5rem,env(safe-area-inset-right))]">
+      <header className="app-topbar sticky top-0 z-40 flex flex-none items-center gap-2 border-b border-zinc-800 bg-zinc-950/95 px-3 [padding-left:max(.75rem,env(safe-area-inset-left))] pr-[max(.75rem,env(safe-area-inset-right))] backdrop-blur md:px-6 md:[padding-left:max(1.5rem,env(safe-area-inset-left))] md:pr-[max(1.5rem,env(safe-area-inset-right))]">
         <MobileNavigation navigationItems={navigationItems} />
         <button
           aria-label="Search Phronesis"
@@ -110,7 +110,7 @@ export default function Topbar({ context, navigationItems, account }: TopbarProp
       </header>
       {shortcutsOpen ? (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4"
+          className="app-safe-area-overlay fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setShortcutsOpen(false);
           }}

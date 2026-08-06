@@ -37,3 +37,15 @@ Result: Pass — Product Review Ready.
 ## Boundary
 
 This evidence verifies implementation conformance in the same session and is not independent approval. Product Owner visual acceptance remains separate.
+
+## iPhone Safe-Area Remediation
+
+- Product Owner photo evidence showed the installed iPhone WebApp's status bar overlapping the menu, search, shortcut-help, and profile controls.
+- The shared top bar now computes to `4rem + env(safe-area-inset-top)` and applies the inset as top padding, preserving a complete 64-pixel toolbar below the status/Dynamic Island area. Browsers that report a zero inset retain the existing 64-pixel geometry.
+- Mobile navigation is portalled to `document.body`, eliminating the fixed-position containing block created by the sticky header's backdrop filter. The drawer and backdrop therefore cover the complete device viewport.
+- Mobile navigation, shortcut help, and command search consume the relevant top and bottom safe-area insets.
+- Focused application-navigation suite: 8/8 pass.
+- Current full supported suite: 438/438 pass.
+- TypeScript, warning-free lint, and Next.js 16.2.12 production build: pass.
+- Live 390×844 review: 64-pixel zero-inset header, 44-pixel controls, safe-area CSS support, 844-pixel body-portalled drawer, document width 375 within the 390-pixel viewport, no horizontal overflow, and zero console errors.
+- The private production runtime was rebuilt and returned HTTP 200 after restart. Final physical-owner iPhone confirmation requires refreshing or fully relaunching the installed WebApp so Safari discards its cached CSS.

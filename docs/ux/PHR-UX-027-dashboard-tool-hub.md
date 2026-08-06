@@ -42,6 +42,7 @@ Users lack a landing page that explains and launches the Phronesis tools availab
 - Render one card per authorized non-Dashboard navigation destination, using the same server-filtered navigation model as the shell.
 - Let desktop users collapse the sidebar to an icon rail and persist that preference in local browser storage.
 - Treat the installed Safari WebApp as a first-class shell: keep the sidebar and its expand/collapse control within the dynamic viewport, theme every document/scrollbar gutter dark, respect safe-area insets, suppress horizontal and standalone overscroll bleed, and avoid browser-native keyboard conflicts outside standalone display mode.
+- In the installed iPhone WebApp, place the complete top-bar control row below `safe-area-inset-top`; the status bar may share the dark canvas but must never cover the navigation, search, shortcut, or account controls. Apply the same top inset to the mobile navigation panel and shell modal overlays.
 - Provide discoverable standalone keyboard controls for search, sidebar toggle, Dashboard, and the first nine authorized tools, plus an in-app shortcut reference. Replace inert shell controls with real destinations.
 - Preserve the existing accessible mobile navigation drawer.
 - Send both permanent-user and temporary-worker successful login flows to Dashboard; the Dashboard then exposes only authorized tools.
@@ -118,6 +119,7 @@ Cards form one column on phones, two columns on medium widths, and up to three c
 - Desktop sidebar collapses and expands, persists the preference across reloads, and remains keyboard and screen-reader usable.
 - The Expand control remains visible without page scrolling in the collapsed installed WebApp, the navigation list scrolls independently, and the sidebar is pinned to `100dvh`.
 - The far-right scrollbar/overscroll gutter is dark in the installed Safari WebApp at every page height; no white document background is exposed during scrolling or resizing.
+- On a notched or Dynamic Island iPhone installed WebApp, the top bar reserves the reported top safe area before its 64-pixel control row. Every top control remains fully visible, reachable, and at least 44 pixels high.
 - Standalone shortcut help lists and implements search, sidebar, Dashboard, and tool-navigation commands; ordinary browser sessions retain native `Cmd/Ctrl+B`, `G`, and digit-key behavior.
 - The top-bar avatar reaches Settings and no visible shell button is inert.
 - Phone navigation remains operable without horizontal overflow.
@@ -129,6 +131,8 @@ Cards form one column on phones, two columns on medium widths, and up to three c
 
 - Browser storage is unavailable: sidebar remains usable in its default expanded state.
 - The navigation list is taller than the WebApp viewport: it scrolls between a fixed brand/toggle header and the fixed shell boundary without hiding Expand or Collapse.
+- iOS reports a non-zero `safe-area-inset-top`: the top bar grows by exactly that inset while retaining a full-height control row; the mobile drawer and modal overlays also begin below the unsafe region.
+- A browser or device reports a zero safe-area inset: the top bar remains the existing 64-pixel height without added blank space.
 - A browser tab, rather than an installed WebApp, receives `Cmd/Ctrl+B` or `G` followed by a navigation key: Phronesis does not intercept it.
 - An installed Safari web app created under an obsolete hostname remains a separate local application artifact and must be reinstalled from the current canonical tailnet URL; the relative manifest prevents application code from introducing another host-specific launch target.
 - A user has one module: Dashboard presents one tool card without empty categories.
@@ -149,7 +153,7 @@ Cards form one column on phones, two columns on medium widths, and up to three c
 
 ## Technical Notes
 
-The server-owned `ProductNavigation` model remains the source for authorized navigation. Dashboard is a shell destination with no independent module, while the existing authorization gate requires at least one visible module before rendering it. Sidebar collapse state is local presentation state only. The sidebar detects standalone display mode only to enable app-specific shortcuts; authorization and navigation membership remain server-owned. Next.js file-based icon routes and `app/manifest.ts` own install metadata; the manifest uses only same-origin relative paths. Root CSS owns the dark document canvas, scrollbar colors, standalone overscroll containment, and safe-area variables. The Vendor checkout card remains adjacent to evidence but its outer workspace wrapper is static, not sticky.
+The server-owned `ProductNavigation` model remains the source for authorized navigation. Dashboard is a shell destination with no independent module, while the existing authorization gate requires at least one visible module before rendering it. Sidebar collapse state is local presentation state only. The sidebar detects standalone display mode only to enable app-specific shortcuts; authorization and navigation membership remain server-owned. Next.js file-based icon routes and `app/manifest.ts` own install metadata; the manifest uses only same-origin relative paths. Root CSS owns the dark document canvas, scrollbar colors, standalone overscroll containment, and safe-area geometry. The top bar uses a 64-pixel content row plus `env(safe-area-inset-top)` rather than placing padding inside a fixed 64-pixel box. Mobile navigation and modal overlays consume the same top/bottom environment insets. The mobile drawer is portalled to the document body so the blurred sticky top bar cannot become its fixed-position containing block. The Vendor checkout card remains adjacent to evidence but its outer workspace wrapper is static, not sticky.
 
 ## UI / UX Notes
 
@@ -172,4 +176,4 @@ Cards should be visually distinct, scan quickly, and communicate tool category a
 - Related tests: `tests/application-navigation.test.ts`, `tests/authorization-foundation.test.ts`.
 - Related release notes: `docs/release-notes/PHR-UX-027.md`.
 - Last modified: 2026-08-06.
-- Modification reason: Product Owner screenshot review added installed-WebApp viewport, dark-gutter, always-visible navigation control, functional shell button, and standalone shortcut requirements.
+- Modification reason: Product Owner iPhone screenshot review added explicit status-bar safe-area reachability for the shared top bar, mobile navigation, and shell overlays.

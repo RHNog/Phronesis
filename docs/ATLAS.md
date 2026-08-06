@@ -13,6 +13,7 @@
 - `PHR-UX-027` also owns origin-relative standalone installation metadata, approved browser/install/iOS icons, and non-overlapping Event Operations placement in Vendor Workspace.
 - Dashboard cards and shared navigation derive from one server-filtered `ProductNavigation` model; Dashboard is a shell destination and never a substitute authorization module.
 - Desktop navigation collapses to a persistent local icon rail while the phone retains the accessible modal drawer.
+- The installed phone shell reserves `safe-area-inset-top` above a full 64-pixel toolbar. Full-screen mobile navigation is body-portalled, and navigation/help/search overlays consume device top and bottom safe-area insets.
 - The approved `PHR-UI-001` application artwork is byte-identical to canonical commit `8d655f5` and supplies Dashboard, desktop/mobile shell, favicon, and Apple home-screen identity. CSS or generated substitutes are prohibited.
 
 ## Local Card Acquisition And Recognition

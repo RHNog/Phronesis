@@ -125,6 +125,7 @@ No later slice inherits acceptance from an earlier game, platform, corpus, or dr
 - Implemented: the shared phone header opens every authorized primary Phronesis destination through one accessible drawer (`PHR-UX-014`).
 - Preserved: desktop sidebar, canonical navigation metadata, server entitlement filtering, and independent page/API authorization.
 - Verified: all six live routes, current state, focus containment/restoration, Escape/backdrop dismissal, breakpoint recovery, 44px targets, 390px overflow, console, 278 tests, TypeScript, lint, build, and private-service health pass.
+- Extended under `PHR-UX-027`: the installed iPhone shell reserves the status-bar safe area above a full toolbar, and body-portalled navigation plus search/help overlays span safe-area-correct device geometry. Current full 438/438 tests and 390×844 live review pass.
 
 ## Product Review Candidate: Event Cash Ledger Revision
 

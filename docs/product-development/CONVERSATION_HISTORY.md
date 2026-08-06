@@ -1141,3 +1141,20 @@ Implementation and same-session conformance are Product Review ready. Live repla
 ### Acceptance State
 
 Implementation and same-session conformance are Product Review ready and privately live. Focused Event Cash Ledger coverage, full 438/438 tests, TypeScript, warning-free lint, production build, live archive/search/direct-link/Back behavior, desktop/phone no-overflow checks, 44-pixel controls, private HTTP 200, and zero console errors pass. No ledger evidence was mutated during validation; independent Product Owner acceptance remains pending.
+
+## 2026-08-06 — iPhone Installed-WebApp Safe-Area Repair
+
+### User Intent
+
+- Make the installed phone application's top controls fully visible and reachable below the iPhone status bar and Dynamic Island.
+
+### Decision And Implementation
+
+- Extended `PHR-UX-027` because it already owns standalone installation and shared-shell behavior.
+- Added `safe-area-inset-top` above a complete 64-pixel top bar, retained the existing zero-inset browser geometry, and made shortcut help plus command search safe-area-aware.
+- Portalled mobile navigation to `document.body` so the sticky header's backdrop filter cannot constrain its fixed backdrop or panel; the drawer now spans the complete device viewport and consumes top/bottom safe areas.
+- Rebuilt and restarted the existing private production service.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. Focused 8/8 and full 438/438 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, 390×844 geometry, 44-pixel controls, full-height body-portalled drawer, no horizontal overflow, private HTTP 200, and zero console errors pass. Final visual confirmation on the owner's physical iPhone remains pending after the installed WebApp is refreshed or fully relaunched.

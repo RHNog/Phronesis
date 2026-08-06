@@ -34,6 +34,8 @@ Implement an entitlement-aware Dashboard at `/`, move Opportunities to `/opportu
 - Keep Event Operations adjacent to the primary Vendor workflow but remove its outer sticky positioning so it cannot cover later full-width controls.
 - Pin the desktop sidebar to the dynamic viewport, make its authorized tool list independently scrollable, and place an always-visible reciprocal expand/collapse control above that scroll region.
 - Theme the root document, scrollbar track/thumb, and standalone overscroll canvas dark; use safe-area-aware shell padding and `viewport-fit=cover` without introducing horizontal overflow.
+- Give the shared top bar a 64-pixel control row in addition to `env(safe-area-inset-top)` so iPhone status chrome cannot cover the menu, search, shortcut, or account controls. Consume the same top/bottom safe areas in the mobile drawer and shell modal overlays; preserve the original dimensions when the inset is zero.
+- Render the mobile drawer overlay at the document-body boundary so sticky-header blur cannot constrain its fixed viewport geometry.
 - Gate WebApp-specific keyboard interception behind standalone display mode. Implement search, sidebar toggle, Dashboard, and first-nine-tool shortcuts with editable-target protection, plus an accessible shortcut-help modal and visible help button.
 - Replace the inert top-bar avatar button with a Settings link.
 
@@ -60,8 +62,9 @@ Implement an entitlement-aware Dashboard at `/`, move Opportunities to `/opportu
 - Cover Dashboard cards, Opportunities rehoming, and event-access landing behavior.
 - Cover manifest identity/start behavior, approved icon derivatives, and absence of sticky positioning on the outer Event Operations wrapper.
 - Cover dynamic-viewport containment, independently scrollable navigation, visible reciprocal controls, standalone shortcut gating, editable-target protection, functional Settings link, shortcut help, viewport-fit metadata, and dark scrollbar/overscroll CSS.
+- Cover top-bar, mobile-drawer, shortcut-dialog, and command-palette safe-area classes plus the 64-pixel-plus-inset geometry contract.
 - Run focused and full automated tests, TypeScript, lint, and production build.
-- Validate expanded/collapsed desktop, mobile drawer, live manifest/head metadata, and Vendor Workspace scrolling at desktop width.
+- Validate expanded/collapsed desktop, mobile drawer, live manifest/head metadata, iPhone installed-WebApp top reachability, and Vendor Workspace scrolling at desktop width.
 
 ## Documentation Updates
 

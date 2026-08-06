@@ -138,6 +138,9 @@ test("the shared shell gives mobile navigation the server-filtered list", () => 
   assert.match(mobileNavigation, /document\.body\.style\.overflow = "hidden"/);
   assert.match(mobileNavigation, /matchMedia\("\(min-width: 768px\)"\)/);
   assert.match(mobileNavigation, /navigationItems\.map/);
+  assert.match(mobileNavigation, /app-safe-area-panel/);
+  assert.match(mobileNavigation, /createPortal/);
+  assert.match(mobileNavigation, /document\.body/);
 });
 
 test("desktop sidebar exposes persistent accessible collapse controls", () => {
@@ -161,6 +164,10 @@ test("desktop sidebar exposes persistent accessible collapse controls", () => {
     new URL("../app/globals.css", import.meta.url),
     "utf8",
   );
+  const commandPalette = readFileSync(
+    new URL("../components/search/CommandPalette.tsx", import.meta.url),
+    "utf8",
+  );
 
   assert.match(sidebar, /phronesis\.sidebar\.collapsed/);
   assert.match(sidebar, /aria-label="Collapse sidebar"/);
@@ -180,6 +187,8 @@ test("desktop sidebar exposes persistent accessible collapse controls", () => {
   assert.match(shell, /min-h-dvh/);
   assert.match(shell, /overflow-x-clip/);
   assert.match(topbar, /aria-label="Keyboard shortcuts"/);
+  assert.match(topbar, /app-topbar/);
+  assert.match(topbar, /app-safe-area-overlay/);
   assert.match(topbar, /aria-label="Open Settings"/);
   assert.match(topbar, /href="\/settings"/);
   assert.match(topbar, /role="dialog" aria-modal="true"/);
@@ -192,6 +201,13 @@ test("desktop sidebar exposes persistent accessible collapse controls", () => {
   assert.match(globals, /::-webkit-scrollbar-track/);
   assert.match(globals, /@media \(display-mode: standalone\)/);
   assert.match(globals, /overscroll-behavior: none/);
+  assert.match(
+    globals,
+    /height: calc\(4rem \+ env\(safe-area-inset-top\)\)/,
+  );
+  assert.match(globals, /padding-top: env\(safe-area-inset-top\)/);
+  assert.match(globals, /app-command-palette-safe/);
+  assert.match(commandPalette, /app-command-palette-safe/);
 });
 
 test("the shared shell uses the approved Phronesis brand assets", () => {

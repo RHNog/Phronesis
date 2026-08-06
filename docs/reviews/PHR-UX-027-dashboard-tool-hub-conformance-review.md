@@ -10,4 +10,6 @@ The approved Phronesis mark is now exact and traceable. Favicon, Apple icon, and
 
 Product Owner remediation also conforms. The generated manifest is origin-relative and contains no environment address, the live document publishes current favicon/application/Apple metadata, and Event Operations is no longer sticky over Buying Decision or certificate controls. The retired Safari installation is correctly classified as local captured state and must be reinstalled from the current host rather than bypassed with a hard-coded compatibility origin.
 
+The subsequent iPhone safe-area remediation also conforms. The installed shell preserves a full toolbar below `safe-area-inset-top`; command and help overlays consume safe-area padding; and the mobile navigation dialog is portalled to the document body so its fixed backdrop and panel span the device viewport instead of the blurred sticky header. Automated and 390×844 live geometry evidence pass, with final owner-device visual confirmation remaining the Product Review gate.
+
 Automated and live evidence is recorded in `docs/testing/PHR-UX-027-dashboard-tool-hub-validation.md`.

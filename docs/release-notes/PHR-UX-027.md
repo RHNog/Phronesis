@@ -16,3 +16,5 @@
 - On 2026-08-06 the tailnet node again reported `ramons-mac-studio` as its live DNS identity. The application remains origin-relative; current access is `https://ramons-mac-studio.tailaa2d39.ts.net:9444/`. The retained MacBook-name Serve alias does not currently resolve and is not an application-code dependency.
 - Returned Vendor Workspace Event Operations to normal document flow so it no longer covers Buying Decision or certificate controls while scrolling or zooming.
 - Safari installations created under a retired hostname require one removal and reinstall from the current URL; the current installed application was verified on the live Mac Studio origin.
+- Moved the installed iPhone WebApp toolbar below the status bar and Dynamic Island while retaining a complete 64-pixel control row.
+- Made mobile navigation, shortcut help, and command search safe-area-aware; the navigation drawer now portals to the document body and reliably covers the full phone viewport.
