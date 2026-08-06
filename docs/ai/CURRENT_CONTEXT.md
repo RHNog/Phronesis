@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-06T13:32:04Z","generation_id":"d5eec60bd605ae931550","head":"49a31fee4c408b87a57194821bc270b6fdfd359a","schema_version":"1","worktree_fingerprint":"c8340d91c0cab936cfd9031377057a64a296f8e4ee576a42de5c1568367ebee2"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-06T13:32:36Z","generation_id":"b991d8e5a20801d3a237","head":"8369d108906872bb92dd0200f0b893dded01838a","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,10 +6,10 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **HEAD:** `49a31fee4c408b87a57194821bc270b6fdfd359a`
-- **Worktree fingerprint:** `c8340d91c0cab936cfd9031377057a64a296f8e4ee576a42de5c1568367ebee2`
+- **HEAD:** `8369d108906872bb92dd0200f0b893dded01838a`
+- **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-06T13:32:04Z
+- **Generated:** 2026-08-06T13:32:36Z
 
 ## Current objective
 
