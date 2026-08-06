@@ -56,6 +56,13 @@ export type RecognitionCandidate = {
   evidence: RecognitionEvidence[];
 };
 
+export type ObservedCardIdentity = {
+  probableName: string | null;
+  collectorNumber: string | null;
+  game: "MAGIC" | "POKEMON" | "UNKNOWN";
+  language: "ENGLISH" | "SPANISH" | "UNKNOWN";
+};
+
 export type RecognitionDecision = {
   decisionId: string;
   regionId: string;
@@ -69,6 +76,7 @@ export type RecognitionDecision = {
   decidedBy: "MACHINE" | "OPERATOR";
   reason: string;
   createdAt: string;
+  observation?: ObservedCardIdentity;
 };
 
 export function assertSha256(value: string, field: string): void {

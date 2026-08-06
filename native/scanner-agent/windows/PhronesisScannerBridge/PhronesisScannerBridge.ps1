@@ -9,7 +9,7 @@ param(
   [string]$CaptureRoot = "C:\PhronesisScannerBridge\capture",
   [Parameter(Mandatory = $true)]
   [string]$SharedRoot,
-  [ValidateSet("Unknown", "AdjacentDuplexFrontFirst", "AdjacentDuplexBackFirst")]
+  [ValidateSet("Unknown", "AdjacentDuplexFrontFirst", "AdjacentDuplexBackFirst", "SingleSidedFront")]
   [string]$PairingMode = "Unknown",
   [string]$PaperStreamPath = "C:\Program Files (x86)\fiScanner\PaperStream Capture\PFU.PaperStream.Capture.exe",
   [ValidateRange(1, 64)]
@@ -24,8 +24,9 @@ $ErrorActionPreference = "Stop"
 $script:Sequence = 0
 $script:EventSession = if ($SessionId) { $SessionId } else { "preflight" }
 $script:AllowedExtensions = @(".jpg", ".jpeg", ".png", ".tif", ".tiff")
-$script:IsDuplexPairing = $PairingMode -ne "Unknown"
-$script:PairingSemantics = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } elseif ($PairingMode -eq "AdjacentDuplexBackFirst") { "adjacent-duplex-back-first" } else { "unknown" }
+$script:IsDuplexPairing = $PairingMode -eq "AdjacentDuplexFrontFirst" -or $PairingMode -eq "AdjacentDuplexBackFirst"
+$script:IsSingleSidedFront = $PairingMode -eq "SingleSidedFront"
+$script:PairingSemantics = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "adjacent-duplex-front-first" } elseif ($PairingMode -eq "AdjacentDuplexBackFirst") { "adjacent-duplex-back-first" } elseif ($PairingMode -eq "SingleSidedFront") { "single-sided-front" } else { "unknown" }
 $script:FirstDuplexSide = if ($PairingMode -eq "AdjacentDuplexFrontFirst") { "FRONT" } elseif ($PairingMode -eq "AdjacentDuplexBackFirst") { "BACK" } else { "UNKNOWN" }
 
 function Get-DeclaredDuplexSide {
@@ -185,7 +186,7 @@ function Test-ExistingBundle {
     return $false
   }
   $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-  $expectedSchema = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
+  $expectedSchema = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } elseif ($script:IsSingleSidedFront) { "phronesis.windows-scan-bundle/v3" } else { "phronesis.windows-scan-bundle/v1" }
   $expectedPairing = $script:PairingSemantics
   if ($manifest.schemaVersion -ne $expectedSchema -or $manifest.sessionId -ne $SessionId -or $manifest.pairingSemantics -ne $expectedPairing) {
     return $false
@@ -203,6 +204,11 @@ function Test-ExistingBundle {
       $expectedSide = Get-DeclaredDuplexSide -ObservedSequence $source.observedSequence
       $expectedPair = if ($source.observedSequence % 2 -eq 1) { $source.observedSequence + 1 } else { $source.observedSequence - 1 }
       if ($existing.side -ne $expectedSide -or [int]$existing.pairedObservedSequence -ne $expectedPair) {
+        return $false
+      }
+    }
+    elseif ($script:IsSingleSidedFront) {
+      if ($existing.side -ne "FRONT" -or $null -ne $existing.pairedObservedSequence) {
         return $false
       }
     }
@@ -321,6 +327,10 @@ function Invoke-Seal {
         $manifestFrame["side"] = Get-DeclaredDuplexSide -ObservedSequence $frame.observedSequence
         $manifestFrame["pairedObservedSequence"] = if ($frame.observedSequence % 2 -eq 1) { $frame.observedSequence + 1 } else { $frame.observedSequence - 1 }
       }
+      elseif ($script:IsSingleSidedFront) {
+        $manifestFrame["side"] = "FRONT"
+        $manifestFrame["pairedObservedSequence"] = $null
+      }
       $manifestFrames += $manifestFrame
       Write-BridgeEvent -Type "frame.copied" -Details @{
         observedSequence = $frame.observedSequence
@@ -331,7 +341,7 @@ function Invoke-Seal {
     }
 
     $manifest = [ordered]@{
-      schemaVersion = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } else { "phronesis.windows-scan-bundle/v1" }
+      schemaVersion = if ($script:IsDuplexPairing) { "phronesis.windows-scan-bundle/v2" } elseif ($script:IsSingleSidedFront) { "phronesis.windows-scan-bundle/v3" } else { "phronesis.windows-scan-bundle/v1" }
       sessionId = $SessionId
       adapter = "paperstream-capture"
       transport = "parallels-shared-folder"

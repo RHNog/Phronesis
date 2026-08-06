@@ -64,6 +64,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - Preserve legacy `v1` bundles as unpaired evidence. Do not infer side or pairing from filenames, profile names, or alternating sequence.
 - Add an opt-in `v2` manifest for an operator-declared adjacent duplex release with explicit first-side semantics. The bridge must support front-first and back-first profiles, reject an odd frame count or any non-reciprocal side/pair declaration before publishing READY, and never derive the first side from the profile name alone. The physically verified `Phronesis Card Duplex` profile is back-first.
 - Persist each verified `v2` front/back relation as acquisition evidence. Only the front schedules recognition; the back remains immutable linked evidence for operator review.
+- Add a `v3` single-sided-front manifest for an operator-reviewed PaperStream simplex profile. Every frame is explicitly `FRONT`, has no pair, and schedules recognition; the bridge and importer must reject contradictory sides or pair references. This mode is the preferred routine path because card backs are not identity, finish, condition, or pricing inputs.
 
 ## Non-Functional Requirements
 
@@ -127,6 +128,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 - The evidence report states the observed file count and order without inferring front/back pairing.
 - A synthetic `v2` duplex bundle proves reciprocal front/back pairing, rejects odd and contradictory declarations, imports only fronts into the recognition queue, and exposes each paired reverse as linked evidence.
 - A physical `v2` adjacent-duplex batch preserves every Windows original, seals an even reciprocal relation using the verified profile order, imports only effective fronts into recognition, and exposes paired backs as evidence. For `Phronesis Card Duplex`, odd observations are backs and even observations are fronts.
+- A synthetic `v3` single-sided-front bundle accepts any bounded positive frame count, rejects paired/back declarations, and schedules every frame exactly once. A physical simplex acceptance remains supervised and uses the operator-reviewed front-only PaperStream profile.
 - Existing `v1` bundles remain byte-for-byte valid and are displayed as unpaired rather than retroactively upgraded.
 - No source image enters Git and no Windows original is deleted. The bridge itself performs no commercial or network mutation; an explicitly authorized downstream recognition import may create only immutable evidence/session/job state under `PHR-TECH-014` and `PHR-WORKFLOW-016`.
 
@@ -152,7 +154,7 @@ The bridge is temporary. It implements the acquisition evidence boundary require
 
 ## Technical Notes
 
-Schema names: `phronesis.windows-scan-bundle/v1` and `phronesis.windows-scan-bundle/v2`. Event schema: `phronesis.windows-bridge-event/v1`. Version 1 records observed sequence only. Version 2 is emitted only for an explicit `adjacent-duplex-front-first` or `adjacent-duplex-back-first` mode and seals each frame's side plus reciprocal paired sequence. The importer validates the complete declared relation before any repository mutation.
+Schema names: `phronesis.windows-scan-bundle/v1`, `phronesis.windows-scan-bundle/v2`, and `phronesis.windows-scan-bundle/v3`. Event schema: `phronesis.windows-bridge-event/v1`. Version 1 records observed sequence only. Version 2 seals explicit reciprocal duplex pairs. Version 3 seals `single-sided-front` observations with `side=FRONT` and no pair. The importer validates the complete declared relation before any repository mutation.
 
 The dedicated shared root is runtime evidence and remains ignored. The repository stores tools and synthetic fixtures only.
 
@@ -179,4 +181,4 @@ The PaperStream job is a one-time operator-reviewed setup. Routine bridge execut
 - Related tests: `docs/testing/PHR-TECH-015-windows-scanner-bridge-validation.md`.
 - Related release notes: `docs/release-notes/PHR-TECH-015.md`.
 - Last modified: 2026-08-06.
-- Modification reason: record the successful physical `v2` acquisition, the manual-release recovery boundary, and the supported-UI configuration gate for subsequent runs.
+- Modification reason: add a fail-closed front-only acquisition contract that removes unused reverse capture from routine scanning.

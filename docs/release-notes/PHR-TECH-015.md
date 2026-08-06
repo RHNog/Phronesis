@@ -27,3 +27,7 @@ The first physical `v2` session completed with 18 images across nine reciprocal 
 PaperStream initially held the completed batch for manual release, so the requested capture folder remained empty. Phronesis recovered and byte-verified the retained originals without deleting any copy, then sealed manifest `75c0670a8e49d000ea81fb04f63d46b18c9463a276df76538a9361b2e1d50f88`. Future routine captures require **Release after scan** enabled in the PaperStream UI.
 
 The expanded contract passes 13/13 Node importer tests and 16/16 PowerShell bridge self-tests in the running Windows VM, including reciprocal back-first sealing and fail-closed contradictory-pair handling.
+
+## 2026-08-06 — Front-Only Routine Intake Contract
+
+Added `phronesis.windows-scan-bundle/v3` and `SingleSidedFront`. Every bounded frame is explicitly `FRONT`, has no pair, and schedules recognition exactly once; contradictory back/pair declarations fail before import. Existing `v1` and `v2` evidence remains unchanged. A separately operator-reviewed `Phronesis Card Front` PaperStream simplex job is required before physical use; creating and physically validating that job remains a supervised supported-UI step.

@@ -31,6 +31,7 @@ Implement and physically qualify a fail-closed Windows-local PaperStream capture
 - Emit redacted deterministic JSONL events from both sides.
 - Preserve Windows originals and sealed bundles; never delete or overwrite conflicting evidence.
 - Preserve `v1` as unpaired legacy evidence and support explicit `v2` adjacent-duplex-front-first and adjacent-duplex-back-first modes with reciprocal side/pair fields, even-count validation, and no filename/profile-name inference. Use back-first for the physically verified `Phronesis Card Duplex` profile.
+- Add a fail-closed `v3` single-sided-front mode whose frames are all explicit fronts with null pairs and whose operator-reviewed PaperStream job uses simplex capture.
 - Import `v2` backs as linked immutable evidence without scheduling them for recognition; schedule only declared fronts.
 - Require batch folders and **Release after scan** in the operator-reviewed PaperStream profile. If scanning completes without output files, inspect PaperStream's supported retained-batch evidence, preserve every original, and do not trigger a rescan until manual-release state is excluded.
 - Provide synthetic cross-platform tests and a Windows VM preflight test before physical execution.

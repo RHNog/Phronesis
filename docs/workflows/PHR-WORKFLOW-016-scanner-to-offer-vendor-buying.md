@@ -18,7 +18,7 @@ Workflow / Vendor Buying / UX / Identity / Pricing / Audit
 
 ## Objective
 
-Let a buyer declare one homogeneous English Pokémon batch, press Start, review exceptions, select the exact catalogue printing that agrees with the declared batch material, apply an existing buying preset, and review an evidence-backed offer without managing scan files.
+Let a buyer declare default material for an English Pokémon batch, press Start, review every observed identity and exact catalogue variant, correct condition or finish per card when the physical card differs from the batch default, apply a server-authoritative buying preset, and review evidence-backed USD and BRL valuation totals without managing scan files.
 
 ## Requirements
 
@@ -37,12 +37,13 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - Treat duplex sensor order as an explicit acquisition property, not a universal front-first assumption. The verified `Phronesis Card Duplex` PaperStream profile releases the rear/card-back observation first and the card face second. Future paired bundles must declare either front-first or back-first semantics and the importer must validate the complete reciprocal relation before scheduling only effective fronts.
 - Preserve an audited, idempotent session-orientation correction for a sealed duplex batch that was declared with the wrong first side. Correction is allowed only before any operator resolution, must retain original objects, manifests, regions, jobs, and decisions, must reject the previously processed backs through append-only region revisions, and must schedule the newly authoritative card faces for recognition.
 - Display the acquisition-proven reverse beside the active front during identity/material review. If the source is a legacy unpaired bundle, show an explicit unavailable state and never infer a reverse from file order.
-- Require an explicit batch condition and batch finish before intake or resolution. Supported first-release Pokémon finishes are `Normal`, `Holofoil`, and `Reverse Holofoil`; a mixed-condition or mixed-finish intake must be split into separate sessions.
-- Apply the declared condition and finish to every resolution in the batch. Preserve batch-setting revisions append-only, and lock both fields after the first card resolution so one offer cannot silently mix material assumptions.
+- Require an explicit default batch condition and finish before intake or resolution. Supported first-release Pokémon finishes are `Normal`, `Holofoil`, and `Reverse Holofoil`.
+- Pre-fill each review from the batch defaults, but let the operator explicitly override condition and select the exact candidate finish per card. Persist the chosen material on the append-only resolution, label overrides in the offer, and require the selected finish to equal the selected catalogue variant. Preserve batch-setting revisions append-only and lock the defaults after the first resolution without locking per-card correction.
 - Keep exact-condition pricing disabled until the session has declared batch material. Never infer, recommend, or claim a condition grade from the scanner images.
-- Treat finish as an operator-declared batch constraint, not as a qualified vision result. A recognition candidate whose exact catalogue variant differs from the batch finish remains unresolved and cannot enter the offer.
+- Treat finish as an operator-confirmed commercial binding, not as a qualified vision result. Never hide a recognition candidate because its exact catalogue variant differs from the batch default; selecting it is an explicit per-card finish override.
 - Present every returned Pokémon printing/finish as a labelled candidate with name, set, collector number, variant, and language; never silently bind the first SKU when multiple physical variants exist.
-- Keep card backs, non-English Pokémon, Magic cards, and insufficient game/language evidence as explicit abstentions in the first release.
+- Preserve an observed name, collector number, game, and language even when exact market retrieval is gated. Keep card backs, non-English Pokémon, Magic cards, and insufficient game/language evidence as explicit market-resolution abstentions in the first release; an observed Spanish identity must never be silently converted to an English SKU.
+- Bind the `tcg-low-80` preset server-side as 80% of current TCGplayer listing low, rounded to the nearest cent. Return and display current TCG Low, TCG Market, LigaPokemon/LigaMagic Low, and Suggested Offer totals with coverage counts. Keep TCG and offer values in USD and Liga values in BRL; never imply an unrecorded currency conversion.
 - Reprocess immutable evidence append-only when the active recognition lane or pipeline version changes. Historical decisions remain auditable but cannot inflate current counts or remain in the current offer draft.
 - Keep scan session, recognition review, and offer draft recoverable after process restart.
 - Order session selection by immutable creation time rather than background-updated time, keep the operator's selected session stable across reloads, and expose prior batches through an explicit session selector.
@@ -63,6 +64,9 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 - The existing physical session whose first/second observations were mislabeled is repaired without changing either image object or its reciprocal pair: the Drowzee image becomes front evidence, the Pokémon-back image becomes reverse evidence, the nine prior back decisions remain auditable but inactive, and nine actual card faces receive new recognition jobs.
 - Manual Refresh produces visible status feedback, session selection does not jump because a worker updated an older batch, and the operator can inspect every unresolved card with keyboard- and touch-operable Previous/Next controls.
 - Cancelling an empty or partially imported session leaves a visible `CANCELLED` record, creates no replacement automatically, accepts no late frames, and allows the operator to start a fresh homogeneous batch immediately.
+- The accepted nine-card batch exposes eight exact English-market candidate identities instead of one batch-finish-compatible identity, and the Spanish Toxicroak remains visibly observed but ineligible for an English-market offer.
+- Barbaracle can be resolved as `Reverse Holofoil` with a per-card condition even when the locked batch default is `Holofoil`.
+- The offer summary displays TCG Low total, TCG Market total, regional Liga low total, and Suggested Offer total with source coverage and separate USD/BRL currency labels.
 
 ## Dependencies
 
@@ -70,7 +74,7 @@ Let a buyer declare one homogeneous English Pokémon batch, press Start, review 
 
 ## UI / UX Notes
 
-The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires a condition and Pokémon finish for the homogeneous batch and exposes an explicit session selector when history exists. A persistent summary shows the locked material declaration plus frame, accepted, review, abstained, and failed counts. The active-session header exposes a destructive-styled Cancel action for non-cancelled work, requires explicit confirmation, explains that retained evidence is not deleted and PaperStream remains independently controlled, and keeps New batch available after cancellation. The exception queue keeps front and acquisition-proven reverse evidence beside only those candidate controls whose exact catalogue variant agrees with the batch; it shows queue position, Previous/Next actions, a distinct status-refresh action, and visible refresh feedback. Destructive session actions require confirmation. When no proven reverse exists, the evidence panel says so instead of guessing. Small screens stack evidence below the active card and keep the primary action reachable without horizontal scrolling.
+The Designer-approved information architecture uses a three-stage session: Capture, Resolve, Offer. Capture requires default condition and Pokémon finish values and exposes an explicit session selector when history exists. A persistent summary shows the locked defaults plus frame, accepted, review, abstained, and failed counts. The active-session header exposes a destructive-styled Cancel action for non-cancelled work, requires explicit confirmation, explains that retained evidence is not deleted and PaperStream remains independently controlled, and keeps New batch available after cancellation. The exception queue prioritizes the front, progressively discloses retained paired reverse evidence, shows every exact candidate variant, and provides explicit per-card condition and finish confirmation. It shows queue position, Previous/Next actions, a distinct status-refresh action, and visible refresh feedback. Offer uses four first-class totals with coverage instead of requiring arithmetic from line items. Small screens stack evidence and controls without horizontal scrolling.
 
 ## Traceability
 
@@ -78,7 +82,7 @@ The Designer-approved information architecture uses a three-stage session: Captu
 - Design gate: `docs/design/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying.md`.
 - Related prompt: `docs/prompts/PHR-WORKFLOW-016-scanner-to-offer-vendor-buying-prompt.md`.
 - Last modified: 2026-08-06.
-- Modification reason: correct the physically observed back-first PaperStream order, preserve an audited recovery path for the already imported inverted session, and make session refresh/exception navigation observable.
+- Modification reason: replace the batch-finish visibility defect with per-card material confirmation, add evidence-backed valuation totals and the 80%-of-TCG-Low preset, and reduce routine reverse-image prominence.
 
 ## Private Operational Activation — 2026-08-05
 

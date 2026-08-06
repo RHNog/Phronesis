@@ -9,7 +9,7 @@ import { benchmarkRecognition, conservativePolicy, decideCandidates } from "@/li
 import { CardRecognitionRepository } from "@/lib/cardRecognition/repository";
 import { sealRecognizedAssetEnvelope, toLigaDraft, toTcgplayerDraft, validateRecognizedAssetBatch, type RecognizedAssetEnvelopeV1 } from "@/lib/cardRecognition/interchange";
 import { activeRecognitionLane, classifyObservedGame, classifyObservedLanguage, createRecognitionDecision, retrieveCandidates } from "@/lib/cardRecognition/pipeline";
-import { SqliteRecognitionCatalogue } from "@/lib/cardRecognition/sqliteCatalogue";
+import { SqliteRecognitionCatalogue, summarizeRecognitionValuation, TCG_LOW_80_PRESET_ID } from "@/lib/cardRecognition/sqliteCatalogue";
 import { DatabaseSync } from "node:sqlite";
 import { assessCorpusReadiness, buildCorpusBundle, corpusObjectPath, verifyCorpusManifest, type CorpusManifest } from "@/lib/cardRecognition/corpus";
 import { runCalibration } from "@/lib/cardRecognition/calibration";
@@ -293,6 +293,36 @@ test("v2 back-first duplex import recognizes the actual card face", async () => 
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
+test("v3 single-sided front import schedules every frame without reverse evidence", async () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-front-only-import-"));
+  const sessionId = "phr-test-front-only";
+  const bundle = join(root, "incoming", sessionId);
+  const framesRoot = join(bundle, "frames");
+  mkdirSync(framesRoot, { recursive: true });
+  const frames = ["front-one", "front-two", "front-three"].map((value, index) => {
+    const bytes = Buffer.from(value);
+    const observedSequence = index + 1;
+    const relativePath = `${String(observedSequence).padStart(3, "0")}.jpg`;
+    writeFileSync(join(framesRoot, relativePath), bytes);
+    return { observedSequence, relativePath, byteCount: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex"), side: "FRONT", pairedObservedSequence: null };
+  });
+  const manifest = { schemaVersion: "phronesis.windows-scan-bundle/v3", sessionId, adapter: "paperstream-capture", transport: "parallels-shared-folder", profileName: "Phronesis Card Front", pairingSemantics: "single-sided-front", frameCount: frames.length, frames };
+  const manifestBytes = Buffer.from(JSON.stringify(manifest));
+  writeFileSync(join(bundle, "manifest.json"), manifestBytes);
+  writeFileSync(join(bundle, "READY"), createHash("sha256").update(manifestBytes).digest("hex"));
+  const repository = new CardRecognitionRepository(":memory:", join(root, "runtime"));
+  try {
+    const imported = await ingestWindowsBundle({ bundlePath: bundle, runtimeRoot: join(root, "runtime"), repository });
+    assert.equal(imported.session.counts.frames, 3);
+    assert.equal(imported.session.counts.pending, 3);
+    assert.deepEqual(imported.frames.map((frame) => ({ side: frame.side, pairedFrameId: frame.pairedFrameId, recognitionScheduled: frame.recognitionScheduled })), [
+      { side: "FRONT", pairedFrameId: null, recognitionScheduled: true },
+      { side: "FRONT", pairedFrameId: null, recognitionScheduled: true },
+      { side: "FRONT", pairedFrameId: null, recognitionScheduled: true },
+    ]);
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
 test("audited duplex correction preserves prior evidence and reschedules only the card face", () => {
   const root = mkdtempSync(join(tmpdir(), "phronesis-orientation-correction-"));
   const repository = new CardRecognitionRepository(":memory:", root);
@@ -326,7 +356,7 @@ test("audited duplex correction preserves prior evidence and reschedules only th
     repository.failJob(replacementLease.jobId, "worker-after-correction", "test cleanup", "2026-08-06T12:00:07.000Z");
     const replay = repository.correctDuplexOrientation({ sessionId, correctedBy: "operator-1", reason: "Verified physical scanner releases the rear sensor before the card face." });
     assert.equal(replay.status, "ALREADY_CORRECTED");
-    assert.equal(repository.database.prepare("SELECT COUNT(*) count FROM recognition_session_orientation_correction WHERE session_id=?").get(sessionId).count, 1);
+    assert.equal((repository.database.prepare("SELECT COUNT(*) count FROM recognition_session_orientation_correction WHERE session_id=?").get(sessionId) as { count: number }).count, 1);
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
@@ -360,19 +390,21 @@ test("session list remains in batch creation order when background work updates 
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
-test("scanner review labels paired evidence and applies fail-closed batch material", () => {
+test("scanner review exposes per-card material, language-safe identity, valuation totals, and collapsed reverse evidence", () => {
   const source = readFileSync(new URL("../features/vendor/components/ScannerToOfferWorkspace.tsx", import.meta.url), "utf8");
   const routeSource = readFileSync(new URL("../app/api/card-recognition/sessions/[sessionId]/route.ts", import.meta.url), "utf8");
-  assert.match(source, /Paired reverse evidence/);
-  assert.match(source, /Paired reverse unavailable/);
-  assert.match(source, /will not infer one from filename or scan order/);
-  assert.match(source, /no automatic grading/);
-  assert.match(source, /Batch condition/);
-  assert.match(source, /Batch finish/);
-  assert.match(source, /Split mixed cards into separate batches/);
-  assert.match(source, /Scanner images do not assign either value/);
-  assert.match(source, /No candidate matches the/);
-  assert.match(source, /Lot total/);
+  assert.match(source, /Show retained reverse evidence/);
+  assert.match(source, /not processed for identity, grading, finish, or pricing/);
+  assert.match(source, /Batch material defaults/);
+  assert.match(source, /Card condition/);
+  assert.match(source, /Card variation/);
+  assert.match(source, /per-card override/i);
+  assert.match(source, /Exact English-market candidates/);
+  assert.match(source, /TCG Low total/);
+  assert.match(source, /TCG Market total/);
+  assert.match(source, /Liga low total/);
+  assert.match(source, /Suggested offer/);
+  assert.match(source, /20% off TCG Low \(80%\)/);
   assert.match(source, /evidenceRegionIds\.length/);
   assert.match(source, /unitOfferCents/);
   assert.match(source, />Cancel</);
@@ -387,9 +419,11 @@ test("scanner review labels paired evidence and applies fail-closed batch materi
   assert.match(routeSource, /export async function DELETE/);
   assert.doesNotMatch(source, /value=\{condition\}/);
   assert.match(routeSource, /offerSummary: repository\.offerSummary\(sessionId\)/);
-  assert.match(routeSource, /priceSnapshot\(machineCandidate\.categoryId, machineCandidate\.sku, batchMaterial\.conditionCode\)/);
-  assert.match(routeSource, /selected candidate does not match the configured batch finish/);
-  assert.doesNotMatch(routeSource, /condition:\s*String\(input\.condition\s*\?\?/);
+  assert.match(routeSource, /summarizeRecognitionValuation/);
+  assert.match(routeSource, /valuationSnapshot\(machineCandidate\.categoryId, machineCandidate\.sku, condition\)/);
+  assert.match(routeSource, /selected finish must match the exact catalogue variant/);
+  assert.match(routeSource, /const condition = String\(input\.condition\s*\?\?/);
+  assert.match(routeSource, /TCG_LOW_80_PRESET_ID/);
 });
 
 test("batch material is append-only, idempotent, and locks after first resolution", () => {
@@ -523,7 +557,7 @@ test("operator resolution is append-only and creates a bound local offer line", 
     const lease = repository.acquireJob("worker", 1000, new Date("2026-08-04T00:00:00.000Z"));
     assert.ok(lease);
     repository.completeJob(lease.jobId, "worker", { decisionId: "decision-1", regionId: imported.region.regionId, status: "REVIEW", selectedCandidate: candidate(0.9), candidates: [candidate(0.9)], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p1", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-04T00:00:01.000Z" });
-    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Reverse Holofoil", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /configured batch/);
+    assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Reverse Holofoil", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /selected catalogue variant/);
     assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: Number.MAX_SAFE_INTEGER, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 2, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /quantity or offer is invalid/);
     assert.throws(() => repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 1, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "US", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" }), /currency is invalid/);
     repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: "printing-1", condition: "NEAR_MINT", finish: "Normal", quantity: 2, priceSnapshotId: "price-1", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: "preset-1", offerCents: 125, currency: "USD", resolvedBy: "operator-1", now: "2026-08-04T00:00:02.000Z" });
@@ -559,6 +593,27 @@ test("operator resolution is append-only and creates a bound local offer line", 
     assert.equal(repository.sessionSummary(sessionId).batchMaterial?.locked, true);
     assert.throws(() => repository.setSessionMaterial({ sessionId, conditionCode: "LIGHTLY_PLAYED", finish: "Normal", configuredBy: "operator-1" }), /locked after the first card resolution/);
     assert.equal(repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Normal", configuredBy: "operator-1" }).batchMaterial?.revision, 1);
+  } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("per-card material can override locked batch defaults while preserving exact variant binding", () => {
+  const root = mkdtempSync(join(tmpdir(), "phronesis-material-override-"));
+  const repository = new CardRecognitionRepository(":memory:", root);
+  try {
+    const object = repository.putObject(Buffer.from("reverse-holo-frame"));
+    const sessionId = repository.createSession("mixed correction");
+    repository.setSessionMaterial({ sessionId, conditionCode: "NEAR_MINT", finish: "Holofoil", configuredBy: "operator-1" });
+    const imported = repository.addFrame({ frameId: randomUUID(), sessionId, sequence: 0, side: "FRONT", objectSha256: object.sha256, mediaType: "image/jpeg", byteLength: 18, capturedAt: "2026-08-06T00:00:00.000Z", pairedFrameId: null });
+    const lease = repository.acquireJob("worker", 1000, new Date("2026-08-06T00:00:00.000Z"));
+    assert.ok(lease);
+    const reverseCandidate = { ...candidate(0.93, "pokemon-en:reverse"), catalogueIdentity: { ...candidate(0.93).catalogueIdentity, variant: "Reverse Holofoil" } };
+    repository.completeJob(lease.jobId, "worker", { decisionId: "decision-reverse", regionId: imported.region.regionId, status: "REVIEW", selectedCandidate: reverseCandidate, candidates: [reverseCandidate], corpusVersion: "c1", indexVersion: "i1", pipelineVersion: "p2", policyVersion: "review", decidedBy: "MACHINE", reason: "review", createdAt: "2026-08-06T00:00:01.000Z" });
+    repository.resolveRegion({ sessionId, regionId: imported.region.regionId, canonicalPrintingId: reverseCandidate.canonicalPrintingId, condition: "LIGHTLY_PLAYED", finish: "Reverse Holofoil", quantity: 1, priceSnapshotId: "price-reverse", priceSnapshotAt: "2026-08-06T00:00:00.000Z", buyingPresetId: TCG_LOW_80_PRESET_ID, offerCents: 80, currency: "USD", resolvedBy: "operator-1" });
+    const line = repository.offerDraft(sessionId)[0];
+    assert.equal(line.condition, "LIGHTLY_PLAYED");
+    assert.equal(line.finish, "Reverse Holofoil");
+    assert.equal(repository.sessionSummary(sessionId).batchMaterial?.finish, "Holofoil");
+    assert.equal(repository.sessionSummary(sessionId).batchMaterial?.locked, true);
   } finally { repository.close(); rmSync(root, { recursive: true, force: true }); }
 });
 
@@ -603,15 +658,19 @@ test("English Pokémon name and collector evidence retrieves labelled exact vari
   assert.equal(candidates[1].catalogueIdentity.variant, "Reverse Holofoil");
   const decision = createRecognitionDecision({ regionId: "region-pokemon", analysis, catalogue, corpusVersion: "pokemon-corpus", indexVersion: "pokemon-index", now: "2026-08-05T00:00:00.000Z" });
   assert.equal(decision.status, "REVIEW");
-  assert.equal(decision.pipelineVersion, "local-vision-ocr-pokemon-en-v1");
+  assert.equal(decision.pipelineVersion, "local-vision-ocr-pokemon-en-v2-observed-identity");
+  assert.deepEqual(decision.observation, { probableName: "Geodude", collectorNumber: "074/165", game: "POKEMON", language: "ENGLISH" });
 });
 
 test("Spanish Pokémon and card backs abstain before catalogue retrieval", () => {
-  const spanish = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "FASE 1", confidence: 1, x: 0.1, y: 0.94, width: 0.2, height: 0.05 }, { text: "Toxicroak", confidence: 1, x: 0.2, y: 0.91, width: 0.5, height: 0.05 }, { text: "Evoluciona de Croagunk", confidence: 1, x: 0.1, y: 0.88, width: 0.5, height: 0.05 }, { text: "El Pokémon Activo de tu rival pasa a estar Envenenado.", confidence: 1, x: 0.1, y: 0.4, width: 0.8, height: 0.05 }] };
+  const spanish = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "FASEI", confidence: 1, x: 0.1, y: 0.94, width: 0.2, height: 0.05 }, { text: "Toxicroak", confidence: 1, x: 0.2, y: 0.91, width: 0.5, height: 0.05 }, { text: "Evoluciona de Croagunk", confidence: 1, x: 0.1, y: 0.88, width: 0.5, height: 0.05 }, { text: "El Pokémon Activo de tu rival pasa a estar Envenenado.", confidence: 1, x: 0.1, y: 0.4, width: 0.8, height: 0.05 }] };
   const back = { schemaVersion: "phronesis.vision-analysis.v1" as const, featurePrint: "fixture", ocr: [{ text: "ParétoN", confidence: 0.3, x: 0.1, y: 0.7, width: 0.2, height: 0.05 }] };
   const catalogue = { search: () => { throw new Error("unsupported evidence must not query the catalogue"); } };
   assert.equal(classifyObservedLanguage(spanish), "SPANISH");
   assert.equal(retrieveCandidates(spanish, catalogue).length, 0);
+  const spanishDecision = createRecognitionDecision({ regionId: "spanish-region", analysis: spanish, catalogue, corpusVersion: "pokemon-corpus", indexVersion: "pokemon-index", now: "2026-08-05T00:00:00.000Z" });
+  assert.equal(spanishDecision.status, "ABSTAINED");
+  assert.deepEqual(spanishDecision.observation, { probableName: "Toxicroak", collectorNumber: null, game: "POKEMON", language: "SPANISH" });
   assert.equal(classifyObservedGame(back), "UNKNOWN");
   assert.equal(retrieveCandidates(back, catalogue).length, 0);
 });
@@ -621,16 +680,23 @@ test("read-only catalogue retrieval uses exact FTS tokens", () => {
   const databasePath = join(root, "catalogue.sqlite");
   const database = new DatabaseSync(databasePath);
   database.exec(`CREATE TABLE pricing_products(category_id TEXT,sku TEXT,product_type TEXT,name TEXT,set_name TEXT,collector_number TEXT,variant TEXT,language TEXT);
-    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,snapshot_date TEXT,source_sku TEXT,direct_low_cents INTEGER,market_price_cents INTEGER,delivered_price_cents INTEGER);
+    CREATE TABLE pricing_latest(category_id TEXT,sku TEXT,condition_key TEXT,snapshot_date TEXT,source_sku TEXT,direct_low_cents INTEGER,market_price_cents INTEGER,delivered_price_cents INTEGER,listing_price_cents INTEGER);
+    CREATE TABLE regional_crosswalk(liga_identity_key TEXT PRIMARY KEY,category_id TEXT,sku TEXT,status TEXT);
+    CREATE TABLE regional_evidence(liga_identity_key TEXT PRIMARY KEY,observed_at TEXT,consumer_low_centavos INTEGER);
     CREATE VIRTUAL TABLE pricing_search USING fts5(category_id UNINDEXED,sku UNINDEXED,name,set_name,collector_number,variant);
     INSERT INTO pricing_products VALUES('magic-en','sku-1','SINGLE','Jin Sakai, Ghost of Tsushima','FIN','1','Normal','English');
-    INSERT INTO pricing_latest VALUES('magic-en','sku-1','NEAR_MINT','2026-08-04','123',900,1000,1100);
+    INSERT INTO pricing_latest VALUES('magic-en','sku-1','NEAR_MINT','2026-08-04','123',900,1000,1100,800);
+    INSERT INTO regional_crosswalk VALUES('liga-1','magic-en','sku-1','MATCHED');
+    INSERT INTO regional_evidence VALUES('liga-1','2026-08-04T12:00:00.000Z',1234);
     INSERT INTO pricing_search VALUES('magic-en','sku-1','Jin Sakai, Ghost of Tsushima','FIN','1','Normal');`);
   database.close();
   const catalogue = new SqliteRecognitionCatalogue(databasePath);
   try {
     assert.equal(catalogue.search("magic-en", "Jin Sakai Ghost of Tsushima")[0].sku, "sku-1");
     assert.deepEqual(catalogue.priceSnapshot("magic-en", "sku-1", "NEAR_MINT"), { priceSnapshotId: "pricing:magic-en:sku-1:NEAR_MINT:2026-08-04:123", priceSnapshotAt: "2026-08-04T00:00:00.000Z", referenceCents: 900, referenceKind: "TCG_DIRECT_LOW" });
+    assert.deepEqual(catalogue.valuationSnapshot("magic-en", "sku-1", "NEAR_MINT"), { priceSnapshotId: "pricing:magic-en:sku-1:NEAR_MINT:2026-08-04:123", priceSnapshotAt: "2026-08-04T00:00:00.000Z", tcgLowCents: 800, tcgMarketCents: 1000, tcgDirectLowCents: 900, suggestedOfferCents: 640, regionalLowCentavos: 1234, regionalProvider: "LigaMagic", regionalObservedAt: "2026-08-04T12:00:00.000Z", regionalCondition: null, regionalLanguage: null });
+    const valuationSummary = summarizeRecognitionValuation([{ regionId: "region-1", candidate: { ...candidate(0.9), categoryId: "magic-en", sku: "sku-1" }, condition: "NEAR_MINT", finish: "Normal", quantity: 2, priceSnapshotId: "price", priceSnapshotAt: "2026-08-04T00:00:00.000Z", buyingPresetId: TCG_LOW_80_PRESET_ID, offerCents: 640, currency: "USD", resolvedBy: "operator", resolvedAt: "2026-08-04T00:00:00.000Z" }], catalogue);
+    assert.deepEqual(valuationSummary, { unitCount: 2, tcgLow: { currency: "USD", totalCents: 1600, coveredUnits: 2 }, tcgMarket: { currency: "USD", totalCents: 2000, coveredUnits: 2 }, regionalLow: { currency: "BRL", totalCentavos: 2468, coveredUnits: 2, providers: ["LigaMagic"] }, suggestedOffer: { currency: "USD", totalCents: 1280, coveredUnits: 2, presetId: TCG_LOW_80_PRESET_ID } });
   }
   finally { catalogue.close(); rmSync(root, { recursive: true, force: true }); }
 });

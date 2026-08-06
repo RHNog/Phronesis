@@ -85,6 +85,16 @@ try {
   $backFirstManifest = Get-Content -LiteralPath (Join-Path (Join-Path (Join-Path $sharedRoot "ready") $backFirstSession) "manifest.json") -Raw | ConvertFrom-Json
   Assert-Test "declared back-first duplex seals reciprocal faces" ($backFirstSeal.ExitCode -eq 0 -and $backFirstManifest.pairingSemantics -eq "adjacent-duplex-back-first" -and $backFirstManifest.frames[0].side -eq "BACK" -and $backFirstManifest.frames[0].pairedObservedSequence -eq 2 -and $backFirstManifest.frames[1].side -eq "FRONT" -and $backFirstManifest.frames[1].pairedObservedSequence -eq 1)
 
+  $frontOnlySession = "phr-test-front-only"
+  $frontOnlyRoot = Join-Path $captureRoot $frontOnlySession
+  [System.IO.Directory]::CreateDirectory($frontOnlyRoot) | Out-Null
+  [System.IO.File]::WriteAllBytes((Join-Path $frontOnlyRoot "001.jpg"), [byte[]](5, 5, 5, 5))
+  [System.IO.File]::WriteAllBytes((Join-Path $frontOnlyRoot "002.jpg"), [byte[]](6, 6, 6, 6))
+  [System.IO.File]::WriteAllBytes((Join-Path $frontOnlyRoot "003.jpg"), [byte[]](7, 7, 7, 7))
+  $frontOnlySeal = Invoke-BridgeChild @("-Command", "Seal", "-SessionId", $frontOnlySession, "-CaptureRoot", $captureRoot, "-SharedRoot", $sharedRoot, "-PairingMode", "SingleSidedFront")
+  $frontOnlyManifest = Get-Content -LiteralPath (Join-Path (Join-Path (Join-Path $sharedRoot "ready") $frontOnlySession) "manifest.json") -Raw | ConvertFrom-Json
+  Assert-Test "single-sided front seals v3 without pairs" ($frontOnlySeal.ExitCode -eq 0 -and $frontOnlyManifest.schemaVersion -eq "phronesis.windows-scan-bundle/v3" -and $frontOnlyManifest.pairingSemantics -eq "single-sided-front" -and $frontOnlyManifest.frames.Count -eq 3 -and $frontOnlyManifest.frames[0].side -eq "FRONT" -and $null -eq $frontOnlyManifest.frames[0].pairedObservedSequence)
+
   $oddSession = "phr-test-duplex-odd"
   $oddRoot = Join-Path $captureRoot $oddSession
   [System.IO.Directory]::CreateDirectory($oddRoot) | Out-Null

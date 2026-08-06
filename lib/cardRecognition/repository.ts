@@ -466,7 +466,6 @@ export class CardRecognitionRepository {
     if (!Number.isFinite(Date.parse(input.priceSnapshotAt))) throw new Error("price snapshot timestamp is invalid");
     const batchMaterial = this.sessionBatchMaterial(input.sessionId);
     if (!batchMaterial) throw new Error("batch condition and finish must be configured before resolution");
-    if (batchMaterial.conditionCode !== input.condition || batchMaterial.finish !== input.finish.trim()) throw new Error("resolution material must match the configured batch");
     const row = this.database.prepare(`SELECT d.payload_json FROM recognition_decision d JOIN recognition_region r ON r.id=d.region_id JOIN recognition_frame f ON f.id=r.frame_id
       WHERE d.region_id=? AND f.session_id=? AND r.state='ACTIVE'
         AND r.revision=(SELECT MAX(r2.revision) FROM recognition_region r2 WHERE r2.frame_id=r.frame_id AND r2.region_order=r.region_order)
@@ -477,7 +476,7 @@ export class CardRecognitionRepository {
     if (!selected) throw new Error("selected candidate was not produced by recognition");
     if (selected.catalogueIdentity && selected.catalogueIdentity.variant.localeCompare(input.finish.trim(), undefined, { sensitivity: "base" }) !== 0) throw new Error("finish must match the selected catalogue variant");
     const now = input.now ?? new Date().toISOString();
-    const decision: RecognitionDecision = { ...prior, decisionId: randomUUID(), status: "ACCEPTED", selectedCandidate: selected, decidedBy: "OPERATOR", reason: "Operator reviewed identity and confirmed material fields.", createdAt: now };
+    const decision: RecognitionDecision = { ...prior, decisionId: randomUUID(), status: "ACCEPTED", selectedCandidate: selected, decidedBy: "OPERATOR", reason: "Operator reviewed identity and confirmed per-card material fields.", createdAt: now };
     const revisionRow = this.database.prepare("SELECT COALESCE(MAX(revision),0)+1 revision FROM recognition_resolution WHERE region_id=?").get(input.regionId) as { revision: number };
     this.database.exec("BEGIN IMMEDIATE");
     try {

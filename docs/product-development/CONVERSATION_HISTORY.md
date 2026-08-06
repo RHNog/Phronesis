@@ -1083,3 +1083,24 @@ Physical `v2` acquisition and processing are complete: nine front jobs completed
 ### Acceptance State
 
 Product Owner authorization received. Final application, native-worker, build, continuity, remote-SHA, and private-runtime health evidence must pass before the deployment is represented as complete.
+
+## 2026-08-06 — Scanner Recognition Recovery, Per-Card Material, And Actionable Offer
+
+### User Intent
+
+- Correct the apparent 1/9 Pokémon identification result and work toward a qualified 9.9/10 accuracy target.
+- Allow condition and variation correction inside Review, including Barbaracle as Reverse Holofoil.
+- End a scan with TCG Low, TCG Market, LigaPokemon/LigaMagic Low, and Suggested Offer totals.
+- Define “20% off TCG Low” as an offer equal to 80% of TCG Low.
+- Stop routine processing/capture of card backs and use the retained nine-card evidence while the owner is away.
+
+### Decisions And Implementation
+
+- Diagnosed the 1/9 result as a candidate-visibility defect: eight of eight supported English fronts had exact candidates, but the homogeneous Holofoil filter hid seven variant sets. Batch material is now a default and per-card review owns condition plus the exact selected candidate variation.
+- Added language-safe pre-retrieval observations. Spanish Toxicroak `55/147` is visibly identified but remains blocked from an English market SKU.
+- Added server-authoritative `tcg-low-80`, current TCG/Liga valuation snapshots, source/currency-separated totals, and coverage.
+- Added `v3` front-only bridge evidence and collapsed retained reverse evidence. No unattended scan was run; physical simplex validation remains supervised.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready. Live replay reports 9/9 observed identities and 8/8 exact candidate coverage for supported English cards; this is not a powered holdout or auto-accept qualification. Repository publication is required on the existing `codex/phr-local-card-recognition-20260804` branch.

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { RecognitionCandidate, RecognitionDecision } from "@/lib/cardRecognition/contracts";
+import type { ObservedCardIdentity, RecognitionCandidate, RecognitionDecision } from "@/lib/cardRecognition/contracts";
 import { conservativePolicy, decideCandidates, type ConfidencePolicy } from "@/lib/cardRecognition/policy";
 import type { VisionAnalysis } from "@/lib/cardRecognition/visionWorker";
 
@@ -19,9 +19,9 @@ export const activeRecognitionLane = {
   categoryId: "pokemon-en",
   game: "POKEMON",
   language: "ENGLISH",
-  corpusVersion: "catalogue-ocr-only-pokemon-en-20260805",
+  corpusVersion: "catalogue-ocr-only-pokemon-en-20260806",
   indexVersion: "vision-v1-pokemon-artwork-index-disabled",
-  pipelineVersion: "local-vision-ocr-pokemon-en-v1",
+  pipelineVersion: "local-vision-ocr-pokemon-en-v2-observed-identity",
 } as const;
 
 export type ObservedLanguage = "ENGLISH" | "SPANISH" | "UNKNOWN";
@@ -29,7 +29,7 @@ export type ObservedLanguage = "ENGLISH" | "SPANISH" | "UNKNOWN";
 function normalizeNameLine(value: string): string {
   return value
     .replace(/[{}©™]/g, " ")
-    .replace(/^(?:BASIC|BASIG|BASIE|STAGE\s*[12]|STAGE[12]|FASE\s*[12L]|FASE[12L])\b[\s,.:;-]*/i, "")
+    .replace(/^(?:BASIC|BASIG|BASIE|STAGE\s*[12]|STAGE[12]|FASE\s*[12LI]|FASE[12LI])\b[\s,.:;-]*/i, "")
     .replace(/\s+\d+(?:\s*\/\s*\d+)?\s*$/, "")
     .replace(/[^\p{L}\p{N}',\- ]/gu, " ")
     .replace(/\s+/g, " ")
@@ -68,6 +68,15 @@ function observedCollector(analysis: VisionAnalysis): { numerator: string; denom
     if (match) return { numerator: match[1], denominator: match[2], display: `${match[1]}/${match[2]}` };
   }
   return null;
+}
+
+export function observeCardIdentity(analysis: VisionAnalysis): ObservedCardIdentity {
+  return {
+    probableName: likelyNameQueries(analysis)[0] ?? null,
+    collectorNumber: observedCollector(analysis)?.display ?? null,
+    game: classifyObservedGame(analysis),
+    language: classifyObservedLanguage(analysis),
+  };
 }
 
 function normalizedCollector(value: string | null): string | null {
@@ -139,11 +148,12 @@ export function createRecognitionDecision(input: {
   const categoryId = input.categoryId ?? activeRecognitionLane.categoryId;
   const candidates = retrieveCandidates(input.analysis, input.catalogue, categoryId);
   const result = decideCandidates(candidates, policy);
+  const observation = observeCardIdentity(input.analysis);
   return {
     decisionId: randomUUID(), regionId: input.regionId, status: result.status,
     selectedCandidate: result.selected, candidates,
     corpusVersion: input.corpusVersion, indexVersion: input.indexVersion,
     pipelineVersion: input.pipelineVersion ?? (categoryId === activeRecognitionLane.categoryId ? activeRecognitionLane.pipelineVersion : "local-vision-ocr-v1"), policyVersion: policy.version,
-    decidedBy: "MACHINE", reason: result.reason, createdAt: input.now ?? new Date().toISOString(),
+    decidedBy: "MACHINE", reason: result.reason, createdAt: input.now ?? new Date().toISOString(), observation,
   };
 }

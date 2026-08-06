@@ -24,6 +24,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 
 - Use English Pokémon (`pokemon-en`) as the first active product lane. The default worker must not query Magic.
 - Treat game and language classification as pre-retrieval gates. English Pokémon evidence may proceed; card backs, non-English Pokémon, Magic, unknown game, and unknown language abstain.
+- Emit a structured observed identity (probable name, collector number, game, and language) before the retrieval gate so an unsupported-language card can remain visibly identified without acquiring an unsafe English catalogue binding.
 - Build Pokémon OCR queries from the probable card-name header and collector fraction when available. Ignore structural headers such as `BASIC`, `STAGE 1`, `STAGE 2`, HP text, and evolution text as names.
 - Preserve name, set, collector number, catalogue variant, and language on every candidate so the operator can distinguish exact Pokémon printings and finishes.
 - Canonical Phronesis printing and physical-variant identity is source truth.
@@ -46,6 +47,7 @@ Build a versioned licensed local reference corpus, benchmark harness, evidence-p
 - Corpus activation is transactional, checksum-verified, and rollback-capable.
 - Benchmark reports top-1/top-k exact-printing recall, accepted precision, review rate, latency, pairing accuracy, and failure strata.
 - Every decision is reproducible from corpus, pipeline, model/index, and policy versions.
+- Unsupported-language observations can report identity evidence while remaining ineligible for exact English-market resolution.
 - No paid or cloud recognition dependency exists at runtime.
 - Restarted jobs are lease-safe and idempotent; duplicate frame or region delivery cannot create duplicate assets.
 - A failed or expired job may be explicitly requeued only through a session-scoped recovery operation that preserves its attempt history and immutable evidence. Recovery must never requeue completed work or another session.
@@ -77,4 +79,4 @@ Runtime authority lives under `.data/card-recognition/` and is ignored by Git. S
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - Related prompt: `docs/prompts/PHR-TECH-014-local-recognition-corpus-engine-prompt.md`.
 - Last modified: 2026-08-06.
-- Modification reason: require deterministic CPU-bound Vision execution and session-scoped failed-job recovery after a macOS 27 beta ANE deadlock was reproduced against immutable duplex evidence.
+- Modification reason: preserve language-safe observed identity separately from exact English-market candidate retrieval.

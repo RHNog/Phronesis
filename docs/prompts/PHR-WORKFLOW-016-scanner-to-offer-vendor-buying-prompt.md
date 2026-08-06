@@ -13,9 +13,12 @@
 ## Implementation Requirements
 
 - Activate English Pokémon as the first scanner-to-offer product line and surface labelled exact printing/variant choices instead of silently selecting the first candidate.
-- Require one explicit condition and one exact Pokémon finish (`Normal`, `Holofoil`, or `Reverse Holofoil`) per homogeneous session; mixed material requires separate sessions.
+- Require explicit default condition and finish values per session, then pre-fill but permit explicit per-card condition and exact candidate-finish confirmation.
 - Persist batch-setting revisions append-only, permit correction only before the first card resolution, and lock the batch material thereafter.
-- Filter actionable candidates by the declared batch finish and enforce the same comparison server-side. A mismatch must fail closed rather than override the batch or silently select another SKU.
+- Show all machine candidates regardless of the batch default. Enforce server-side that the submitted finish equals the selected exact catalogue variant and persist per-card material append-only.
+- Preserve observed name, collector number, game, and language when market retrieval abstains; do not map a non-English observation to an English SKU.
+- Add a server-authoritative `tcg-low-80` preset equal to 80% of TCGplayer listing low, plus TCG Low, TCG Market, LigaPokemon/LigaMagic Low, and Suggested Offer totals with USD/BRL separation and coverage.
+- Collapse retained duplex reverse evidence by default and render no reverse placeholder for front-only sessions.
 - Replay existing immutable session evidence append-only after the pipeline switch; current UI counts and offer lines must exclude superseded region decisions.
 - Add authenticated Node-runtime APIs for session creation, sealed-bundle import, session read, candidate resolution, material confirmation, and draft-offer assembly.
 - For an isolated worktree runtime, bind the canonical authorization database explicitly; test an authenticated request so an incomplete worktree-relative auth store cannot pass anonymous-only health checks.

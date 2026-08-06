@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   if (!categoryId || !sku || !condition) return NextResponse.json({ error: "Category, SKU, and condition are required." }, { status: 400 });
   const catalogue = new SqliteRecognitionCatalogue(operationalPricingDatabasePath());
   try {
-    const snapshot = catalogue.priceSnapshot(categoryId, sku, condition);
+    const snapshot = catalogue.valuationSnapshot(categoryId, sku, condition);
     return snapshot ? NextResponse.json({ snapshot }) : NextResponse.json({ error: "No current price evidence exists for this exact condition." }, { status: 404 });
   } finally { catalogue.close(); }
 }

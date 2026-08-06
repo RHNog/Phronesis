@@ -18,6 +18,7 @@ Implement the local, evidence-producing recognition foundation described by `PHR
 
 - Make `pokemon-en` the first active recognition lane and record a Pokémon-specific pipeline version; the default worker must not query `magic-en`.
 - Gate retrieval on observed Pokémon plus English evidence, ignore Pokémon structural header/HP/evolution text as card names, and search by probable name plus collector fraction before name-only fallback.
+- Persist a pre-retrieval observed identity with probable name, collector number, game, and language even when the exact market lane abstains.
 - Persist candidate name, set, collector number, catalogue variant, and language for exact operator review.
 - Add append-only, idempotent session reprocessing for pipeline changes and ensure summaries/offers use only the latest active region revision.
 - Add shared acquisition/region/recognition contracts and strict validators.

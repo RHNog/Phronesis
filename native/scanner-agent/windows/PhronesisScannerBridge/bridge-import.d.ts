@@ -2,10 +2,10 @@ export type VerifiedWindowsBundle = {
   status?: "imported" | "already_imported";
   manifestSha256: string;
   manifest: {
-    schemaVersion: "phronesis.windows-scan-bundle/v1" | "phronesis.windows-scan-bundle/v2";
+    schemaVersion: "phronesis.windows-scan-bundle/v1" | "phronesis.windows-scan-bundle/v2" | "phronesis.windows-scan-bundle/v3";
     sessionId: string;
     profileName: string;
-    pairingSemantics: "unknown" | "adjacent-duplex-front-first" | "adjacent-duplex-back-first";
+    pairingSemantics: "unknown" | "adjacent-duplex-front-first" | "adjacent-duplex-back-first" | "single-sided-front";
     frames: Array<{ observedSequence: number; relativePath: string; byteCount: number; sha256: string; side: "FRONT" | "BACK" | "UNKNOWN"; pairedObservedSequence: number | null }>;
   };
 };
