@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T14:03:10Z","generation_id":"5e357f98b22e03cf40a4","head":"55731ca853c27118d85a44b81e53bfffcebbcbb1","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-price-monitoring-20260730","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T15:13:49Z","generation_id":"e75c26ce6de379e47981","head":"51b7e2bb4c7a4aa0e669d78c696296df85627837","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
@@ -20,12 +20,15 @@ Finish and preserve the isolated public event-worker gateway implementation, rep
 - Re-ran the configured project gate over the reconciled tree: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and diff hygiene pass.
 - Published implementation `66f9e6a` and seal `30605a3`; local acquire/continuity returned zero findings and hosted run `31108532122` passed continuity in 8 seconds and project validation in 1 minute 22 seconds.
 - Removed the hosted run's remaining Node 20 action-runtime deprecation by upgrading the two official checkout steps and the setup-node step to their current Node 24-compatible v7 majors without changing the exact-SHA or validation contract.
+- Aligned the portable runtime to Handoff 0.5.1, adopted shared workflow 2.20.0,
+  and made hosted permissions explicitly read-only without changing the public
+  ingress or product runtime.
 
 ## State left behind
 
-- Branch `codex/phr-price-monitoring-20260730` at `55731ca853c27118d85a44b81e53bfffcebbcbb1`.
+- Branch `codex/phr-price-monitoring-20260730` at `51b7e2bb4c7a4aa0e669d78c696296df85627837`.
 - Implementation worktree is clean.
-- Continuity generation `5e357f98b22e03cf40a4` was prepared successfully.
+- Continuity generation `e75c26ce6de379e47981` was prepared successfully.
 
 ## Remaining work
 
