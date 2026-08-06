@@ -72,7 +72,7 @@ export default async function OpportunityDetailsPage({
   }
 
   return (
-    <AppShell>
+    <AppShell requiredModule="INTELLIGENCE">
       <OpportunityDetails
         opportunity={rankedOpportunity}
         card={card}

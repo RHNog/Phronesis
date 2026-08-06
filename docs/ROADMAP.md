@@ -1,5 +1,188 @@
 # Roadmap
 
+## Product Review Candidate: Maximum Liga Equivalence Coverage
+
+- Implemented: one provider-aware target disposition for all 162,765 Magic and 46,642 English Pokémon products (`PHR-API-015`).
+- Implemented: bounded encoded-identity repair, ordered exact/compatible Pokémon tiers, complete reporting, and exact/compatible Vendor Workspace language.
+- Live result: Lucario V `27/73` resolves to LigaPokemon R$29.99; Pokémon single-card evidence reaches 32,600 / 43,748 (74.52%); Magic retains 131,883 accepted exact targets.
+- Preserved: ambiguous/unavailable products receive no price, collection-export sealed gaps remain explicit, and compatible rows cannot enter Arbitrage.
+- Next: Product Owner review and separately authorized deployment. Any new sealed or special-product coverage requires another authoritative source rather than weaker matching.
+
+## Product Review Candidate: Arbitrage And Liga Acquisition Recovery
+
+- Implemented: one operational pricing database across runtime, observer, import, provider, and artwork paths (`PHR-TECH-012`).
+- Implemented: private runtime supervision and automatic crosswalk rebuild after new Magic catalogue or complete LigaMagic snapshot.
+- Implemented: daily 03:00 overlap-safe LigaMagic orchestration plus isolated LigaPokemon profile, pilot, parser, and snapshot assembly (`PHR-API-013`).
+- Implemented: capture-first atomic archives and receipts plus a separate importer child, preventing large Magic work from blocking later game capture (`PHR-TECH-012`).
+- Verified: focused 54/54 and full 402/402 tests, TypeScript, lint, production build, diff hygiene, live five-category recovery, and private runtime probes.
+- Implemented: exact isolated LigaPokemon catalogue reconciliation with 25,200 accepted identities and 24,895 two-sided price pairs, plus provider-labelled Vendor Workspace evidence (`PHR-API-014`).
+- Operational state: all five TCGplayer categories are current to the August 5 12:21 run; private review, capture observer, and daily Liga agent are active. Remaining gates are LigaMagic reauthentication and separately approved Pokémon Arbitrage candidate exposure.
+
+## Completed Repair: GitHub Handoff Continuity
+
+- Completed: install locked dependencies before project validation and validate the exact committed PR head with full Git history and restored branch identity (`PHR-TECH-011`).
+- Preserved: GitHub reads committed Handoff truth; only a successful local `./handoff` may prepare and seal continuity state.
+- Verified: 376/376 local tests, TypeScript, lint, production build, clean Handoff seal, remote SHA equality, and both hosted pull-request jobs pass.
+- Deployment remained separate from the repair: a concurrently authorized operation subsequently activated Funnel port 10000, while the existing private 9443 service remained unchanged.
+
+## Product Review Candidate: Assisted Sealed Artwork Recovery
+
+- Implemented: conservative v1 assisted recovery plus an Administration Settings exception queue with lazy candidate images, search, pagination, and reversible approve/reject/restore/undo controls (`PHR-UX-024`).
+- Active private state: 356 / 2,894 exact plus 118 assisted representatives, for 474 / 2,894 visible (16.38%); 901 candidate-backed products remain pending.
+- Preserved: assisted and owner representatives never overwrite or reclassify exact artwork and remain visibly labelled in Vendor Workspace.
+- Next: improve the 901 pending and 1,519 unmatched products only through stronger package evidence, another sealed source, image understanding, or curated owner uploads.
+
+## Completed: Community Pokémon Artwork Gap Fill
+
+- Implemented: validated PokéFiles public-catalogue ingestion and pinned-commit `ptcg-assets` sealed manifest ingestion under `PHR-API-004`.
+- Applied: 31,286 / 43,732 Pokémon single rows (71.54%) and 356 / 2,892 sealed rows (12.31%) now have exact persisted artwork mappings; the sealed recovery added 165 exact products.
+- Retained: 1,500 / 1,500 priority sources in the durable cache; repeat execution is idempotent.
+- Preserved: 1,019 possible-but-non-exact and 1,517 unmatched/unsupported sealed rows remain honest placeholders.
+- Future gap work: add only sources or curated owner evidence that can prove the remaining exact product identities; do not lower the current match boundary to chase percentage.
+
+## Product Review Candidate: PriceCharting Multi-Game Daily Snapshots
+
+- Implemented: versioned Magic v2 and English One Piece v3 identity profiles over the immutable PriceCharting receipt model (`PHR-API-012`).
+- Measured: Magic accepted 109,841 / 129,485 eligible singles (84.83%) and One Piece accepted 4,731 / 6,122 eligible English singles (77.28%). Unmatched, ambiguous, colliding, sealed, non-English, and malformed rows remain inactive.
+- Implemented: encrypted Settings registration for both subscription CSV URLs, PriceCharting-only HTTPS acquisition, same-host redirect/content/schema/game checks, immutable downloads, ten-minute request pacing, per-game atomic promotion, same-day skip, retry, and one-shot/watch operation.
+- Activation gate: enter the two owner subscription URLs, run a supervised `npm run pricecharting:sync`, validate representative active Graded Area evidence, then separately approve host recurrence. No scheduler is installed in this release.
+
+## Product Review Candidate: PriceCharting Bulk Evidence Import
+
+- Product review ready: `PHR-API-011` implements immutable PriceCharting receipts, strict schema validation, provider-neutral staging, versioned Pokémon resolution, one-to-one collision quarantine, atomic promotion, last-good rollback, active Graded Area consumption, and deterministic coverage reporting. The 91,572-row owner file completed dry-run only; activation, recurrence, One Piece, and Magic remain pending.
+- Implemented measured boundary: resolver v9 proves 33,379 exact one-to-one candidates, including 32,099 with graded evidence; 1,704 converging rows across 745 targets and 387 ambiguous rows remain non-active. Coverage is 80.78% of eligible English single rows and 76.33% of the local Pokémon singles catalogue, using only tested deterministic identity rules.
+- Operator path: owner-operated local dry-run/apply for English Pokémon singles. Sealed records stage but remain strict-gated. The current owner receipt is dry-run only.
+- Deferred: authenticated daily acquisition, recurrence, review-console mutations, and separately audited One Piece and Magic game profiles.
+
+## Product Review Candidate: Editable Purchase Cart
+
+- Implemented: exact cart lines edit unit purchase value and quantity; Bulk edits total paid and optional approximate count (`PHR-UX-020`).
+- Implemented: each line exposes Save changes and Remove item, unsaved edits block checkout, and a reduced purchase quantity clamps pending Case quantity.
+- Preserved: identity/evidence fields, receipts, Event Ledger, Inventory, Display Case, payment, and authorization boundaries remain unchanged.
+- Verified: focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, production build, live persistence/removal/Case-clamp checks, and 390×844 no-overflow/44px controls.
+
+## Product Review Candidate: Sealed Readiness And Embedded Verification
+
+- Implemented: a restart-safe PkmnPrices `/v1/sealed` worker applies the full configured 100-credit UTC-day ceiling to newest-first Pokémon sealed ingestion and exact artwork resolution (`PHR-API-008`).
+- Implemented: the canonical recommended offer is now a compact expandable tile immediately above the cart with small TCG Low and TCG Market evidence (`PHR-UX-019`).
+- Implemented: Vendor Workspace contains a native official PSA certificate connector plus truthful no-network capability gates for Beckett/BCCG, TAG, CGC, and SGC (`PHR-API-009`).
+- Verified: combined 12/12 focused and 314/314 full tests, TypeScript, warning-free lint, production build, live desktop composition, disclosure behavior, and 390×844 responsive rendering.
+- Activation gate: register a sealed-enabled `PKMNPRICES_API_KEY` and `PSA_API_TOKEN` server-side, then restart the private service. No provider credit or certificate request was consumed during validation.
+
+## Product Review Candidate: Adjacent Search And Checkout Workspace
+
+- Implemented: Catalogue results and the canonical Event station/cart form one adjacent desktop operational band; evidence and buying decision form the secondary band (`PHR-UX-018`).
+- Preserved: checkout state, receipt/ledger/Inventory transactions, Quick Sale, evidence, and buying intelligence remain unchanged.
+- Verified: focused 21/21 and full 305/305 tests, TypeScript, lint, production build, private service, 1280px adjacent geometry, and 390px semantic stacking with zero horizontal overflow.
+
+## Product Review Candidate: Catalogue Verification Controls
+
+- Implemented: selected catalogue identities expose a safe prefilled TCGplayer cross-check and canonical enlarged artwork preview (`PHR-UX-017`).
+- Preserved: TCGplayer remains manual corroboration; Phronesis identity, artwork resolution, pricing evidence, and selection remain unchanged.
+- Verified: full 305/305 tests, focused 10/10 remediation checks, TypeScript, lint, production build, private service, 252×348 viewport-clamped preview, Escape dismissal, 44px phone link, zero horizontal overflow, and no new browser warning/error.
+
+## Product Review Candidate: Event Flip And Display Case Inventory
+
+- Implemented: finalized event Purchases feed a derived Event Flip queue; exact single-card lots support multi-select quantity and editable intended Sale price before one retry-safe Add-to-Case action (`PHR-WORKFLOW-013`).
+- Implemented: Display Case reserves receipt-backed units, combines them visibly with prepared opening stock, and provides price, return, Sale, reversal, count, variance, and CSV verification controls (`PHR-WORKFLOW-014`).
+- Preserved: General Inventory remains ownership/cost authority and now exposes owned, Case reserved, and generally available quantities with reservation-safe disposition/count/void guards.
+- Implemented: Vendor Workspace can send each eligible exact-card purchase line directly to Case only after the buyer enters its intended Case Sale price; receipt, Inventory, and reservation are atomic.
+- Verified: focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, 390px no-overflow, 44–48px controls, and clean browser console.
+- Deferred: exact Bulk itemization, Binder Inventory (`PHR-WORKFLOW-015`), multiple named cases, scanner/label workflows, settlement, marketplace publication, and public deployment.
+
+## Product Review Candidate: Event Stock Control And Intent-Aware Search
+
+- Implemented: an owner-scoped native Google Sheet template and strict five-column CSV contract feed an immutable event-scoped SQLite stock snapshot (`PHR-WORKFLOW-012`).
+- Implemented: full Event Ledger and Vendor Workspace Quick Sale share exact option search, atomic decrement/reversal, manual fallback, physical count evidence, and sold/leftover reports.
+- Implemented: bounded structured search interprets `SH03` as `SWSH03`, derives high-confidence One Piece OP/EB/ST/PRB code-to-title aliases from exact local catalogue evidence, and normalizes bounded One Piece collector input such as `22` to printed `022`, disclosing every interpretation while preserving explicit card selection (`PHR-UX-016`).
+- Verified: complete disposable stock workflow, intended Darkness Ablaze Charizard first, active `OP13 booster` Carrying On His Will sealed results, 55 evidence-derived One Piece aliases, 302/302 tests, TypeScript, lint, build, diff hygiene, private health, and 390px no-overflow/clean-console review.
+- Deferred: authenticated live Google synchronization, global Inventory allocation, barcode/SKU contract v2, and broader typo/OCR interpretation.
+
+## Product Review Candidate: Vendor Workspace Quick Sale
+
+- Implemented: Vendor Workspace now presents one Event station with default Purchase intake and one-tap Lite Quick Sale (`PHR-UX-015`).
+- Preserved: `/event-ledger` remains the seller's full event-control panel; both surfaces share the same active event, API, repository, validation, idempotency, cash summary, and audit trail.
+- Verified: an isolated two-item $25.50 Cash Sale entered at 390px appeared in the full Event Ledger with the same $125.50 expected cash. Full 279/279 tests, TypeScript, lint, build, private health, responsive overflow/touch targets, and console checks pass.
+
+## Product Review Candidate: Responsive Application Navigation
+
+- Implemented: the shared phone header opens every authorized primary Phronesis destination through one accessible drawer (`PHR-UX-014`).
+- Preserved: desktop sidebar, canonical navigation metadata, server entitlement filtering, and independent page/API authorization.
+- Verified: all six live routes, current state, focus containment/restoration, Escape/backdrop dismissal, breakpoint recovery, 44px targets, 390px overflow, console, 278 tests, TypeScript, lint, build, and private-service health pass.
+
+## Product Review Candidate: Event Cash Ledger Revision
+
+- Implemented: one active single-currency event begins with explicit opening cash (`PHR-WORKFLOW-006`).
+- Implemented: frictionless manual Sales and Purchases, payment-aware cash effects, and audited Cash Adjustments.
+- Implemented: one manual Sale records one overall amount plus one to 25 required sold-item descriptions and quantities without Inventory dependency.
+- Implemented: Vendor Workspace purchase receipts and Inventory intake create one linked ledger Purchase atomically.
+- Implemented: immutable closing count, expected cash, over/short variance, reasoned reversal, and responsive dedicated Event Ledger surface.
+- Verified: 278 tests, TypeScript, lint, production build, private service health, desktop review, complete phone-shell navigation, and 390px no-overflow/minimum-44px-control review pass.
+- Excluded: payment processing, settlement, accounting, profit claims, and automatic manual-sale Inventory reconciliation.
+
+## Completed: LigaMagic/TCGplayer Arbitrage Data Validation
+
+- Accepted crosswalk: 71,954 exact plus 14,438 qualifier-preserving alias matches; 86,392 total, 133,146 unmatched supported identities, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
+- Accepted evidence: 86,032 two-sided LigaMagic Compra/TCGplayer NM price pairs and deterministic fingerprint `ada5cb0288f45d16636bc3e34aab144709d0ff0b12c9eda629aa5ce6fcff20d2` across repeated builds.
+- Next operational gate: owner direction-specific costs, followed by real executable availability verification. No candidate is actionable before both.
+- Listing readiness is the deferred `PHR-WORKFLOW-011` backlog item.
+
+## Completed: Inventory Disposition Ledger
+
+- Completed: explicit Sale, Loss, Damage, Transfer Out, and Correction records (`PHR-WORKFLOW-010`).
+- Completed: atomic on-hand decrement, retry-safe creation, and non-destructive reasoned reversal.
+- Completed: gross recorded sale evidence without profit, settlement, or accounting claims.
+- Completed: count-revision protection, workspace ownership, operator authorization, responsive UI, and recent ledger.
+- Next inventory slice: listing readiness. Payment settlement, margin allocation, and accounting export remain separate future work.
+
+## Completed: Inventory Location And Count Reconciliation
+
+- Completed: normalized workspace locations with explicit Unassigned state (`PHR-WORKFLOW-009`).
+- Completed: atomic operator move/count reconciliation with reasoned append-only events.
+- Completed: receipt, approximate, counted, and unknown on-hand quantity basis without source receipt or cost-basis mutation.
+- Completed: operator-only management UI and recent activity with desktop-first/390px adaptation.
+- Completed next slice: explicit sale/disposition ledger; listing readiness now follows owned-quantity disposition truth.
+
+## Completed: Receipt-Backed Inventory Intake
+
+- Completed: exact and Bulk event receipt lines create one workspace inventory lot each in the checkout transaction (`PHR-WORKFLOW-008`).
+- Completed: exact printing, condition, quantity, unit/total cost, receipt/event/operator provenance, and truthful approximate Bulk evidence.
+- Completed: idempotent historical reconciliation and audited receipt-void propagation without deletion.
+- Completed: module-authorized `/inventory` workspace with desktop-first and mobile-adaptive summaries and filters.
+- Subsequent delivery completed locations/counts and disposition/sales; listing readiness is next.
+
+## Active: LigaMagic Brazilian Market Snapshot
+
+- Completed: `PHR-API-005` dedicated authenticated collection-export profile, one supervised pilot, safe request capture, and complete initial dry-run snapshot. `PHR-API-013` now owns recurrence.
+- Verified snapshot: 37 collections; 329,976 advertised/exported cards; 329,903 source rows; 329,301 unique identities; 602 identical cross-collection duplicates; zero price conflicts.
+- Confirmed semantics: `Compra` is consumer acquisition price; `Venda` is store buy offer.
+- Advanced on 2026-08-03: exact crosswalk, official FX, two-way calculations, 03:00 recurrence, and isolated LigaPokemon connector are implemented. Remaining gates are complete route costs, executable availability, LigaMagic reauthentication, and LigaPokemon pilot/promotion.
+
+## Accepted Remediation: Artwork And Provider Settings
+
+- Completed: exact-name Magic artwork discovery and unique Store Championship set-label reconciliation.
+- Completed: provider connection health and registration requirements in Settings.
+- Completed: in-app employee-login readiness checklist with the exact private GitHub callback.
+- Gated next slice: authenticated owner-only encrypted credential registration after Employee login is live.
+
+## Accepted: Card-Show Operations
+
+- Implemented: catalogue-first watch refresh, unique legacy identity reconciliation, truthful failure state, and secret-free provider health (`PHR-TECH-010`).
+- Implemented: manual watch composer and immediate offer ladder (`PHR-UX-010`, `PHR-UX-011`).
+- Implemented / activation gated: module-at-invite single-use employee activation (`PHR-ARCH-012`).
+- Implemented / live product review ready: account-free timed worker codes with scoped operational sessions, independently assignable Artwork Review, and server-validated session resumption through the configured duration (`PHR-ARCH-014`). Strict isolation of the separate private owner path still requires the gated `REQUIRED` auth activation.
+- Implemented: persistent exact/Bulk event cart and immutable receipts (`PHR-WORKFLOW-006`).
+- Implemented: bounded artwork resolution, restart-safe exact provider mappings, bounded event prewarming, and exact-SKU curated local images (`PHR-API-004`, `PHR-TECH-007`).
+- Accepted locally at checkpoint `6c38c1f`. Required authentication and unconfigured external providers remain gated; GitHub publication is not part of this checkpoint.
+
+## Active: Identity-Backed Price Monitoring
+
+- Completed: `PHR-TECH-009` restored a 204/204 behavioral baseline with clean standalone TypeScript, lint, and production build gates.
+- Implemented / activation gated: `PHR-ARCH-011` invite-only identity, sessions, workspace membership, roles, module entitlements, auditability, and server enforcement. Credentials, owner bootstrap, advisory disposition, and live callback verification remain external gates.
+- Product Review ready: `PHR-WORKFLOW-005` user-scoped server persistence, one-action tracking, undo, deterministic legacy migration, and verified-checkpoint refresh.
+- Implemented / external providers gated: `PHR-API-003` bounded JustTCG estimates, official eBay/CardTrader active listings, and first-party observed sales without scraping.
+- Gate: explicit Product Review before canonical adoption and GitHub continuity.
+
 ## Product Review Candidate: Cross-Game Artwork-First Buying
 
 - Implemented: unified search across all registered catalogue categories with visible game ownership and per-category freshness.
@@ -29,10 +212,10 @@
 ## Recently Completed: PHR-UX-006 Application Structure
 
 - Completed: organized production navigation around Discover, Decide, Monitor, and Administer.
-- Completed: retained Manage as a future product area without exposing unavailable destinations.
-- Completed: made Opportunities, Vendor Workspace, Market Watch, and Settings the only primary operational destinations.
+- Superseded by `PHR-WORKFLOW-008`: Manage is now operational through the module-authorized Inventory destination.
+- Historical baseline: Opportunities, Vendor Workspace, Market Watch, and Settings were the original primary operational destinations before inventory intake.
 - Completed: preserved Purchase Evaluation and opportunity details as contextual routes.
-- Constraint: this structural phase does not authorize Inventory, Portfolio, Alerts, Cards, Analytics, or mobile implementation.
+- Constraint retained for unimplemented Portfolio, Alerts, Cards, and Analytics; `PHR-WORKFLOW-008` separately authorized Inventory and responsive mobile adaptation.
 
 ## PHR-UX-005 Collector Presentation Rules
 

@@ -1,0 +1,55 @@
+[project]
+name = "Phronesis"
+
+[documents]
+agents = "AGENTS.md"
+project_state = "docs/PROJECT_STATE.md"
+architecture = "docs/ARCHITECTURE.md"
+decisions = "docs/DECISIONS.md"
+changelog = "docs/CHANGELOG.md"
+backlog = "docs/BACKLOG.md"
+active_task = "docs/ai/ACTIVE_TASK.md"
+handoff = "docs/ai/HANDOFF.md"
+session_summary = "docs/ai/SESSION_SUMMARY.md"
+current_context = "docs/ai/CURRENT_CONTEXT.md"
+work_queue = "docs/ai/WORK_QUEUE.md"
+bootstrap = "docs/ai/BOOTSTRAP.md"
+
+[framework]
+schema_version = "1"
+docs_dir = "docs"
+ai_dir = "docs/ai"
+reports_dir = "docs/ai/reports"
+required_documents = [
+  "AGENTS.md",
+  "docs/PROJECT_STATE.md",
+  "docs/ARCHITECTURE.md",
+  "docs/DECISIONS.md",
+  "docs/CHANGELOG.md",
+  "docs/BACKLOG.md",
+  "docs/ai/ACTIVE_TASK.md",
+  "docs/ai/HANDOFF.md",
+  "docs/ai/SESSION_SUMMARY.md",
+  "docs/ai/CURRENT_CONTEXT.md",
+  "docs/ai/WORK_QUEUE.md",
+  "docs/ai/BOOTSTRAP.md",
+]
+generated_paths = [
+  "docs/ai/HANDOFF.md",
+  "docs/ai/SESSION_SUMMARY.md",
+  "docs/ai/CURRENT_CONTEXT.md",
+  "docs/ai/WORK_QUEUE.md",
+  "docs/ai/BOOTSTRAP.md",
+  "docs/ai/reports/",
+]
+
+[validation]
+commands = [
+  "npm run test",
+  "npm run lint",
+  "npm run build",
+  "git diff --check",
+]
+max_age_hours = 24
+stale_after_hours = 168
+fail_on_stale_documents = false

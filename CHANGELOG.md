@@ -1,5 +1,81 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-012 Event Stock Control / PHR-UX-016 Intent-Aware Search
+
+### Local event inventory
+
+- Added an owner-scoped native Google Sheet template and strict five-column CSV ingestion with SHA-256 provenance.
+- Added event-scoped SQLite manifests, options, movements, and physical counts; both Event Ledger Sale surfaces reuse one exact-option picker and canonical write path.
+- Added atomic stock decrement/reversal, retry and oversell protection, explicit untracked fallback, compact summaries, and sold/leftover CSV reports.
+- Kept physical verification collapsed until requested so a large manifest does not obstruct live Sale entry.
+
+### Structured catalogue intent
+
+- Added bounded, escaped, all-token query expansion for numbered Pokémon set shorthand and leading-zero variants.
+- Added visible interpretation feedback without changing catalogue identity or automatically selecting a product.
+- Verified `Charizard v sh03` returns the SWSH03 Darkness Ablaze Charizard V first.
+- Verified 284/284 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private health, a 29.93 ms median 10,000-option stock search, and 390px no-overflow/clean-console behavior.
+
+## Unreleased — PHR-UX-015 Vendor Workspace Quick Sale
+
+### Shared event station
+
+- Added Purchase intake and Quick Sale modes to Vendor Workspace, preserving Purchase intake as the default.
+- Added manual multi-item Sale entry, payment selection, optional notes, immediate expected-cash/gross-sales feedback, and a direct path to full Event Ledger control.
+- Reused the canonical active event, `/api/event-ledger`, repository, validation, idempotency, summary, and immutable activity; no second ledger or Inventory mutation was introduced.
+- Verified an isolated two-item $25.50 Cash Sale across both surfaces, 279/279 tests, standalone TypeScript, warning-free lint, production build, private service health, desktop/390px responsiveness, 44px targets, and zero-console-error gates.
+
+## Unreleased — PHR-UX-014 Responsive Application Navigation
+
+### Complete phone shell
+
+- Added an accessible phone drawer containing every server-authorized primary Phronesis destination.
+- Reused the exact navigation list already supplied to the desktop sidebar, preserving lifecycle labels, routes, ordering, and current-page state.
+- Added focus containment/restoration, Escape/backdrop dismissal, body-scroll restoration, and automatic closure when the desktop breakpoint activates.
+- Kept Menu, Search, and User controls at 44px or larger with no 390px horizontal overflow.
+- Verified all six live routes, 278/278 tests, standalone TypeScript, warning-free lint, production build, private service health, desktop recovery, and zero-console-error gates.
+
+## Unreleased — PHR-WORKFLOW-006 Event Cash Ledger Revision
+
+### Event cash control
+
+- Added explicit event currency, opening cash, expected drawer cash, physical close count, and preserved close variance.
+- Added payment-aware manual Sale, Purchase, and Cash Adjustment entries with retry-safe append-only persistence and reasoned reversal.
+- Added one to 25 required description/quantity rows to each manual Sale without catalogue or Inventory dependency.
+- Linked evaluated exact/Bulk purchase receipts to ledger Purchases inside the receipt/Inventory transaction and linked receipt void to one cash reversal.
+- Added the dedicated responsive Event Ledger destination and moved Vendor Checkout event setup to that canonical path.
+- Verified 278/278 tests after the `PHR-UX-014` phone-shell correction, plus standalone TypeScript, warning-free lint, production build, private desktop/390px runtime, console, overflow, touch-target, and complete-navigation gates.
+
+## Unreleased — PHR-WORKFLOW-010
+
+### Inventory disposition
+
+- Added classified Sale, Loss, Damage, Transfer Out, and Correction records against known lot quantities.
+- Added atomic operational-quantity decrement, retry-safe creation, and non-destructive reasoned reversal.
+- Added gross recorded sales, disposed/sold summaries, and operator-only responsive workflows.
+- Preserved receipt, acquisition-cost, count, and provenance evidence; ambiguous reversal after a later count fails closed.
+- Verified 259/259 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop/390px runtime, console, overflow, and HTTP gates.
+
+## Unreleased — PHR-WORKFLOW-009
+
+### Inventory reconciliation
+
+- Added normalized workspace locations and explicit Unassigned inventory state.
+- Added atomic move/physical-count reconciliation with append-only actor, reason, timestamp, and before/after events.
+- Added on-hand quantity basis without changing receipt quantity, Bulk intake evidence, or acquisition cost basis.
+- Added operator-authorized lot management and recent reconciliation activity on desktop and mobile.
+- Verified 252/252 tests, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop/390px runtime, and console gates.
+
+## Unreleased — PHR-WORKFLOW-008
+
+### Receipt-backed inventory
+
+- Added atomic inventory intake for exact-card and truthful aggregate Bulk event-receipt lines.
+- Added exact condition/variant/quantity and acquisition cost basis with receipt, event, operator, and timestamp provenance.
+- Added idempotent historical receipt reconciliation and non-destructive receipt-void propagation.
+- Added module-authorized Inventory navigation, summaries, filters, and responsive lot presentation.
+- Verified the supported behavioral suite, standalone TypeScript, warning-free lint, production build, diff hygiene, private desktop, 390px mobile, and console gates.
+
 ## Unreleased — PHR-UX-009
 
 ### Buying intelligence explanation
@@ -43,6 +119,7 @@
 - Added tailnet-only phone review through `PHR-TECH-005`, with loopback binding, HTTPS, persistent recovery, mobile verification, and no public deployment.
 
 ### Added
+- Provider Connections and Employee login readiness sections in Settings, with live secret-free provider state and the exact private GitHub callback.
 
 - Desktop-first Snapshot-Powered Vendor Workspace for Magic, Pokémon, and One Piece.
 - Read-only observer of verified Pricing Update Tool catalogue completions.
@@ -64,6 +141,12 @@ The format is inspired by "Keep a Changelog".
 ## [Unreleased]
 
 ### Added
+- Card-show operations program: catalogue-first watch refresh, manual watch composer, offer-first decisions, module-scoped employee activation, persistent exact/Bulk vendor checkout, and exact-SKU curated product artwork.
+- Automatic eBay client-credentials token exchange with bounded in-memory token reuse.
+- Node-safe watch/evidence repository boundary so the four-daily catalogue observer remains operational outside Next.js.
+
+### Fixed
+- Magic artwork lookup now strips search qualifiers by querying each visible canonical card name and safely resolves the unique Store Championship Urza's Saga despite provider set-label drift.
 - Canonical Phronesis identity, three-role product-development workflow, CTO conversation ledger, and documentation-practices review.
 - Sprint 33 Provider Replay & Fixture Infrastructure under `lib/providers/replay/`.
 - Replay modes `LIVE`, `REPLAY`, and `AUTO` controlled by `PROVIDER_MODE` in local development.

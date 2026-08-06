@@ -1,5 +1,182 @@
 # Agent Handoff
 
+## Product Review Candidate — Dedicated Favicon And iOS Application Icon — 2026-08-05
+
+- `PHR-ARCH-010` now separates the compact app mark from the full Phronesis navigation logo. The Product Owner attachment is the source for application metadata; `phronesis-logo.png` remains unchanged in desktop/mobile shell chrome.
+- Static Next.js assets provide `app/favicon.ico` at 32×32, `app/icon.png` at 512×512, and `app/apple-icon.png` at 180×180. A canonical 1254×1254 PNG lives at `public/brand/phronesis-app-icon.png`.
+- Fresh production HTML declares all three icon links with the correct relation, type, and size; HTTP responses are 200 and byte-identical to repository assets.
+- Focused 6/6 and full 404/404 tests, TypeScript, lint, build, visual QA, asset hashes/dimensions, and diff hygiene pass. The launch-managed private runtime is restarted and verified; repository publication is authorized in this delivery.
+
+## Product Review Candidate — Maximum Liga Equivalence Coverage — 2026-08-05
+
+- `PHR-API-015` fixes the reported Lucario V `27/73` gap: bounded decoding reconciles LigaPokemon's `Champion&rsquo;s Path` presentation to the exact TCGplayer printing and exposes the acquired R$29.99 low/average/high evidence.
+- `regional_product_equivalence` now records one exact, compatible, ambiguous, or unavailable disposition for every current Magic and English Pokémon TCGplayer target.
+- Live Pokémon result: 30,061 exact, 2,539 compatible, 102 ambiguous, and 13,940 unavailable across 46,642 products; exact-or-compatible evidence covers 32,600 / 43,748 singles (74.52%).
+- Live Magic result: 131,883 exact and 30,882 unavailable across 162,765 products.
+- Compatible evidence is labelled for Vendor Workspace comparison only. Arbitrage still reads the original exact Magic source crosswalk.
+- Full 404/404 tests, TypeScript, lint, production build, repeated Magic/Pokémon snapshot fingerprints, and live database invariants pass.
+- The operational crosswalk/ledgers were rebuilt and the launch-managed private runtime was restarted from the validated build. Local/tailnet Vendor Workspace, live Lucario evidence, public route isolation, and exact-Arbitrage exclusion all pass; repository publication is authorized in this delivery.
+
+## Product Review Candidate — Unified Vendor Pricing And Brand Recovery — 2026-08-05
+
+- `PHR-UX-022` now renders one combined TCGplayer/Liga pricing card in Snapshot evidence. The exact live Pikachu shows $2.09 TCG Market, $2.92 delivered, and LigaPokemon R$38.99 low / R$42.07 market in the same semantic region.
+- Grading is one closed-by-default disclosure directly below pricing. Expanding it reveals PriceCharting candidates and certificate lookup; Buying decision no longer duplicates either regional or grading controls.
+- `PHR-ARCH-010` restores the exact July 9 1254×1254 raster to `public/brand/phronesis-logo.png`. Desktop/mobile shell identity plus `/icon` and `/apple-icon` use its byte-identical SHA-256 `29062e6fb7657458e17f594290380e50670431c0116824393b922a460ca54984`; the generic favicon was removed.
+- Focused 27/27, full 403/403, TypeScript, lint, production build, diff hygiene, private HTTP/icon probes, live exact-card interaction, 390px zero-overflow audit, and clean console pass.
+- The private service is live. The main worktree remains intentionally uncommitted because it contains unrelated concurrent changes.
+
+## Live — Provider-Aware Regional Evidence And Capture-First Catalogues — 2026-08-05
+
+- `PHR-API-014` now returns exact LigaMagic evidence for `magic-en` and exact LigaPokemon evidence for `pokemon-en`, with visible provider provenance in Vendor Workspace. Pokémon remains excluded from Arbitrage.
+- The screenshot Pikachu V SKU now reports the August 5 12:21 TCGplayer checkpoint and live LigaPokemon evidence at R$38.99 low / R$42.07 average.
+- `PHR-TECH-012` archives each completed catalogue immediately with an atomic SHA-256 receipt, while a separate child performs imports, watchlist refresh, JustTCG enrichment, and Magic/Pokémon reconciliation.
+- A read-only recovery from the latest Pricing Update Tool staging tables imported Pokémon 221,627 rows, One Piece 34,908, Riftbound 10,036, and Lorcana 30,566. All five category checkpoints are August 5 12:21, `CURRENT`, and `stale: false`.
+- Full validation is 402/402 plus TypeScript, lint, Next.js 16.2.12 production build, diff hygiene, live provider API probes, and launch-managed runtime health.
+- The next ordinary 18:00 source run should create native capture receipts; monitor it without triggering another provider run. LigaMagic reauthentication and Pokémon Arbitrage exposure remain separate gates.
+
+## Product Review Candidate — Timed Worker Session Continuity — 2026-08-04
+
+- `PHR-ARCH-014` now resumes an existing valid HttpOnly worker session from the stable `/event-access` link for its remaining server-issued duration.
+- The human code remains single-use. Resume validates the hashed SQLite session, redeemed grant, scope, expiry, revocation, event state, and assigned modules before redirecting.
+- Live diagnosis confirmed the reported grant/session was active and unrevoked; the old page ignored it and prompted for the consumed code again.
+- Focused 13/13, TypeScript, lint, build, diff hygiene, LaunchAgent restart, private/public 200 probes, public Settings 404, and production CSS delivery pass. The restricted full run is 396/397 only because the gateway bind fixture receives sandbox `EPERM`; it passes unrestricted.
+- Product Owner next action: refresh the existing public worker link in the same browser. No code rotation or grant recreation is required while that cookie remains present and valid.
+
+## Product Review Candidate — LigaPokemon Catalogue Reconciliation — 2026-08-04
+
+- `PHR-API-014` implements isolated, transactional LigaPokemon-to-English-TCGplayer reconciliation over the complete 167,912-row snapshot.
+- Live result: 25,200 exact matches, 25,034 with LigaPokemon consumer-low, 25,002 with TCGplayer Near Mint, and 24,884 with both. Two consecutive builds produced fingerprint `295be8d699da35d13b8df82a59a6d46ae9a51fd6f337e6c60b3a7f3259c91d9a`.
+- Eight punctuation-duplicate Professor's Research rows are quarantined across four target groups. Another 8,474 explicit foreign-market rows and 2,600 unsupported treatments are inactive. Zero accepted target duplicates or missing targets remain.
+- Complete recurring LigaPokemon snapshots and verified Pokémon catalogue checkpoints rebuild the isolated crosswalk. Magic remains 329,301 rows / 131,885 matches with fingerprint `38dfd400845f0aea1b9835b8a7502d3b0e2f3d46abdac75f5b41dd9d69fa1a42`.
+- Pokémon is not exposed through Arbitrage. The next Product Owner decision is a separately specified candidate policy; route costs and executable availability remain independent actionability gates.
+- Documentation: `docs/api/PHR-API-014-ligapokemon-catalogue-reconciliation.md`, `docs/testing/PHR-API-014-ligapokemon-catalogue-reconciliation-validation.md`, and `docs/reviews/PHR-LIGAPOKEMON-CATALOGUE-RECONCILIATION-conformance-review.md`.
+
+## Product Review Candidate — Arbitrage And Regional Acquisition Recovery — 2026-08-03
+
+- `PHR-TECH-012` resolves the zero Arbitrage queue to a private runtime selecting `.data/pricing-lookup.sqlite` rather than the verified `.data/mobile-review.sqlite`; the former has zero matches and the latter has 131,869.
+- All supported runtime and maintenance paths now share the operational resolver. Private launch supervises the catalogue observer, and new Magic imports or complete LigaMagic runs rebuild regional reconciliation.
+- `PHR-API-013` adds a daily 03:00 LigaMagic LaunchAgent, overlap lock, same-day idempotency, atomic status, complete-receipt gate, and independent provider results.
+- LigaPokemon has isolated profile/pilot/full commands, an authenticated 20-column parser, and isolated snapshots. Its Lote 1 pilot passed at 9,772/9,772. Exact Product Owner authorities preserve source and exported quantities for Lote 10, Lote 4, Lote RF 3, and Lote RF 6. Full acquisition completes all 18 collections at 167,912 unique identities with zero duplicate conflicts; `PHR-API-014` now supplies isolated exact reconciliation while candidate exposure remains gated.
+- The five TCG catalogue checkpoints remain at 2026-08-01. The sibling acquisition dashboard is down and its four-daily schedule is stale; do not represent Phronesis catalogue data as up to date.
+- Focused checks and full 393/393 tests, TypeScript, warning-free lint, production build, plist validation, and diff hygiene pass. Same-session conformance passes but is not independent approval.
+- Live recovery passed: the supervisor owns observer plus Next.js, and the API returns 50 ranked identity-verified candidates instead of zero. They remain blocked by incomplete route costs and zero availability verifications.
+- The remote-session shutdown edge was repaired and the runtime was consolidated to exactly one private screen, wrapper, observer, and Next.js listener. The separate public-gateway screen was untouched.
+- The 03:00 agent is loaded. Durable orchestration records LigaPokemon `SUCCESS`; overall status remains `PARTIAL_FAILURE` only because LigaMagic is independently `REAUTHENTICATION_REQUIRED`. The external TCG scheduler also remains stale.
+
+## Product Review Candidate — Editable Purchase Cart — 2026-08-01
+
+- `PHR-UX-020` is implemented under `PHR-STRUCT-20260801-006`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- Exact cart lines expose editable Unit purchase price and Purchase quantity. Bulk exposes Bulk total paid and optional Approximate count. Each line has Save changes and Remove item.
+- The canonical purchase route and repository update only the requesting operator's active-event cart payload and preserve identity, condition, notes, recommendation, and market evidence.
+- Unsaved edits block receipt finalization, and a saved quantity reduction clamps any pending direct-to-Case quantity.
+- Verification is green at focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, production build, diff hygiene, live edit/persistence/remove/Case-clamp flow, 390×844 no overflow, 44px controls, and clean browser logs.
+- A disposable live cart line was removed after verification; the active cart is empty and no receipt, ledger entry, Inventory lot, or Case allocation was created.
+- No dependency, public deployment, commit, or push occurred. Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Sealed Readiness And Embedded Verification — 2026-08-01
+
+- `PHR-API-008`, `PHR-UX-019`, and `PHR-API-009` are implemented under `PHR-STRUCT-20260801-005`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- PkmnPrices ingestion is sealed-only, newest-release-first, restart-safe, and capped at exactly 100 local-policy credits per UTC day. Exact identity evidence is required before artwork adoption.
+- The Vendor Event station now shows the canonical ready recommendation directly above `Current purchase`, with TCG Low/Market in the collapsed summary and the offer ladder on expansion.
+- Vendor Workspace includes embedded certificate lookup. PSA uses the official API when configured; Beckett/BCCG, TAG, CGC, and SGC return `OFFICIAL_API_REQUIRED` without automated traffic.
+- Verification is green at combined focused 12/12 and full 314/314 tests, TypeScript, warning-free lint, production build, diff hygiene, live desktop composition/expansion, and 390×844 responsive rendering.
+- `PKMNPRICES_API_KEY` and `PSA_API_TOKEN` are absent from the private runtime. No credit or certificate request was transmitted. Configure server-side credentials and restart the private service to activate; the PkmnPrices key must include sealed access.
+- No dependency, public deployment, commit, or push occurred. Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Adjacent Search And Checkout Workspace — 2026-08-01
+
+- `PHR-UX-018` is implemented under `PHR-STRUCT-20260801-004` as a reversible Vendor Workspace recomposition.
+- Catalogue results and the single canonical Event station/cart are adjacent on desktop; Snapshot evidence and Buying decision remain in the secondary band. No checkout state, API, receipt, ledger, Inventory, Display Case, or Quick Sale logic was duplicated or changed.
+- Live review measured 351px results beside 586px checkout at 1280px and the correct results → checkout → evidence → decision order at 390px, with zero horizontal overflow at both sizes.
+- Verification is green at focused 21/21 and full 305/305 tests, TypeScript, warning-free lint, production build, and private service. No event mutation, dependency, public deployment, commit, or push occurred.
+- Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Catalogue Verification Controls — 2026-08-01
+
+- `PHR-UX-017` is implemented under `PHR-STRUCT-20260801-003` as a reversible Vendor Workspace verification layer.
+- Exact selected catalogue identity produces a safely encoded TCGplayer all-products search; the 44px link opens with `noopener noreferrer` and never changes Phronesis identity or selection.
+- `CardThumbnailPreview` reuses canonical image candidates/cache for result hover and selected-image focus/touch, renders through a viewport-clamped fixed portal, and dismisses on Escape or interaction exit.
+- Live `OP16-022` evidence measured a 252×348 contained preview, zero phone horizontal overflow, correct external URL, and no new browser warning/error after bounded on-demand image loading remediation.
+- Verification is green at full 305/305, focused 10/10, TypeScript, warning-free lint, production build, diff hygiene, and private service. No provider API, external navigation, mutation, dependency, public deployment, commit, or push occurred.
+- Same-session Chief Architect conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — One Piece Set-Code Search Resolution — 2026-08-01
+
+- `PHR-UX-016` is enhanced under `PHR-STRUCT-20260801-002`: OP/EB/ST/PRB codes resolve to human set titles derived from exact local single-card catalogue evidence, not hard-coded release names.
+- The active catalogue produced 55 fail-closed aliases. OP13 resolves to Carrying On His Will from 165 base-set products and `OP13 booster` returns all four loaded sealed formats while OP13 singles remain searchable.
+- One Piece numeric collector input is now zero-padded before FTS retrieval: `OP16 22` and `OP16 022` return the same two `OP16-022` Monkey.D.Luffy identities, while the mismatched `Zoro OP16 22` query returns zero.
+- Every non-alias token remains required, special-event/weak/ambiguous mappings are rejected, and the operator still selects the exact result.
+- Verification is green at focused 19/19 and full 302/302 tests, TypeScript, warning-free lint, production build, diff hygiene, private API/health, 21.58 ms loopback response, and 390×844 no-overflow/clean-console review.
+- The private service is rebuilt with the additive alias table. No provider, source catalogue, selected identity, inventory, public deployment, commit, or push changed. Same-session conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Event Flip And Display Case Inventory — 2026-07-31
+
+- `PHR-WORKFLOW-013` and `PHR-WORKFLOW-014` are implemented under `PHR-STRUCT-20260731-006`; `PHR-WORKFLOW-015` records Binder Inventory for later design. The feature-branch worktree remains uncommitted pending Product Owner review.
+- Every finalized event Purchase appears in Event Flip. Exact single-card lots can be multi-selected, quantity-checked, intended-price edited, and reserved into Display Case; sealed, Bulk, and manual Purchase evidence remains visible and General-only.
+- Display Case combines prepared opening stock with receipt-backed event flips while preserving source and ownership boundaries. Both Sale surfaces use one source-labelled picker; linked Sale and eligible reversal update Case, General Inventory, and Event Ledger atomically.
+- Vendor Workspace purchase lines now offer direct Case routing with Case quantity defaulting to one, editable through purchased quantity, and a required Case Sale price; the receipt, Inventory lot, initial price, and reservation commit together, while unallocated copies remain in Event Flip.
+- General Inventory now exposes owned on-hand, Case reserved, and generally available quantities and blocks dispositions, counts, and receipt voids that would invalidate Case evidence. Case returns are retry-safe and physical counts remain append-only variance observations.
+- Verification is green at focused 6/6 and full 290/290 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, desktop, 390px no-overflow, 44–48px controls, and clean browser console.
+- No live event mutation, provider request, external transaction, dependency, public deployment, commit, or push occurred. Same-session conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Event Stock Control And Intent-Aware Search — 2026-07-31
+
+- `PHR-WORKFLOW-012` and `PHR-UX-016` are implemented under `PHR-STRUCT-20260731-005`; the existing dirty feature-branch worktree remains uncommitted pending Product Owner direction.
+- Native Google Sheet template: `https://docs.google.com/spreadsheets/d/1yqGJMvyL_zzMuDQPOdnLi0UUuyIF1-B3-9iwpkEUv50/edit` (owner-scoped). The app also provides a local CSV template.
+- Both Event Ledger Sale surfaces now search and atomically decrement one local event manifest, preserve untracked fallback, restore stock on reversal, and produce sold/leftover/count/variance evidence.
+- `Charizard v sh03` now discloses `SH03 → SWSH03` and returns Darkness Ablaze Charizard V `019/189` first.
+- Verification is green at 284/284 tests, TypeScript, warning-free lint, production build, diff hygiene, private health, complete disposable API workflow, 29.93 ms median search over 10,000 options, and 390px no-overflow/clean-console review.
+- No live event mutation, public Sheet, credential, external transaction, dependency, commit, or push occurred. Same-session conformance passes; CTO Product Review remains pending.
+
+## Product Review Candidate — Vendor Workspace Quick Sale — 2026-07-31
+
+- `PHR-UX-015` is implemented under `PHR-STRUCT-20260731-004`; the worktree remains uncommitted pending Product Owner direction.
+- Vendor Workspace now provides one Event station with default Purchase intake and Lite Quick Sale. Both modes feed the same active Event Ledger; `/event-ledger` retains full event control.
+- An isolated 390px two-item $25.50 Cash Sale updated the Lite summary to $125.50 expected cash and appeared with identical items/totals in the full Event Ledger. No persistent user event data was changed.
+- Verification is green at 279/279 tests plus standalone TypeScript, warning-free lint, production build, diff hygiene, private-service health, desktop/390px overflow and touch-target checks, and a clean browser console.
+- Same-session Chief Architect conformance passes. CTO Product Review, commit, and push remain pending.
+
+## Product Review Candidate — Responsive Application Navigation — 2026-07-31
+
+- `PHR-UX-014` fixes the shared shell defect found during Event Ledger phone review; the worktree remains uncommitted pending Product Owner direction.
+- Every authorized destination now appears in an accessible phone drawer fed by the same server-filtered list as the desktop sidebar.
+- Live 390px review reached Opportunities, Vendor Workspace, Event Ledger, Market Watch, Inventory, and Settings; active state, focus wrap/return, dismissal, body-scroll restoration, breakpoint recovery, 44px controls, overflow, and console checks pass.
+- Verification is green at 278/278 tests plus standalone TypeScript, warning-free lint, production build, diff hygiene, and private-service health.
+
+## Product Review Candidate — Event Cash Ledger — 2026-07-31
+
+- `PHR-WORKFLOW-006` is implemented under `PHR-STRUCT-20260731-002`; changes remain uncommitted until the Product Owner requests Git continuity.
+- `/event-ledger` starts one USD/BRL event with explicit opening cash, records manual payment-aware Sales/Purchases, stores one to 25 sold-item rows per Sale, supports Cash Adjustments/reversals, and freezes close variance.
+- Vendor receipt checkout atomically creates Inventory and one linked ledger Purchase; receipt void appends the ledger reversal.
+- Verification is green at 278/278 tests plus standalone TypeScript, lint, production build, diff hygiene, private service health, desktop, complete phone navigation, 390px no-overflow/minimum-44px-control, and zero-console-error gates.
+- Same-session Chief Architect conformance passes. CTO Product Review, commit, and push remain pending.
+
+## Current Canonical Git And Arbitrage Handoff — 2026-07-30
+
+- Canonical repository: `/Volumes/JarvisSSD/Projects/Phronesis`; the Developer checkout is rollback-only.
+- Reconciled branch: `codex/phr-price-monitoring-20260730`.
+- Verified implementation commit: `66e0500d295d079e96e54e6e821b95e6ca46b70d`.
+- Handoff adoption baseline: `885b645c7266e52963509774c35e181c06bec9be`; at reconciliation it exactly matched `origin/codex/phr-price-monitoring-20260730` and was 15 commits ahead of `origin/main`, zero behind.
+- Validated data: 86,392 LigaMagic/TCGplayer identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and all 109,763 Textless rows quarantined.
+- Arbitrage remains truthfully blocked at `IDENTITY_VERIFIED` until owner costs and real executable availability exist.
+- The generated `docs/ai/HANDOFF.md` is the authoritative exact post-seal branch/commit package. Historical sections below are point-in-time evidence and do not override it.
+
+## CTO Accepted — Artwork And Provider Settings
+
+- The Store Championship Foil Urza's Saga thumbnail now renders; the separate Winner product remains an honest placeholder because it has no uniquely verified provider artwork.
+- Settings reports JustTCG configured/disabled, eBay unconfigured, and CardTrader unconfigured without exposing values.
+- The exact owner login activation checklist is visible in Settings. External GitHub OAuth app creation and credential entry are the remaining user-controlled gate.
+- Verification is green at 234/234 tests plus type/lint/build/runtime/browser gates. No provider credential or external account was created.
+
+## CTO Accepted — Card-Show Operations
+
+- `PHR-TECH-010`, `PHR-UX-010`, `PHR-ARCH-012`, `PHR-UX-011`, `PHR-WORKFLOW-006`, and `PHR-API-004` are implemented under `PHR-STRUCT-20260730-005`.
+- Full verification is green: 232/232 tests, standalone TypeScript, warning-free lint, production build, observer one-shot, diff hygiene, and private runtime checks.
+- The existing Urza's Saga watch now refreshes from the verified catalogue at `$469.04`; its cross-provider set-label discrepancy reconciles only because the remaining physical identity is unique.
+- Private review is `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Five catalogues are current; Riftbound remains outside feature work despite a retained upstream receipt.
+- JustTCG is configured but disabled by feature flag. eBay client credentials and CardTrader token are absent. Required employee authentication remains gated.
+- Local feature-branch checkpoint is `6c38c1f`. No push or publication occurred.
+
 ## Canonically Adopted — PHR-UX-009
 
 - Ready Snapshot evaluations now expose the existing Phronesis Intelligence assessment, evidence, confidence, opportunities, risks, and current action.
@@ -32,7 +209,7 @@
 ## Current Product Review Gate — PHR-API-002 + PHR-UX-008
 
 - Unified five-category search, artwork-first grouping, Finish-before-Condition selection, and Pokémon/TCGdex artwork are implemented and locally operational.
-- Private review URL remains `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac is awake/online and the phone is on the same Tailscale tailnet.
+- Private review URL remains `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor` while the Mac is awake/online and the phone is on the same Tailscale tailnet.
 - Current data: Magic, Pokémon, and One Piece July 29 receipts. Lorcana/Riftbound are registered and await an upstream completed receipt.
 - Verification at that gate: 18/18 focused, 7/7 identity, lint/build/diff pass; the newer Bandai/cache gate above supersedes those counts.
 - External gate remaining after the authorized revision: Riftbound thumbnails need Riot approval/app key.
@@ -40,11 +217,11 @@
 
 ## 2026-07-29 Event Readiness
 
-`PHR-TECH-006` activated July 29 18:20 Magic, Pokémon, and One Piece catalogues in `.data/mobile-review.sqlite`; source evidence is preserved under `.data/pricing-catalogues/20260729_182153/`. The persistent observer watches every ten seconds and archives future verified receipts before import. At that gate, `PHR-UI-002` provided only Magic thumbnails; the current `PHR-API-002` gate above supersedes that provider limitation. Review at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Do not trigger an extra upstream run, mutate Pricing Update Tool, or delete archives before the event.
+`PHR-TECH-006` activated July 29 18:20 Magic, Pokémon, and One Piece catalogues in `.data/mobile-review.sqlite`; source evidence is preserved under `.data/pricing-catalogues/20260729_182153/`. The persistent observer watches every ten seconds and archives future verified receipts before import. At that gate, `PHR-UI-002` provided only Magic thumbnails; the current `PHR-API-002` gate above supersedes that provider limitation. Review at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Do not trigger an extra upstream run, mutate Pricing Update Tool, or delete archives before the event.
 
 ## 2026-07-29 Private Phone Review
 
-`PHR-TECH-005` provides a persistent tailnet-only Product Review URL at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`. Check it with `npm run review:phone:status`. The user LaunchAgent is `com.phronesis.private-review`; Tailscale Serve port 9443 is dedicated to it. Never use Funnel or replace handlers 443/8443. The Mac must remain awake and online.
+`PHR-TECH-005` provides a persistent tailnet-only Product Review URL at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`. Check it with `npm run review:phone:status`. The user LaunchAgent is `com.phronesis.private-review`; Tailscale Serve port 9443 is dedicated to it. Never use Funnel or replace handlers 443/8443. The Mac must remain awake and online.
 
 ## 2026-07-29 PHR-WORKFLOW-004 Handoff
 
@@ -453,3 +630,6 @@ No sprint is complete until documentation is updated.
 ## Suggested Next Step
 
 Next Pipeline Integrity work should persist Pipeline Reports with failed evaluations and add policy validation before Business Profiles are saved. Next System Readiness work should persist Readiness Reports with Evaluation Snapshots and add historical diagnostics for failed evaluations. Next Business Profile work should persist profiles, add import / export, and include profile ids plus Offer Policy in immutable evaluation snapshots. Next Playability work should add official provider integrations for EDHREC-style deck penetration, MTGGoldfish-style format popularity, and Melee / MTGO / Top8 competitive results without scraping. Market Provider v2 should add true live listings or recent sales from a marketplace-specific provider while preserving normalized `MarketSnapshot` output. Future intelligence work should register models in the Asset Intelligence Framework without changing the Asset Intelligence → Strategy → Negotiation Ladder → Offer Ladder Validation → Decision Resolver contract. Evaluation History is now the input for future backtesting, simulation, strategy replay, evaluation replay, Market Context replay, signal validation, personal buying history, and portfolio tracking.
+# Current Handoff — 2026-07-30
+
+`PHR-STRUCT-20260730-004` is Product Review ready. `PHR-TECH-009` is accepted; `PHR-ARCH-011`, `PHR-WORKFLOW-005`, and `PHR-API-003` are implemented locally on `codex/phr-price-monitoring-20260730`. Authentication and external listing providers remain inactive pending credentials and documented activation gates. Do not claim active eBay/CardTrader coverage or marketplace-wide completed sales. The review package passes 220/220 tests, standalone TypeScript, lint, build, migration, diff, and responsive smoke checks. No push or canonical adoption has occurred.

@@ -3,8 +3,15 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import type { PricingExportContract } from "../lib/pricing/contract";
 import { parsePricingExport, PricingContractError } from "../lib/pricing/contract";
-import { askingPriceSpread, deliveredPriceFor, nearestPricedCondition, queryClearlyTargetsSingle } from "../lib/pricing/domain";
+import { askingPriceSpread, deliveredPriceFor, isStale, nearestPricedCondition, queryClearlyTargetsSingle } from "../lib/pricing/domain";
 import { PricingRepository } from "../lib/pricing/repository";
+import { createPricingSearchPlan } from "../lib/pricing/searchPlan";
+import {
+  canonicalOnePieceCollectorNumber,
+  canonicalOnePieceSetCode,
+  deriveOnePieceSetAliases,
+  onePieceSetCodeFromCollectorNumber,
+} from "../lib/pricing/setAliases";
 import { pricingEvidenceResponse } from "../lib/pricing/evidenceFixtures";
 
 const headers = ["sku_col", "kind_col", "name_col", "set_col", "number_col", "variant_col", "language_col", "condition_col", "market_col", "listing_col", "shipping_col", "date_col", "image_col"];
@@ -77,6 +84,24 @@ test("import is idempotent and stores history only on price change", () => {
   repository.close();
 });
 
+test("verified artwork mappings persist by complete identity and warm candidates retain value priority", () => {
+  const repository = new PricingRepository();
+  repository.importTestCsv("pokemon-en", csv("2026-07-28"), contract);
+  const match = repository.findBySku("pokemon-en", "sv3-199-holo");
+  assert.ok(match);
+  assert.equal(repository.saveArtworkResolutions([match], {
+    [match.sku]: { small: "https://assets.tcgdex.net/en/sv/sv03.5/199/low.webp" },
+  }, "tcgdex"), 1);
+  assert.equal(repository.getArtworkResolutions([match])[match.sku].small, "https://assets.tcgdex.net/en/sv/sv03.5/199/low.webp");
+  assert.equal(repository.listArtworkCandidates("pokemon-en")[0].artworkPriorityCents, 12_000);
+
+  const changedIdentity = { ...match, collectorNumber: "200/165" };
+  assert.deepEqual(repository.getArtworkResolutions([changedIdentity]), {});
+  assert.equal(repository.replaceArtworkResolutions([match], {}, "tcgdex"), 0);
+  assert.deepEqual(repository.getArtworkResolutions([match]), {});
+  repository.close();
+});
+
 test("sealed search is relevance-gated, grouped, and never ordered by price", () => {
   const repository = new PricingRepository();
   repository.importTestCsv("pokemon-en", csv("2026-07-28"), contract);
@@ -106,6 +131,121 @@ test("shipping, query intent, and asking spread follow bounded rules", () => {
   assert.equal(queryClearlyTargetsSingle("Scarlet Violet 151"), false);
   assert.equal(askingPriceSpread(1_500, 1_800).mode, "ABSOLUTE");
   assert.equal(askingPriceSpread(9_000, 10_000).mode, "PERCENTAGE");
+});
+
+test("catalogue query planning understands bounded Pokémon set-code shorthand", () => {
+  const shorthand = createPricingSearchPlan("Charizard v sh03");
+  assert.equal(shorthand.interpretations[0]?.canonical, "SWSH03");
+  assert.match(shorthand.ftsQuery, /"sh03"\*/);
+  assert.match(shorthand.ftsQuery, /"swsh03"\*/);
+  assert.ok(shorthand.tokens.every((token) => token.alternatives.length <= 6));
+  assert.equal(createPricingSearchPlan("sh").interpretations.length, 0);
+
+  const repository = new PricingRepository();
+  const aliasCsv = [
+    headers.join(","),
+    "swsh03-charizard-v,Card,Charizard V,SWSH03: Darkness Ablaze,019/189,Holofoil,English,LP,7.26,7.00,1.00,2026-07-31,",
+    "swsh09-charizard-v,Card,Charizard V,SWSH09: Brilliant Stars,017/172,Holofoil,English,LP,6.00,5.50,1.00,2026-07-31,",
+  ].join("\n");
+  repository.importTestCsv("pokemon-en", aliasCsv, contract);
+  const result = repository.search("pokemon-en", "Charizard v sh03");
+  assert.equal(result.singles[0]?.setName, "SWSH03: Darkness Ablaze");
+  assert.equal(
+    result.interpretations?.[0]?.message,
+    "Understood SH03 as SWSH03",
+  );
+  repository.close();
+});
+
+test("One Piece set aliases derive from dominant exact catalogue evidence and fail closed", () => {
+  assert.equal(canonicalOnePieceCollectorNumber("22"), "022");
+  assert.equal(canonicalOnePieceCollectorNumber("022"), "022");
+  assert.equal(canonicalOnePieceCollectorNumber("000"), null);
+  assert.equal(canonicalOnePieceCollectorNumber("0022"), null);
+  assert.equal(canonicalOnePieceCollectorNumber("22a"), null);
+  assert.equal(canonicalOnePieceSetCode("op-3"), "op03");
+  assert.equal(canonicalOnePieceSetCode("PRB 1"), "prb01");
+  assert.equal(canonicalOnePieceSetCode("OP100"), null);
+  assert.equal(onePieceSetCodeFromCollectorNumber("OP13-001"), "op13");
+  assert.equal(onePieceSetCodeFromCollectorNumber("EB01-003 (Alternate Art)"), "eb01");
+  assert.equal(onePieceSetCodeFromCollectorNumber("P-001"), null);
+
+  const aliases = deriveOnePieceSetAliases([
+    { sku: "op13-1", setName: "Carrying On His Will", collectorNumber: "OP13-001" },
+    { sku: "op13-2", setName: "Carrying On His Will", collectorNumber: "OP13-002" },
+    { sku: "op13-3", setName: "Carrying On His Will", collectorNumber: "OP13-003" },
+    { sku: "op13-event-1", setName: "Carrying On His Will: 3rd Anniversary Tournament Cards", collectorNumber: "OP13-101" },
+    { sku: "op13-event-2", setName: "Carrying On His Will: 3rd Anniversary Tournament Cards", collectorNumber: "OP13-102" },
+    { sku: "op13-prerelease-1", setName: "Carrying On His Will Pre-Release Cards", collectorNumber: "OP13-103" },
+    { sku: "op13-prerelease-2", setName: "Carrying On His Will Pre-Release Cards", collectorNumber: "OP13-104" },
+    { sku: "op14-only", setName: "The Azure Sea's Seven", collectorNumber: "OP14-001" },
+    { sku: "op02-a1", setName: "Paramount War", collectorNumber: "OP02-001" },
+    { sku: "op02-a2", setName: "Paramount War", collectorNumber: "OP02-002" },
+    { sku: "op02-b1", setName: "Contested Catalogue Name", collectorNumber: "OP02-003" },
+    { sku: "op02-b2", setName: "Contested Catalogue Name", collectorNumber: "OP02-004" },
+  ]);
+  assert.deepEqual(aliases, [
+    {
+      alias: "op13",
+      canonicalSetName: "Carrying On His Will",
+      evidenceCount: 3,
+      runnerUpCount: 0,
+    },
+  ]);
+});
+
+test("One Piece code intent reaches human-titled sealed products without weakening token coverage", () => {
+  const repository = new PricingRepository();
+  const onePieceCsv = [
+    headers.join(","),
+    "op13-001,Card,Monkey.D.Luffy,Carrying On His Will,OP13-001,Normal,English,NM,1.00,0.90,0.20,2026-08-01,",
+    "op13-002,Card,Roronoa Zoro,Carrying On His Will,OP13-002,Normal,English,NM,2.00,1.90,0.20,2026-08-01,",
+    "op13-003,Card,Nami,Carrying On His Will,OP13-003,Normal,English,NM,3.00,2.90,0.20,2026-08-01,",
+    "op13-event,Card,Event Luffy,Carrying On His Will: 3rd Anniversary Tournament Cards,OP13-101,Normal,English,NM,4.00,3.90,0.20,2026-08-01,",
+    "op13-pack,Box,Carrying On His Will Booster Pack,Carrying On His Will,,Sealed,English,,7.00,6.75,,2026-08-01,",
+    "op13-box,Box,Carrying On His Will Booster Box,Carrying On His Will,,Sealed,English,,200.00,195.00,10.00,2026-08-01,",
+    "op16-022,Card,Monkey.D.Luffy,The Time of Battle,OP16-022,Normal,English,NM,0.13,0.12,0.20,2026-08-01,",
+    "op16-023,Card,Roronoa Zoro,The Time of Battle,OP16-023,Normal,English,NM,1.00,0.90,0.20,2026-08-01,",
+  ].join("\n");
+  repository.importTestCsv("onepiece-en", onePieceCsv, contract);
+
+  const sealed = repository.search("onepiece-en", "OP13 booster");
+  assert.deepEqual(
+    sealed.sealed.map((match) => match.name),
+    ["Carrying On His Will Booster Box", "Carrying On His Will Booster Pack"],
+  );
+  assert.equal(
+    sealed.interpretations?.[0]?.message,
+    "Understood OP13 as Carrying On His Will",
+  );
+  assert.ok(repository.search("onepiece-en", "OP13").singles.length >= 3);
+  assert.equal(repository.search("onepiece-en", "OP13 Charizard").singles.length, 0);
+  assert.equal(repository.search("onepiece-en", "OP13 Charizard").sealed.length, 0);
+  assert.equal(repository.search("onepiece-en", "OP-13 booster").sealed.length, 2);
+  const unpaddedCollector = repository.search(
+    "onepiece-en",
+    "Monkey.D.Luffy OP16 22",
+  );
+  const paddedCollector = repository.search(
+    "onepiece-en",
+    "Monkey.D.Luffy OP16 022",
+  );
+  assert.equal(unpaddedCollector.singles[0]?.collectorNumber, "OP16-022");
+  assert.equal(paddedCollector.singles[0]?.collectorNumber, "OP16-022");
+  assert.ok(
+    unpaddedCollector.interpretations?.some(
+      (item) => item.message === "Understood collector 22 as 022",
+    ),
+  );
+  assert.equal(repository.search("onepiece-en", "Zoro OP16 22").singles.length, 0);
+
+  const unified = repository.searchAll("OP13 booster");
+  assert.equal(unified.sealed.length, 2);
+  assert.equal(
+    unified.interpretations?.[0]?.message,
+    "Understood OP13 as Carrying On His Will",
+  );
+  repository.close();
 });
 
 test("inactive or unknown category is distinct from no match in loaded category", () => {
@@ -233,6 +373,12 @@ test("runtime evidence disables development chrome and keeps stale dates coheren
   assert.ok(displayedSnapshotDates.length > 0);
   assert.deepEqual(new Set(displayedSnapshotDates), new Set(["2026-07-01"]));
   assert.ok(stale.singles.every((match) => match.previousSnapshotDate === null));
+});
+
+test("catalogue freshness reflects the six-hour acquisition cadence", () => {
+  const snapshot = "2026-08-05T12:00:00.000Z";
+  assert.equal(isStale(snapshot, new Date("2026-08-05T19:59:59.999Z")), false);
+  assert.equal(isStale(snapshot, new Date("2026-08-05T20:00:00.001Z")), true);
 });
 
 test("native VoiceOver evidence requires the complete decision flow without combined-card truncation", () => {

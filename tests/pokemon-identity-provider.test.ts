@@ -38,3 +38,25 @@ test("Pokémon TCG provider rejects malformed queries before network access", as
   assert.equal(result.errorKind, "MALFORMED_QUERY");
   assert.equal(called, false);
 });
+
+test("TCGdex readiness enumeration follows bounded pagination and normalizes every page", async () => {
+  const requestedPages: string[] = [];
+  const provider = new TcgdexProvider({
+    fetcher: async (input) => {
+      const url = new URL(String(input));
+      if (url.pathname.endsWith("/sets")) {
+        return new Response(JSON.stringify([{ id: "base1", name: "Base Set" }]), { status: 200 });
+      }
+      const page = url.searchParams.get("pagination:page") ?? "1";
+      requestedPages.push(page);
+      const records = page === "1"
+        ? Array.from({ length: 20_000 }, (_, index) => ({ id: `base1-${index + 1}`, localId: String(index + 1), name: `Card ${index + 1}`, image: `https://assets.tcgdex.net/en/base/base1/${index + 1}` }))
+        : [{ id: "base1-20001", localId: "20001", name: "Last Card", image: "https://assets.tcgdex.net/en/base/base1/20001" }];
+      return new Response(JSON.stringify(records), { status: 200 });
+    },
+  });
+  const result = await provider.listAllCardsWithDiagnostics();
+  assert.deepEqual(requestedPages, ["1", "2"]);
+  assert.equal(result.cards.length, 20_001);
+  assert.equal(result.cards.at(-1)?.name, "Last Card");
+});

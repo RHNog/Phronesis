@@ -308,6 +308,12 @@ export function getFieldsForEvidenceDomains(domainIds: EvidenceDomainId[]) {
   ];
 }
 
+export function getEvidenceDomainsForFields(fields: MarketSnapshotField[]) {
+  return (Object.keys(domainFields) as EvidenceDomainId[]).filter((domainId) =>
+    domainFields[domainId].some((field) => fields.includes(field)),
+  );
+}
+
 export function getPreferredProvidersForEvidenceDomains(
   domainIds: EvidenceDomainId[],
 ) {

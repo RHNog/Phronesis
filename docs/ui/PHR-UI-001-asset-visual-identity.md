@@ -44,6 +44,7 @@ Create a provider-agnostic image layer under `components/cards/`. `CardThumbnail
 - Expose overlay and action slots without changing component hierarchy later.
 - Display source diagnostics in developer mode.
 - Use the canonical thumbnail in Market Watch and Universal Asset Picker results.
+- Expose reusable viewport-clamped hover/focus preview presentation through the canonical image candidates without adding provider discovery.
 - Show watchlist name, printing, collector number, game, current price, target, difference, trend, and status with artwork as the row anchor.
 - Show picker thumbnail, card name, set, collector number, finish, and language.
 
@@ -97,6 +98,7 @@ Thumbnail dimensions remain stable on mobile and desktop to prevent layout shift
 - Missing or failed artwork renders the Phronesis placeholder.
 - Search and printing results use `CardThumbnail`.
 - Hover, selected state, overlays, and actions use the existing component hierarchy.
+- Vendor Workspace can enlarge canonical artwork without rendering a separate image-selection path.
 
 ## Edge Cases
 
@@ -115,7 +117,7 @@ Thumbnail dimensions remain stable on mobile and desktop to prevent layout shift
 ## Future Enhancements
 
 - Cache Storage or IndexedDB for explicit offline image-byte persistence.
-- Hover previews, face switching, contextual overlays, and quick actions.
+- Face switching, contextual overlays, and quick actions.
 - Repository-owned image freshness metadata and provider failover.
 
 ## Technical Notes
@@ -142,5 +144,5 @@ All artwork uses a 5:7 aspect ratio, rounded-lg radius, zinc border, subtle shad
 - Related implementation prompt: `docs/prompts/PHR-UI-001-implementation-prompt.md`.
 - Related tests: `tests/card-image-cache.test.ts`.
 - Related release notes: `docs/release-notes/PHR-UI-001.md`.
-- Last modified: 2026-07-09.
-- Modification reason: Initial implementation.
+- Last modified: 2026-08-01.
+- Modification reason: Record `PHR-UX-017` adoption of the canonical image hierarchy for reusable hover/focus preview presentation.

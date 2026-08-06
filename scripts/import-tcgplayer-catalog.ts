@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { closeSync, openSync, readSync } from "node:fs";
 import { resolve } from "node:path";
+import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import { PricingRepository } from "../lib/pricing/repository";
 import {
   readTcgplayerCatalog,
@@ -28,7 +29,7 @@ try {
   closeSync(descriptor);
 }
 
-const databasePath = process.env.PHRONESIS_PRICING_DB_PATH ?? resolve(".data/pricing-lookup.sqlite");
+const databasePath = operationalPricingDatabasePath();
 const repository = new PricingRepository(databasePath);
 try {
   const startedAt = new Date().toISOString();

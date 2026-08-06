@@ -57,7 +57,7 @@ The route is not a general-purpose proxy. Only exact approved hosts and paths ca
 
 ### Performance
 
-Artwork loads lazily. The implementation does not bulk-download entire provider catalogues; visible or explicitly prewarmed unique artworks populate the cache.
+Artwork loads lazily during ordinary use. An operator may explicitly prewarm a configurable bounded set of already verified local catalogue mappings; the 2026-08-01 event-readiness run used a 1,000-image limit with four concurrent requests. The implementation does not perform an unbounded provider image crawl.
 
 ### Offline Support
 
@@ -84,5 +84,5 @@ On 2026-07-29 the Product Owner instructed Phronesis to consider Bandai authoriz
 - Related provider feature: `PHR-API-002`.
 - Validation: `docs/testing/PHR-TECH-007-durable-local-artwork-cache-validation.md`.
 - Release note: `docs/release-notes/PHR-TECH-007.md`.
-- Last modified: 2026-07-30.
-- Modification reason: bounded runtime remediation for provider request identity and Lorcana title-query compatibility.
+- Last modified: 2026-08-01.
+- Modification reason: authorize explicit bounded high-priority prewarming of verified persistent mappings for event readiness.

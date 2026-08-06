@@ -281,8 +281,10 @@ test("Current Market Estimate prioritizes JustTCG Variant Valuation over non-con
     ],
     incomingEvidence: [
       createEvidence({
+        conditionSpecific: true,
         field: "marketPrice",
         providerName: "justtcg",
+        providerCondition: "Near Mint",
         source: "Variant Valuation",
         value: 104,
       }),

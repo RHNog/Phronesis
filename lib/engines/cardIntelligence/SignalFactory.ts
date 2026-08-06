@@ -29,9 +29,19 @@ function clampScore(score: number) {
 }
 
 function includesAny(values: (string | undefined)[], terms: string[]) {
-  const haystack = values.join(" ").toLowerCase();
+  const normalizedValues = values
+    .filter((value): value is string => Boolean(value))
+    .map((value) => value.toLowerCase());
 
-  return terms.some((term) => haystack.includes(term));
+  return terms.some((term) =>
+    normalizedValues.some((value) => {
+      if (term === "foil") {
+        return !/\bnon[- ]?foil\b/.test(value) && /\bfoil\b/.test(value);
+      }
+
+      return value.includes(term);
+    }),
+  );
 }
 
 function getRarityScore(printing: Card) {

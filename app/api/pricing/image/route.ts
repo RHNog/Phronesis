@@ -1,8 +1,11 @@
 import { getDurableArtworkCache, isApprovedArtworkSource } from "@/lib/artwork/DurableArtworkCache";
+import { authorizationErrorResponse, authorizeRequest } from "@/lib/auth/requestAuthorization";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
+  const authorization = await authorizeRequest(request, "VENDOR_WORKSPACE");
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const source = new URL(request.url).searchParams.get("source") ?? "";
   if (!source || source.length > 2_048 || !isApprovedArtworkSource(source)) {
     return new Response("Invalid artwork source.", { status: 400 });

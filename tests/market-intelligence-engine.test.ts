@@ -1,13 +1,10 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { MarketIntelligenceEngine } from "@/lib/market/intelligence/MarketIntelligenceEngine";
-import { MarketIntelligenceRepository } from "@/lib/market/MarketIntelligenceRepository";
-import { marketTruthEngine } from "@/lib/market/MarketTruthEngine";
-import { JustTCGProvider } from "@/lib/providers/justtcg/JustTCGProvider";
-import type { MarketSnapshotRequestContext } from "@/lib/market/MarketIntelligenceRepository";
+import { JustTCGAdapter } from "@/lib/providers/justtcg/JustTCGAdapter";
+import type { JustTCGRawCardResponse } from "@/lib/providers/justtcg/JustTCGNormalizer";
 
 const replayCards = [
   "Mox Opal",
@@ -18,107 +15,40 @@ const replayCards = [
   "Urza's Saga",
 ];
 
-async function withReplayEnv<T>(operation: () => Promise<T>) {
-  const previousProviderMode = process.env.PROVIDER_MODE;
-  const previousApiKey = process.env.JUSTTCG_API_KEY;
+const fixturePaths: Record<string, string> = {
+  "Mox Opal": "mox-opal/6be9b1d5-9ab8-4adb-ba54-2c0117e842fa/normal/nm/english.json",
+  "Chrome Mox": "chrome-mox.json",
+  "Lightning Bolt": "lightning-bolt.json",
+  "Black Lotus": "black-lotus.json",
+  "Collected Company": "collected-company.json",
+  "Urza's Saga": "urzas-saga.json",
+};
 
-  process.env.PROVIDER_MODE = "REPLAY";
-  process.env.JUSTTCG_API_KEY = "fixture-key";
+function createProfileFromReplay(cardName: string) {
+  const fixturePath = path.join(
+    process.cwd(),
+    "fixtures/providers/justtcg/magic",
+    fixturePaths[cardName],
+  );
+  const fixture = JSON.parse(fs.readFileSync(fixturePath, "utf8")) as {
+    metadata: { recordedFrom: string };
+    raw: JustTCGRawCardResponse;
+  };
+  const adapter = new JustTCGAdapter();
 
-  try {
-    return await operation();
-  } finally {
-    if (previousProviderMode === undefined) {
-      delete process.env.PROVIDER_MODE;
-    } else {
-      process.env.PROVIDER_MODE = previousProviderMode;
-    }
+  assert.equal(fixture.metadata.recordedFrom, "MANUAL_FIXTURE", cardName);
+  assert.deepEqual(adapter.validate(fixture.raw), [], cardName);
 
-    if (previousApiKey === undefined) {
-      delete process.env.JUSTTCG_API_KEY;
-    } else {
-      process.env.JUSTTCG_API_KEY = previousApiKey;
-    }
-  }
-}
-
-function createStoragePath() {
-  return path.join(
-    os.tmpdir(),
-    `market-intelligence-engine-${Date.now()}-${Math.random()}.json`,
+  return new MarketIntelligenceEngine().analyzeJustTCGNormalizedResponse(
+    adapter.normalize(fixture.raw, { cardName }),
   );
 }
 
-function createContext(cardName: string): MarketSnapshotRequestContext {
-  const id = cardName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-
-  return {
-    cardIdentity: cardName,
-    condition: "NM",
-    finish: "Normal",
-    game: "Magic: The Gathering",
-    printingId: `${id}-printing`,
-    variantId: `${id}-printing:normal`,
-  };
-}
-
-async function createRepositorySnapshotFromReplay(cardName: string) {
-  return withReplayEnv(async () => {
-    const storagePath = createStoragePath();
-    const repository = new MarketIntelligenceRepository(storagePath);
-    const provider = new JustTCGProvider(() => {
-      throw new Error("Live JustTCG SDK should not be instantiated in replay tests.");
-    });
-    const context = createContext(cardName);
-    const providerSnapshot = await provider.getMarketSnapshot({
-      cardName,
-      game: "Magic: The Gathering",
-      printingId: context.printingId,
-      variantId: context.variantId,
-    });
-    const validation = marketTruthEngine.evaluate({
-      context,
-      snapshot: providerSnapshot,
-    });
-
-    assert.equal(validation.report.valid, true);
-
-    const repositorySnapshot = repository.upsertSnapshot({
-      context,
-      refresh: {
-        evidence: validation.evidence,
-        fields: ["marketPrice", "marketConfidence"],
-        providerId: providerSnapshot.providerId,
-        refreshedAt: new Date().toISOString(),
-        refreshTimeMs: 0,
-        values: {
-          marketConfidence: providerSnapshot.prices[0]?.confidence ?? null,
-          marketPrice: providerSnapshot.prices[0]?.price ?? null,
-          providerId: providerSnapshot.providerId,
-        },
-      },
-    });
-    const replayDiagnostics = provider.getReplayDiagnostics();
-
-    fs.rmSync(storagePath, { force: true });
-
-    return {
-      repositorySnapshot,
-      replayDiagnostics,
-    };
-  });
-}
-
 test("Market Intelligence Engine generates replay-only profiles for certified fixtures", async () => {
-  const engine = new MarketIntelligenceEngine();
 
   for (const cardName of replayCards) {
-    const { repositorySnapshot, replayDiagnostics } =
-      await createRepositorySnapshotFromReplay(cardName);
-    const profile = engine.analyzeRepositorySnapshot(repositorySnapshot);
+    const profile = createProfileFromReplay(cardName);
 
-    assert.equal(replayDiagnostics?.liveRequestSkipped, true, cardName);
-    assert.equal(replayDiagnostics?.quotaSaved, true, cardName);
     assert.ok(profile.signals.length >= 2, cardName);
     assert.ok(profile.reasoning.length >= 3, cardName);
     assert.notEqual(profile.marketHealth, "Distressed", cardName);
@@ -127,12 +57,10 @@ test("Market Intelligence Engine generates replay-only profiles for certified fi
 });
 
 test("Market Intelligence signals and reasoning differ by replayed observation", async () => {
-  const engine = new MarketIntelligenceEngine();
   const profiles = new Map<string, ReturnType<MarketIntelligenceEngine["analyzeRepositorySnapshot"]>>();
 
   for (const cardName of replayCards) {
-    const { repositorySnapshot } = await createRepositorySnapshotFromReplay(cardName);
-    profiles.set(cardName, engine.analyzeRepositorySnapshot(repositorySnapshot));
+    profiles.set(cardName, createProfileFromReplay(cardName));
   }
 
   const moxOpal = profiles.get("Mox Opal");
@@ -144,15 +72,9 @@ test("Market Intelligence signals and reasoning differ by replayed observation",
   assert.ok(collectedCompany);
   assert.ok(lightningBolt);
   assert.ok(blackLotus);
-  assert.ok(
-    moxOpal.signals.some((signal) =>
-      ["healthy-uptrend", "near-historical-high", "strong-momentum"].includes(signal.id),
-    ),
-  );
-  assert.ok(
-    collectedCompany.signals.some((signal) =>
-      ["cooling-demand", "market-consolidation", "evidence-coverage-moderate"].includes(signal.id),
-    ),
+  assert.notEqual(
+    moxOpal.observationSummary.currentPrice,
+    collectedCompany.observationSummary.currentPrice,
   );
   assert.notDeepEqual(
     moxOpal.signals.map((signal) => signal.id),

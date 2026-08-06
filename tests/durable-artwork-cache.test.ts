@@ -92,3 +92,33 @@ test("durable artwork cache validates and retains Lorcast AVIF images", async ()
     await rm(root, { force: true, recursive: true });
   }
 });
+
+test("community artwork allowlist accepts only exact Pokémon catalogue and pinned repository paths", () => {
+  assert.equal(isApprovedArtworkSource("https://images.pokemontcg.io/base1/4_hires.png"), true);
+  assert.equal(isApprovedArtworkSource("https://images.scrydex.com/pokemon/me3-1/large"), true);
+  assert.equal(isApprovedArtworkSource(
+    `https://raw.githubusercontent.com/1niceroli/ptcg-assets/${"a".repeat(40)}/base1/display.png`,
+  ), true);
+  assert.equal(isApprovedArtworkSource("https://raw.githubusercontent.com/1niceroli/ptcg-assets/main/base1/display.png"), false);
+  assert.equal(isApprovedArtworkSource("https://images.scrydex.com/magic/card/large"), false);
+});
+
+test("community cache signature-checks GitHub raster bytes sent as generic binary", async () => {
+  const root = await mkdtemp(join(tmpdir(), "phronesis-artwork-"));
+  try {
+    const cache = new DurableArtworkCache({
+      root,
+      fetcher: async () => new Response(png, {
+        status: 200,
+        headers: { "Content-Type": "application/octet-stream" },
+      }),
+    });
+    const result = await cache.get(
+      `https://raw.githubusercontent.com/1niceroli/ptcg-assets/${"a".repeat(40)}/base1/display.png`,
+    );
+    assert.equal(result.metadata.authorization, "COMMUNITY_CATALOGUE");
+    assert.equal(result.metadata.contentType, "image/png");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});

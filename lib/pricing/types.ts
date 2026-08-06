@@ -22,6 +22,7 @@ export type NormalizedPricingRow = {
   language: string;
   condition: PricingCondition | null;
   marketPriceCents: number | null;
+  directLowCents?: number | null;
   listingPriceCents: number | null;
   shippingCents: number | null;
   shippingSource: ShippingSource;
@@ -33,6 +34,7 @@ export type NormalizedPricingRow = {
 export type PriceState = Pick<
   NormalizedPricingRow,
   | "marketPriceCents"
+  | "directLowCents"
   | "listingPriceCents"
   | "shippingCents"
   | "shippingSource"
@@ -59,6 +61,12 @@ export type SearchMatch = {
   sealedPrice: PriceState | null;
   previousMarketPriceCents: number | null;
   previousSnapshotDate: string | null;
+};
+
+export type PricingSearchInterpretation = {
+  input: string;
+  canonical: string;
+  message: string;
 };
 
 export type CategoryFreshness = {
@@ -97,6 +105,7 @@ export type PricingSyncState = {
 
 export type PricingSearchResponse = {
   query: string;
+  interpretations?: PricingSearchInterpretation[];
   category: CategoryFreshness;
   sealed: SearchMatch[];
   singles: SearchMatch[];
@@ -105,6 +114,7 @@ export type PricingSearchResponse = {
 
 export type UnifiedPricingSearchResponse = {
   query: string;
+  interpretations?: PricingSearchInterpretation[];
   categories: CategoryFreshness[];
   sealed: SearchMatch[];
   singles: SearchMatch[];

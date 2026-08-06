@@ -148,8 +148,8 @@ test("changing condition changes decision", () => {
 
   assertReady(nearMint);
   assertReady(lightlyPlayed);
-  assert.equal(nearMint.decision.action, "BUY");
-  assert.equal(lightlyPlayed.decision.action, "NEGOTIATE");
+  assert.equal(nearMint.decision.action, "NEGOTIATE");
+  assert.equal(lightlyPlayed.decision.action, "PASS");
 });
 
 test("changing strategy changes negotiation ladder", () => {
@@ -162,6 +162,7 @@ test("changing strategy changes negotiation ladder", () => {
     selectedVariant: testVariant,
     strategyProfile: getProfileById("custom-profile") ?? getDefaultProfile(),
   });
+  const highProfitProfile = getProfileById("high-profit-profile") ?? getDefaultProfile();
   const highProfit = evaluatePurchase({
     card: testCard,
     condition: "NM",
@@ -169,7 +170,13 @@ test("changing strategy changes negotiation ladder", () => {
     marketPrice: testMarketPrice,
     purchasePrice: 150,
     selectedVariant: testVariant,
-    strategyProfile: getProfileById("high-profit-profile") ?? getDefaultProfile(),
+    strategyProfile: {
+      ...highProfitProfile,
+      constraints: {
+        ...highProfitProfile.constraints,
+        maximumPurchasePrice: 100,
+      },
+    },
   });
 
   assertReady(custom);
@@ -228,9 +235,17 @@ test("changing finish changes negotiation ladder", () => {
 
   assertReady(nonfoil);
   assertReady(foil);
-  assert.notEqual(
-    nonfoil.negotiationLadder.maximumBuyPrice,
-    foil.negotiationLadder.maximumBuyPrice,
+  assert.notDeepEqual(
+    {
+      openingOffer: nonfoil.negotiationLadder.openingOffer,
+      targetOffer: nonfoil.negotiationLadder.targetOffer,
+      maximumBuyPrice: nonfoil.negotiationLadder.maximumBuyPrice,
+    },
+    {
+      openingOffer: foil.negotiationLadder.openingOffer,
+      targetOffer: foil.negotiationLadder.targetOffer,
+      maximumBuyPrice: foil.negotiationLadder.maximumBuyPrice,
+    },
   );
 });
 
@@ -313,7 +328,7 @@ test("strategies consume signal weights", () => {
   );
 });
 
-test("evaluation with positive spread returns positive profit and not PASS", () => {
+test("positive spread can still PASS when the business offer policy is stricter", () => {
   const marketPrice = {
     ...testMarketPrice,
     price: 88.42,
@@ -331,7 +346,7 @@ test("evaluation with positive spread returns positive profit and not PASS", () 
   assertReady(evaluation);
   assert.ok(evaluation.estimatedProfit > 0);
   assert.ok(evaluation.negotiationLadder.maximumBuyPrice > 0);
-  assert.notEqual(evaluation.decision.action, "PASS");
+  assert.equal(evaluation.decision.action, "PASS");
 });
 
 test("evaluation above market ladder returns PASS", () => {

@@ -18,7 +18,7 @@ export default async function PricingLookupEvidencePage({
   const zoomReflow = params.zoom === "200" || params.zoom === "400";
   const response = pricingEvidenceResponse(scenario);
   return (
-    <AppShell commandPaletteContext="VendorWorkspace">
+    <AppShell commandPaletteContext="VendorWorkspace" requiredModule="VENDOR_WORKSPACE">
       <PricingLookup
         initialQuery={response.query}
         initialResponse={response}

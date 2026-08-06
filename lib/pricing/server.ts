@@ -1,11 +1,9 @@
-import { join } from "node:path";
+import { operationalPricingDatabasePath } from "@/lib/pricing/databasePath";
 import { PricingRepository } from "@/lib/pricing/repository";
 
 let repository: PricingRepository | undefined;
 
 export function getPricingRepository(): PricingRepository {
-  repository ??= new PricingRepository(
-    process.env.PHRONESIS_PRICING_DB_PATH ?? join(process.cwd(), ".data", "pricing-lookup.sqlite"),
-  );
+  repository ??= new PricingRepository(operationalPricingDatabasePath());
   return repository;
 }

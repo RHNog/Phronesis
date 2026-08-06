@@ -1,4 +1,22 @@
+<!-- handoff: {"document":"ARCHITECTURE","owner":"human-and-agent","schema_version":"1"} -->
 # Architecture
+
+## Repository-Native Continuity Boundary
+
+`handoff.toml` maps canonical human-owned project truth to `PROJECT_STATE`, `ARCHITECTURE`, `DECISIONS`, `CHANGELOG`, `BACKLOG`, and `ACTIVE_TASK`. Generated continuity documents under `docs/ai/` are derived only after verified human-owned state is committed. Bare `./handoff` runs the configured test, lint, build, and diff checks, creates the generated operational package, validates it, and seals it in a separate commit. Conversation state and the rollback checkout are never continuity authority.
+
+The portable runtime is Handoff 0.5.1. Its wrapper suppresses Python bytecode
+so verifier execution cannot create repository dirt.
+
+`PHR-TECH-011` separates GitHub responsibilities. The `project-validation` job installs the locked npm dependency graph under pinned Node 24 and independently runs test, lint, build, and diff hygiene. The `continuity` job checks out the exact pull-request head or push SHA with full history and validates the already-committed Handoff package. GitHub never calls `prepare-handoff`; CI verifies repository truth and cannot manufacture a transient replacement for a missing local seal.
+
+## 2026-07-30 Card-Show Operations Boundaries
+
+- Verified pricing catalogues remain the broad refresh source; external market adapters supply explicitly classified supplemental evidence only.
+- Watch refresh, purchase ledger, activation, and curated artwork mutations are server Route Handlers with module authorization.
+- Purchase receipts and authorization audits are append-only evidence. Browser state is never their source of truth.
+- Buying presentation consumes existing evaluation and offer engines; it does not own business formulas.
+- Exact product artwork is presentation data and cannot mutate catalogue or market identity.
 
 ## Cross-Game Snapshot Search Boundary
 
@@ -2014,3 +2032,6 @@ Production UI shows user-facing readiness blockers. Atlas Inspector shows System
 - Recommendation explanations must add decision context instead of repeating visible metrics.
 - Vendor Workspace shortcuts must preserve normal typing behavior inside inputs and selects.
 - Context invalidation must stay centralized in `ContextInvalidationEngine`.
+# Current Architecture Addendum — Price Monitoring
+
+Market Watch persistence is application-owned SQLite state scoped by Phronesis user and workspace. Local storage is compatibility/rollback state, not authority. Verified catalogue receipts update watched valuations through `WatchlistRepository`; optional external evidence flows through `MarketEvidenceRepository` with immutable evidence-kind semantics. Provider credentials and calls remain server-side, explicit, bounded, and absent from initial page loads.

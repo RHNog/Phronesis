@@ -8,6 +8,14 @@ import {
   type ProductType,
   type SearchMatch,
 } from "@/lib/pricing/types";
+import { normalizeSearchText } from "@/lib/pricing/searchText";
+import {
+  createPricingSearchPlan,
+  tokenPlanMatchesText,
+  type PricingSearchPlan,
+} from "@/lib/pricing/searchPlan";
+
+export { normalizeSearchText } from "@/lib/pricing/searchText";
 
 const conditionLabels: Record<PricingCondition, string> = {
   NEAR_MINT: "Near Mint",
@@ -58,20 +66,19 @@ export function deliveredPriceFor(
   };
 }
 
-export function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
 const finishOnlyParenthetical = /\((?:\d{2,4}|[a-z]{1,4}\d{1,4}|(?:etched|foil|holofoil|reverse holofoil|rainbow foil|surge foil|galaxy foil|confetti foil|pool party foil|textured foil|cold foil))\)\s*$/i;
+const commerceCollectorSuffix = /\s+[-\u2013\u2014]\s+(?:#\s*)?(?:(?:[a-z]{1,8}\d{0,4}-)?\d{1,4}[a-z]?\s*\/\s*(?:[a-z]{0,8})?\d{1,4}[a-z]?|(?:op|st|eb|prb|p|don)\d{0,3}-\d{1,4}|\d{1,4}[a-z]?)\s*$/i;
 
 export function artworkIdentityName(value: string): string {
   let name = value.trim();
-  while (finishOnlyParenthetical.test(name)) name = name.replace(finishOnlyParenthetical, "").trim();
+  let previous = "";
+  while (name !== previous) {
+    previous = name;
+    name = name
+      .replace(finishOnlyParenthetical, "")
+      .replace(commerceCollectorSuffix, "")
+      .trim();
+  }
   return name;
 }
 
@@ -133,14 +140,22 @@ export function queryClearlyTargetsSingle(query: string): boolean {
   return singleSignals.test(query) || collectorNumberOnly.test(normalized);
 }
 
-export function searchScore(row: Pick<NormalizedPricingRow, "name" | "setName" | "collectorNumber" | "variant" | "productType">, query: string): number {
-  const q = normalizeSearchText(query);
+export function searchScore(
+  row: Pick<
+    NormalizedPricingRow,
+    "name" | "setName" | "collectorNumber" | "variant" | "productType"
+  >,
+  query: string,
+  suppliedPlan?: PricingSearchPlan,
+): number {
+  const plan = suppliedPlan ?? createPricingSearchPlan(query);
+  const q = plan.normalized;
   if (!q) return 0;
   const name = normalizeSearchText(row.name);
   const set = normalizeSearchText(row.setName);
   const number = normalizeSearchText(row.collectorNumber ?? "");
   const variant = normalizeSearchText(row.variant);
-  const tokens = q.split(" ");
+  const searchable = `${name} ${set} ${number} ${variant}`;
   let score = 0;
   if (name === q) score += 100;
   else if (name.startsWith(q)) score += 70;
@@ -149,9 +164,17 @@ export function searchScore(row: Pick<NormalizedPricingRow, "name" | "setName" |
   else if (set.includes(q)) score += 28;
   if (number === q) score += 65;
   if (variant.includes(q)) score += 24;
-  score += tokens.filter((token) =>
-    `${name} ${set} ${number} ${variant}`.includes(token),
-  ).length * 6;
+  const matchedTokens = plan.tokens.filter((token) =>
+    tokenPlanMatchesText(token, searchable),
+  );
+  if (matchedTokens.length !== plan.tokens.length) return 0;
+  score += matchedTokens.length * 6;
+  for (const interpretation of plan.interpretations) {
+    const canonical = normalizeSearchText(interpretation.canonical);
+    if (canonical && (set === canonical || set.includes(canonical))) {
+      score += 45;
+    }
+  }
   if (row.productType === "SEALED" && (name === q || set === q)) score += 10;
   return score;
 }
@@ -211,5 +234,5 @@ export function isStale(snapshotDate: string | null, now = new Date()): boolean 
   if (!snapshotDate) return false;
   const parsed = new Date(snapshotDate.includes("T") ? snapshotDate : `${snapshotDate}T00:00:00Z`);
   const age = now.getTime() - parsed.getTime();
-  return age > pricingLookupConfig.staleAfterDays * 86_400_000;
+  return age > pricingLookupConfig.staleAfterHours * 3_600_000;
 }

@@ -62,7 +62,7 @@ Phronesis follows the upstream completion checkpoints; it does not hardcode or r
 - Grade prefixes map to NM, LP, MP, HP, and DMG.
 - Finish/treatment and non-English language suffixes encoded in the TCGplayer condition string are preserved instead of collapsed.
 - Market price is the preferred evaluation reference. When it is absent, delivered low is the explicit fallback.
-- Listing is `TCG Low Price`; delivered low is `TCG Low Price With Shipping`; exported shipping is their non-negative difference when both exist.
+- Direct-qualified reference is `TCG Direct Low`; listing is `TCG Low Price`; delivered low is `TCG Low Price With Shipping`; exported shipping is their non-negative difference when both exist. When present for the exact SKU/condition, Direct Low takes precedence in buying evaluation under `PHR-BR-001`.
 - Currency parser accepts the catalogue's observed precision and stores rounded cents.
 - Unknown conditions, product lines, malformed values, duplicate price identities, and schema drift fail closed before activation.
 

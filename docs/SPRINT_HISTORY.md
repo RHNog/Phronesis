@@ -1,5 +1,33 @@
 # Sprint History
 
+## 2026-07-31 — Event Flip And Display Case Inventory
+
+Added a Purchase-derived Event Flip queue for exact single-card lots, multi-select quantity and intended-price allocation, and one retry-safe Add-to-Case action. Added a Display Case allocation ledger over receipt-backed ownership, combined prepared/event-flip visibility, one source-labelled Sale picker shared by full and Lite Event Ledger, atomic Case/General Sale and guarded reversal, returns, counts, verification CSV, and General Inventory reservation math/guards. Vendor Workspace now offers direct-to-Case routing with a required Case price inside the atomic receipt transaction. Exact sealed, aggregate Bulk, and manual Purchase outcomes remain truthfully General-only. Binder Inventory is recorded for later design. Focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, and 390px no-overflow/clean-console gates pass. Product Review remains pending.
+
+## 2026-07-31 — Event Stock Control And Intent-Aware Search
+
+Added a native Google Sheet template and strict local CSV ingestion, event-scoped SQLite manifests/options/movements/counts, one stock picker shared by full and Lite Event Ledger Sales, atomic decrement/reversal, explicit untracked fallback, physical variance, and truthful sold/leftover reports. Physical verification stays collapsed during live selling. Added bounded structured catalogue intent so `Charizard v sh03` returns the SWSH03 Darkness Ablaze Charizard first while showing the interpretation and preserving explicit selection. A disposable import/Sale/count/report/reversal workflow, 29.93 ms median search across 10,000 options, 284/284 tests, TypeScript, lint, build, diff hygiene, private health, and 390px overflow/console gates pass. Product Review remains pending.
+
+## 2026-07-31 — Vendor Workspace Quick Sale
+
+Added a Lite Event Ledger inside Vendor Workspace without creating a second ledger. The Event station defaults to existing Purchase intake and adds manual multi-item Quick Sale using the canonical active event, authorized API, repository, payment-aware drawer math, idempotency, and activity. An isolated phone-width workflow proved the Sale and totals across both UI surfaces; 279/279 tests, TypeScript, lint, build, private health, desktop/phone overflow and control-size checks, and clean console pass. Product Review remains pending.
+
+## 2026-07-31 — Responsive Application Navigation
+
+Closed the phone-shell dead end exposed during Event Ledger Product Review. `AppShell` now gives the same server-filtered typed destinations to the desktop sidebar and an accessible phone drawer, with active state, focus containment/restoration, Escape/backdrop dismissal, body-scroll restoration, and automatic desktop-breakpoint recovery. All six live destinations, 278/278 tests, TypeScript, lint, production build, private health, 390px overflow/touch targets, desktop recovery, and console gates pass. Product Review remains pending.
+
+## 2026-07-31 — Event Cash Ledger Revision
+
+Evolved event purchasing into one payment-aware cash ledger with explicit opening cash, frictionless manual Sales and Purchases, one to 25 manually described items per Sale, Cash Adjustments, append-only reversal, receipt-linked evaluated purchases, and immutable closing variance. The dedicated `/event-ledger` surface passes the 278-test suite after the separately documented phone-shell correction, TypeScript, lint, production build, private runtime, desktop, and 390px review gates. Product Review remains pending.
+
+## 2026-07-30 — Artwork And Provider Settings Remediation
+
+Repaired the exact Store Championship Urza's Saga thumbnail by separating user search terms from provider identity queries and allowing only unique Magic name/collector reconciliation across provider set labels. Added secret-free provider status and Employee login activation guidance to Settings. All 234 tests and remaining gates pass; secure credential registration remains gated on owner login.
+
+## 2026-07-30 — Card-Show Operations Program
+
+Delivered six integrated event-readiness slices: truthful catalogue-first price tracking, intentional manual watch setup, immediate recommended offers, module-scoped employee activation foundations, persistent exact/Bulk purchase receipts, and exact local recovery for missing product artwork. Repaired the private catalogue observer and live Urza's Saga refresh. Verification passes 232/232 tests, standalone TypeScript, lint, build, diff, and private runtime gates; required authentication and unconfigured external providers remain gated.
+
 ## 2026-07-30 — PHR-UX-009 Visible Buying Intelligence
 
 Exposed the canonical Asset Assessment and current Decision Resolver action inside the Snapshot Vendor Workspace, with evidence coverage, confidence, business conclusion, bounded opportunities/risks, and progressively disclosed Intelligence Console models. Focused, full-baseline, lint/build/diff, desktop, and 390px mobile checks passed without changing intelligence or buying formulas.
@@ -562,3 +590,6 @@ Introduced pure presentation model, adapter, formatter, and diagnostics modules 
 Collector Presentation Rules.
 
 Refined presentation terminology so Printing Design Facet appears as Treatment and Physical Finish appears as Printing. Added visibility metadata and centralized rules that hide Standard Treatment plus Regular, Normal, Nonfoil, and provider-unavailable Printing. Introduced shared collector-fact rendering across Command Palette, Vendor results, and Watchlist while developer diagnostics retain canonical values and suppression reasons. Canonical ontology and provider mappings were unchanged.
+# 2026-07-30 — Identity-Backed Price Monitoring
+
+Implemented server-owned exact-variant watches, one-action Vendor Workspace tracking with undo, deterministic legacy import, verified catalogue checkpoint refresh, and user-owned market evidence. Official listing adapters are credential-gated and completed-sale evidence remains first-party. Verification passes 220/220 tests, TypeScript, lint, production build, schema migration, diff hygiene, and desktop/mobile responsive checks.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.phronesis.private-review</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/Volumes/JarvisSSD/Projects/Phronesis/scripts/start-phronesis.mjs</string>
+    <string>start</string>
+    <string>--hostname</string>
+    <string>127.0.0.1</string>
+    <string>--port</string>
+    <string>3100</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Volumes/JarvisSSD/Projects/Phronesis</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>PHRONESIS_PRICING_DB_PATH</key>
+    <string>/Volumes/JarvisSSD/Projects/Phronesis/.data/mobile-review.sqlite</string>
+    <key>PHRONESIS_PRIVATE_REVIEW_ORIGIN</key>
+    <string>ramons-mac-studio.tailaa2d39.ts.net</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>StandardOutPath</key>
+  <string>/Users/ramonnogueira/Library/Logs/Phronesis-private-review.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/ramonnogueira/Library/Logs/Phronesis-private-review.error.log</string>
+  <key>ExitTimeOut</key>
+  <integer>15</integer>
+</dict>
+</plist>

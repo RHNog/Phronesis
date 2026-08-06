@@ -1,4 +1,148 @@
+<!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
+
+## 2026-08-05 — Target-complete Liga reconciliation separates comparison from Arbitrage authority
+
+- **Status:** Implemented; Product Review and deployment remain pending (`PHR-API-015`).
+- **Context:** LigaPokemon contained the reported Lucario V at R$29.99, but an encoded apostrophe hid the exact set identity. The source-centric crosswalk also could not state what happened to every TCGplayer target, while forcing an equivalent for source-absent products would fabricate evidence.
+- **Decision:** retain both collision-safe source crosswalks, add one provider-aware disposition per TCGplayer target, decode only bounded presentation entities, and admit ordered unique structural equivalents for Vendor Workspace. Label compatible rows and prohibit them from Arbitrage.
+- **Consequences:** every Magic and English Pokémon target is auditable. Pokémon exposes 32,600 exact-or-compatible single-card targets; Magic retains 131,883 accepted exact targets. Sealed and source-absent products remain explicitly unavailable, and price never selects identity.
+
+## 2026-08-05 — Capture Before Import And Project Regional Evidence By Provider
+
+- **Status:** Implemented and live (`PHR-TECH-012`, `PHR-API-014`).
+- **Context:** A synchronous Magic import and crosswalk rebuild blocked the catalogue observer while the upstream tool completed and deleted Pokémon plus three sibling CSVs. Separately, Vendor Workspace queried only the legacy Magic regional tables even though 25,200 exact Pokémon matches existed.
+- **Decision:** keep the observer parent limited to immediate hash-bound archival and atomic receipt persistence, and run imports/reconciliation in at most one child process. Route regional evidence by approved category/provider, expose only exact `MATCHED` rows with visible provenance, and never fall back across games. Treat the six-hour source schedule as overdue after eight hours.
+- **Consequences:** later exports remain capturable during large imports; interrupted receipts recover idempotently; corrupt archives fail closed. LigaMagic and LigaPokemon prices are visible for exact Vendor Workspace identities, while Pokémon Arbitrage, route costs, and availability remain separately gated.
+
+## 2026-08-04 — One-Time Codes Bootstrap Durable Timed Sessions
+
+- **Status:** Implemented and live (`PHR-ARCH-014`).
+- **Context:** A successfully redeemed worker grant and session remained active, but revisiting the stable worker link showed the code form. Re-entering the correctly consumed code then appeared to the operator as access revocation.
+- **Decision:** keep the human-readable code single-use and treat the random HttpOnly session as the credential for the remaining configured duration. `/event-access` resumes only after server-side validation, and the cookie carries bounded relative and absolute expiry matching the session deadline.
+- **Consequences:** navigation, reload, and reopening the link in the same browser no longer require code reuse. Logout, owner revocation, expiry, event closure, or a missing browser cookie still require a new valid access path and cannot be bypassed by replaying the original code.
+
+## 2026-08-04 — Reconcile Pokémon Exactly Before Candidate Exposure
+
+- **Status:** Implemented and live verified (`PHR-API-014`).
+- **Context:** The complete LigaPokemon snapshot contains 167,912 identities, but TCGplayer and LigaPokemon differ across set labels, title punctuation, collector presentation, finishes, foreign sets, and special treatments. Reusing the Magic tables or widening text matching would create silent cross-game or physical-printing collisions.
+- **Decision:** maintain isolated Pokémon crosswalk/evidence tables and admit only one English Near Mint single with exact normalized card name, bounded explicit set equivalence, collector numerator, and Normal/Holofoil/Reverse Holofoil identity. Quarantine foreign-market labels, unsupported treatments, multiple targets, and source-to-target collision groups. Rebuild after complete LigaPokemon snapshots and Pokémon catalogue checkpoints, but do not expose rows through Arbitrage without a separate Product Owner gate.
+- **Consequences:** 25,200 exact identities are available as regional evidence and 24,884 have two-sided price data. Eight punctuation-duplicate source rows remain quarantined; broader foreign, pattern, vintage, and promotional coverage remains explicit residual work. Magic reconciliation and its candidate queue are unchanged.
+
+## 2026-08-03 — Preserve One Operational Pricing Database And Pilot-Gate LigaPokemon
+
+- Decision: retain the verified `.data/mobile-review.sqlite` file as the operational default rather than rename 1.2 GB of live data during recovery.
+- Decision: all supported database consumers use one resolver; explicit environment overrides remain available for tests and deliberate operations.
+- Decision: recurring Liga acquisition is provider-contract based but profiles and evidence never cross providers.
+- Decision: install a 03:00 local LigaMagic recurrence with overlap locking, atomic status, exact completeness checks, and automatic Magic reconciliation.
+- Decision: add LigaPokemon profile/pilot/snapshot capability now, but require the authenticated pilot marker before any full run and prohibit regional promotion until a separate exact Pokémon crosswalk is approved.
+- Decision: use ordinary Chrome plus post-startup loopback CDP attachment for Liga providers. LigaPokemon removes authenticated controls from Playwright-launched contexts, while the owner-authenticated ordinary-Chrome path exposes the exact export contract without credential or storage inspection.
+- Decision: preserve exact advertised-versus-exported quantity equality by default. The Product Owner explicitly authorizes repeat-identical LigaPokemon exports only for `Lote 10 (9.704 cards)` at 9,700, `Lote 4 (9.870 cards)` at 9,868, `Lote RF 3 (9.983 cards)` at 9,982, and `Lote RF 6 (7.681 cards)` at 7,679; receipts and snapshots retain source and authoritative numbers with `PRODUCT_OWNER_EXPORT` provenance. Every other mismatch remains `SOURCE_COUNT_MISMATCH`.
+- Rationale: the verified Lote 1 pilot passed, while these four collections each reproducibly export a stable quantity below their labels. Exact evidence-bearing exceptions honor the Product Owner's decisions without creating a general tolerance or erasing upstream provenance.
+
+## 2026-08-03 — GitHub verifies committed Handoff state instead of preparing it
+
+- **Status:** Implemented and hosted-verified (`PHR-TECH-011`).
+- **Context:** PR #5 repeatedly reported test, lint, and build failures because the Handoff workflow ran project validation before installing npm dependencies. The workflow also regenerated continuity in an ephemeral runner and executed twice for each feature-branch revision.
+- **Decision:** Separate project validation from continuity verification. GitHub pins Node 24, runs `npm ci`, and executes project gates in one job. A second job checks out the exact pull-request head with full history and runs only `./handoff validate-continuity --json`. Feature branches run through `pull_request`; `push` is restricted to `main`.
+- **Consequences:** Missing dependencies no longer masquerade as code defects,
+  duplicate feature notifications stop, and GitHub cannot hide an unsealed
+  repository by preparing temporary generated files. Local closeout must commit
+  human-owned truth and use bare `./handoff` before publication. Handoff 0.5.1
+  also suppresses portable Python bytecode and CI uses read-only permissions.
+
+## 2026-08-02 — Assisted sealed imagery remains representative, not exact
+
+- **Status:** Implemented and applied; Product Review ready (`PHR-UX-024`).
+- **Context:** 1,019 sealed products have plausible community artwork but lack enough machine-readable evidence to prove packaging identity.
+- **Decision:** Stage candidate metadata locally, automatically adopt only exact-set/class candidates that pass a versioned representative safety policy, and require an explicit authorized human decision for every remaining ambiguity. Automated and human decisions use separate provenance, remain reversible, and never overwrite or inflate the exact tier.
+- **Consequences:** v1 added 118 assisted representatives and raised visible coverage to 16.38% while exact coverage remains 12.30%. The former 47.51% number is a theoretical ceiling, not a verified match rate; unsafe percentage chasing is prohibited.
+
+## 2026-08-02 — Community artwork may fill exact gaps but cannot weaken product identity
+
+- **Status:** Implemented and CTO accepted (`PHR-API-004`).
+- **Context:** Paid Scrydex access was declined, while PokéFiles and `ptcg-assets` expose useful Pokémon card and sealed-product artwork with uneven completeness and authority.
+- **Decision:** Treat PokéFiles as a public metadata catalogue pointing to upstream images and consume `ptcg-assets` only at a pinned commit. Preserve valid same-identity mappings, require exact card material identity or exact sealed set/class/unique descriptor proof, bound byte prefetch, and retain every ambiguity as a placeholder with an audit reason.
+- **Consequences:** Current local coverage is 71.54% for Pokémon single rows and 12.31% for sealed rows; 1,500 priority sources are cached. The sealed recovery pass added 165 exact products without guessing booster art, editions, cases, promos, or same-class variants. Residual gaps remain visible work rather than false confidence.
+
+## 2026-08-01 — Multi-game PriceCharting identity is profile-specific and daily acquisition is owner-URL driven
+
+- **Status:** Implemented and product-review ready; activation and host scheduling pending (`PHR-API-012`).
+- **Context:** Magic and One Piece reuse PriceCharting’s CSV schema but not Pokémon’s physical-identity grammar. The owner’s subscription can supply fresh daily CSVs, while the public API documentation defines pacing and freshness but does not publish a stable generic bulk-download endpoint contract.
+- **Decision:** Maintain deterministic versioned game profiles, require independent set/name/collector/treatment/language proof, and never join on bare `tcg-id`. Store the owner’s actual Magic and One Piece download URLs encrypted. The server accepts only allow-listed HTTPS PriceCharting destinations, spaces CSV calls by ten minutes, validates the full game-specific file, and atomically promotes each game through persistent daily state.
+- **Consequences:** Demonstrated source coverage is 84.83% for eligible Magic singles and 77.28% for eligible English One Piece singles, with uncertainty left inactive. Automation is structurally ready without inventing an undocumented URL, exposing secrets, or installing a host scheduler. A supervised one-shot activation must precede recurrence.
+
+## 2026-08-01 — PriceCharting bulk data remains independent, collision-free evidence
+
+- **Status:** Implemented and product-review ready; owner-file dry run complete and activation pending (`PHR-API-011`).
+- **Context:** The daily PriceCharting CSV can add broad graded and metadata coverage, but PriceCharting products and Phronesis TCGplayer-centred physical SKUs do not share a safe universal key. The measured source includes many-to-one target collisions, duplicated TCG IDs, sparse/duplicated UPCs, non-standard collectibles, and no image or Direct Low field.
+- **Decision:** Preserve each CSV as an immutable receipt, validate and normalize it into provider staging, resolve identities through versioned game rules, and promote only a complete one-to-one collision-free mapping set. Store PriceCharting values as independent observations and retain all non-accepted states with reasons. Never merge them into TCGplayer-owned price lanes or use them to change the offer recommendation.
+- **Consequences:** Automatic Pokémon coverage is capped by proven identity rather than a percentage target. Resolver v9 exceeds the earlier heuristic ceiling only through fixture-gated collector, set, qualifier, annotation, pattern, and finish evidence; every remaining collision and ambiguity stays non-active. Recurring acquisition, One Piece, and Magic reuse the same receipt/promotion infrastructure but require later explicit scheduler and game-profile work.
+
+## 2026-07-31 — Display Case is an allocation over owned inventory, not a second ownership ledger
+
+- **Status:** Accepted for Product Review.
+- **Context:** Event Purchases must become immediate sorting work and physically displayed cards must be sold and counted without duplicating receipt quantity, acquisition cost, or General Inventory ownership. Prepared Sheet stock also needs to remain visible even though it has no receipt-backed lot.
+- **Decision:** Event Flip is derived from finalized receipt/Inventory evidence. Display Case stores append-only reservation, price, Sale, reversal, return, and count evidence over exact single-card lots. Prepared stock remains a separate source joined only in presentation/reporting. A Case-linked Sale updates Case, its underlying Inventory lot, and the Event Ledger in one transaction. General Inventory availability subtracts Case reservations.
+- **Consequences:** Allocation never decrements or duplicates owned quantity. General dispositions/counts and receipt voids cannot invalidate active reservations. Case list price is not realized revenue. Exact sealed, Bulk, and manual Purchases remain General-only until a later itemization contract. Binder Inventory is deferred under its own permanent Feature ID.
+
+## 2026-07-31 — Event stock uses a local immutable snapshot and separate reconciliation evidence
+
+- **Status:** Accepted for Product Review.
+- **Context:** Event sellers need fast option-level Sale entry and expected leftovers from a human-maintained Google Sheet, but live selling cannot depend on network access or mutable spreadsheet state.
+- **Decision:** A strict five-column CSV export becomes one hash-recorded, event-scoped SQLite manifest. Both Event Ledger surfaces may link Sale rows to exact manifest options. Ledger rows and append-only stock movements commit atomically; reversal appends compensation. Physical counts remain observations rather than quantity rewrites.
+- **Consequences:** The Sheet is an authoring/template surface, not the live database. A consumed manifest cannot be replaced. Global receipt-backed Inventory remains independent. Actual whole-Sale amount, imported list price, expected leftover, counted quantity, variance, and untracked lines remain explicitly distinct.
+
+## 2026-07-31 — Search may expand bounded structured intent but never adopt identity
+
+- **Status:** Accepted for Product Review.
+- **Context:** Literal prefix FTS could not retrieve `SWSH03` for the common shorthand `SH03`, even when the rest of the query exactly described Charizard V.
+- **Decision:** Candidate retrieval and scoring share one deterministic, escaped query plan with bounded documented structured aliases and visible interpretation feedback. Every logical input token remains required.
+- **Consequences:** `SH03` reaches `SWSH03` quickly, but expansion cannot rewrite a catalogue record, reconcile a crosswalk, or automatically select a product. Broader typo or natural-language behavior requires separately measured rules.
+
+## 2026-07-31 — One Event Ledger serves full and Lite operating surfaces
+
+- **Status:** Accepted for Product Review.
+- **Context:** A buyer working in Vendor Workspace may make an incidental Sale, but changing routes to the seller-focused Event Ledger interrupts the live buying workflow.
+- **Decision:** Vendor Workspace provides a Lite Quick Sale mode beside its default Purchase intake. It reuses the active event ID, authorized `/api/event-ledger`, domain validation, `PurchaseLedgerRepository`, idempotency, returned summary, and activity trail. `/event-ledger` remains the only full event-control surface.
+- **Consequences:** Buyer- and seller-entered Sales affect the same expected drawer and audit history immediately. Vendor Workspace cannot own a second ledger or expose event start, cash adjustment, reversal, correction, close, or reconciliation. Manual Quick Sales remain independent of Inventory.
+
+## 2026-07-31 — Responsive renderers share one filtered navigation input
+
+- **Status:** Accepted for Product Review.
+- **Context:** The desktop sidebar was intentionally hidden at phone widths, but the shared top bar had no replacement, making every directly entered phone workflow a navigation dead end.
+- **Decision:** `AppShell` resolves visible modules on the server and passes one typed, entitlement-filtered destination list to both the desktop sidebar and phone drawer. The phone renderer may own route state and accessible interaction behavior but cannot own product metadata or permission logic.
+- **Consequences:** New authorized primary destinations appear in both responsive treatments automatically. Hidden navigation remains presentation only; page, API, and repository authorization stay authoritative. Phone navigation must retain focus, scroll, touch-target, overflow, and breakpoint-recovery evidence.
+
+## 2026-07-31 — Event cash evidence is separate from Inventory and profit
+
+- **Status:** Accepted.
+- **Context:** Live event sales may involve items that were never registered in Phronesis, while evaluated purchases already create immutable receipts and Inventory intake. The operator still needs exact drawer control.
+- **Decision:** One event owns one currency and declared opening cash. A manual Sale owns one positive overall payment plus one to 25 required description/quantity rows and never requires or mutates catalogue/Inventory identity. Payment method determines signed drawer effect. Evaluated purchases add a linked ledger Purchase in their existing receipt/Inventory transaction. Reversal is append-only, and close freezes expected, counted, and variance evidence.
+- **Consequences:** Manual event sales cannot claim Inventory disposition or allocated cost basis. Sales less Purchases is labelled Net Cash Movement, never profit. Later reconciliation to Inventory, settlement, tax, accounting export, and multi-currency drawers require separate decisions.
+
+## 2026-07-30 — Repository-native Handoff owns session continuity
+
+- **Status:** Accepted.
+- **Context:** The canonical repository contains durable product and engineering truth, while conversations, IDE state, and the retained rollback checkout may be stale or unavailable.
+- **Decision:** Human-owned canonical documents and `ACTIVE_TASK` are committed before bare `./handoff` generates and seals operational continuity artifacts. The generated package records the exact branch, commit, worktree fingerprint, validation evidence, remaining work, blockers, and next action.
+- **Consequences:** Generated files are never hand-edited; transfer readiness may be claimed only after Handoff validation succeeds. Git evidence and the canonical JarvisSSD checkout supersede historical point-in-time claims.
+
+## 2026-07-30 — Authentication identity does not own product authorization
+
+- Use self-hosted Better Auth database sessions and GitHub OAuth for authentication.
+- Keep workspace membership, role defaults, explicit module entitlements, invitations, and authorization audit in Phronesis-owned tables.
+- Re-authorize at every page/data/mutation boundary; Proxy and hidden navigation are not security controls.
+- Default to disabled compatibility mode and require complete configuration plus live verification before enforcing login.
+- Do not force dependency downgrades or activate required mode while supported fixes for known Next transitive production advisories are unavailable.
+
+## 2026-07-30 — Green verification is a product-development prerequisite
+
+- Permit explicit TypeScript test imports only under the repository's existing no-emit contract.
+- Freeze evaluation-history snapshots recursively at the repository boundary.
+- Select refresh providers from the evidence domains required by requested fields; unrelated missing evidence cannot make an otherwise capable provider ineligible.
+- Treat `Nonfoil` as semantically distinct from `Foil` in finish signals.
+- Keep the supported full suite offline and deterministic through certified local provider fixtures.
 
 ## 2026-07-29 — Official Bandai source and durable provider-image cache
 
@@ -6,7 +150,7 @@
 - Use the official Bandai English card list as the primary One Piece artwork source; retain Scrydex only as a possible structured fallback.
 - Match base, parallel/reprint, and SP assets only from strict product/set, card-number, normalized-name, and explicit qualifier evidence. Ambiguity fails to a placeholder.
 - Retain authorized provider raster bytes locally through a same-origin exact-allowlist cache. Store ignored content and provenance metadata; reject redirects, invalid MIME/signatures, oversize responses, credentials, and unapproved paths.
-- Permit bounded prewarming of images already mapped by an active event search, but not provider-wide bulk acquisition.
+- Permit bounded prewarming of images already mapped by an active search or exact local catalogue reconciliation, but not unbounded provider-wide image acquisition. Full provider card metadata may be enumerated read-only to build exact local mappings; the operator must set an explicit image limit.
 
 ## 2026-07-29 — Unified search, deterministic artwork grouping, and official provider boundaries
 
@@ -459,6 +603,24 @@ Consequences:
 76. Zero-valued Opening Offer, Target Offer, Maximum Buy Price, or Recommended Offer is invalid unless a future feature explicitly declares zero as intended.
 
 77. Atlas Developer Mode may display Pipeline Trace. Production users must not see pipeline, trace, undefined, fallback, or zero-default terminology.
+
+78. Price monitoring membership is user/workspace state, not browser state. Local storage is a rollback cache and deterministic legacy-import source only.
+
+79. Verified Pricing Update Tool receipts are the canonical broad watch-refresh clock. Phronesis must not create a competing four-daily provider schedule.
+
+80. Market estimates, active listings, and observed completed sales are different evidence classes and may never be projected into one another.
+
+81. Official marketplace adapters remain disabled without credentials and run only on explicit user action; no scraper is an acceptable substitute.
+
+82. Manual/global watch creation requires a positive target or an explicit no-target decision before persistence; Vendor Workspace keeps its event-speed one-action shortcut.
+
+83. A legacy watch may cross provider set-label drift only when category, exact name, collector number, finish, language, and product type identify one physical catalogue product. Ambiguity always fails closed.
+
+84. Activation codes are single-use onboarding artifacts, not login passwords. Module access is selected before issuance and server authorization remains authoritative.
+
+85. Vendor operators may finalize their own event receipts. Receipts are immutable; administrative voids append audit evidence.
+
+86. Missing sealed or special-product artwork may be owner-curated locally only when bound to an exact catalogue SKU and validated as approved raster content.
 
 ## Documentation Rule
 

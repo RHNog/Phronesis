@@ -6,6 +6,18 @@ function cloneSnapshot(snapshot: EvaluationSnapshot): EvaluationSnapshot {
   return JSON.parse(JSON.stringify(snapshot)) as EvaluationSnapshot;
 }
 
+function deepFreeze<T>(value: T): T {
+  if (!value || typeof value !== "object" || Object.isFrozen(value)) {
+    return value;
+  }
+
+  Object.values(value as Record<string, unknown>).forEach((child) => {
+    deepFreeze(child);
+  });
+
+  return Object.freeze(value);
+}
+
 function canUseLocalStorage() {
   return typeof window !== "undefined" && Boolean(window.localStorage);
 }
@@ -14,11 +26,11 @@ export class HistoryRepository {
   private snapshots: EvaluationSnapshot[] = [];
 
   all() {
-    return this.readAll().map(cloneSnapshot);
+    return this.readAll().map((snapshot) => deepFreeze(cloneSnapshot(snapshot)));
   }
 
   append(snapshot: EvaluationSnapshot) {
-    const immutableSnapshot = Object.freeze(cloneSnapshot(snapshot));
+    const immutableSnapshot = deepFreeze(cloneSnapshot(snapshot));
     const snapshots = [...this.readAll(), immutableSnapshot];
 
     this.snapshots = snapshots.map(cloneSnapshot);

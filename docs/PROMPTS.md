@@ -1,5 +1,245 @@
 # Prompt History
 
+## 2026-08-05 — Dedicated Favicon And iOS Application Icon
+
+- Source: Product Owner supplied the compact Phronesis mark and directed its use as both browser favicon and iOS application icon.
+- Feature: `PHR-ARCH-010` under `PHR-STRUCT-20260805-004`.
+- Implementation prompt: `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
+- Outcome: the full navigation logo remains unchanged; deterministic static 512×512 browser, 180×180 Apple, and 32×32 favicon assets use the supplied compact mark with recorded hashes and Next.js metadata.
+
+## 2026-08-05 — Maximum Liga Equivalence Coverage
+
+- Source: Product Owner report that Lucario V lacked Brazil pricing and direction to maximize LigaMagic/LigaPokemon conciliation for every TCGplayer item.
+- Feature: `PHR-API-015`; structure `PHR-STRUCT-20260805-003`.
+- Implementation prompt: `docs/prompts/PHR-API-015-maximum-liga-equivalence-coverage-prompt.md`.
+- Outcome: encoded Lucario identity repaired at R$29.99, complete target-disposition ledger for both games, 32,600 Pokémon single-card exact-or-compatible targets, visible compatibility semantics, and unchanged exact-only Arbitrage authority.
+
+## 2026-08-05 — Unified Vendor Pricing And Brand Asset Recovery
+
+- Source: Product Owner direction to place Liga beside TCGplayer, collapse grading beneath that card, and recover the earlier Phronesis logos/icons.
+- Features: `PHR-UX-022` and `PHR-ARCH-010` under `PHR-STRUCT-20260805-002`.
+- Implementation prompts: `docs/prompts/PHR-UX-022-selection-focused-vendor-workspace-prompt.md` and `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
+- Outcome: one combined raw-card pricing region, one subordinate grading disclosure, byte-identical July logo recovery, shared shell branding, and Next.js icon metadata.
+
+## 2026-08-05 — Provider-Aware Regional Evidence And Capture-First Catalogues
+
+- Source: Product Owner direction to correct missing LigaMagic/LigaPokemon prices and the August 4 Pokémon snapshot immediately.
+- Features: `PHR-API-014` and `PHR-TECH-012`.
+- Implementation prompts: `docs/prompts/PHR-API-014-ligapokemon-catalogue-reconciliation-prompt.md` and `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md`.
+- Outcome: exact source-labelled Liga evidence in Vendor Workspace, separate durable capture/import processes, six-hour-cadence freshness, August 5 recovery for all five catalogues, and live private deployment. Pokémon Arbitrage remains separately gated.
+
+## 2026-08-04 — Timed Worker Session Continuity
+
+- Source: Product Owner report that worker access appeared revoked after the first successful login.
+- Feature: `PHR-ARCH-014`; structure `PHR-STRUCT-20260804-002`.
+- Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+- Outcome: grant-bounded persistent HttpOnly cookies and server-validated `/event-access` resumption, without making one-time codes reusable.
+
+## 2026-08-04 — LigaPokemon Catalogue Reconciliation
+
+- Source: Product Owner direction to reconcile the completed LigaPokemon acquisition data.
+- Feature: `PHR-API-014`.
+- Implementation prompt: `docs/prompts/PHR-API-014-ligapokemon-catalogue-reconciliation-prompt.md`.
+- Outcome: isolated exact Pokémon crosswalk, complete-manifest integrity checks, collision and foreign-market quarantine, automatic acquisition/catalogue refresh hooks, and a deterministic live result of 25,200 accepted mappings. Arbitrage exposure remains separately gated.
+
+## 2026-08-03 — Arbitrage And Regional Acquisition Recovery
+
+- Source: Product Owner request to diagnose the zero Arbitrage queue, assess TCG catalogue freshness, schedule LigaMagic, and add LigaPokemon.
+- Structure: `PHR-STRUCT-20260803-007`; assignment `PHR-ARBITRAGE-ACQUISITION-RECOVERY-20260803`.
+- Implementation prompts: `docs/prompts/PHR-TECH-012-arbitrage-data-plane-continuity-prompt.md` and `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
+- Outcome: one operational pricing data plane, bounded Magic reconciliation, daily Liga orchestration, and a pilot-gated isolated LigaPokemon connector.
+
+## Resilient Copy Controls — 2026-08-03
+
+The Product Owner reported that the public worker-link copy control appeared inert on iPhone and authorized a reusable Phronesis-wide correction. `PHR-UX-025` specifies awaited Clipboard API handling, an iPhone/Safari compatibility fallback, explicit success/error feedback, and selectable manual recovery.
+
+Implementation prompt: `docs/prompts/PHR-UX-025-resilient-copy-controls-prompt.md`.
+
+## GitHub Handoff Continuity — 2026-08-03
+
+The Product Owner authorized repair after the Handoff workflow began failing on GitHub while repository continuity still described an earlier implementation. `PHR-TECH-011` separates dependency-backed project validation from committed-state continuity validation, removes CI-side Handoff mutation, and requires the existing dirty implementation to pass the local gate before a canonical seal.
+
+Implementation prompt: `docs/prompts/PHR-TECH-011-github-handoff-continuity-prompt.md`.
+
+## Sealed Artwork Review Queue — 2026-08-02
+
+The Product Owner first requested a compute estimate and a manual sealed-image review tool, then directed Phronesis to perform the defensible review work automatically. `PHR-UX-024` now specifies local candidate staging, a conservative versioned assisted policy, separately typed representative provenance, append-only decisions, exact-artwork protection, reversible controls, and truthful Vendor Workspace labelling.
+
+Implementation prompt: `docs/prompts/PHR-UX-024-sealed-artwork-review-queue-prompt.md`. Result: 118 assisted representatives applied, visible sealed coverage increased to 474 / 2,894 (16.38%), and 901 genuine exceptions remain. Focused 6/6 and full 368/368 verification pass.
+
+## Community Pokémon Artwork Gap Fill — 2026-08-02
+
+The Product Owner declined paid Scrydex access and authorized immediate maximum-safe use of PokéFiles and `1niceroli/ptcg-assets`. The revised `PHR-API-004` work order requires public-client validation, exact material-aware single matching, immutable-commit sealed matching, no full repository clone, insert-if-missing-or-stale persistence, bounded cache warming, and explicit ambiguity reports.
+
+Implementation prompt: `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`.
+
+Implementation and active ingestion completed in the same session: 31,286 single mappings, 356 sealed mappings, and 1,500 cached priority sources. A second exact recovery pass added 165 sealed products by repairing source classification and deterministic identity gaps. The final repeat run inserted zero mappings and had zero cache failures.
+
+## PriceCharting Multi-Game Daily Snapshots — 2026-08-01
+
+The Product Owner supplied Magic and One Piece PriceCharting exports, directed Phronesis to reuse the Pokémon import lessons at maximum safe compatibility, and requested a once-daily automated snapshot routine. `PHR-API-012` specifies versioned exact-identity profiles, encrypted subscription download URLs, allow-listed/paced acquisition, immutable receipts, and per-game atomic activation.
+
+Implementation prompt: `docs/prompts/PHR-API-012-pricecharting-multigame-daily-snapshots-prompt.md`.
+
+Implementation completed in the same session. Magic accepted 109,841 eligible singles and English One Piece accepted 4,731 as non-active dry-run receipts. Daily one-shot/watch code and Settings registration are ready; owner URL entry, supervised activation, Product Review, and host scheduler approval remain pending.
+
+## PriceCharting Bulk Evidence Import — 2026-08-01
+
+`PHR-STRUCT-20260801-007` specifies `PHR-API-011`: immutable PriceCharting CSV receipts, strict provider staging, versioned Pokémon identity reconciliation, one-to-one collision quarantine, atomic last-good promotion, independent observations, and deterministic coverage reporting. The first work order is local dry-run/apply only; recurrence, One Piece, and Magic remain later objectives.
+
+Implementation prompt: `docs/prompts/PHR-API-011-pricecharting-bulk-evidence-import-prompt.md`.
+
+Implementation completed in the same session: the owner file produced a non-active 91,572-row dry-run receipt, focused and full validation passed, and explicit owner activation remains pending.
+
+## Editable Purchase Cart — 2026-08-01
+
+`PHR-STRUCT-20260801-006` authorizes `PHR-UX-020` to edit value and quantity on an employee-owned unsubmitted purchase-cart line, expose explicit Save changes and Remove item controls, and preserve immutable downstream purchase evidence.
+
+Implementation prompt: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
+
+## Sealed Readiness And Embedded Verification — 2026-08-01
+
+`PHR-STRUCT-20260801-005` authorizes `PHR-API-008` to spend a strict local 100-credit UTC-day budget only on newest-first PkmnPrices sealed ingestion, `PHR-UX-019` to put the canonical recommendation in a compact expandable cart-adjacent tile, and `PHR-API-009` to embed only authorized grading-certificate interfaces.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-API-008-pkmnprices-sealed-ingestion-prompt.md`.
+- `docs/prompts/PHR-UX-019-compact-checkout-offer-prompt.md`.
+- `docs/prompts/PHR-API-009-grading-certificate-lookup-prompt.md`.
+
+## Adjacent Search And Checkout Workspace — 2026-08-01
+
+`PHR-STRUCT-20260801-004` authorizes `PHR-UX-018` to place the single canonical VendorCheckout beside catalogue results on desktop while preserving a semantic linear phone order and all existing event behavior.
+
+Implementation prompt: `docs/prompts/PHR-UX-018-adjacent-search-checkout-workspace-prompt.md`.
+
+## Catalogue Verification Controls — 2026-08-01
+
+`PHR-STRUCT-20260801-003` authorizes `PHR-UX-017` to add a reusable enlarged catalogue-artwork preview and a fixed-origin, exact-context TCGplayer cross-check link without external API calls or identity mutation.
+
+Implementation prompt: `docs/prompts/PHR-UX-017-catalogue-verification-controls-prompt.md`.
+
+## One Piece Set-Code Search Resolution — 2026-08-01
+
+`PHR-STRUCT-20260801-002` extends `PHR-UX-016` so OP/EB/ST/PRB codes resolve through high-confidence aliases derived from exact imported catalogue evidence, with special/weak/ambiguous mappings failing closed.
+
+Implementation prompt: `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+
+## Timed Event Worker Access — 2026-07-31
+
+`PHR-ARCH-014` implements an account-free, event-bound code login with narrow operational module assignments. Its 2026-08-03 amendment adds an independently assignable `ARTWORK_REVIEW` module with manual `OPERATE` versus system-wide `ADMIN` separation. Its 2026-08-04 amendment resumes a valid HttpOnly session for the configured duration while preserving single-use codes. Implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
+
+## Event Flip And Display Case Inventory — 2026-07-31
+
+`PHR-STRUCT-20260731-006` authorizes `PHR-WORKFLOW-013` to derive a multi-card Event Flip queue from receipt-backed purchases and `PHR-WORKFLOW-014` to reserve, sell, return, count, and report Display Case cards without duplicating General Inventory ownership. `PHR-WORKFLOW-015` records Binder Inventory as a separately deferred product lane.
+
+Execution completed with Product Review pending. Implementation reports and conformance records live under `docs/implementation-reports/` and `docs/reviews/` for both active Feature IDs.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-WORKFLOW-013-event-flip-queue-prompt.md`.
+- `docs/prompts/PHR-WORKFLOW-014-display-case-inventory-prompt.md`.
+
+## Event Stock Control And Intent-Aware Search — 2026-07-31
+
+`PHR-STRUCT-20260731-005` authorizes `PHR-WORKFLOW-012` to ingest a canonical Google-Sheet CSV snapshot into event-scoped local stock, link both Sale surfaces to append-only quantity movements and reconciliation reports, and authorizes `PHR-UX-016` to interpret bounded catalogue shorthand such as `SH03 → SWSH03` without automatic identity adoption.
+
+Implementation prompts:
+
+- `docs/prompts/PHR-WORKFLOW-012-event-stock-control-prompt.md`.
+- `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+
+## Vendor Workspace Quick Sale — 2026-07-31
+
+`PHR-STRUCT-20260731-004` authorizes `PHR-UX-015` to add a Lite Quick Sale mode inside Vendor Workspace while keeping `/api/event-ledger` and `PurchaseLedgerRepository` as the single event-cash control.
+
+Implementation prompt: `docs/prompts/PHR-UX-015-vendor-workspace-quick-sale-prompt.md`.
+
+## Responsive Application Navigation — 2026-07-31
+
+`PHR-STRUCT-20260731-003` authorizes `PHR-UX-014` to repair the shared phone shell by passing the same server-filtered primary destinations to an accessible mobile drawer while preserving the persistent desktop sidebar.
+
+Implementation prompt: `docs/prompts/PHR-UX-014-responsive-application-navigation-prompt.md`.
+
+## Event Cash Ledger Revision — 2026-07-31
+
+Structure `PHR-STRUCT-20260731-002` reopens `PHR-WORKFLOW-006` additively: declare opening cash, record payment-aware manual Sales and Purchases, attach one to 25 manually described sold items to one Sale, preserve receipt/Inventory atomicity, append reasoned reversal, and freeze close variance.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md`.
+
+## LigaMagic/TCGplayer Crosswalk Validation — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-013` reactivates `PHR-ARCH-013`, `PHR-API-006`, and `PHR-WORKFLOW-007` to validate the acquired source pair, derive only conflict-free edition aliases, and produce reproducible cross-market coverage evidence.
+
+Implementation prompt: `docs/prompts/PHR-ARCH-013-crosswalk-validation-remediation-prompt.md`.
+
+## Inventory Disposition Ledger — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-012` authorizes `PHR-WORKFLOW-010`: append explicit lot-specific sale/disposition evidence, atomically update operational on-hand quantity, and preserve acquisition and physical-count history.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-010-inventory-disposition-ledger-prompt.md`.
+
+## Inventory Location And Count Reconciliation — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-011` authorizes `PHR-WORKFLOW-009`: create workspace locations and append-only, reasoned MOVE/COUNT events while preserving immutable receipt quantity and acquisition cost basis.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-009-inventory-location-count-reconciliation-prompt.md`.
+
+## Receipt-Backed Inventory Intake — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-010` authorizes `PHR-WORKFLOW-008`: atomically convert exact-card and truthful aggregate Bulk receipt lines into workspace inventory lots, reconcile historical receipts, propagate receipt voids, and expose module-authorized inventory visibility.
+
+Implementation prompt: `docs/prompts/PHR-WORKFLOW-008-receipt-backed-inventory-intake-prompt.md`.
+
+# Official BCB PTAX Exchange Rate — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-009` authorizes `PHR-API-007`: automatically retrieve and retain official BCB PTAX closing buy/sell rates, apply the direction-correct side to regional economics, preserve last-good data, and replace manual FX controls with provenance-rich evidence.
+
+Implementation prompt: `docs/prompts/PHR-API-007-official-bcb-ptax-fx-prompt.md`.
+
+## Regional Vending And Arbitrage Intelligence — 2026-07-30
+
+Structure `PHR-STRUCT-20260730-008` authorized exact cross-market identity (`PHR-ARCH-013`), regional evidence/cost truth (`PHR-API-006`), vending guidance (`PHR-UX-013`), and two-way availability verification (`PHR-WORKFLOW-007`).
+
+Canonical work order: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
+
+## PHR-API-005 LigaMagic Authenticated Export Snapshots — 2026-07-30
+
+Build a dedicated local authenticated LigaMagic export profile, capture one supervised collection export without credential/session disclosure, and create a complete non-scheduled dry-run snapshot across every discovered collection.
+
+Canonical work order: `docs/prompts/PHR-API-005-ligamagic-authenticated-export-snapshots-prompt.md`.
+
+## PHR-UX-012 Provider Connections Settings — 2026-07-30
+
+Centralize secret-free provider health and activation guidance in Settings while gating credential entry on authenticated owner-only encrypted storage.
+
+Canonical work order: `docs/prompts/PHR-UX-012-provider-connections-settings-prompt.md`.
+
+## PHR Card-Show Operations Program — 2026-07-30
+
+Approved autonomous implementation program covering refresh integrity (`PHR-TECH-010`), intentional manual watch creation (`PHR-UX-010`), employee activation and module assignment (`PHR-ARCH-012`), offer-first buying decisions (`PHR-UX-011`), the event purchase ledger (`PHR-WORKFLOW-006`), and sealed/special-product artwork coverage (`PHR-API-004`).
+
+Canonical work orders:
+
+- `docs/prompts/PHR-TECH-010-refresh-integrity-provider-health-prompt.md`
+- `docs/prompts/PHR-UX-010-watch-entry-composer-prompt.md`
+- `docs/prompts/PHR-ARCH-012-employee-activation-module-access-prompt.md`
+- `docs/prompts/PHR-UX-011-offer-first-buying-decision-prompt.md`
+- `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md`
+- `docs/prompts/PHR-API-004-product-artwork-coverage-prompt.md`
+
+## PHR-WORKFLOW-005 Identity-Backed Price Monitoring
+
+Purpose: persist exact user-owned watches server-side, make tracking a one-action Vendor Workspace continuation, and refresh watches from verified catalogue checkpoints.
+
+Canonical work order: `docs/prompts/PHR-WORKFLOW-005-identity-backed-price-monitoring-prompt.md`.
+
+## PHR-API-003 Low-Cost Market Evidence Sources
+
+Purpose: add opt-in budgeted estimates, credential-gated official listing evidence, and first-party observed sales while prohibiting scraping and false sold-copy claims.
+
+Canonical work order: `docs/prompts/PHR-API-003-low-cost-market-evidence-sources-prompt.md`.
+
 ## PHR-UX-009 Visible Buying Intelligence Panel
 
 Date: 2026-07-30

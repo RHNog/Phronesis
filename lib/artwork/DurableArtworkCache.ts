@@ -7,7 +7,11 @@ const defaultMaximumBytes = 8 * 1024 * 1024;
 const artworkUserAgent = "Phronesis/0.1 (durable artwork cache)";
 const allowedContentTypes = new Set(["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"]);
 
-type ArtworkAuthorization = "PROVIDER_API" | "PRODUCT_OWNER_ATTESTED_BANDAI" | "VERIFIED_CATALOGUE";
+type ArtworkAuthorization =
+  | "COMMUNITY_CATALOGUE"
+  | "PROVIDER_API"
+  | "PRODUCT_OWNER_ATTESTED_BANDAI"
+  | "VERIFIED_CATALOGUE";
 
 type SourcePolicy = {
   authorization: ArtworkAuthorization;
@@ -20,6 +24,10 @@ const sourcePolicies = new Map<string, SourcePolicy>([
   ["cards.scryfall.io", { authorization: "PROVIDER_API", path: /^\/(?:art_crop|border_crop|large|normal|png|small)\// }],
   ["en.onepiece-cardgame.com", { authorization: "PRODUCT_OWNER_ATTESTED_BANDAI", path: /^\/images\/cardlist\/card\/[A-Za-z0-9_-]+\.png$/ }],
   ["static.tcgplayer.com", { authorization: "VERIFIED_CATALOGUE", path: /^\// }],
+  ["images.pkmnprices.com", { authorization: "PROVIDER_API", path: /^\/sealed\// }],
+  ["images.pokemontcg.io", { authorization: "COMMUNITY_CATALOGUE", path: /^\/[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+(?:_hires)?\.png$/ }],
+  ["images.scrydex.com", { authorization: "COMMUNITY_CATALOGUE", path: /^\/pokemon\/[A-Za-z0-9._-]+\/(?:small|medium|large)$/ }],
+  ["raw.githubusercontent.com", { authorization: "COMMUNITY_CATALOGUE", path: /^\/1niceroli\/ptcg-assets\/[0-9a-f]{40}\/.+\.(?:avif|gif|jpe?g|png|webp)$/i }],
 ]);
 
 export type ArtworkCacheMetadata = {
@@ -85,6 +93,13 @@ function hasValidSignature(bytes: Uint8Array, contentType: string): boolean {
     return signature === "GIF87a" || signature === "GIF89a";
   }
   return false;
+}
+
+function detectedRasterContentType(bytes: Uint8Array): string | null {
+  for (const contentType of allowedContentTypes) {
+    if (hasValidSignature(bytes, contentType)) return contentType;
+  }
+  return null;
 }
 
 export function isApprovedArtworkSource(value: string): boolean {
@@ -156,10 +171,17 @@ export class DurableArtworkCache {
     if (!response.ok || response.status >= 300) throw new Error(`Artwork provider returned ${response.status}.`);
     const declaredLength = Number(response.headers.get("content-length") ?? "0");
     if (declaredLength > this.maximumBytes) throw new Error("Artwork exceeds the configured size limit.");
-    const contentType = (response.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
-    if (!allowedContentTypes.has(contentType)) throw new Error("Artwork provider returned an unsupported content type.");
+    const declaredContentType = (response.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+    const maySniffTrustedCommunityRaster =
+      approvedCommunityBinary(policy, declaredContentType);
+    if (!allowedContentTypes.has(declaredContentType) && !maySniffTrustedCommunityRaster) {
+      throw new Error("Artwork provider returned an unsupported content type.");
+    }
     const bytes = new Uint8Array(await response.arrayBuffer());
-    if (!bytes.length || bytes.byteLength > this.maximumBytes || !hasValidSignature(bytes, contentType)) {
+    const contentType = maySniffTrustedCommunityRaster
+      ? detectedRasterContentType(bytes)
+      : declaredContentType;
+    if (!contentType || !bytes.length || bytes.byteLength > this.maximumBytes || !hasValidSignature(bytes, contentType)) {
       throw new Error("Artwork provider returned an invalid raster image.");
     }
     const metadata: ArtworkCacheMetadata = {
@@ -184,6 +206,10 @@ export class DurableArtworkCache {
     await rename(temporaryMetadata, metadataPath);
     return { bytes, metadata };
   }
+}
+
+function approvedCommunityBinary(policy: SourcePolicy, contentType: string): boolean {
+  return policy.authorization === "COMMUNITY_CATALOGUE" && contentType === "application/octet-stream";
 }
 
 let defaultCache: DurableArtworkCache | undefined;

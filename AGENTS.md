@@ -53,5 +53,19 @@ Before product-development work:
 3. Read the current CTO Structure, product memory, active role supplement, and design context when applicable.
 4. Apply the master workflow. Local guidance may add project-specific facts or stricter controls but may not silently weaken or override it.
 
-Canonical workflow revision adopted: `2.8.0`.
+Canonical workflow revision adopted: `2.20.0`.
 <!-- END:master-canonical-workflow -->
+
+<!-- handoff:contract:start -->
+## Canonical Handoff continuity
+
+The repository is authoritative; conversation history is disposable.
+
+- **Acquire Handoff**: read `handoff.toml`, the configured canonical documents,
+  and generated operational context; run `./handoff validate-continuity`; then
+  execute the exact next action.
+- **Handoff**: update canonical truth and `ACTIVE_TASK`, commit verified project
+  state, then run bare `./handoff`. Do not claim transfer readiness on failure.
+- Architectural decisions must never remain only in a conversation.
+- Repository evidence supersedes conversational state whenever they conflict.
+<!-- handoff:contract:end -->

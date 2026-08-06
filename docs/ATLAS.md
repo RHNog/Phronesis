@@ -1,5 +1,162 @@
 # Project Atlas
 
+## Dedicated Browser And iOS Application Icon
+
+- `PHR-ARCH-010` separates the readable navigation identity from the compact application mark. Desktop and mobile shell chrome retain `public/brand/phronesis-logo.png`.
+- The Product Owner-supplied 1254×1254 JPEG is preserved by provenance and deterministically converted to `public/brand/phronesis-app-icon.png`; no generative alteration, redraw, recoloring, or network substitution occurs.
+- Next.js static metadata owns `app/favicon.ico` (32×32), `app/icon.png` (512×512), and `app/apple-icon.png` (180×180). Generated browser metadata declares the correct relation, MIME type, and intrinsic size for each asset.
+
+## Maximum Liga Equivalence Coverage
+
+- `PHR-API-015` adds `regional_product_equivalence`, a provider-aware ledger with one exact, compatible, ambiguous, or unavailable disposition for every Magic and English Pokémon TCGplayer product.
+- The live Pokémon target set contains 43,748 singles and 2,894 sealed products. It resolves 30,061 exact and 2,539 compatible targets; 102 remain ambiguous and 13,940 unavailable. Material treatment qualifiers remain compatible unless Liga names the same treatment. Lucario V `27/73` resolves the encoded `Champion&rsquo;s Path` source identity and exposes R$29.99.
+- The live Magic target set contains 159,126 singles and 3,639 sealed products. Its existing accepted crosswalk populates 131,883 exact target rows; 30,882 are unavailable.
+- Compatible evidence is a Vendor Workspace comparison aid only. Arbitrage continues to consume the original collision-safe Magic source crosswalk, and no unavailable or ambiguous target receives a price.
+
+## Unified Vendor Pricing And Product Identity
+
+- `PHR-UX-022` composes selected-condition TCGplayer evidence and exact provider-labelled LigaMagic/LigaPokemon evidence inside one primary pricing region. Regional unmatched/quarantined states remain explicit and do not replace TCGplayer data.
+- PriceCharting candidates and the existing certificate lookup occupy one native grading disclosure immediately below raw-card pricing. It is closed by default and remains evidence-only.
+- `PHR-ARCH-010` retains the canonical full-logo asset at `public/brand/phronesis-logo.png`, recovered byte-for-byte from the Product Owner's July 9 raster. Desktop/mobile shell identity uses that full logo; dedicated favicon and iOS metadata use the separately supplied compact application mark.
+
+## Timed Worker Session Continuity
+
+- `PHR-ARCH-014` separates a single-use human code from the random HttpOnly session created at redemption.
+- The session cookie persists only until the server-issued deadline. Reopening `/event-access` validates the hashed SQLite session, grant, scope, expiry, revocation, event state, and entitlements before redirecting to the first assigned module.
+- The stable link never makes the code reusable. Missing, expired, revoked, logged-out, or event-closed sessions return to code entry.
+
+## LigaPokemon Exact Catalogue Reconciliation
+
+- `PHR-API-014` binds only complete LigaPokemon manifests to the English Pokémon TCGplayer catalogue through exact name, bounded set, collector numerator, and finish identity.
+- `regional_pokemon_crosswalk` and `regional_pokemon_evidence` are isolated from the Magic regional tables. Complete source receipts and current Pokémon catalogue state produce deterministic source, pricing, and crosswalk fingerprints.
+- After bounded presentation decoding, the live 167,912-row snapshot yields 25,549 exact source matches and 25,226 two-sided price pairs. Eight source collision rows, 8,474 explicit foreign-market rows, and 2,600 unsupported treatments are quarantined.
+- Regional evidence lookup is provider-aware and fail closed: `magic-en` reads LigaMagic, `pokemon-en` reads LigaPokemon, and unsupported games receive no substitute. Vendor Workspace shows provider-labelled exact evidence; Arbitrage still reads only the accepted Magic crosswalk until a separate Product Owner candidate-exposure decision.
+
+## Arbitrage Data Continuity And Liga Recurrence
+
+- `PHR-TECH-012` makes `.data/mobile-review.sqlite` the semantic operational pricing database unless a test/operator provides an explicit override. Runtime, observers, imports, artwork maintenance, and provider evidence no longer invent separate fallback files.
+- The private runtime uses `scripts/start-phronesis.mjs`, supervising catalogue observation with Next.js. The observer hashes and archives completed files immediately with atomic receipts; a separate child imports and reconciles so large categories cannot pause capture.
+- The August 5 12:21 run is active for all five games. Six-hour cadence freshness uses an eight-hour grace window and visibly marks overdue last-good evidence.
+- `PHR-API-013` generalizes the authenticated Liga export boundary without sharing profiles: LigaMagic and LigaPokemon keep separate hosts, Chrome profiles, debug ports, configuration, runs, hashes, receipts, and SQLite namespaces.
+- Daily recurrence is sequential, overlap-safe, same-day idempotent, and status-bearing. Complete conflict-free LigaMagic snapshots rebuild the Magic crosswalk; one provider failure never deletes last-good evidence from another.
+- LigaPokemon's official authenticated export route is confirmed, but its controls and bytes remain owner-authenticated evidence. Full acquisition requires a successful pilot; `PHR-API-014` now owns exact regional reconciliation while candidate exposure remains deferred.
+- The external TCG catalogue acquisition tool remains a separate owner. Its 00:00/06:00/12:00/18:00 schedule is active; Phronesis observes and durably captures its completed checkpoints without mutating that provider workflow.
+
+## GitHub Handoff Continuity
+
+- `PHR-TECH-011` makes GitHub a verifier of committed repository truth, not a second Handoff author.
+- Project validation installs the locked Node dependency graph before test, lint, build, and diff gates. Continuity validation checks the exact PR head with full history.
+- Feature branches receive one pull-request run; direct pushes are limited to `main`, avoiding duplicate email-producing runs for the same feature commit.
+- Local implementation commits remain distinct from the generated Handoff seal so stale or dirty continuity cannot be published as current.
+
+## Assisted Sealed Artwork Recovery
+
+- `PHR-UX-024` stages uncertain Pokémon sealed community-image metadata and runs a conservative versioned representative policy before exposing the genuine exceptions in Administration Settings.
+- Active private coverage is 356 / 2,894 exact (12.30%) plus 118 assisted representatives, for 474 / 2,894 visible (16.38%). The manual exception queue now contains 901 products.
+- `OWNER_APPROVED_REPRESENTATIVE` and `ASSISTED_REPRESENTATIVE` provenance remain separate from exact. Every representative is audited, reversible, and blocked by any current exact mapping.
+- The earlier 47.51% figure is a theoretical queue ceiling, not a verified match rate. The v1 pass refuses 421 broad mixed-product guesses, 504 value-sensitive/composite variants, and 41 package variants; 1,519 unsupported/unmatched products still require another source or curated uploads.
+
+## Community Pokémon Artwork Gap Fill
+
+- `PHR-API-004` now consumes PokéFiles as a validated public catalogue snapshot and `1niceroli/ptcg-assets` as an immutable Git-tree manifest; no paid Scrydex API is required.
+- PokéFiles resolves only exact English set, collector, and material artwork identity. `ptcg-assets` resolves only exact set, compatible sealed-product class, and unique descriptor evidence.
+- The active database contains 31,286 / 43,732 mapped Pokémon single rows (71.54%) and 356 / 2,892 mapped sealed rows (12.31%). The sealed recovery pass added 165 exact mappings, an 86.4% relative increase.
+- The 1,500 highest-priority unique sources are cached locally. One dead PokémonTCG source was replaced by exact TCGdex identity evidence; all final cache requests pass.
+- Residual sealed uncertainty is explicit: 1,019 possible-but-non-exact and 1,517 unmatched/unsupported rows remain placeholders rather than receiving guessed product art.
+
+## PriceCharting Multi-Game Daily Snapshots
+
+- `PHR-API-012` extends the receipt/promotion architecture to versioned `magic-en` and `onepiece-en` profiles without altering Pokémon v9 or creating a second catalogue.
+- PriceCharting `tcg-id` is not semantically compatible with the current Phronesis source-SKU namespace for the supplied Magic and One Piece files. It remains stored corroboration and is never a join or tie-breaker.
+- Magic v2 accepts 109,841 of 129,485 eligible source singles (84.83%); One Piece v3 accepts 4,731 of 6,122 eligible English source singles (77.28%). The dry-run residual stays explicit: absent catalogues, sealed products, non-English records, ambiguous distributions, and source/target collisions are inactive.
+- Daily acquisition reads encrypted owner-provided subscription download URLs, permits only HTTPS PriceCharting hosts, checks same-host redirects/content/schema/game, spaces CSV calls by ten minutes, stores immutable downloads, and activates each game independently only after a complete import.
+- Per-game UTC-day state makes one-shot/watch operation restart-idempotent. No host scheduler is installed and no game is active until the owner supplies URLs and approves a supervised apply.
+
+## PriceCharting Bulk Evidence
+
+- `PHR-API-011` extends the live `PHR-API-010` verifier with an immutable local bulk-evidence path; it does not create a parallel canonical catalogue.
+- PriceCharting product ID is the provider Market Identity key. TCG ID, UPC, ASIN, and ePID are typed corroborating aliases and never stand alone as identity proof.
+- A provider receipt is validated and resolved entirely in staging. Only collision-free one-to-one mappings may become active through one atomic receipt pointer; ambiguity, source/target collision, unsupported collectibles, malformed rows, and unmatched identities remain durable diagnostics.
+- The earlier heuristic benchmark found 13,957 collision-free candidates. Implemented resolver v9 proves 33,379 one-to-one candidates, including 32,099 with graded evidence, through decorated-name/full-collector normalization, explicit set and physical-pattern rules, exact annotations, and sibling-proven finish semantics while still enforcing protected qualifiers. Its current residual includes 1,704 collision rows across 745 targets and 387 ambiguous rows; neither class can activate.
+- PriceCharting observations never write TCGplayer-owned price lanes. TCG Direct Low precedence remains authoritative, PriceCharting Ungraded remains separately attributed corroboration, and the CSV supplies no artwork.
+- Receipt, staging, promotion, evidence, and reporting infrastructure are provider/game neutral. The 2026-08-01 owner receipt is dry-run only and no active pointer exists. One Piece and Magic require separate audited identity profiles; recurring acquisition is a later orchestration layer over the same importer.
+
+## Inventory Operations
+
+- `InventoryRepository` converts finalized receipt lines into immutable-provenance lots, then separately owns operational locations, physical counts, and disposition evidence.
+- Receipt quantity, approximate Bulk intake, acquisition cost, event/receipt/operator provenance, and prior counts are immutable source evidence.
+- `current_quantity` is a materialized operational projection: counts establish it, active dispositions decrement it, and eligible reversals restore it atomically.
+- `PHR-WORKFLOW-010` classifies inventory leaving as Sale, Loss, Damage, Transfer Out, or Correction. Gross sale proceeds remain evidence only—not profit or settlement.
+- Disposition creation is workspace-idempotent. Reversal never deletes the original and is blocked after a later count revision would make restoration ambiguous.
+- `/inventory` and `/api/inventory` require assigned module access; mutations independently require `INVENTORY:OPERATE` and DAL ownership checks.
+
+## LigaMagic Authenticated Snapshot
+
+- `PHR-API-005` launches a dedicated LigaMagic profile as ordinary Chrome for manual authentication, then relaunches and attaches Playwright over a local CDP port only after the saved session exists. It never automates login or copies Safari/default-profile cookies.
+- LigaMagic collection export uses `Padrão LigaMagic CSV [Modelo para Coleções]`; the similarly named 13-column format contains no prices and is rejected.
+- Collection labels count physical card quantity, while CSV rows are unique collection entries. Completeness reconciles the label against summed `Quantidade` and records row count separately.
+- `Compra` is the consumer acquisition price from a store. `Venda` is the store buy offer to a consumer. Both remain distinct integer-centavo evidence lanes.
+- The completed local dry run covers 37 collections and 329,976 cards with zero conflicting duplicate prices. Raw files, hashes, receipts, the manifest, and SQLite snapshot live under ignored `.data/ligamagic/`. The original `PHR-API-005` delivery had no schedule; `PHR-API-013` now owns the loaded 03:00 recurrence and crosswalk promotion.
+
+## Regional Cross-Market Intelligence
+
+- `RegionalIntelligenceRepository` joins LigaMagic and TCGplayer only through exact name, collector number, finish, and edition identity. Evidence-derived edition aliases additionally require two unique anchors, a single conflict-free target, structural compatibility, and language/treatment qualifier preservation.
+- The accepted source pair maps 86,392 identities and provides 86,032 two-sided price pairs; 133,146 supported identities remain unmatched, zero ambiguous identities are adopted, and 109,763 Textless rows remain quarantined.
+- US-to-Brazil analysis treats TCGplayer delivered/listing evidence as acquisition cost. Brazil-to-US analysis treats TCGplayer market/listing evidence as resale value. LigaMagic Compra remains Brazilian consumer retail evidence; Venda remains a dealer-buy benchmark.
+- Official BCB PTAX is operational, but owner direction costs and real executable availability remain mandatory before an opportunity can become `ACTIONABLE`.
+
+## Card-Show Operations
+
+- `PHR-UX-020` keeps purchase corrections inside the canonical operator-owned open cart. Exact lines may change unit value and quantity; Bulk may change total value and optional approximate count. The server preserves line identity/evidence, finalization rejects unsaved UI drafts, and submitted receipt/ledger/Inventory/Case records remain immutable.
+- `PHR-UX-019` places the canonical ready buying offer immediately above `Current purchase` in the single Event station. Its collapsed state shows the recommendation plus TCG Low/Market evidence; expansion reveals the existing opening, target, and walk-away ladder without introducing another calculation path.
+- `PHR-API-009` owns one embedded grader registry. PSA may use its documented bearer-authenticated public API when configured; Beckett/BCCG, TAG, CGC, and SGC are explicit `OFFICIAL_API_REQUIRED` capabilities and never fall through to scraping.
+- `PHR-UX-018` makes rapid purchase composition spatially primary: Catalogue results sit beside the single canonical Event station on desktop, while evidence and buying analysis remain in a second band. Phone DOM order is results, checkout, evidence, decision; no transaction owner or state is duplicated.
+
+- `CatalogueWatchRefresh` resolves exact SKUs or a single physical identity from the current local catalogue; provider set-label drift cannot weaken collector/finish/language/product-type uniqueness.
+- `PurchaseLedgerRepository` owns workspace/operator events, payment-aware ledger entries, sold-item rows, carts, idempotent immutable receipts, close snapshots, and append-only reversal/void audit in the ignored application database. `PHR-WORKFLOW-006` extends those records additively without rewriting receipt evidence.
+- An Event begins with declared single-currency opening cash. Manual Sales carry one overall amount plus one or more required description/quantity sold-item rows and never require or mutate Inventory.
+- Expected cash is opening cash plus active Cash Sales, minus active Cash Purchases, plus reasoned Cash Adjustments. Card, Transfer, and Other entries remain event totals without drawer effect. Closing records actual cash and variance; net cash movement is not profit.
+- Evaluated Vendor Workspace purchases retain atomic receipt/Inventory intake and add one linked ledger Purchase in the same transaction. Manual-entry reversal is append-only; linked purchase correction stays receipt-owned.
+- `PHR-UX-015` gives Vendor Workspace a Lite Quick Sale mode that posts to the same active Event Ledger API, repository, validation, idempotency, summary, and activity as `/event-ledger`; no parallel cash state exists.
+- `PHR-WORKFLOW-012` adds event-scoped stock allocation from a strict five-column, SHA-256-recorded Google Sheet CSV snapshot. Both Sale surfaces use one exact-option picker; Sale/reversal movements and ledger rows commit atomically, while manual lines remain explicitly untracked.
+- Event stock does not replace global Inventory. Opening quantities and imported option facts remain immutable after the first tracked Sale; expected leftover is derived from append-only movements, and physical counts remain separate variance evidence.
+- Sold reports preserve the actual whole-Sale amount separately from imported unit list price. Leftover reports preserve opening, sold, expected, counted, and variance without inferring loss or another Sale.
+- `PHR-WORKFLOW-013` derives Event Flip directly from finalized receipt-backed Inventory. Exact single-card lots can be quantity-selected and intended-price marked in batches; Vendor Workspace may instead mark an eligible cart line with a required Case price so receipt, lot, and reservation commit together. Sealed, aggregate Bulk, and description-only manual Purchases remain visible but General-only until separately itemized.
+- `PHR-WORKFLOW-014` models Display Case as a reserved allocation over owned Inventory. Allocation changes reserved/general-available quantities but not total owned; a linked Sale atomically decrements Case and the underlying lot, and eligible reversal restores both.
+- Display Case combines prepared opening stock and purchase-derived Case items only at the presentation/report boundary. One source-labelled Sale picker serves full and Lite Event Ledger, while actual whole-Sale revenue remains separate from imported or handler-entered list price.
+- General Inventory exposes owned on-hand, Display Case reserved, and generally available quantities and rejects dispositions, counts, or receipt voids that would invalidate Case evidence. Binder Inventory is reserved as future `PHR-WORKFLOW-015` with no current route or schema.
+- Vendor Workspace defaults to Purchase intake and exposes only incidental Sale capture plus current expected cash/gross sales. Event start, full activity, adjustment, reversal, correction, close, and reconciliation remain owned by `/event-ledger`.
+- Employee activation codes are salted scrypt hashes and only unlock an invited identity ceremony; server module entitlements remain authoritative.
+- `CuratedArtworkStore` binds validated local raster content to one category/SKU and serves it through the protected artwork boundary.
+- `/event-ledger` is the primary event-control surface. `/vendor` presents the Offer Ladder and feeds both evaluated purchases and manual Quick Sales into that same active Event Ledger.
+
+## Identity-Backed Price Monitoring And Market Evidence
+
+- `PHR-API-008` dedicates a local 100-credit UTC-day PkmnPrices policy budget to `/v1/sealed`. Open Pokémon set metadata orders releases newest first; durable usage/cursors prevent restart overrun, and exact local name+set corroboration is required before artwork resolution. The worker remains dormant without a sealed-enabled provider key.
+- `WatchlistRepository` owns user/workspace-scoped default lists, exact variant memberships, soft deletion, history, and deterministic legacy ownership in the shared ignored SQLite boundary.
+- Vendor Workspace creates an exact artwork/finish/condition/language watch in one action; duplicate tracking is idempotent and newly created membership can be undone inline.
+- Verified Pricing Update Tool receipts refresh matching watch entries from the local pricing repository without creating a second provider schedule.
+- `MarketEvidenceRepository` keeps `MARKET_ESTIMATE`, `ACTIVE_LISTING`, and `OBSERVED_SALE` separate and user-owned.
+- JustTCG enrichment is opt-in and budgeted. Official eBay Browse and CardTrader adapters are credential-gated and user-triggered; no provider runs on initial evidence load.
+- Completed sales remain first-party observations until a licensed completed-transaction source is authorized. Active listings and aggregate estimates are never promoted into sold evidence.
+
+## Internal Identity And Module Authorization
+
+- `PHR-UX-025` centralizes Phronesis copy actions behind an awaited modern Clipboard API, a direct-tap compatibility fallback, and an explicit selectable manual recovery field. Current worker-code, public-link, and activation-link controls never fail silently or log/persist copied values.
+- `PHR-ARCH-011` uses Better Auth database sessions and GitHub identity while keeping Phronesis workspace membership and module authorization application-owned.
+- `PHR-ARCH-014` permits account-free timed workers to receive only explicit operational modules. `ARTWORK_REVIEW` is independent from `ADMINISTRATION`: worker `OPERATE` covers manual candidate/gallery decisions, while refresh and assisted recovery remain permanent-identity `ADMIN` operations. Artwork Review alone creates an event-independent timed `TASK`; any transactional module forces active-event `EVENT` scope. Browser-only workers enter through an isolated public Funnel on port 10000 and a loopback gateway; owner Settings/permanent authentication are transport-blocked, public authorization accepts only valid timed sessions, valid cookies resume for their server-bounded duration, and private owner Serve remains tailnet-only on 9443.
+- `AuthorizationRepository` owns the single workspace, memberships, explicit entitlements, local invitations, and append-only audit records in ignored SQLite storage.
+- Secure page, Route Handler, and mutation checks live in the server Data Access Layer. Next.js Proxy and filtered navigation are optimistic/user-experience controls only.
+- Rollout modes are `DISABLED`, `OPTIONAL`, and `REQUIRED`; disabled is the default and preserves tailnet review. Required mode fails closed unless base URL, secret, GitHub credentials, migration, and owner invitation are ready.
+- Activation remains gated by credentials/owner identity, live callback verification, and disposition of remaining Next transitive advisories.
+
+## Green Verification Baseline
+
+- `PHR-TECH-009` establishes `npm test` (204/204), standalone TypeScript, warning-free lint, production build, and diff validation as the clean product-development gate.
+- `HistoryRepository` owns recursive immutability for stored and returned evaluation snapshots.
+- `MarketRefreshScheduler` resolves only the evidence domains required by requested fields when choosing capable providers.
+- Card finish signals distinguish `Nonfoil` from `Foil`; deterministic provider cases normalize certified local fixtures through the production adapter.
+
 ## Visible Buying Intelligence
 
 - `PHR-UX-009` exposes the intelligence explanation already created by the canonical Snapshot purchase evaluation.
@@ -12,6 +169,7 @@
 
 - `PHR-TECH-008` activates Lorcana snapshot pricing, raises strict Pokémon set reconciliation through an explicit alias registry, and adds validated Lorcast AVIF retention. Magic, Pokémon, One Piece, and Lorcana are now loaded catalogue games; Riftbound is deferred.
 - `PricingRepository.searchAll` owns unified local catalogue search; the API remains backward compatible with category-specific requests.
+- `PHR-UX-016` keeps retrieval and scoring on one escaped intent plan. `pricing_search_aliases` stores only reproducible high-confidence One Piece code-to-title discovery aliases derived from exact collector rows; it never changes canonical products or selected identity.
 - `groupSearchMatchesByArtwork` creates deterministic category/name/set/collector/language artwork groups while preserving alternate-art descriptors and sealed products.
 - Vendor Workspace selects a group, then an exact Finish SKU, then Condition; only that exact snapshot record reaches `evaluatePurchase`.
 - `/api/pricing/artwork` dispatches Magic to Scryfall, Pokémon to TCGdex, Lorcana to Lorcast, and One Piece to the official Bandai English card list. Riftbound returns an explicit authorization state.
@@ -21,17 +179,20 @@
 
 ## Application Structure
 
-`PHR-UX-006` defines the lifecycle map used by the production shell:
+`PHR-UX-006` defines the lifecycle map used by the production shell, and `PHR-UX-014` makes that map reachable at phone widths:
 
 ```text
 Discover   -> Opportunities       -> / and /opportunities/[id]
 Decide     -> Vendor Workspace    -> /vendor and /evaluate
 Monitor    -> Market Watch        -> /watchlists
 Administer -> Settings            -> /settings
-Manage     -> Future capability   -> no production destination
+Manage     -> Event Ledger        -> /event-ledger
+Manage     -> Event Flip          -> /event-flip
+Manage     -> Display Case        -> /display-case
+Manage     -> General Inventory   -> /inventory
 ```
 
-Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. Developer routes are intentionally outside this map.
+Primary navigation ownership lives in `lib/navigation/ProductNavigation.ts`. `AppShell` passes one server entitlement-filtered list to the persistent desktop sidebar and the accessible phone drawer; responsive renderers never own permission logic. Developer routes are intentionally outside this map.
 
 ## Product Development Governance
 
@@ -229,7 +390,7 @@ Rule: the command palette routes typed selections and never owns workflow busine
 - Fallback: `components/cards/CardImagePlaceholder.tsx`
 - Source order: Repository, Replay, Provider, then Placeholder; repeated resolutions report Cached.
 - Performance boundary: UI resolution cache owns URL selection; Next.js and browser HTTP caches own image bytes.
-- Extension boundary: hover previews, contextual overlays, and quick actions attach to existing image slots.
+- Extension boundary: `CardThumbnailPreview` attaches viewport-clamped hover/focus enlargement to existing image candidates; contextual overlays and quick actions remain future extensions.
 
 Rule: product modules must not independently render or select card artwork.
 
@@ -1422,38 +1583,47 @@ Current and future registered models:
 
 Dependency graph metadata is included on each model so future Atlas visualizations can show provider and model dependencies.
 
+## Receipt-Backed Inventory Intake (`PHR-WORKFLOW-008`)
+
+Inventory is now an operational Manage-area module. Finalized event receipts create immutable-provenance exact or aggregate Bulk lots inside the checkout transaction. Exact cost basis is unit acquisition cost multiplied by quantity; Bulk cost basis is aggregate and never implies individual card identity. Receipt voids retain and deactivate lots. Workspace/module authorization is enforced at the page and API boundaries. Future inventory work should extend through explicit location, count, disposition, valuation, or listing events rather than editing source receipts.
+
+## Inventory Location And Count Reconciliation (`PHR-WORKFLOW-009`)
+
+Workspace locations and physical counts extend lots through append-only observations. Current on-hand basis is RECEIPT, APPROXIMATE, COUNTED, or UNKNOWN. MOVE and COUNT events retain actor, reason, timestamp, and before/after evidence; a combined reconciliation is atomic. Count discrepancy never rewrites receipt quantity or acquisition cost and does not imply SALE, LOSS, DAMAGE, or TRANSFER. Those future disposition types require a separate ledger.
+
 ## Backlog
 
-1. Add live marketplace listings and recent sales.
-2. Add EDHREC provider for Commander deck penetration.
-3. Add MTGGoldfish provider for format popularity and trend.
-4. Add Melee, MTGO, and Top8 providers for competitive metagame results.
-5. Add Deck Penetration implementation with percentage, sample size, confidence, and status.
-6. Add Meta Stability and Trend provider implementations.
-7. Add Intelligence Console keyboard and visual regression coverage.
-8. Persist Business Profiles.
-9. Add Business Profile import and export.
-10. Validate Offer Policy before Business Profiles are saved.
-11. Persist Readiness Reports with Evaluation Snapshots.
-12. Persist Pipeline Reports for failed evaluations.
-13. Add readiness browser diagnostics for historical failed evaluations.
-14. Add Pipeline Trace replay UI.
-15. Add a Printing Descriptor Engine for provider-neutral printing labels.
-16. Add development-only Vendor Workflow transition inspector.
-17. Add Evaluation Trace replay UI.
-18. Add workflow context inspector.
-19. Add historical backtesting.
-20. Add simulation engine.
-21. Add strategy replay and Market Context replay.
-22. Add Asset Intelligence model diagnostics UI.
-23. Add Liquidity Engine as an Asset Intelligence model.
-24. Add Historical Analytics Engine as an Asset Intelligence model.
-25. Add Market Context Engine.
-26. Add camera, OCR, and barcode entry.
-27. Add ARIA active-descendant support for richer keyboard highlighting.
-28. Add persisted buyer preferences for finish defaults.
-29. Add saved Vendor Workspace chip presets.
-30. Add visual regression coverage for 13-inch and 14-inch laptop viewports.
+1. Add marketplace-neutral listing readiness (`PHR-WORKFLOW-011`) without publication, payment, shipping, or automatic repricing.
+2. Add live marketplace listings and recent sales.
+3. Add EDHREC provider for Commander deck penetration.
+4. Add MTGGoldfish provider for format popularity and trend.
+5. Add Melee, MTGO, and Top8 providers for competitive metagame results.
+6. Add Deck Penetration implementation with percentage, sample size, confidence, and status.
+7. Add Meta Stability and Trend provider implementations.
+8. Add Intelligence Console keyboard and visual regression coverage.
+9. Persist Business Profiles.
+10. Add Business Profile import and export.
+11. Validate Offer Policy before Business Profiles are saved.
+12. Persist Readiness Reports with Evaluation Snapshots.
+13. Persist Pipeline Reports for failed evaluations.
+14. Add readiness browser diagnostics for historical failed evaluations.
+15. Add Pipeline Trace replay UI.
+16. Add a Printing Descriptor Engine for provider-neutral printing labels.
+17. Add development-only Vendor Workflow transition inspector.
+18. Add Evaluation Trace replay UI.
+19. Add workflow context inspector.
+20. Add historical backtesting.
+21. Add simulation engine.
+22. Add strategy replay and Market Context replay.
+23. Add Asset Intelligence model diagnostics UI.
+24. Add Liquidity Engine as an Asset Intelligence model.
+25. Add Historical Analytics Engine as an Asset Intelligence model.
+26. Add Market Context Engine.
+27. Add camera, OCR, and barcode entry.
+28. Add ARIA active-descendant support for richer keyboard highlighting.
+29. Add persisted buyer preferences for finish defaults.
+30. Add saved Vendor Workspace chip presets.
+31. Add visual regression coverage for 13-inch and 14-inch laptop viewports.
 
 ## Technical Debt
 

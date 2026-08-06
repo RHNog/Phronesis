@@ -1,7 +1,10 @@
 import type { MarketSnapshot } from "@/types/marketSnapshot";
 import { resolveCapability } from "@/lib/capabilities/PlatformCapabilityResolver";
 import type { IdentityTreatment } from "@/types/identityTreatment";
-import type { PhysicalFinish, PrintingDesignFacet } from "@/types/identityOntology";
+import type {
+  PhysicalFinish,
+  PrintingDesignFacet,
+} from "@/types/identityOntology";
 import {
   appendSuccessfulWatchObservation,
   ensureWatchHistory,
@@ -18,17 +21,10 @@ export type WatchlistRefreshStatus =
   | "Refresh Failed";
 
 export type WatchlistObservationSource =
-  | "Repository"
-  | "Provider"
-  | "Replay"
-  | "Seed"
-  | "Unavailable";
+  "Repository" | "Provider" | "Replay" | "Seed" | "Unavailable";
 
 export type WatchlistMarketTrend =
-  | "Increasing"
-  | "Stable"
-  | "Declining"
-  | "Unknown";
+  "Increasing" | "Stable" | "Declining" | "Unknown";
 
 export type WatchlistMarketStatus =
   | "Approaching Target"
@@ -40,11 +36,7 @@ export type WatchlistMarketStatus =
   | "Stale Observation";
 
 export type WatchlistRefreshPriority =
-  | "Highest"
-  | "High"
-  | "Medium"
-  | "Low"
-  | "Lowest";
+  "Highest" | "High" | "Medium" | "Low" | "Lowest";
 
 export interface WatchlistAssetIdentity {
   assetId: string;
@@ -133,11 +125,14 @@ export function calculateWatchlistMetrics(
     | "refreshPriority"
   >,
 ): WatchlistEntry {
-  const marketCapability = resolveCapability(entry.assetIdentity.game, "marketData");
-  const current = marketCapability.status === "Operational"
-    ? entry.currentValuation
-    : null;
-  const difference = current === null ? null : current - entry.targetPrice;
+  const marketCapability = resolveCapability(
+    entry.assetIdentity.game,
+    "marketData",
+  );
+  const current =
+    marketCapability.status === "Operational" ? entry.currentValuation : null;
+  const hasTarget = Number.isFinite(entry.targetPrice) && entry.targetPrice > 0;
+  const difference = current === null || !hasTarget ? null : current - entry.targetPrice;
   const percentToTarget =
     current === null || entry.targetPrice === 0
       ? null
@@ -176,7 +171,9 @@ export function calculateWatchlistMetrics(
   };
 }
 
-export function getObservationAgeMs(entry: Pick<WatchlistEntry, "lastObservation">) {
+export function getObservationAgeMs(
+  entry: Pick<WatchlistEntry, "lastObservation">,
+) {
   if (!entry.lastObservation) {
     return null;
   }
@@ -236,6 +233,10 @@ export function getMarketStatus(
     "lastRefresh" | "observationSource" | "percentToTarget" | "refreshStatus"
   >,
 ): WatchlistMarketStatus {
+  if (entry.refreshStatus === "Refresh Failed") {
+    return "Refresh Recommended";
+  }
+
   if (entry.percentToTarget !== null && entry.percentToTarget >= 100) {
     return "Above Target";
   }
@@ -256,10 +257,6 @@ export function getMarketStatus(
     return "Recently Refreshed";
   }
 
-  if (entry.refreshStatus === "Refresh Failed") {
-    return "Refresh Recommended";
-  }
-
   if (entry.observationSource === "Unavailable") {
     return "Stale Observation";
   }
@@ -268,7 +265,10 @@ export function getMarketStatus(
 }
 
 export function justifyProviderRequest(entry: WatchlistEntry, manual = false) {
-  const marketCapability = resolveCapability(entry.assetIdentity.game, "marketData");
+  const marketCapability = resolveCapability(
+    entry.assetIdentity.game,
+    "marketData",
+  );
   if (marketCapability.status !== "Operational") {
     return marketCapability.reason;
   }
@@ -276,6 +276,10 @@ export function justifyProviderRequest(entry: WatchlistEntry, manual = false) {
 
   if (isRepositoryFresh(entry)) {
     return "Repository evidence is fresh; provider request is not justified.";
+  }
+
+  if (marketCapability.providerSelected === "Verified Catalogue Snapshot") {
+    return "Pricing refresh is driven by verified catalogue checkpoints; no live provider request is available for this game.";
   }
 
   if (manual) {
@@ -296,7 +300,8 @@ export function justifyProviderRequest(entry: WatchlistEntry, manual = false) {
 function selectValuation(snapshot: MarketSnapshot) {
   return (
     snapshot.marketIntelligence?.marketPrice ??
-    snapshot.prices.find((price) => price.priceType === "market_estimate")?.price ??
+    snapshot.prices.find((price) => price.priceType === "market_estimate")
+      ?.price ??
     snapshot.prices.find((price) => price.priceType === "variant_valuation")
       ?.price ??
     snapshot.prices[0]?.price ??
@@ -325,7 +330,10 @@ export async function refreshWatchlistEntry(input: {
 }): Promise<WatchlistEntry> {
   const { entry, manual = false } = input;
   const providerRequestJustification = justifyProviderRequest(entry, manual);
-  const marketCapability = resolveCapability(entry.assetIdentity.game, "marketData");
+  const marketCapability = resolveCapability(
+    entry.assetIdentity.game,
+    "marketData",
+  );
 
   if (marketCapability.status !== "Operational") {
     return calculateWatchlistMetrics({
@@ -378,6 +386,21 @@ export async function refreshWatchlistEntry(input: {
     });
   }
 
+  if (marketCapability.providerSelected === "Verified Catalogue Snapshot") {
+    return calculateWatchlistMetrics({
+      ...entry,
+      developerDiagnostics: {
+        ...entry.developerDiagnostics,
+        apiSaved: true,
+        errorMessage: undefined,
+        providerHit: false,
+        providerRequestJustification,
+        repositoryHit: false,
+      },
+      refreshStatus: "Refresh Skipped",
+    });
+  }
+
   const params = new URLSearchParams({
     cardName: entry.assetIdentity.name,
     condition: entry.condition,
@@ -392,10 +415,22 @@ export async function refreshWatchlistEntry(input: {
     const response = await fetch(`/api/market/snapshot?${params.toString()}`, {
       method: "GET",
     });
-    const snapshot = (await response.json()) as MarketSnapshot;
+    const responseText = await response.text();
+    let snapshot: MarketSnapshot;
+    try {
+      snapshot = JSON.parse(responseText) as MarketSnapshot;
+    } catch {
+      throw new Error(
+        response.ok
+          ? "Market refresh returned an invalid response."
+          : `Market refresh failed with ${response.status}.`,
+      );
+    }
 
     if (!response.ok) {
-      throw new Error(snapshot.errorMessage ?? `Refresh failed with ${response.status}.`);
+      throw new Error(
+        snapshot.errorMessage ?? `Refresh failed with ${response.status}.`,
+      );
     }
 
     const providersQueried =
@@ -435,8 +470,14 @@ export async function refreshWatchlistEntry(input: {
       currentValuation: valuation,
       developerDiagnostics: {
         apiSaved: providersQueried.length === 0,
-        cacheAgeMs: Math.max(0, Date.now() - new Date(snapshot.updatedAt).getTime()),
-        observationAgeMs: Math.max(0, Date.now() - new Date(observedAt).getTime()),
+        cacheAgeMs: Math.max(
+          0,
+          Date.now() - new Date(snapshot.updatedAt).getTime(),
+        ),
+        observationAgeMs: Math.max(
+          0,
+          Date.now() - new Date(observedAt).getTime(),
+        ),
         providerHit,
         providerRequestJustification,
         replay,
@@ -461,14 +502,14 @@ export async function refreshWatchlistEntry(input: {
         ...entry.developerDiagnostics,
         apiSaved: false,
         cacheAgeMs: getObservationAgeMs(entry),
-        errorMessage: error instanceof Error ? error.message : "Unknown refresh error.",
+        errorMessage:
+          error instanceof Error ? error.message : "Unknown refresh error.",
         observationAgeMs: Date.now() - startedAt,
         providerHit: false,
         providerRequestJustification,
         replay: false,
         repositoryHit: false,
       },
-      lastRefresh: new Date().toISOString(),
       refreshStatus: "Refresh Failed",
     });
   }

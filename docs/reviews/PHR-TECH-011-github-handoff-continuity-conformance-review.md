@@ -1,0 +1,17 @@
+# PHR-TECH-011 Conformance Review
+
+Date: 2026-08-03
+
+Verdict: `CONFORMANT — HOSTED VERIFICATION PASSED`.
+
+The workflow conforms to the specification's central boundary: GitHub verifies committed truth and never prepares Handoff state. Locked dependencies precede project validation, continuity reads the exact PR head with full history, and feature-branch push duplication is removed.
+
+Hosted run `30844457778` confirmed the project-validation job and single-run trigger behavior. Its continuity failure was branch-only: exact-SHA checkout was detached. Restoring a runner-local event branch at the unchanged SHA conforms to the branch-and-commit identity contract without weakening or regenerating continuity.
+
+The local application and gateway implementation conforms to its required verification gate: 376/376 tests, standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, valid launchd XML and Node path, secret-pattern review, and diff hygiene all pass. Clean implementation and generated seal commits, remote SHA equality, detached-runner emulation, and both hosted jobs pass.
+
+This same-session conformance review is not independent Product Owner approval and does not authorize public Funnel activation.
+
+A separate concurrent operation later recorded an explicit Product Owner authorization and activated the `PHR-ARCH-014` Funnel boundary. Incorporating its independently verified documentation into a later seal preserves continuity; it does not change the scope or security decision of this CI repair.
+
+August 6 maintenance remains conformant with the same boundary. The Mac Studio source reconciliation was committed before sealing; local acquire/continuity and hosted run `31108532122` passed. Advancing official checkout/setup-node steps to current v7 majors changes only their action runtime, retains explicit Node 24 project execution and read-only exact-SHA continuity, and removes the hosted Node 20 deprecation annotation. Final conformance still requires the replacement seal and both jobs to pass on its exact remote SHA.

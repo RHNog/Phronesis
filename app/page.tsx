@@ -8,6 +8,7 @@ import {
 } from "@/data/seedStrategies";
 import { generateOpportunity } from "@/lib/engines/opportunity/generateOpportunity";
 import { MockMarketProvider } from "@/lib/providers/market/MockMarketProvider";
+import RegionalArbitrageWorkspace from "@/components/opportunities/RegionalArbitrageWorkspace";
 
 export default async function Home() {
   const provider = new MockMarketProvider();
@@ -18,9 +19,10 @@ export default async function Home() {
   const opportunities = opportunity ? [opportunity] : [];
 
   return (
-    <AppShell>
+    <AppShell requiredModule="INTELLIGENCE">
       <div className="w-full space-y-6">
         <OpportunityHeader />
+        <RegionalArbitrageWorkspace />
         <HotOpportunitiesWorkspace
           opportunities={opportunities}
           strategies={seedStrategies}

@@ -7,6 +7,10 @@ import type { MarketIntelligenceRepositorySnapshot } from "@/lib/market/MarketSn
 import type { MarketPrice } from "@/types/marketPrice";
 import type { MarketSnapshot } from "@/types/marketSnapshot";
 import type { MarketSnapshotField } from "@/lib/market/MarketSnapshotMetadata";
+import {
+  authorizationErrorResponse,
+  authorizeRequest,
+} from "@/lib/auth/requestAuthorization";
 
 function getSelectedValue(
   snapshot: MarketIntelligenceRepositorySnapshot,
@@ -17,7 +21,9 @@ function getSelectedValue(
   return selection?.provenance ? selection.value : null;
 }
 
-function createPrices(snapshot: MarketIntelligenceRepositorySnapshot): MarketPrice[] {
+function createPrices(
+  snapshot: MarketIntelligenceRepositorySnapshot,
+): MarketPrice[] {
   const base = {
     cardId: snapshot.identity.printingId,
     currency: "USD",
@@ -38,7 +44,8 @@ function createPrices(snapshot: MarketIntelligenceRepositorySnapshot): MarketPri
       confidence: snapshot.marketConfidence ?? 60,
       price: selectedMarketPrice,
       priceType: "market_estimate",
-      condition: snapshot.evidenceSelections?.marketPrice?.provenance?.node.condition,
+      condition:
+        snapshot.evidenceSelections?.marketPrice?.provenance?.node.condition,
       conditionSpecific:
         snapshot.evidenceSelections?.marketPrice?.provenance?.node
           .conditionSpecific,
@@ -84,7 +91,10 @@ function toApiMarketSnapshot(
   const selectedListingCount = getSelectedValue(snapshot, "listingCount");
   const selectedLiquidity = getSelectedValue(snapshot, "liquidity");
   const selectedLowestListing = getSelectedValue(snapshot, "lowestListing");
-  const selectedMarketConfidence = getSelectedValue(snapshot, "marketConfidence");
+  const selectedMarketConfidence = getSelectedValue(
+    snapshot,
+    "marketConfidence",
+  );
   const selectedMarketPrice = getSelectedValue(snapshot, "marketPrice");
   const selectedRecentSales = getSelectedValue(snapshot, "recentSales");
   const selectedSalesVelocity = getSelectedValue(snapshot, "salesVelocity");
@@ -154,7 +164,9 @@ function toApiMarketSnapshot(
       projectionUsed: selectedEvidence?.projection?.projectionUsed ?? false,
       requestedCondition: snapshot.identity.condition,
       requestedUiField:
-        selectedEvidence?.projection?.requestedUiField ?? selectedEvidence?.field ?? null,
+        selectedEvidence?.projection?.requestedUiField ??
+        selectedEvidence?.field ??
+        null,
       repositorySource: source,
       resolvedEvidenceDomain:
         selectedEvidence?.projection?.resolvedEvidenceDomain ?? null,
@@ -165,6 +177,12 @@ function toApiMarketSnapshot(
 }
 
 export async function GET(request: Request) {
+  const authorization = await authorizeRequest(
+    request,
+    "MARKET_WATCH",
+    "OPERATE",
+  );
+  if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const { searchParams } = new URL(request.url);
   const cardName = searchParams.get("cardName") ?? "";
   const condition = searchParams.get("condition") ?? "NM";
@@ -186,16 +204,39 @@ export async function GET(request: Request) {
     });
   }
 
-  const result = await marketRefreshScheduler.getSnapshot({
-    cardIdentity: cardName || printingId,
-    condition,
-    finish,
-    game,
-    printingId,
-    variantId,
-  });
+  try {
+    const result = await marketRefreshScheduler.getSnapshot({
+      cardIdentity: cardName || printingId,
+      condition,
+      finish,
+      game,
+      printingId,
+      variantId,
+    });
 
-  return NextResponse.json(
-    toApiMarketSnapshot(result.repositorySnapshot, result.source, result.diagnostics),
-  );
+    return NextResponse.json(
+      toApiMarketSnapshot(
+        result.repositorySnapshot,
+        result.source,
+        result.diagnostics,
+      ),
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        errorMessage:
+          error instanceof Error
+            ? error.message
+            : "Market refresh could not produce valid evidence.",
+        priceMissing: true,
+        printingId,
+        prices: [],
+        providerId: "market-refresh",
+        sourceLabel: "Market refresh unavailable",
+        updatedAt: new Date().toISOString(),
+        variantId,
+      },
+      { status: 422 },
+    );
+  }
 }
