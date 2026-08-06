@@ -188,7 +188,7 @@
 - Remote-safety rule: build, validate, install, and health-check the gateway before Funnel activation. Any failure leaves 9443 operational. Do not switch the global auth mode while the owner is remote.
 - Acceptance: module-correct worker landing, Secure cookie behind TLS termination, public no-cookie fail-closed behavior, owner-only path blocking, private-path continuity, durable launch service, Funnel verification, full gates, and explicit shutdown instructions.
 - Work order: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
-- Live result: `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access` is public through Funnel and requires a valid single-use event code. Settings, permanent authentication, and unassigned modules remain denied. The owner-only `:9443` route remains tailnet-only and returns HTTP 200.
+- Live result: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/event-access` is public through Funnel and requires a valid single-use event code. Settings, permanent authentication, and unassigned modules remain denied. The owner-only `:9443` route remains tailnet-only and returns HTTP 200 when the private-review backend is running.
 - Runtime result: Phronesis and its gateway listen only on `127.0.0.1:3100` and `127.0.0.1:3101`. Named detached `screen` sessions supervise the locked/remote Mac runtime; validated LaunchAgent definitions are installed for the next normal login.
 - Verification: public login 200; public Settings and permanent auth 404; uncredentialed Artwork Review redirects to event login; private Settings 200; full 376/376 tests pass. Public shutdown is `tailscale funnel --https=10000 off`.
 
@@ -1058,7 +1058,7 @@ Engineer implementation, Designer review, and same-session Chief Architect confo
 
 ### Operational Result
 
-- Private URL: `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor`
+- Private URL: `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor`
 - Validation: `docs/testing/PHR-TECH-005-private-mobile-review-access-validation.md`
 - Conformance/report: `docs/implementation-reports/PHR-TECH-005-private-mobile-review-access-report.md`
 - Service is operational; canonical adoption remains coupled to the outstanding PHR-WORKFLOW-004 Product Review acceptance.

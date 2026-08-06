@@ -23,7 +23,7 @@
     <key>PHRONESIS_PRICING_DB_PATH</key>
     <string>/Volumes/JarvisSSD/Projects/Phronesis/.data/mobile-review.sqlite</string>
     <key>PHRONESIS_PRIVATE_REVIEW_ORIGIN</key>
-    <string>ramons-macbook-pro.tailaa2d39.ts.net</string>
+    <string>ramons-mac-studio.tailaa2d39.ts.net</string>
   </dict>
   <key>RunAtLoad</key>
   <true/>

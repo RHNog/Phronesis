@@ -82,7 +82,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 - Receipt-backed inventory intake, locations, physical counts, and append-only disposition evidence.
 - LigaMagic snapshot evidence crossed against TCGplayer: 71,954 exact plus 14,438 qualifier-preserving alias mappings, 86,392 matched identities, 86,032 two-sided price pairs, zero ambiguous adoptions, and 109,763 quarantined Textless rows.
 - Official Banco Central do Brasil PTAX buy/sell evidence and two-way US/Brazil arbitrage calculations with explicit truth gates.
-- Persistent private review service at `https://ramons-macbook-pro.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
+- Persistent private review service at `https://ramons-mac-studio.tailaa2d39.ts.net:9443/vendor` while the Mac and tailnet are available.
 
 ## Current constraints
 

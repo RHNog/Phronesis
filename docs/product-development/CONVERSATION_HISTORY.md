@@ -1,5 +1,13 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Mac Studio Host Continuity And Handoff Recovery
+
+The Product Owner supplied the failed Acquire Handoff evidence and directed Phronesis to analyze and repair the current Handoff state. Repository inspection reproduced seven errors: five generated documents, the validation report, and the continuity manifest all retained the clean fingerprint from generation `5c12817f1ef90b71f483`, while six intentional post-seal edits migrated current operational references from `ramons-macbook-pro` to `ramons-mac-studio`. This was correct stale-state detection, not a Handoff runtime defect.
+
+The reconciliation preserves those six owner changes and keeps historical activation, release-note, implementation-report, and test evidence on the host where it actually occurred. Current truth now uses the Mac Studio in the employee-login checklist, private-review LaunchAgent, Project State, current CTO Structure, active architecture, and Agent Handoff. Tailscale reports `ramons-mac-studio.tailaa2d39.ts.net`; the installed LaunchAgent is byte-identical to the repository definition and runs with that origin. Local ports 3100 and 3101 remain loopback-only. Private Vendor Workspace and Settings return 200 through port 9443; public event login returns 200 through Funnel port 10000 while public Settings remains denied with 404.
+
+The reconciled tree passes 404/404 tests, warning-free lint, the Next.js 16.2.12 production build and TypeScript gate, plist validation, private-review status, live route probes, and diff hygiene. The repair intentionally commits human-owned source truth before running bare `./handoff`; the generated continuity manifest and JSON validator remain authoritative for the resulting seal. The separately approved public window remains active, and its exact shutdown action is unchanged: disable only Funnel port 10000 when the Product Owner confirms that window has ended.
+
 ## 2026-08-05 — Dedicated Favicon And iOS Application Icon
 
 The Product Owner supplied a new compact Phronesis mark and directed that it become the browser favicon and iOS application icon. CTO preserved the permanent product-identity feature `PHR-ARCH-010` and assigned the bounded revision under `PHR-STRUCT-20260805-004`. The established full raster remains the readable desktop/mobile navigation identity; this request did not authorize replacing application chrome, redesigning the mark, or deploying the build.

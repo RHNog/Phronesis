@@ -119,10 +119,10 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 
 ## Live Public Worker Deployment
 
-- Public login: `https://ramons-macbook-pro.tailaa2d39.ts.net:10000/event-access`.
+- Public login: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/event-access`.
 - Tailscale Funnel port `10000` terminates public HTTPS and forwards only to `127.0.0.1:3101`.
 - The gateway forwards to Phronesis on `127.0.0.1:3100`; both application processes bind only to loopback.
-- The existing owner route `https://ramons-macbook-pro.tailaa2d39.ts.net:9443` remains tailnet-only and unchanged.
+- The existing owner route `https://ramons-mac-studio.tailaa2d39.ts.net:9443` remains tailnet-only and unchanged.
 - While the Mac has no active desktop host, named detached `screen` sessions supervise the two loopback processes. Validated LaunchAgent definitions are installed for the next normal user login.
 - Disable public ingress with `tailscale funnel --https=10000 off`; this does not alter private Serve on `9443`.
 - The host Mac must remain powered, awake, online, and connected to Tailscale for either route to work.

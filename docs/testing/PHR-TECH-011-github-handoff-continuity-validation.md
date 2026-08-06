@@ -39,3 +39,13 @@ Passed.
 - Detached-runner emulation: the exact seal correctly fails as `DETACHED`, then passes with zero errors/warnings after the event branch is restored at the unchanged SHA.
 - Hosted replacement run `30844716647`: `continuity` passed in 5 seconds and `project-validation` passed in 1 minute 19 seconds. Only one pull-request run was created and no feature-branch push run was created.
 - Concurrent-state reconciliation: after hosted success, a separate process activated the public gateway and updated seven `PHR-ARCH-014` records. Read-only Funnel, Serve, loopback listener, detached runtime, public denial, and private continuity checks substantiated those edits before they were incorporated into a new implementation/seal pair.
+
+## 2026-08-06 Mac Studio continuity revalidation
+
+- Initial `./handoff validate-continuity --json`: seven errors, all derived from the same post-seal worktree fingerprint mismatch; branch, remote tracking, configuration digest, and vendored Handoff 0.5.0 runtime were otherwise coherent.
+- Intended source delta: six narrow hostname migrations from `ramons-macbook-pro` to `ramons-mac-studio`; historical evidence that actually ran on the MacBook remains unchanged.
+- Host identity: `uname`, macOS LocalHostName, and Tailscale self identity resolve to the Mac Studio; the tailnet DNS name is `ramons-mac-studio.tailaa2d39.ts.net`.
+- Launch definition: repository and installed `com.phronesis.private-review.plist` files are byte-identical, pass `plutil -lint`, and the loaded job reports the Mac Studio origin.
+- Runtime boundary: Node listens only on `127.0.0.1:3100` and `127.0.0.1:3101`; private 9443 Vendor/Settings return 200; public 10000 event login returns 200 and Settings returns 404.
+- Configured repository gate: 404/404 tests, warning-free lint, Next.js 16.2.12 production build with TypeScript, and `git diff --check` pass.
+- Closure contract: commit the verified human-owned reconciliation first, run bare `./handoff` from the clean implementation commit, require zero JSON continuity findings, and verify ordinary remote SHA equality.
