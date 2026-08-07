@@ -2,7 +2,7 @@
 
 ## Revision
 
-2026-08-06 additive consignment-ownership revision of the existing Event Purchase Ledger.
+2026-08-07 additive private purchase-evidence revision of the existing Event Purchase Ledger.
 
 ## Existing Tables Preserved
 
@@ -13,6 +13,14 @@
 - `phronesis_purchase_audit`
 
 No receipt, cart, Inventory, or audit row is removed or rewritten by migration.
+
+## Purchase Photo Metadata
+
+No schema migration is required. An exact or Bulk cart-line JSON payload may contain one bounded `evidenceImage` metadata object with an opaque UUID, validated raster media type, byte size, SHA-256 digest, and creation timestamp. Checkout copies the complete line payload into its immutable receipt-line payload before deleting the cart row.
+
+Image bytes live in a private application-owned object directory outside the public asset tree and database. `PHRONESIS_PURCHASE_EVIDENCE_PATH` may select the directory; otherwise it is a sibling of the authentication database. Files are never addressed by a client filename or filesystem path.
+
+Authorized retrieval requires that the opaque object ID remains referenced by either a workspace-owned active cart line or a workspace-owned immutable receipt line. Removing or clearing a draft retires the unsubmitted object; checkout deliberately retains receipt evidence.
 
 ## Event Additions
 
@@ -66,6 +74,7 @@ The table does not represent authentication membership, Inventory title, custome
 - Event creation and its validated product-owner roster commit together.
 - A sold-item owner reference is accepted only after the repository verifies the active event, workspace, and exact roster row inside the write transaction.
 - Purchase receipt, receipt lines, Inventory intake, and linked ledger Purchase commit together.
+- Clearing a cart deletes all and only the requesting operator's active-event draft lines in one transaction and records the bounded line count in purchase audit evidence. Private draft image retirement follows the committed database mutation on a best-effort, path-bounded basis.
 - Receipt void, Inventory deactivation, and linked cash reversal commit together.
 - Closing records actual cash, expected cash, and variance only after calculating the current event snapshot inside the same serialized write boundary. Later administrative receipt corrections do not rewrite that close snapshot.
 - Reads and writes are workspace-scoped; mutations require `VENDOR_WORKSPACE:OPERATE`.

@@ -1,5 +1,13 @@
 # Agent Handoff
 
+## Product Review Candidate — Buyer Cart Clear And Purchase Photos — 2026-08-07
+
+- The additive `PHR-UX-020` revision is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.
+- Clear Cart requires count-specific confirmation and deletes only the requesting operator's unsubmitted exact-active-event lines. It audits the removed count, resets local editor/Case state after success, and cannot change colleague carts or finalized receipts.
+- Each exact or Bulk cart line accepts one private content-validated raster image up to 8 MB. The application-owned store uses opaque UUIDs, SHA-256 metadata, atomic writes, path-bounded deletion, and an optional `PHRONESIS_PURCHASE_EVIDENCE_PATH` override.
+- Upload/read/remove reauthorize against the current workspace and cart/receipt reference. Draft remove/clear retires its object; checkout retains evidence metadata in the immutable receipt line.
+- Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, build, private HTTP 200, and isolated 390×844 upload/cancel/clear/object-retirement/no-overflow/44px checks pass. No live event was fabricated. Same-session conformance is not independent Product Owner approval.
+
 ## Product Review Candidate — Vendor Workspace Liga And PriceCharting Stack — 2026-08-07
 
 - `PHR-API-016` and `PHR-UX-013` are privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.

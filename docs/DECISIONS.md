@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — Purchase photos are private line evidence; Clear Cart remains operator scoped
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-UX-020`).
+- **Decision:** Clear Cart deletes all and only the requesting operator's unsubmitted cart lines in the exact active event, in one database transaction and behind a count-specific confirmation. Finalized receipts and colleague carts remain immutable.
+- **Decision:** Store at most one purchase photo per exact or Bulk line as a private opaque object. Validate raster signatures, enforce an 8 MB ceiling, retain SHA-256/size/media metadata in existing line JSON, and never expose a filesystem path or public asset URL.
+- **Decision:** Draft remove/clear retires its object; replacement durably writes the new object before changing the line reference. Checkout copies photo metadata into the immutable receipt line, and every read is authorized from a current workspace-owned cart or receipt reference.
+- **Consequences:** Event buyers can document collection and box purchases without converting photos into catalogue artwork or weakening receipt integrity. This adds no database migration, OCR, multi-photo gallery, or public sharing surface.
+
 ## 2026-08-07 — Personal market intelligence keeps provider truth and user preference separate
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-API-017`, `PHR-ARCH-017`, `PHR-UX-013`, `PHR-UX-016`).

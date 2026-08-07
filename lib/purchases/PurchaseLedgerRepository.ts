@@ -29,6 +29,7 @@ import {
   type EventSaleItem,
   type PurchaseEvent,
   type PurchaseCasePlacementDraft,
+  type PurchaseEvidenceImage,
   type PurchaseLine,
   type PurchaseLineDraft,
   type PurchasePrincipal,
@@ -760,6 +761,21 @@ export class PurchaseLedgerRepository {
     ).map((row) => parseLine(String(row.payload_json)));
   }
 
+  getCartLine(
+    principal: PurchasePrincipal,
+    lineId: string,
+  ): PurchaseLine | null {
+    const row = this.database
+      .prepare(
+        `SELECT payload_json FROM phronesis_purchase_cart_line
+         WHERE id=? AND workspace_id=? AND operator_user_id=?`,
+      )
+      .get(lineId, principal.workspaceId, principal.operatorUserId) as
+      | SqlRow
+      | undefined;
+    return row ? parseLine(String(row.payload_json)) : null;
+  }
+
   removeLine(principal: PurchasePrincipal, lineId: string): boolean {
     const result = this.database
       .prepare(
@@ -768,6 +784,146 @@ export class PurchaseLedgerRepository {
       )
       .run(lineId, principal.workspaceId, principal.operatorUserId);
     return Number(result.changes) === 1;
+  }
+
+  clearCart(
+    principal: PurchasePrincipal,
+    eventId: string,
+  ): PurchaseLine[] {
+    return this.withTransaction(() => {
+      this.assertActiveEvent(principal.workspaceId, eventId);
+      const lines = this.listCart(principal, eventId);
+      this.database
+        .prepare(
+          `DELETE FROM phronesis_purchase_cart_line
+           WHERE workspace_id=? AND operator_user_id=? AND event_id=?`,
+        )
+        .run(principal.workspaceId, principal.operatorUserId, eventId);
+      this.insertAudit(principal, "PURCHASE_CART_CLEARED", null, {
+        eventId,
+        lineCount: lines.length,
+      });
+      return lines;
+    });
+  }
+
+  attachEvidenceImage(
+    principal: PurchasePrincipal,
+    lineId: string,
+    evidenceImage: PurchaseEvidenceImage,
+  ): { line: PurchaseLine; previous: PurchaseEvidenceImage | null } {
+    const row = this.database
+      .prepare(
+        `SELECT event_id, payload_json FROM phronesis_purchase_cart_line
+         WHERE id=? AND workspace_id=? AND operator_user_id=?`,
+      )
+      .get(lineId, principal.workspaceId, principal.operatorUserId) as
+      | SqlRow
+      | undefined;
+    if (!row) throw new Error("Cart line was not found.");
+    const eventId = String(row.event_id);
+    this.assertActiveEvent(principal.workspaceId, eventId);
+    this.assertEvidenceImage(evidenceImage);
+    const line = parseLine(String(row.payload_json));
+    const previous = line.evidenceImage ?? null;
+    const updated = { ...line, evidenceImage } as PurchaseLine;
+    const result = this.database
+      .prepare(
+        `UPDATE phronesis_purchase_cart_line SET payload_json=?, updated_at=?
+         WHERE id=? AND workspace_id=? AND operator_user_id=? AND event_id=?`,
+      )
+      .run(
+        JSON.stringify(updated),
+        new Date().toISOString(),
+        lineId,
+        principal.workspaceId,
+        principal.operatorUserId,
+        eventId,
+      );
+    if (Number(result.changes) !== 1) {
+      throw new Error("Purchase photo could not be attached.");
+    }
+    this.insertAudit(principal, "PURCHASE_PHOTO_ATTACHED", null, {
+      eventId,
+      lineId,
+      evidenceId: evidenceImage.id,
+      replacedEvidenceId: previous?.id ?? null,
+    });
+    return { line: updated, previous };
+  }
+
+  removeEvidenceImage(
+    principal: PurchasePrincipal,
+    lineId: string,
+  ): { line: PurchaseLine; removed: PurchaseEvidenceImage | null } {
+    const row = this.database
+      .prepare(
+        `SELECT event_id, payload_json FROM phronesis_purchase_cart_line
+         WHERE id=? AND workspace_id=? AND operator_user_id=?`,
+      )
+      .get(lineId, principal.workspaceId, principal.operatorUserId) as
+      | SqlRow
+      | undefined;
+    if (!row) throw new Error("Cart line was not found.");
+    const eventId = String(row.event_id);
+    this.assertActiveEvent(principal.workspaceId, eventId);
+    const line = parseLine(String(row.payload_json));
+    const removed = line.evidenceImage ?? null;
+    if (!removed) return { line, removed: null };
+    const updated = { ...line };
+    delete updated.evidenceImage;
+    const result = this.database
+      .prepare(
+        `UPDATE phronesis_purchase_cart_line SET payload_json=?, updated_at=?
+         WHERE id=? AND workspace_id=? AND operator_user_id=? AND event_id=?`,
+      )
+      .run(
+        JSON.stringify(updated),
+        new Date().toISOString(),
+        lineId,
+        principal.workspaceId,
+        principal.operatorUserId,
+        eventId,
+      );
+    if (Number(result.changes) !== 1) {
+      throw new Error("Purchase photo could not be removed.");
+    }
+    this.insertAudit(principal, "PURCHASE_PHOTO_REMOVED", null, {
+      eventId,
+      lineId,
+      evidenceId: removed.id,
+    });
+    return { line: updated, removed };
+  }
+
+  canReadEvidenceImage(workspaceId: string, evidenceId: string): boolean {
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
+        evidenceId,
+      )
+    )
+      return false;
+    const cartReference = this.database
+      .prepare(
+        `SELECT 1 FROM phronesis_purchase_cart_line
+         WHERE workspace_id=?
+           AND json_extract(payload_json, '$.evidenceImage.id')=?
+         LIMIT 1`,
+      )
+      .get(workspaceId, evidenceId);
+    if (cartReference) return true;
+    return Boolean(
+      this.database
+        .prepare(
+          `SELECT 1 FROM phronesis_purchase_receipt_line AS line
+           JOIN phronesis_purchase_receipt AS receipt
+             ON receipt.id=line.receipt_id
+           WHERE receipt.workspace_id=?
+             AND json_extract(line.payload_json, '$.evidenceImage.id')=?
+           LIMIT 1`,
+        )
+        .get(workspaceId, evidenceId),
+    );
   }
 
   updateLine(
@@ -1650,6 +1806,24 @@ export class PurchaseLedgerRepository {
   private assertIdempotencyKey(key: string) {
     if (!/^[A-Za-z0-9:_-]{8,128}$/.test(key)) {
       throw new Error("Idempotency key is invalid.");
+    }
+  }
+
+  private assertEvidenceImage(image: PurchaseEvidenceImage) {
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
+        image.id,
+      ) ||
+      !["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"].includes(
+        image.contentType,
+      ) ||
+      !Number.isSafeInteger(image.byteLength) ||
+      image.byteLength <= 0 ||
+      image.byteLength > 8 * 1024 * 1024 ||
+      !/^[0-9a-f]{64}$/.test(image.contentSha256) ||
+      Number.isNaN(new Date(image.uploadedAt).valueOf())
+    ) {
+      throw new Error("Purchase photo metadata is invalid.");
     }
   }
 

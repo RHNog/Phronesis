@@ -83,6 +83,14 @@ export type BulkPurchaseLineDraft = {
 
 export type PurchaseLineDraft = ExactPurchaseLineDraft | BulkPurchaseLineDraft;
 
+export type PurchaseEvidenceImage = {
+  id: string;
+  contentType: string;
+  byteLength: number;
+  contentSha256: string;
+  uploadedAt: string;
+};
+
 export type ExactPurchaseLine = ExactPurchaseLineDraft & {
   id: string;
   name: string;
@@ -91,9 +99,13 @@ export type ExactPurchaseLine = ExactPurchaseLineDraft & {
   variant: string;
   language: string;
   productType: "SINGLE" | "SEALED";
+  evidenceImage?: PurchaseEvidenceImage;
 };
 
-export type BulkPurchaseLine = BulkPurchaseLineDraft & { id: string };
+export type BulkPurchaseLine = BulkPurchaseLineDraft & {
+  id: string;
+  evidenceImage?: PurchaseEvidenceImage;
+};
 export type PurchaseLine = ExactPurchaseLine | BulkPurchaseLine;
 
 export type PurchaseCartLineUpdate = {

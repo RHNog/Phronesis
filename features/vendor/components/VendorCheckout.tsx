@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   useCallback,
@@ -73,6 +74,8 @@ function CartLineEditor({
   pending,
   onDirtyChange,
   onRemove,
+  onPhotoRemove,
+  onPhotoUpload,
   onUpdate,
 }: {
   children?: ReactNode;
@@ -81,6 +84,8 @@ function CartLineEditor({
   pending: boolean;
   onDirtyChange: (lineId: string, dirty: boolean) => void;
   onRemove: (lineId: string) => Promise<void>;
+  onPhotoRemove: (line: PurchaseLine) => Promise<void>;
+  onPhotoUpload: (line: PurchaseLine, file: File) => Promise<void>;
   onUpdate: (
     line: PurchaseLine,
     actualPaidCents: number,
@@ -223,6 +228,55 @@ function CartLineEditor({
           </button>
         </div>
       </form>
+      <div className="mt-3 border-t border-zinc-800 pt-3">
+        <p className="text-xs font-medium text-zinc-300">Purchase photo</p>
+        {line.evidenceImage ? (
+          <div className="mt-2 overflow-hidden rounded-lg border border-zinc-700 bg-black/40">
+            <Image
+              src={`/api/purchases/evidence?id=${encodeURIComponent(line.evidenceImage.id)}`}
+              alt={`Purchase evidence for ${line.kind === "BULK" ? "Bulk purchase" : line.name}`}
+              width={640}
+              height={480}
+              unoptimized
+              className="max-h-56 w-full object-contain"
+            />
+          </div>
+        ) : (
+          <p className="mt-1 text-xs leading-5 text-zinc-500">
+            Especially useful for mixed collections, boxes, and other Bulk
+            purchases.
+          </p>
+        )}
+        <div className={`mt-2 grid gap-2 ${line.evidenceImage ? "grid-cols-2" : "grid-cols-1"}`}>
+          <label className="flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-center text-xs font-semibold text-zinc-200 focus-within:border-cyan-300 focus-within:ring-2 focus-within:ring-cyan-300/30">
+            {line.evidenceImage ? "Replace photo" : "Take or upload photo"}
+            <input
+              type="file"
+              accept="image/avif,image/gif,image/jpeg,image/png,image/webp"
+              disabled={pending}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void onPhotoUpload(line, file);
+                event.currentTarget.value = "";
+              }}
+              className="sr-only"
+            />
+          </label>
+          {line.evidenceImage ? (
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => void onPhotoRemove(line)}
+              className="min-h-11 rounded-lg border border-red-900/80 bg-red-950/25 px-3 text-xs font-semibold text-red-300 disabled:opacity-40"
+            >
+              Remove photo
+            </button>
+          ) : null}
+        </div>
+        <p className="mt-2 text-[11px] text-zinc-500">
+          One private image · JPEG, PNG, WebP, GIF, or AVIF · 8 MB maximum
+        </p>
+      </div>
       {children}
     </li>
   );
@@ -272,6 +326,7 @@ export default function VendorCheckout({
   const [dirtyCartLineIds, setDirtyCartLineIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const [clearCartConfirming, setClearCartConfirming] = useState(false);
   const cartRailRef = useRef<HTMLDivElement>(null);
 
   const handleLineDirtyChange = useCallback(
@@ -294,6 +349,7 @@ export default function VendorCheckout({
     };
     if (!response.ok) throw new Error(body.error ?? "Checkout could not load.");
     setState(body);
+    if (!body.cart.length) setClearCartConfirming(false);
   }
 
   useEffect(() => {
@@ -436,6 +492,83 @@ export default function VendorCheckout({
         return next;
       });
       setMessage("Item removed from the purchase cart.");
+      if (state.cart.length === 1) setClearCartConfirming(false);
+    }
+  }
+
+  async function clearCart() {
+    if (!state.event || !state.cart.length) return;
+    const cleared = await mutate({
+      action: "clear-cart",
+      eventId: state.event.id,
+    });
+    if (!cleared) return;
+    setDirtyCartLineIds(new Set());
+    setCasePlacementsByLine({});
+    setClearCartConfirming(false);
+    setMessage("Purchase cart cleared. Finalized receipts were not changed.");
+  }
+
+  async function uploadPurchasePhoto(line: PurchaseLine, file: File) {
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage("Purchase photo must be no larger than 8 MB.");
+      return;
+    }
+    setPending(true);
+    setMessage(null);
+    try {
+      const form = new FormData();
+      form.set("lineId", line.id);
+      form.set("file", file);
+      const response = await fetch("/api/purchases/evidence", {
+        method: "POST",
+        body: form,
+      });
+      const result = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      if (!response.ok) {
+        throw new Error(result.error ?? "Purchase photo could not be stored.");
+      }
+      await load();
+      setMessage(
+        `${line.kind === "BULK" ? "Bulk purchase" : line.name} photo stored privately.`,
+      );
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Purchase photo could not be stored.",
+      );
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function removePurchasePhoto(line: PurchaseLine) {
+    setPending(true);
+    setMessage(null);
+    try {
+      const response = await fetch(
+        `/api/purchases/evidence?lineId=${encodeURIComponent(line.id)}`,
+        { method: "DELETE" },
+      );
+      const result = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      if (!response.ok) {
+        throw new Error(result.error ?? "Purchase photo could not be removed.");
+      }
+      await load();
+      setMessage("Purchase photo removed from the draft cart line.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Purchase photo could not be removed.",
+      );
+    } finally {
+      setPending(false);
     }
   }
 
@@ -518,6 +651,7 @@ export default function VendorCheckout({
     if (success) {
       setDirtyCartLineIds(new Set());
       setCasePlacementsByLine({});
+      setClearCartConfirming(false);
       setMessage(
         selectedCaseLines.length
           ? `Purchase finalized and ${selectedCaseLines.length} card ${selectedCaseLines.length === 1 ? "was" : "were"} sent to the Display Case.`
@@ -834,8 +968,51 @@ export default function VendorCheckout({
                     <p className="mt-1 text-[10px] uppercase tracking-wide text-zinc-500">
                       Saved subtotal
                     </p>
+                    {state.cart.length ? (
+                      <button
+                        type="button"
+                        disabled={pending}
+                        onClick={() => setClearCartConfirming(true)}
+                        className="mt-2 min-h-11 rounded-lg border border-red-900/80 bg-red-950/20 px-3 text-xs font-semibold text-red-300 disabled:opacity-40"
+                      >
+                        Clear cart
+                      </button>
+                    ) : null}
                   </div>
                 </div>
+                {clearCartConfirming && state.cart.length ? (
+                  <div
+                    role="group"
+                    aria-label="Confirm clear purchase cart"
+                    className="mt-3 rounded-lg border border-red-900/80 bg-red-950/25 p-3"
+                  >
+                    <p className="text-sm font-semibold text-red-200">
+                      Clear all {state.cart.length} saved cart {state.cart.length === 1 ? "item" : "items"}?
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-zinc-400">
+                      Unsubmitted purchase photos will also be removed. Finalized
+                      receipts are not affected.
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        disabled={pending}
+                        onClick={() => setClearCartConfirming(false)}
+                        className="min-h-11 rounded-lg border border-zinc-700 px-3 text-xs font-semibold text-zinc-200 disabled:opacity-40"
+                      >
+                        Keep cart
+                      </button>
+                      <button
+                        type="button"
+                        disabled={pending}
+                        onClick={() => void clearCart()}
+                        className="min-h-11 rounded-lg border border-red-700 bg-red-700/30 px-3 text-xs font-semibold text-red-100 disabled:opacity-40"
+                      >
+                        Clear {state.cart.length} {state.cart.length === 1 ? "item" : "items"}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
                 {state.cart.length ? (
                   <ul className="mt-3 space-y-2">
                     {state.cart.map((line) => {
@@ -847,12 +1024,14 @@ export default function VendorCheckout({
                       );
                       return (
                         <CartLineEditor
-                          key={`${line.id}:${line.actualPaidCents}:${line.kind === "EXACT" ? line.quantity : (line.approximateQuantity ?? "")}`}
+                          key={`${line.id}:${line.actualPaidCents}:${line.kind === "EXACT" ? line.quantity : (line.approximateQuantity ?? "")}:${line.evidenceImage?.id ?? ""}`}
                           currency={eventCurrency}
                           line={line}
                           pending={pending}
                           onDirtyChange={handleLineDirtyChange}
                           onRemove={removeLine}
+                          onPhotoRemove={removePurchasePhoto}
+                          onPhotoUpload={uploadPurchasePhoto}
                           onUpdate={updateLine}
                         >
                           {caseEligible ? (

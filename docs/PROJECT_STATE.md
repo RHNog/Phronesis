@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-07 Buyer Cart Clear And Purchase Photo State
+
+- The additive `PHR-UX-020` revision is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.
+- Clear Cart deletes all and only the requesting operator's unsubmitted lines in the exact active event after count-specific confirmation. It resets local editor/Case state after success and never changes a colleague's cart or finalized receipt.
+- Each exact or Bulk line supports one private JPEG, PNG, WebP, GIF, or AVIF image up to 8 MB. Phronesis validates signatures, records SHA-256 integrity, stores opaque objects outside public assets, and reauthorizes every upload/read/remove request.
+- Removing or clearing a draft retires its image object. Checkout copies the line metadata into its immutable receipt payload so authorized receipt evidence remains readable after the source cart empties.
+- Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, private HTTP health, and an isolated 390×844 upload/cancel/clear/no-overflow/44px review pass. No live event or receipt was fabricated for acceptance.
+
 ## 2026-08-07 Personal Market Intelligence State
 
 - `PHR-API-017`, `PHR-ARCH-017`, and additive revisions to `PHR-API-016`, `PHR-UX-013`, and `PHR-UX-016` are privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444` from branch `codex/phr-local-card-recognition-20260804`.

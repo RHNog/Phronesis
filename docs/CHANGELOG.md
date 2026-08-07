@@ -5,6 +5,8 @@
 
 ### Added
 
+- Operator-scoped Buyer Cart clearing plus one private, content-validated purchase photo per exact or Bulk line, with receipt retention and draft-object retirement (`PHR-UX-020`).
+
 - Provider-specific 7D/30D/3M/1Y price movement for retained TCGplayer, LigaMagic/LigaPokémon, and PriceCharting evidence, with separate currencies/lanes, honest one-point states, and responsive accessible controls (`PHR-API-017`, `PHR-UX-013`).
 
 - Active-member `My settings` with all current market providers included by default, personal provider visibility, nullable regional cost overrides, workspace inheritance, audited writes, and no Administration or credential exposure (`PHR-ARCH-017`).
@@ -29,7 +31,7 @@
 
 - Clickable encrypted provider registration, selection-focused Vendor Workspace composition, and a PriceCharting Graded Area whose live token-in-query adapter remains approval-gated (`PHR-UX-021`, `PHR-UX-022`, `PHR-API-010`).
 
-- Inline Vendor purchase-cart editing for exact unit value/quantity and Bulk total/count, with explicit save, visible removal, unsaved-checkout protection, and Case-quantity safety (`PHR-UX-020`).
+- Inline Vendor purchase-cart editing for exact unit value/quantity and Bulk total/count, with explicit save/removal, guarded full-cart clearing, private purchase photos, unsaved-checkout protection, and Case-quantity safety (`PHR-UX-020`).
 
 - Newest-first, sealed-only PkmnPrices ingestion with a durable exact 100-credit UTC-day ceiling, exact artwork resolution, and Settings health (`PHR-API-008`).
 

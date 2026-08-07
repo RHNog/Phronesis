@@ -133,9 +133,10 @@ No later slice inherits acceptance from an earlier game, platform, corpus, or dr
 ## Product Review Candidate: Editable Purchase Cart
 
 - Implemented: exact cart lines edit unit purchase value and quantity; Bulk edits total paid and optional approximate count (`PHR-UX-020`).
-- Implemented: each line exposes Save changes and Remove item, unsaved edits block checkout, and a reduced purchase quantity clamps pending Case quantity.
+- Implemented: each line exposes Save changes and Remove item, the operator can confirm and clear the complete owned active-event draft, unsaved edits block checkout, and a reduced purchase quantity clamps pending Case quantity.
+- Implemented: each exact or Bulk line accepts one private 8 MB content-validated raster photo with preview/replace/remove; draft deletion retires it and checkout preserves authorized immutable receipt evidence.
 - Preserved: identity/evidence fields, receipts, Event Ledger, Inventory, Display Case, payment, and authorization boundaries remain unchanged.
-- Verified: focused 16/16 and full 315/315 tests, TypeScript, warning-free lint, production build, live persistence/removal/Case-clamp checks, and 390×844 no-overflow/44px controls.
+- Verified: focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, production build, private runtime health, owner/receipt isolation, image retirement, and 390×844 no-overflow/44px controls.
 
 ## Product Review Candidate: Sealed Readiness And Embedded Verification
 

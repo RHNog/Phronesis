@@ -11,6 +11,7 @@ import {
   type PurchasePrincipal,
 } from "@/lib/purchases/domain";
 import { getPurchaseLedgerRepository } from "@/lib/purchases/server";
+import { getPurchaseEvidenceStore } from "@/lib/purchases/PurchaseEvidenceStore";
 import { watchlistPrincipalFromAuthorization } from "@/lib/watchlist/server";
 
 export const runtime = "nodejs";
@@ -109,9 +110,31 @@ export async function POST(request: Request) {
     if (body.action === "remove-line") {
       if (typeof body.lineId !== "string")
         throw new Error("Cart line is required.");
+      const line = ledger.getCartLine(principal, body.lineId);
+      const removed = ledger.removeLine(principal, body.lineId);
+      if (removed && line?.evidenceImage) {
+        await getPurchaseEvidenceStore()
+          .delete(line.evidenceImage.id)
+          .catch(() => undefined);
+      }
       return Response.json({
-        removed: ledger.removeLine(principal, body.lineId),
+        removed,
       });
+    }
+    if (body.action === "clear-cart") {
+      if (typeof body.eventId !== "string")
+        throw new Error("Purchase event is required.");
+      const removedLines = ledger.clearCart(principal, body.eventId);
+      await Promise.all(
+        removedLines
+          .flatMap((line) =>
+            line.evidenceImage ? [line.evidenceImage.id] : [],
+          )
+          .map((evidenceId) =>
+            getPurchaseEvidenceStore().delete(evidenceId).catch(() => undefined),
+          ),
+      );
+      return Response.json({ cleared: removedLines.length });
     }
     if (body.action === "update-line") {
       if (typeof body.lineId !== "string")

@@ -17,6 +17,7 @@ import type { PricingRepository } from "../lib/pricing/repository.ts";
 import type { SearchMatch } from "../lib/pricing/types.ts";
 import { resolveCatalogueWatch } from "../lib/watchlist/CatalogueWatchRefresh.ts";
 import { PurchaseLedgerRepository } from "../lib/purchases/PurchaseLedgerRepository.ts";
+import { PurchaseEvidenceStore } from "../lib/purchases/PurchaseEvidenceStore.ts";
 import { validatePurchaseLineDraft } from "../lib/purchases/domain.ts";
 
 const match: SearchMatch = {
@@ -360,6 +361,130 @@ test("open purchase cart lines edit value and quantity without changing identity
   database.close();
 });
 
+test("purchase photos remain private receipt evidence while clear cart stays operator scoped", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "phronesis-purchase-evidence-"));
+  const database = new DatabaseSync(":memory:");
+  const ledger = new PurchaseLedgerRepository(database);
+  const store = new PurchaseEvidenceStore(directory);
+  const buyer = { workspaceId: "workspace", operatorUserId: "buyer" };
+  const colleague = { workspaceId: "workspace", operatorUserId: "colleague" };
+  const outsider = { workspaceId: "other-workspace", operatorUserId: "buyer" };
+  const image = Uint8Array.from([
+    137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0,
+  ]);
+  try {
+    const event = ledger.createEvent(buyer, {
+      name: "Bulk Photo Show",
+      eventDate: "2026-08-07",
+    });
+    const buyerBulk = ledger.addLine(
+      buyer,
+      event.id,
+      validatePurchaseLineDraft({
+        kind: "BULK",
+        productLines: ["POKEMON"],
+        actualPaidCents: 12_500,
+        notes: "Mixed binder and two boxes",
+        approximateQuantity: 850,
+      }),
+    );
+    ledger.addLine(
+      colleague,
+      event.id,
+      validatePurchaseLineDraft({
+        kind: "BULK",
+        productLines: ["MAGIC"],
+        actualPaidCents: 5_000,
+        notes: "Colleague-owned draft",
+      }),
+    );
+    const firstPhoto = await store.put(image, "image/png");
+    ledger.attachEvidenceImage(buyer, buyerBulk.id, firstPhoto);
+    assert.equal(
+      ledger.listCart(buyer, event.id)[0]?.evidenceImage?.id,
+      firstPhoto.id,
+    );
+    assert.equal(
+      ledger.canReadEvidenceImage(buyer.workspaceId, firstPhoto.id),
+      true,
+    );
+    assert.equal(
+      ledger.canReadEvidenceImage(outsider.workspaceId, firstPhoto.id),
+      false,
+    );
+    assert.throws(
+      () => ledger.attachEvidenceImage(colleague, buyerBulk.id, firstPhoto),
+      /not found/i,
+    );
+
+    const detached = ledger.removeEvidenceImage(buyer, buyerBulk.id);
+    assert.equal(detached.removed?.id, firstPhoto.id);
+    await store.delete(firstPhoto.id);
+    const replacement = await store.put(image, "image/png");
+    ledger.attachEvidenceImage(buyer, buyerBulk.id, replacement);
+
+    const cleared = ledger.clearCart(buyer, event.id);
+    assert.equal(cleared.length, 1);
+    assert.equal(cleared[0]?.evidenceImage?.id, replacement.id);
+    assert.equal(ledger.listCart(buyer, event.id).length, 0);
+    assert.equal(ledger.listCart(colleague, event.id).length, 1);
+    assert.equal(
+      Number(
+        (
+          database
+            .prepare(
+              "SELECT COUNT(*) AS count FROM phronesis_purchase_audit WHERE action='PURCHASE_CART_CLEARED'",
+            )
+            .get() as { count: number }
+        ).count,
+      ),
+      1,
+    );
+    await store.delete(replacement.id);
+
+    const receiptLine = ledger.addLine(
+      buyer,
+      event.id,
+      validatePurchaseLineDraft({
+        kind: "BULK",
+        productLines: ["POKEMON", "MAGIC"],
+        actualPaidCents: 20_000,
+        notes: "Collection retained with receipt photo",
+      }),
+    );
+    const receiptPhoto = await store.put(image, "image/png");
+    ledger.attachEvidenceImage(buyer, receiptLine.id, receiptPhoto);
+    const receipt = ledger.checkout(buyer, event.id, "checkout:photo-evidence");
+    assert.equal(receipt.lines[0]?.evidenceImage?.id, receiptPhoto.id);
+    assert.equal(ledger.listCart(buyer, event.id).length, 0);
+    assert.equal(
+      ledger.canReadEvidenceImage(buyer.workspaceId, receiptPhoto.id),
+      true,
+    );
+    assert.deepEqual(Array.from((await store.get(receiptPhoto.id)).bytes), Array.from(image));
+  } finally {
+    database.close();
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("purchase photo storage rejects malformed raster content", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "phronesis-purchase-invalid-"));
+  try {
+    const store = new PurchaseEvidenceStore(directory);
+    await assert.rejects(
+      () =>
+        store.put(
+          new TextEncoder().encode("<html>not an image</html>"),
+          "image/png",
+        ),
+      /valid JPEG, PNG, WebP, GIF, or AVIF/i,
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
 test("Bulk requires both supported product ownership and notes", () => {
   assert.throws(
     () =>
@@ -420,8 +545,12 @@ test("the manual watch composer and compact cart-adjacent offer are wired into p
   assert.match(checkout, /Purchase quantity/);
   assert.match(checkout, /Save changes/);
   assert.match(checkout, /Remove item/);
+  assert.match(checkout, /Clear cart/);
+  assert.match(checkout, /Take or upload photo/);
+  assert.match(checkout, /\/api\/purchases\/evidence/);
   assert.match(checkout, /Save every cart change before finalizing/);
   assert.match(purchaseRoute, /body\.action === "update-line"/);
+  assert.match(purchaseRoute, /body\.action === "clear-cart"/);
   assert.doesNotMatch(vendor, /OfferFirstSummary/);
   assert.match(vendor, /VendorCheckout/);
   assert.match(vendor, /Owner image override/);

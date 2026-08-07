@@ -142,6 +142,12 @@ Implementation completed in the same session: the owner file produced a non-acti
 
 Implementation prompt: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
 
+## Buyer Cart Clear And Purchase Photos — 2026-08-07
+
+`PHR-BUYER-CART-EVIDENCE-20260807` revises `PHR-UX-020` to add count-confirmed clearing of the requesting operator's active-event draft and one private content-validated purchase photo per exact or Bulk line. Draft deletion retires the object; checkout retains authorized immutable receipt evidence.
+
+Implementation prompt: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
+
 ## Sealed Readiness And Embedded Verification — 2026-08-01
 
 `PHR-STRUCT-20260801-005` authorizes `PHR-API-008` to spend a strict local 100-credit UTC-day budget only on newest-first PkmnPrices sealed ingestion, `PHR-UX-019` to put the canonical recommendation in a compact expandable cart-adjacent tile, and `PHR-API-009` to embed only authorized grading-certificate interfaces.
