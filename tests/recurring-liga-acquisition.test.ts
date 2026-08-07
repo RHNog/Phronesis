@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -11,6 +11,7 @@ import {
   sanitizeAcquisitionMessage,
   type RegionalAcquisitionStatus,
 } from "../lib/providers/liga/RecurringAcquisition.ts";
+import { getLigaProviderHealth } from "../lib/providers/liga/RegionalProviderHealth.ts";
 import { resolveLigaQuantityAuthority } from "../lib/providers/liga/QuantityAuthority.ts";
 
 test("regional acquisition schedule and provider commands are explicit", () => {
@@ -138,4 +139,87 @@ test("LigaPokemon Lote 10 uses only the exact Product Owner export authority", (
     }).quantityAuthority,
     "SOURCE_LABEL",
   );
+});
+
+test("provider health exposes safe Liga outcomes from the canonical acquisition receipt", () => {
+  const parent = mkdtempSync(join(tmpdir(), "phronesis-provider-health-"));
+  const root = join(parent, "regional-acquisition");
+  const completedAt = "2026-08-05T07:01:05.248Z";
+  try {
+    mkdirSync(root, { recursive: true });
+    for (const providerId of ["ligamagic", "ligapokemon"]) {
+      const providerRoot = join(parent, providerId);
+      mkdirSync(providerRoot, { recursive: true });
+      writeFileSync(join(providerRoot, "config.json"), "{}\n");
+    }
+    const status: RegionalAcquisitionStatus = {
+      featureId: "PHR-API-013",
+      runId: "regional-20260805T070006246Z",
+      status: "PARTIAL_FAILURE",
+      localDate: "2026-08-05",
+      startedAt: "2026-08-05T07:00:06.246Z",
+      completedAt,
+      providers: {
+        ligamagic: {
+          providerId: "ligamagic",
+          status: "FAILED",
+          startedAt: "2026-08-05T07:00:06.246Z",
+          completedAt,
+          snapshotRunId: null,
+          promotionStatus: "NOT_APPLICABLE",
+          message: "REAUTHENTICATION_REQUIRED: profiles /Users/owner/private-profile and C:\\Users\\owner\\profile need sign in.\nRetry locally.",
+        },
+        ligapokemon: {
+          providerId: "ligapokemon",
+          status: "SUCCESS",
+          startedAt: "2026-08-05T07:00:06.246Z",
+          completedAt,
+          snapshotRunId: "dry-run-20260805T070105248Z",
+          promotionStatus: "SUCCESS",
+          message: "Snapshot verified and the Pokémon regional crosswalk was rebuilt.",
+        },
+      },
+    };
+    writeFileSync(join(root, "status.json"), `${JSON.stringify(status)}\n`);
+
+    const health = getLigaProviderHealth({
+      PHRONESIS_REGIONAL_ACQUISITION_ROOT: root,
+    });
+
+    assert.equal(health[0]?.providerId, "ligamagic");
+    assert.equal(health[0]?.configured, true);
+    assert.equal(health[0]?.status, "REAUTHENTICATION_REQUIRED");
+    assert.match(health[0]?.acquisition.message ?? "", /\[private path\]/);
+    assert.doesNotMatch(health[0]?.acquisition.message ?? "", /Users\/owner/);
+    assert.doesNotMatch(health[0]?.acquisition.message ?? "", /C:\\Users/);
+    assert.doesNotMatch(health[0]?.acquisition.message ?? "", /\n/);
+    assert.equal(health[1]?.providerId, "ligapokemon");
+    assert.equal(health[1]?.status, "SUCCESS");
+    assert.equal(health[1]?.acquisition.snapshotRunId, "dry-run-20260805T070105248Z");
+    assert.equal(health[1]?.acquisition.promotionStatus, "SUCCESS");
+    assert.equal(health[1]?.acquisition.schedule, "Daily at 03:00 America/New_York");
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test("provider health safely represents configured and unconfigured providers before a run", () => {
+  const parent = mkdtempSync(join(tmpdir(), "phronesis-provider-health-empty-"));
+  const root = join(parent, "regional-acquisition");
+  try {
+    mkdirSync(root, { recursive: true });
+    mkdirSync(join(parent, "ligapokemon"), { recursive: true });
+    writeFileSync(join(parent, "ligapokemon", "config.json"), "{}\n");
+
+    const health = getLigaProviderHealth({
+      PHRONESIS_REGIONAL_ACQUISITION_ROOT: root,
+    });
+
+    assert.equal(health[0]?.status, "NOT_CONFIGURED");
+    assert.equal(health[0]?.enabled, false);
+    assert.equal(health[1]?.status, "NEVER_RUN");
+    assert.equal(health[1]?.enabled, true);
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
 });

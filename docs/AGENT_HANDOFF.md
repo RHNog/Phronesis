@@ -1,5 +1,14 @@
 # Agent Handoff
 
+## Product Review Candidate — Provider Connections And Regional Health — 2026-08-07
+
+- `PHR-UX-012` is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/settings?panel=providers` from branch `codex/phr-local-card-recognition-20260804`.
+- Regional marketplaces lead with LigaMagic and LigaPokémon. The Administration-only API reads the canonical `PHR-API-013` receipt and returns only allowlisted, path-redacted operational fields; Liga credential/profile controls remain local and absent from the page.
+- Current displayed evidence is LigaMagic `REAUTHENTICATION_REQUIRED` and LigaPokémon `SUCCESS` with snapshot `dry-run-20260805T070105248Z` promoted successfully.
+- JustTCG and PriceCharting now occupy the first valuation row; eBay Browse and CardTrader follow. Refresh status performs a fresh uncached read and announces the timestamp.
+- Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live HTTPS API, Refresh interaction, semantic DOM, and visual card/order checks pass. No provider, credential, profile, snapshot, or public route was mutated.
+- Next: Product Owner reviews the live panel and completes LigaMagic reauthentication locally. Same-session conformance is not independent Product Owner approval.
+
 ## Product Review Candidate — Public Trusted Accounts Without Tailscale — 2026-08-07
 
 - `PHR-TECH-016` is publicly active at `https://ramons-mac-studio.tailaa2d39.ts.net:10000`; remote visitors need no Tailscale client or tailnet membership. Share the exact Sign Up path: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`.

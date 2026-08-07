@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — Regional acquisition health belongs in Provider Connections
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-UX-012`).
+- **Decision:** Expose LigaMagic and LigaPokémon through a read-only server projection of the existing `PHR-API-013` atomic receipt. Read configuration existence but never configuration contents, profile state, cookies, credentials, or tokens.
+- **Decision:** Order providers by operational purpose: regional marketplaces first; valuation feeds with PriceCharting immediately after JustTCG; specialized services last. Provider API ordering and UI placement follow the same contract.
+- **Decision:** Keep Liga reauthentication and acquisition outside the browser UI. Refresh reads current status only and requires Administration view; credential-backed provider mutation retains its separate permanent-admin encrypted-vault gate.
+- **Consequences:** The owner sees actionable regional failures and successful promotions in the correct Settings surface without weakening local authentication boundaries or presenting PriceCharting as an unrelated tail card.
+
 ## 2026-08-06 — Scanner computers are outbound Phronesis appliances, not trusted servers
 
 - **Status:** Control-plane foundation implemented; signed distribution and physical qualification gated (`PHR-TECH-017`).

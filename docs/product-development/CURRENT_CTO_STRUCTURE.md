@@ -1,5 +1,18 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Provider Connections And Regional Acquisition Health
+
+- Assignment: `PHR-PROVIDER-CONNECTIONS-20260807`
+- Feature: `PHR-UX-012`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: restore LigaMagic/LigaPokémon operational visibility and place PriceCharting correctly inside the focused Provider Connections panel.
+- Information architecture: Regional marketplaces first; Market and valuation feeds with JustTCG then PriceCharting; specialized services last.
+- Security rule: project only allowlisted `PHR-API-013` receipt fields behind `ADMINISTRATION:VIEW`; keep Liga profiles, credentials, reauthentication, and acquisition local and outside browser controls.
+- Work order: `docs/prompts/PHR-UX-012-provider-connections-settings-prompt.md`.
+- Verification: full 460/460 suite, TypeScript, warning-free lint/build, diff hygiene, live HTTPS API state, Refresh feedback, semantic order, and deployed visual review pass.
+- Runtime: `https://ramons-mac-studio.tailaa2d39.ts.net:9444/settings?panel=providers` reads the canonical regional-acquisition evidence root. LigaMagic currently needs local reauthentication; LigaPokémon has a successful promoted snapshot.
+- Next accountable role: Product Owner reviews the revised panel and reauthenticates LigaMagic locally. Same-session conformance is not independent approval.
+
 ## Active Revision — Cross-Platform Scanner Appliance Control Plane
 
 - Assignment: `PHR-SCANNER-APPLIANCE-20260806`

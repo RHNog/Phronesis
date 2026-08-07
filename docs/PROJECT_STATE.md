@@ -1,6 +1,13 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-07 Provider Connections State
+
+- `PHR-UX-012` is rebuilt and privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/settings?panel=providers`.
+- LigaMagic and LigaPokémon lead the panel and read the canonical `PHR-API-013` receipt through a secret-free Administration-only projection. Current truth is LigaMagic `REAUTHENTICATION_REQUIRED` and LigaPokémon `SUCCESS` with promoted snapshot `dry-run-20260805T070105248Z`.
+- Market and valuation feeds now place PriceCharting immediately after JustTCG, before eBay Browse and CardTrader. Refresh status performs an uncached read and reports completion without reloading Settings.
+- Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live HTTPS API, interaction, semantic order, and visual layout gates pass. No provider mutation or acquisition was run.
+
 ## 2026-08-07 Public Trusted Account Access State
 
 - `PHR-ARCH-016` and `PHR-TECH-016` are publicly operational for trusted-account registration, sign-in, and approved-module use at `https://ramons-mac-studio.tailaa2d39.ts.net:10000`; remote visitors need neither Tailscale software nor tailnet membership.

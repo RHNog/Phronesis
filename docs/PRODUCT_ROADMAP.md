@@ -1,5 +1,11 @@
 # Product Roadmap
 
+## Product Review Candidate — Provider Connections And Regional Health
+
+- Settings now presents LigaMagic and LigaPokémon first with their real local acquisition outcomes, then groups PriceCharting directly beside JustTCG as a valuation feed (`PHR-UX-012`).
+- The owner can refresh current status without reloading or exposing private browser profiles. LigaMagic currently needs local reauthentication; LigaPokémon has a successfully promoted snapshot.
+- A later owner-authorized workflow may provide a safe local reauthentication launcher or bounded acquisition trigger; current delivery is intentionally read-only.
+
 ## Product Review Candidate — Plug-And-Play Scanner Appliances
 
 - Pair an approved Mac or Windows scanner computer once, see its exact readiness in Scanner-to-Offer, and control Start or Cancel from Phronesis (`PHR-TECH-017`).

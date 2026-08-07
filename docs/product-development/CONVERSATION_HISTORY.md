@@ -1,5 +1,23 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — Provider Connections Regional Health And PriceCharting Placement
+
+### User Intent
+
+- Immediately deploy LigaMagic/LigaPokémon information in the current Admin UI.
+- Correct PriceCharting card placement instead of sending the owner to the obsolete provider presentation.
+
+### Decision And Implementation
+
+- Revised `PHR-UX-012` rather than adding another Settings surface. Regional marketplaces now lead with read-only LigaMagic and LigaPokémon operational cards sourced from the existing `PHR-API-013` atomic status receipt.
+- Returned only allowlisted, sanitized status fields behind Administration view authorization. Liga authentication and acquisition remain in isolated local profiles and cannot be triggered or mutated from Settings.
+- Grouped market evidence semantically and placed PriceCharting immediately after JustTCG, before eBay Browse and CardTrader. Added uncached Refresh status with accessible live feedback.
+- Pointed the active `:9444` worktree deployment at the canonical regional-acquisition root, rebuilt, restarted, and checked the real tailnet endpoint in the browser.
+
+### Acceptance State
+
+Implementation and same-session conformance are privately live and Product Review ready. Current UI truth is LigaMagic `REAUTHENTICATION_REQUIRED`, LigaPokémon `SUCCESS` with promoted snapshot `dry-run-20260805T070105248Z`, JustTCG `DISABLED`, and PriceCharting `READY`. Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live API, Refresh interaction, semantic ordering, and visual layout checks pass. No provider mutation, credential change, acquisition, or public deployment occurred.
+
 ## 2026-08-07 — Remote Trusted Accounts Without Tailscale
 
 ### User Intent

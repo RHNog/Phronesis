@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Provider Connections And Regional Acquisition Health
+
+- Implemented and privately live: LigaMagic and LigaPokémon operational cards sourced from the canonical recurring-acquisition receipt (`PHR-UX-012`, `PHR-API-013`).
+- Implemented: semantic provider groups, PriceCharting immediately after JustTCG, uncached Refresh status, accessible feedback, and responsive readable cards.
+- Preserved: isolated owner-authenticated Liga profiles, encrypted permanent-admin credential mutation, private filesystem boundaries, and no browser-triggered acquisition.
+- Verified: 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live tailnet API truth, Refresh interaction, and deployed desktop layout/order.
+- Next: Product Owner reauthenticates LigaMagic locally. A future audited local-action workflow may help open reauthentication or trigger acquisition; it is not implied by this read-only delivery.
+
 ## Product Review Candidate: Ongoing Event Team Access
 
 - Implemented and privately live: active Event Ledger `Event team` surface with approved-account and event-bound temporary-worker paths (`PHR-WORKFLOW-017`).

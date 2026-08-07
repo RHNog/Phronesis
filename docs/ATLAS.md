@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Provider Connections And Regional Acquisition Health
+
+- `PHR-UX-012` makes Settings → Providers the single operational catalogue for regional acquisition, valuation feeds, listing evidence, sealed products, and certificate services.
+- `RegionalProviderHealth` projects the private `PHR-API-013` atomic receipt into allowlisted LigaMagic/LigaPokémon health. Configuration is an existence check only; secrets and browser-profile data never cross the server boundary.
+- Provider order is semantic and deterministic: LigaMagic, LigaPokémon; JustTCG, PriceCharting, eBay Browse, CardTrader; PkmnPrices Sealed, PSA Certificates.
+- The health Route Handler requires Administration view and Refresh performs a fresh uncached read. Liga authentication remains local and owner-operated; the UI cannot trigger acquisition or mutate a profile.
+
 ## Ongoing Event Team Access
 
 - `PHR-WORKFLOW-017` makes both valid post-opening access lifecycles discoverable inside the active Event Ledger: persistent approved-account entitlements and exact-event temporary worker codes.

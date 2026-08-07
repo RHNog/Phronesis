@@ -4,12 +4,13 @@ import { EbayBrowseListingProvider } from "@/lib/providers/eBayProvider";
 import { CardTraderListingProvider } from "@/lib/providers/CardTraderProvider";
 import { getPkmnPricesSealedSummary } from "@/lib/providers/pkmnprices/server";
 import { getProviderCredential } from "@/lib/providers/credentials";
+import { getLigaProviderHealth } from "@/lib/providers/liga/RegionalProviderHealth";
 import { getPriceChartingBulkRepository } from "@/lib/providers/pricecharting/server";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  const authorization = await authorizeRequest(request, "MARKET_WATCH", "VIEW");
+  const authorization = await authorizeRequest(request, "ADMINISTRATION", "VIEW");
   if (!authorization.allowed) return authorizationErrorResponse(authorization);
   const justTcgKey = getProviderCredential("justtcg", "JUSTTCG_API_KEY");
   const justTcg = getJustTCGWatchEnrichmentConfig({ ...process.env, JUSTTCG_API_KEY: justTcgKey });
@@ -20,14 +21,17 @@ export async function GET(request: Request) {
   const priceChartingConfigured = ["PRICECHARTING_API_TOKEN", "PRICECHARTING_MAGIC_CSV_URL", "PRICECHARTING_ONEPIECE_CSV_URL"].some((field) => Boolean(getProviderCredential("pricecharting", field)));
   const priceChartingCurrent = priceChartingBulk.some((summary) => summary.status === "CURRENT");
   const priceChartingImported = priceChartingBulk.some((summary) => summary.status !== "NOT_IMPORTED");
+  const regionalProviders = getLigaProviderHealth();
   return Response.json({
     providers: [
+      ...regionalProviders,
       {
         configured: Boolean(justTcgKey),
         enabled: justTcg.enabled,
         providerId: "justtcg",
         status: justTcg.enabled ? "READY" : justTcgKey ? "DISABLED" : "NOT_CONFIGURED",
       },
+      { configured: priceChartingConfigured || priceChartingImported, enabled: priceChartingConfigured || priceChartingCurrent, providerId: "pricecharting", status: priceChartingCurrent ? "CURRENT" : priceChartingImported ? "STAGED" : priceChartingConfigured ? "READY" : "NOT_CONFIGURED", bulkImports: priceChartingBulk },
       { configured: ebay.configured, enabled: ebay.configured, providerId: ebay.providerId, status: ebay.configured ? "READY" : "NOT_CONFIGURED" },
       { configured: cardTrader.configured, enabled: cardTrader.configured, providerId: cardTrader.providerId, status: cardTrader.configured ? "READY" : "NOT_CONFIGURED" },
       {
@@ -47,7 +51,6 @@ export async function GET(request: Request) {
         providerId: "psa-certificates",
         status: getProviderCredential("psa-certificates", "PSA_API_TOKEN") ? "READY" : "NOT_CONFIGURED",
       },
-      { configured: priceChartingConfigured || priceChartingImported, enabled: priceChartingConfigured || priceChartingCurrent, providerId: "pricecharting", status: priceChartingCurrent ? "CURRENT" : priceChartingImported ? "STAGED" : priceChartingConfigured ? "READY" : "NOT_CONFIGURED", bulkImports: priceChartingBulk },
     ],
     note: "Configuration health only. Upstream quota is not inferred.",
   });

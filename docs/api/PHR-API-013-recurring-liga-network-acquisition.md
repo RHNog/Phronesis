@@ -134,7 +134,7 @@ Not applicable to this command-line acquisition slice.
 ## Future Enhancements
 
 - Exact LigaPokemon-to-TCGplayer Pokémon crosswalk and two-way Pokémon arbitrage.
-- Owner-facing acquisition health in Settings after the backend contract stabilizes.
+- Owner-triggered acquisition and reauthentication actions in Settings after a separate audited security/workflow decision. Read-only owner-facing acquisition health is implemented by `PHR-UX-012`.
 
 ## Technical Notes
 
@@ -162,5 +162,5 @@ CLI outcomes use concise provider-specific states and exact reauthentication ins
 - Related implementation prompt: `docs/prompts/PHR-API-013-recurring-liga-network-acquisition-prompt.md`.
 - Related tests: `docs/testing/PHR-API-013-recurring-liga-network-acquisition-validation.md`.
 - Related release notes: `docs/release-notes/PHR-API-013.md`.
-- Last modified: 2026-08-03.
-- Modification reason: record Product Owner authorization for Lote 10 and the separately discovered, still-unauthorized Lote 4 source-count mismatch.
+- Last modified: 2026-08-07.
+- Modification reason: cross-reference the implemented read-only Settings health projection while retaining owner-triggered acquisition and reauthentication as separate future decisions.

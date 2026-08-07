@@ -439,16 +439,30 @@ test("Settings owns provider health and owner-only encrypted credential registra
     new URL("../components/settings/ProviderConnections.tsx", import.meta.url),
     "utf8",
   );
+  const providerHealth = readFileSync(
+    new URL("../app/api/market/provider-health/route.ts", import.meta.url),
+    "utf8",
+  );
   const access = readFileSync(
     new URL("../components/auth/AccessManagement.tsx", import.meta.url),
     "utf8",
   );
   assert.match(settings, /ProviderConnections/);
   assert.match(providers, /provider-health/);
-  assert.match(providers, /Secret entry remains locked/);
+  assert.match(providers, /Regional marketplaces/);
+  assert.match(providers, /LigaMagic/);
+  assert.match(providers, /LigaPokémon/);
+  assert.match(providers, /Refresh status/);
+  assert.match(providers, /Credential entry remains locked/);
   assert.match(providers, /type="password"/);
   assert.match(providers, /administration\/provider-credentials/);
   assert.match(providers, /Save securely/);
+  assert.ok(providers.indexOf('id: "ligamagic"') < providers.indexOf('id: "ligapokemon"'));
+  assert.ok(providers.indexOf('id: "ligapokemon"') < providers.indexOf('id: "justtcg"'));
+  assert.ok(providers.indexOf('id: "justtcg"') < providers.indexOf('id: "pricecharting"'));
+  assert.ok(providers.indexOf('id: "pricecharting"') < providers.indexOf('id: "ebay-browse"'));
+  assert.match(providerHealth, /getLigaProviderHealth/);
+  assert.match(providerHealth, /authorizeRequest\(request, "ADMINISTRATION", "VIEW"\)/);
   assert.match(access, /Pending accounts/);
   assert.match(access, /Approve and assign modules/);
   assert.match(access, /Verify this person outside Phronesis/);

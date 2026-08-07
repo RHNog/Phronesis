@@ -5,6 +5,8 @@
 
 ### Added
 
+- Read-only LigaMagic/LigaPokémon acquisition health, semantic provider groups, live Refresh status, and correct PriceCharting placement beside JustTCG in Settings → Providers (`PHR-UX-012`).
+
 - Cross-platform scanner appliance control plane with one-time pairing, revocable outbound agent credentials, readiness, durable Start/Cancel commands, front-only direct recognition ingest, portable agent setup, and macOS/Windows native build automation (`PHR-TECH-017`).
 
 - Phronesis-assisted Pokémon sealed artwork recovery with conservative versioned selection, reversible owner exceptions, separate exact/assisted/owner coverage, and truthful Vendor Workspace provenance; v1 added 118 visible representatives (`PHR-UX-024`).

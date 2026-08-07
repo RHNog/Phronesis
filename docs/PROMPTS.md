@@ -230,9 +230,9 @@ Build a dedicated local authenticated LigaMagic export profile, capture one supe
 
 Canonical work order: `docs/prompts/PHR-API-005-ligamagic-authenticated-export-snapshots-prompt.md`.
 
-## PHR-UX-012 Provider Connections Settings — 2026-07-30
+## PHR-UX-012 Provider Connections Settings — 2026-07-30; Revised 2026-08-07
 
-Centralize secret-free provider health and activation guidance in Settings while gating credential entry on authenticated owner-only encrypted storage.
+Centralize secret-free provider health and activation guidance in Settings while gating credential entry on authenticated owner-only encrypted storage. The 2026-08-07 revision adds read-only LigaMagic/LigaPokémon acquisition health, semantic provider groups, live Refresh status, and deterministic PriceCharting placement after JustTCG.
 
 Canonical work order: `docs/prompts/PHR-UX-012-provider-connections-settings-prompt.md`.
 
