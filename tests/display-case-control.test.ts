@@ -347,7 +347,9 @@ test("prepared stock and Event Flip cards sell and reverse atomically through on
     eventDate: "2026-08-03",
     currency: "USD",
     openingCashCents: 5_000,
+    productOwners: [{ name: "Card Consignor" }],
   });
+  const consignor = ledger.getEventLedgerSnapshot(principal).productOwners[0]!;
   ledger.eventStock.importCsv(
     principal,
     event.id,
@@ -405,6 +407,7 @@ test("prepared stock and Event Flip cards sell and reverse atomically through on
           description: "wrong card text",
           quantity: 1,
           caseItemId: caseItem.id,
+          productOwnerId: consignor.id,
         },
       ],
     }),
@@ -413,6 +416,7 @@ test("prepared stock and Event Flip cards sell and reverse atomically through on
   assert.equal(sale.items[0]?.inventoryItemId, preparedItem.id);
   assert.equal(sale.items[1]?.caseItemId, caseItem.id);
   assert.equal(sale.items[1]?.unitListPriceCents, 4_999);
+  assert.equal(sale.items[1]?.productOwnerName, "Card Consignor");
   assert.match(sale.items[1]?.description ?? "", /Charizard V/);
   assert.equal(
     ledger.eventStock.getSnapshot(principal, event.id).summary.expectedQuantity,

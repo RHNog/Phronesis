@@ -9,6 +9,8 @@ The operator's first question is “What should be in the drawer?” The next ac
 - Show event name, date, location, currency, and opening cash in one compact form.
 - Opening cash is required but zero is valid.
 - Do not show transaction controls until the event starts.
+- Place an optional `Product owners` roster below event identity. Start with no external owner, make `Add product owner` a 44-pixel action, and explain that the roster locks when the event opens.
+- Each roster row contains a required name, optional short reference, and Remove action. House inventory is built in and must not be entered as a person.
 
 ## Active Event
 
@@ -19,6 +21,7 @@ The operator's first question is “What should be in the drawer?” The next ac
 - A Sale always starts with one `Item sold` description and quantity `1`.
 - `Add another item` appends another description/quantity row inside the same Sale.
 - Use one overall Sale amount; do not require price allocation per sold item.
+- Give every sold-item row an Owner selector. `House inventory` is the default; the locked event roster supplies the other choices.
 - Notes are optional and secondary.
 - Record directly without a confirmation modal. On success, clear the entry and return focus to fast entry.
 
@@ -36,6 +39,7 @@ The operator's first question is “What should be in the drawer?” The next ac
 
 - Newest entries appear first and identify Sale, Purchase, Adjustment, or Reversal in words and sign.
 - Show every sold-item line under its Sale.
+- Show each sold item's owner as a legible non-colour badge in activity and historical reports.
 - Offer a visible Undo/Reverse action only for eligible manual entries and require a reason before committing the reversal.
 - Linked Vendor purchase entries route correction through receipt administration.
 
@@ -45,6 +49,7 @@ The operator's first question is “What should be in the drawer?” The next ac
 - Calculate and label the result as Over, Short, or Balanced.
 - Keep gross sales, purchase spend, cash/non-cash split, and transaction count in the closed summary.
 - Never label net cash movement as profit.
+- Do not show owner payout totals, commission, or settlement from attribution alone; the sale has one overall amount and no per-line allocation.
 
 ## Responsive Behavior
 

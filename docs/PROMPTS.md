@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-06 — Event Consignment Ownership And Settings Control Center
+
+- Source: Product Owner request to attribute sold products to pre-registered event consignors and replace the endless Settings page.
+- Features: `PHR-WORKFLOW-006` additive revision and new `PHR-UX-029`.
+- Implementation prompts: `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md` and `docs/prompts/PHR-UX-029-settings-control-center-prompt.md`.
+- Result: immutable pre-opening owner rosters, owner-aware Sale lines across full/Lite/tracked flows and reports, plus a responsive direct-linkable Settings control center that preserves all prior settings modules and authorization.
+
 ## 2026-08-06 — Dashboard Tool Hub And Collapsible Navigation
 
 - Source: Product Owner request for a landing-page hub, one card per Phronesis tool, collapsible sidebar, and Dashboard-first login.

@@ -6,6 +6,7 @@ import {
   validateEventCashAdjustmentDraft,
   validateEventCurrency,
   validateEventManualPurchaseDraft,
+  validateEventProductOwnerDrafts,
   validateEventSaleDraft,
   type PurchasePrincipal,
 } from "@/lib/purchases/domain";
@@ -100,6 +101,7 @@ export async function POST(request: Request) {
           body.openingCashCents,
           "Opening cash",
         ),
+        productOwners: validateEventProductOwnerDrafts(body.productOwners),
       });
       return Response.json(
         { snapshot: ledger.getEventLedgerSnapshot(principal) },

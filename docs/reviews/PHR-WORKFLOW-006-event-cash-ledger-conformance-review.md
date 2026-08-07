@@ -19,3 +19,11 @@ Verdict: **CONFORMS — PRODUCT REVIEW PENDING**
 All deterministic and private responsive gates pass as recorded in `docs/testing/PHR-WORKFLOW-006-event-cash-ledger-validation.md`.
 
 This same-session review verifies architecture and specification conformance but is not independent Product Owner approval. CTO Product Review remains pending.
+
+## 2026-08-06 Consignment Ownership Revision
+
+The revision conforms. Owner identity is event-scoped immutable evidence created before opening, not a mutable global contact or a post-sale label. A nullable sold-item owner reference preserves the truthful distinction between house inventory and a rostered consignor, while repository checks enforce same-workspace/same-event ownership even though the historical sale-item table was not destructively rebuilt.
+
+Both sale surfaces reuse the canonical repository and both tracked-item adapters preserve ownership. Activity and historical reports render stored attribution without calculating an owner payable from the unallocated whole-Sale total. The live migration is additive and legacy evidence is not rewritten.
+
+Same-session implementation conformance and isolated browser evidence pass; independent Product Owner approval remains pending.

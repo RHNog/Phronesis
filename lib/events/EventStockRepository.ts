@@ -365,6 +365,7 @@ export class EventStockRepository {
         description,
         quantity: item.quantity,
         inventoryItemId: item.inventoryItemId,
+        productOwnerId: item.productOwnerId,
         unitListPriceCents: Number(stock.unit_price_cents),
         color,
         variation,

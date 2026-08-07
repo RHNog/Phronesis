@@ -23,6 +23,12 @@ Implement the approved single-currency Event Cash Ledger with opening cash, fric
 
 ## Implementation Requirements
 
+- Extend event creation with a validated zero-to-50 product-owner roster declared before opening and persisted atomically with the event.
+- Add a normalized event-owner table plus an additive nullable sold-item owner column; keep legacy events and sale rows readable as house inventory.
+- Validate that every non-null sale-line owner belongs to the same active event and workspace.
+- Expose the locked roster in active and historical snapshots, add owner selection to both full Ledger and Vendor Quick Sale item editors, and show attribution in immutable activity.
+- Keep the existing one-total-per-sale cash model. Do not invent per-owner proceeds, commission, payout, or profit.
+
 - Add only additive SQLite migration and preserve all existing receipt/inventory evidence.
 - Extend the purchase/event domain with event currency, opening/closing cash, payment method, ledger entry, sold-item, summary, and snapshot types plus strict validators.
 - Add repository operations for start, snapshot, multi-item Sale, manual Purchase, Cash Adjustment, reasoned reversal, and close.

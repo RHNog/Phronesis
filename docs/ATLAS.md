@@ -1,5 +1,19 @@
 # Project Atlas
 
+## Event Consignment Ownership
+
+- `PHR-WORKFLOW-006` now creates an optional event-specific product-owner roster atomically at event opening and treats that roster as immutable evidence.
+- `PurchaseLedgerRepository` remains the sale authority: each sold-item row stores either null for house inventory or one same-event/same-workspace owner ID; hydrated activity and reports expose the preserved owner name.
+- Full Event Ledger and Vendor Workspace Quick Sale share the same owner-aware Sale contract. Event Stock and Display Case canonicalization preserve the selected owner while retaining their existing stock/inventory effects.
+- Owner attribution does not calculate commission, payout, profit, or settlement. Those results require a later per-line revenue-allocation and consignment-policy workflow.
+
+## Settings Control Center
+
+- `PHR-UX-029` replaces the vertically stacked Settings page with Overview plus five focused panels: Business profiles, Regional economics, Provider connections, People & access, and Temporary access.
+- One typed metadata registry drives desktop navigation, phone selection, overview cards, labels, descriptions, and stable `?panel=` values.
+- The protected Server Component retains runtime-data and authorization ownership; the client control center changes navigation/presentation only and preserves mounted panel state while inactive panels are hidden from layout and accessibility.
+- Native history integration supports reload and Back/Forward without a server request for ordinary panel switching; unknown values fail safely to Overview.
+
 ## Past Event Ledger Reports
 
 - `PHR-UX-028` makes closed Event Ledger evidence discoverable from the Event Ledger header instead of exposing only the active or latest closed event.

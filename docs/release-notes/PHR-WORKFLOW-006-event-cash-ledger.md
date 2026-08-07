@@ -10,6 +10,9 @@
 - Dedicated Event Ledger navigation and a canonical path from Vendor Checkout.
 - Vendor Workspace Event station with a Lite Quick Sale mode that records into the same active Event Ledger and returns its updated cash summary.
 - `PHR-UX-028` closed-event archive inside Event Ledger with search, summary previews, exact read-only report URLs, and current-event return.
+- Optional event-specific product-owner roster entered before opening and locked with the event.
+- House-or-consignor selection on every sold product in full Event Ledger and Vendor Workspace Quick Sale.
+- Immutable owner attribution in active activity, closeout, and past Event Ledger reports, including tracked Event Stock and Display Case sales.
 
 ## Reliability And Evidence
 
@@ -18,7 +21,8 @@
 - Evaluated purchase receipt, Inventory intake, and linked ledger Purchase commit together.
 - Receipt void preserves the original evidence and appends the matching ledger reversal.
 - Close-time expected cash and variance remain preserved after later administrative correction.
+- Owner IDs are validated against the same event and workspace; legacy rows remain house-owned without fabricated consignors.
 
 ## Follow-Up
 
-Product Review is pending. Payment capture, tax, settlement, accounting export, customer CRM, multi-currency drawers, and automatic manual-sale Inventory reconciliation remain separate future decisions.
+Product Review is pending. Payment capture, tax, consignment commission, per-item revenue allocation, owner settlement/statements, accounting export, customer CRM, multi-currency drawers, and automatic manual-sale Inventory reconciliation remain separate future decisions.

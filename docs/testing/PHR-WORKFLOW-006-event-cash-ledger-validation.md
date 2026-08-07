@@ -47,3 +47,15 @@ Verdict: **PASS — PRODUCT REVIEW PENDING**
 ## Negative-Effect Declaration
 
 No payment processing, tax, settlement, accounting export, customer CRM, public deployment, automatic manual-sale Inventory mutation, external transaction, new dependency, destructive schema migration, force push, or history rewrite was introduced.
+
+## 2026-08-06 Consignment Ownership Revision
+
+- Repository coverage proves atomic event/roster creation, case-insensitive duplicate-name denial, immutable roster retrieval, house-owned defaults, and rejection of foreign-event or foreign-workspace owner IDs.
+- Full Event Ledger and Vendor Workspace Quick Sale coverage prove owner IDs reach the same canonical Sale repository path.
+- Event Stock and Display Case coverage prove tracked item canonicalization preserves the selected owner rather than silently falling back to house inventory.
+- Historical snapshot coverage proves the owner name remains visible after closing and reopening a report; legacy events expose an empty roster without invented owner data.
+- Isolated 390×844 browser validation added `Ana Collection · Booth B12`, opened the event, selected that owner on `Consigned test card`, recorded a $10.00 Cash Sale, closed balanced at $10.00, and reopened the archive. Both active and closed activity displayed `Ana Collection`.
+- The live pre-existing active event correctly remains `House inventory only`, because its roster was fixed before this revision; no live ledger evidence was mutated during validation.
+- Full supported repository suite: 441/441 pass.
+- TypeScript, warning-free lint, Next.js 16.2.12 production build, `git diff --check`, private HTTP 200, desktop/phone no-overflow checks, and zero browser-console errors pass.
+- Online live-database backup and `PRAGMA integrity_check` passed before the additive migration; the resulting table/column are present and the existing event has zero invented owner rows.

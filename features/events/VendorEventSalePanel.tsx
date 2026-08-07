@@ -110,6 +110,7 @@ export default function VendorEventSalePanel({
       quantity: Number(item.quantity),
       inventoryItemId: item.inventoryItemId,
       caseItemId: item.caseItemId,
+      productOwnerId: item.productOwnerId ?? undefined,
     }));
     if (soldItems.some((item) => !item.description)) {
       setError("Describe every item sold.");
@@ -301,6 +302,7 @@ export default function VendorEventSalePanel({
             eventId={event.id}
             currency={currency}
             items={items}
+            productOwners={snapshot.productOwners}
             onChange={setItems}
             disabled={pending}
             refreshToken={stockRefreshToken}

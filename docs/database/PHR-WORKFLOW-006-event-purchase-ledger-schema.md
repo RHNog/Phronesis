@@ -2,7 +2,7 @@
 
 ## Revision
 
-2026-07-31 additive revision of the existing Event Purchase Ledger.
+2026-08-06 additive consignment-ownership revision of the existing Event Purchase Ledger.
 
 ## Existing Tables Preserved
 
@@ -45,12 +45,26 @@ Unique constraints prevent duplicate operator/idempotency writes, duplicate rece
 - ledger entry ID and position;
 - required human-entered item description;
 - positive whole-number quantity.
+- nullable `product_owner_id`, where null means house inventory and a value must resolve to the same event/workspace's immutable product-owner roster.
 
 These rows intentionally contain no catalogue SKU, Inventory lot, cost basis, or disposition reference.
+
+## Event Product Owners
+
+`phronesis_event_product_owner` stores the optional roster declared atomically before event opening:
+
+- immutable owner ID, workspace ID, and event ID;
+- normalized display name and optional short operator reference;
+- stable roster position and creation timestamp;
+- case-insensitive unique name within one event.
+
+The table does not represent authentication membership, Inventory title, customer identity, a payable account, or a settlement. There is no post-opening roster mutation endpoint. Legacy events have an empty roster, and legacy/null sold-item references mean house inventory.
 
 ## Transaction Rules
 
 - Manual Sale/Purchase/Adjustment creation and its item rows commit together.
+- Event creation and its validated product-owner roster commit together.
+- A sold-item owner reference is accepted only after the repository verifies the active event, workspace, and exact roster row inside the write transaction.
 - Purchase receipt, receipt lines, Inventory intake, and linked ledger Purchase commit together.
 - Receipt void, Inventory deactivation, and linked cash reversal commit together.
 - Closing records actual cash, expected cash, and variance only after calculating the current event snapshot inside the same serialized write boundary. Later administrative receipt corrections do not rewrite that close snapshot.

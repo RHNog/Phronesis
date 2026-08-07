@@ -429,7 +429,10 @@ test("the manual watch composer and compact cart-adjacent offer are wired into p
 
 test("Settings owns provider health and owner-only encrypted credential registration", () => {
   const settings = readFileSync(
-    new URL("../app/settings/page.tsx", import.meta.url),
+    new URL(
+      "../features/settings/components/SettingsControlCenter.tsx",
+      import.meta.url,
+    ),
     "utf8",
   );
   const providers = readFileSync(

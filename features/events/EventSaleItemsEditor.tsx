@@ -5,7 +5,10 @@ import type {
   EventSaleOption,
   EventSaleOptionsSnapshot,
 } from "@/lib/events/displayCase";
-import type { EventCurrency } from "@/lib/purchases/domain";
+import type {
+  EventCurrency,
+  EventProductOwner,
+} from "@/lib/purchases/domain";
 
 export type EventSaleItemInput = {
   id: string;
@@ -18,10 +21,16 @@ export type EventSaleItemInput = {
   color?: string | null;
   variation?: string | null;
   expectedQuantity?: number;
+  productOwnerId: string | null;
 };
 
 export function newEventSaleItem(): EventSaleItemInput {
-  return { id: crypto.randomUUID(), description: "", quantity: "1" };
+  return {
+    id: crypto.randomUUID(),
+    description: "",
+    quantity: "1",
+    productOwnerId: null,
+  };
 }
 
 function money(cents: number, currency: EventCurrency | null): string {
@@ -36,6 +45,7 @@ export default function EventSaleItemsEditor({
   eventId,
   currency,
   items,
+  productOwners,
   onChange,
   disabled = false,
   refreshToken = 0,
@@ -44,6 +54,7 @@ export default function EventSaleItemsEditor({
   eventId: string;
   currency: EventCurrency | null;
   items: EventSaleItemInput[];
+  productOwners: EventProductOwner[];
   onChange: (items: EventSaleItemInput[]) => void;
   disabled?: boolean;
   refreshToken?: number;
@@ -141,6 +152,10 @@ export default function EventSaleItemsEditor({
       setError("A Sale can contain at most 25 item lines.");
       return;
     }
+    const emptyIndex = items.findIndex(
+      (item) =>
+        !item.inventoryItemId && !item.caseItemId && !item.description.trim(),
+    );
     const selected: EventSaleItemInput = {
       id: crypto.randomUUID(),
       description: stockItem.description,
@@ -152,11 +167,9 @@ export default function EventSaleItemsEditor({
       color: stockItem.color,
       variation: stockItem.variation,
       expectedQuantity: stockItem.expectedQuantity,
+      productOwnerId:
+        emptyIndex >= 0 ? (items[emptyIndex]?.productOwnerId ?? null) : null,
     };
-    const emptyIndex = items.findIndex(
-      (item) =>
-        !item.inventoryItemId && !item.caseItemId && !item.description.trim(),
-    );
     onChange(
       emptyIndex >= 0
         ? items.map((item, index) => (index === emptyIndex ? selected : item))
@@ -343,6 +356,27 @@ export default function EventSaleItemsEditor({
                   }
                   className={`mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-base text-zinc-100 outline-none disabled:opacity-50 ${focusClass}`}
                 />
+              </label>
+              <label className="col-span-2 text-xs text-zinc-500">
+                Product owner
+                <select
+                  value={item.productOwnerId ?? ""}
+                  disabled={disabled}
+                  onChange={(event) =>
+                    updateItem(item.id, {
+                      productOwnerId: event.target.value || null,
+                    })
+                  }
+                  className={`mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-base text-zinc-100 outline-none disabled:opacity-50 ${focusClass}`}
+                >
+                  <option value="">House inventory</option>
+                  {productOwners.map((owner) => (
+                    <option key={owner.id} value={owner.id}>
+                      {owner.name}
+                      {owner.reference ? ` · ${owner.reference}` : ""}
+                    </option>
+                  ))}
+                </select>
               </label>
               {items.length > 1 || tracked ? (
                 <button

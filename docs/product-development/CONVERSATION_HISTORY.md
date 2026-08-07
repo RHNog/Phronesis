@@ -1,5 +1,25 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Event Consignment Ownership And Settings Control Center
+
+### User Intent
+
+- Identify the owner of each product sold in Event Ledger for consigned booth inventory.
+- Require product owners to be registered before that event opens.
+- Replace the poorly organized endless Settings page with an efficient and visually coherent administrative workspace.
+
+### Decision And Implementation
+
+- Extended `PHR-WORKFLOW-006` with an immutable event-scoped owner roster created atomically at opening, plus nullable house-or-owner attribution on every sold-item row.
+- Added owner selection to full Event Ledger and Vendor Workspace Quick Sale, preserved it through Event Stock and Display Case canonicalization, and exposed it in active activity and closed historical reports.
+- Explicitly deferred commission, per-line sale allocation, owner payout statements, settlement, and profit because the existing Sale has one unallocated customer total.
+- Assigned `PHR-UX-029` and replaced Settings' vertical stack with Overview plus five direct-linkable work panels, desktop rail, phone selector, native history, safe query normalization, focus management, and same-session state preservation.
+- Preserved all prior Settings components, APIs, provider-secret boundaries, and Administration authorization.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. Full 441/441 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, isolated owner→Sale→close→archive validation, live database backup/integrity/additive migration, desktop/phone Settings navigation, Back/Forward, unsaved-state preservation, no-overflow geometry, 44-pixel controls, private HTTP 200, and zero browser-console errors pass. The current live event remains house-only because its roster was locked before this revision; owners can be added when the next event is created.
+
 ## 2026-08-06 — Trusted Account Registration And Restricted Custom Domain
 
 ### User Intent

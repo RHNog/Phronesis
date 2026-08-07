@@ -57,7 +57,9 @@ test("stock-linked Sales, retries, reversal, counts, and reports share one event
     eventDate: "2026-08-01",
     currency: "USD",
     openingCashCents: 10_000,
+    productOwners: [{ name: "Sleeve Consignor" }],
   });
+  const consignor = ledger.getEventLedgerSnapshot(principal).productOwners[0]!;
   const csv = stockCsv(
     "Dragon Shield Sleeves,12.50,4,Black,Matte",
     "Dragon Shield Sleeves,13.00,2,Blue,Dual Matte",
@@ -99,6 +101,7 @@ test("stock-linked Sales, retries, reversal, counts, and reports share one event
           description: "client text is replaced",
           quantity: 2,
           inventoryItemId: blackSleeves.id,
+          productOwnerId: consignor.id,
         },
         {
           description: "binder",
@@ -115,6 +118,7 @@ test("stock-linked Sales, retries, reversal, counts, and reports share one event
   );
   assert.equal(sale.items[0]?.unitListPriceCents, 1_250);
   assert.equal(sale.items[0]?.inventoryItemId, blackSleeves.id);
+  assert.equal(sale.items[0]?.productOwnerName, "Sleeve Consignor");
   stock = ledger.eventStock.getSnapshot(principal, event.id);
   assert.equal(stock.summary.soldQuantity, 3);
   assert.equal(stock.summary.expectedQuantity, 4);

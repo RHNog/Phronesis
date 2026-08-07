@@ -6,6 +6,7 @@ import { getPricingRepository } from "@/lib/pricing/server";
 import {
   validateEventCurrency,
   validateEventPaymentMethod,
+  validateEventProductOwnerDrafts,
   validatePurchaseLineDraft,
   type PurchasePrincipal,
 } from "@/lib/purchases/domain";
@@ -85,6 +86,7 @@ export async function POST(request: Request) {
               body.openingCashCents === undefined
                 ? undefined
                 : Number(body.openingCashCents),
+            productOwners: validateEventProductOwnerDrafts(body.productOwners),
           }),
         },
         { status: 201 },

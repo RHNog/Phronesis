@@ -1,5 +1,32 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Event Consignment Ownership
+
+- Assignment: `PHR-EVENT-CONSIGNMENT-OWNERSHIP-20260806`
+- Feature: `PHR-WORKFLOW-006`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: identify the owner of each product sold at an event when house and consigned inventory share the booth.
+- Roster rule: zero to 50 event-specific owners are declared before opening, created atomically with the event, and immutable thereafter; house inventory is always available without a fabricated owner row.
+- Sale rule: each sold-item line in full Event Ledger or Vendor Workspace Quick Sale selects house inventory or one exact rostered owner. Repository validation rejects stale, foreign-event, and foreign-workspace owner IDs.
+- Evidence rule: attribution survives Event Stock/Display Case canonicalization, activity, reversal, closeout, and historical report reopening. Legacy events retain an empty roster and house-owned items.
+- Financial boundary: the existing whole-Sale total remains unallocated. No commission, owner payable, profit, statement, or settlement is inferred.
+- Work order: `docs/prompts/PHR-WORKFLOW-006-event-purchase-ledger-prompt.md`.
+- Verification: full 441/441 suite, TypeScript, lint, production build, isolated phone-width owner→Sale→close→archive workflow, additive live migration and backup/integrity evidence, private HTTP 200, and zero console errors pass.
+- Next accountable role: Product Owner adds the real roster before opening the next event and reviews owner attribution. The already-active live event remains correctly house-only.
+
+## Active Revision — Settings Control Center
+
+- Assignment: `PHR-SETTINGS-CONTROL-CENTER-20260806`
+- Feature: `PHR-UX-029`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: eliminate Settings' endless-scroll navigation while keeping every existing administrative panel and authorization boundary.
+- Information architecture: Overview plus Business profiles, Regional economics, Provider connections, People & access, and Temporary access, all driven by one typed registry.
+- UX rule: desktop sticky rail, phone selector, touch-safe overview cards, durable `?panel=` links, Back/Forward restoration, focused headings, and inactive panels hidden from layout/accessibility while mounted state is preserved.
+- Security rule: the protected Server Component, `ADMINISTRATION` gate, existing APIs, runtime status, and secret boundaries remain unchanged.
+- Work order: `docs/prompts/PHR-UX-029-settings-control-center-prompt.md`.
+- Verification: full 441/441 suite, TypeScript, warning-free lint, production build, 1280×720 and 390×844 no-overflow review, 44-pixel controls, direct-link/history/state-preservation checks, private HTTP 200, and zero console errors pass.
+- Next accountable role: Product Owner visually reviews the live Overview and work panels; same-session conformance is not independent approval.
+
 ## Active Revision — Past Event Ledger Reports
 
 - Assignment: `PHR-PAST-EVENT-REPORTS-20260806`

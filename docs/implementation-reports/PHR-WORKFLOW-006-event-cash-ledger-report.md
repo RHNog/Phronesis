@@ -24,3 +24,11 @@ Manual Sale items are human-entered event evidence, not catalogue identities or 
 ## Verification
 
 Behavioral, authorization, TypeScript, lint, production-build, diff, private-runtime, desktop, and 390px gates pass as recorded in `docs/testing/PHR-WORKFLOW-006-event-cash-ledger-validation.md`. Product Review subsequently identified a missing global phone-navigation path outside the ledger workspace; `PHR-UX-014` remediates that shared-shell defect and raises the clean full-suite evidence to 278/278.
+
+## 2026-08-06 Consignment Ownership Revision
+
+Event Ledger now captures event-specific consignment ownership without pretending to calculate settlement. The start form accepts up to 50 owners with optional booth/vendor references, creates that roster atomically with the event, and locks it at opening. House inventory remains the explicit default without a fabricated owner record.
+
+Every sold-item line in full Event Ledger and Vendor Workspace Quick Sale can select one rostered owner. Repository validation rejects an owner from another event or workspace, and owner attribution survives tracked Event Stock, Display Case canonicalization, reversals, activity, closeout, and historical reports. Legacy events remain readable with an empty roster and house-owned sale items.
+
+The additive live migration introduced `phronesis_event_product_owner` and nullable `product_owner_id` evidence without rebuilding historical tables. No commission percentage, revenue allocation, payout, payable, or profit result was introduced because a Sale still records one customer total rather than a price per sold-item line.

@@ -11,6 +11,7 @@ import {
   validateEventCashAdjustmentDraft,
   validateEventManualPurchaseDraft,
   validateEventPaymentMethod,
+  validateEventProductOwnerDrafts,
   validatePurchaseCartLineUpdate,
   validateEventSaleDraft,
   type EventCashAdjustmentDraft,
@@ -22,6 +23,8 @@ import {
   type EventLedgerSummary,
   type EventManualPurchaseDraft,
   type EventPaymentMethod,
+  type EventProductOwner,
+  type EventProductOwnerDraft,
   type EventSaleDraft,
   type EventSaleItem,
   type PurchaseEvent,
@@ -124,6 +127,20 @@ export class PurchaseLedgerRepository {
         PRIMARY KEY(entry_id, position),
         FOREIGN KEY(entry_id) REFERENCES phronesis_event_ledger_entry(id)
       );
+      CREATE TABLE IF NOT EXISTS phronesis_event_product_owner (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT NOT NULL,
+        event_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        reference TEXT,
+        position INTEGER NOT NULL CHECK(position >= 0),
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(event_id) REFERENCES phronesis_purchase_event(id)
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS phronesis_event_product_owner_name
+        ON phronesis_event_product_owner(event_id, name COLLATE NOCASE);
+      CREATE INDEX IF NOT EXISTS phronesis_event_product_owner_event
+        ON phronesis_event_product_owner(workspace_id, event_id, position);
     `);
     this.ensureColumn("phronesis_purchase_event", "currency", "TEXT");
     this.ensureColumn(
@@ -148,6 +165,16 @@ export class PurchaseLedgerRepository {
       "INTEGER",
     );
     this.ensureColumn("phronesis_purchase_event", "closed_by_user_id", "TEXT");
+    this.ensureColumn(
+      "phronesis_event_sale_item",
+      "product_owner_id",
+      "TEXT",
+    );
+    this.database.exec(`
+      CREATE INDEX IF NOT EXISTS phronesis_event_sale_item_owner
+        ON phronesis_event_sale_item(product_owner_id)
+        WHERE product_owner_id IS NOT NULL;
+    `);
   }
 
   createEvent(
@@ -159,6 +186,7 @@ export class PurchaseLedgerRepository {
       budgetCents?: number | null;
       currency?: EventCurrency;
       openingCashCents?: number;
+      productOwners?: EventProductOwnerDraft[];
     },
   ): PurchaseEvent {
     const name = input.name.trim();
@@ -189,6 +217,7 @@ export class PurchaseLedgerRepository {
     if (!Number.isSafeInteger(openingCashCents) || openingCashCents < 0) {
       throw new Error("Opening cash must be a non-negative cent value.");
     }
+    const productOwners = validateEventProductOwnerDrafts(input.productOwners);
     const activeEvent = this.getActiveEvent(principal);
     if (activeEvent) {
       if (
@@ -197,7 +226,11 @@ export class PurchaseLedgerRepository {
         activeEvent.location === location &&
         activeEvent.currency === currency &&
         activeEvent.openingCashCents === openingCashCents &&
-        activeEvent.budgetCents === budget
+        activeEvent.budgetCents === budget &&
+        this.sameProductOwnerRoster(
+          this.listEventProductOwners(principal.workspaceId, activeEvent.id),
+          productOwners,
+        )
       ) {
         return activeEvent;
       }
@@ -206,28 +239,46 @@ export class PurchaseLedgerRepository {
 
     const id = randomUUID();
     const now = new Date().toISOString();
-    this.database
-      .prepare(
-        `
-        INSERT INTO phronesis_purchase_event(
-          id, workspace_id, created_by_user_id, name, event_date, location,
-          budget_cents, currency, opening_cash_cents, status, created_at, updated_at
-        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?, ?)
-      `,
-      )
-      .run(
-        id,
-        principal.workspaceId,
-        principal.operatorUserId,
-        name,
-        input.eventDate,
-        location,
-        budget,
-        currency,
-        openingCashCents,
-        now,
-        now,
+    this.withTransaction(() => {
+      this.database
+        .prepare(
+          `
+          INSERT INTO phronesis_purchase_event(
+            id, workspace_id, created_by_user_id, name, event_date, location,
+            budget_cents, currency, opening_cash_cents, status, created_at, updated_at
+          ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?, ?)
+        `,
+        )
+        .run(
+          id,
+          principal.workspaceId,
+          principal.operatorUserId,
+          name,
+          input.eventDate,
+          location,
+          budget,
+          currency,
+          openingCashCents,
+          now,
+          now,
+        );
+      const insertOwner = this.database.prepare(
+        `INSERT INTO phronesis_event_product_owner(
+           id, workspace_id, event_id, name, reference, position, created_at
+         ) VALUES(?, ?, ?, ?, ?, ?, ?)`,
       );
+      productOwners.forEach((owner, position) => {
+        insertOwner.run(
+          randomUUID(),
+          principal.workspaceId,
+          id,
+          owner.name,
+          owner.reference ?? null,
+          position,
+          now,
+        );
+      });
+    });
     return {
       id,
       name,
@@ -265,6 +316,7 @@ export class PurchaseLedgerRepository {
     if (!event) {
       return {
         event: null,
+        productOwners: [],
         summary: null,
         entries: [],
         canStartNewEvent: true,
@@ -331,6 +383,11 @@ export class PurchaseLedgerRepository {
     const now = new Date().toISOString();
 
     this.withTransaction(() => {
+      this.assertSaleProductOwners(
+        principal.workspaceId,
+        eventId,
+        sale.items,
+      );
       const resolvedItems = this.displayCase.resolveSaleItems(
         principal,
         eventId,
@@ -353,8 +410,9 @@ export class PurchaseLedgerRepository {
       const insertItem = this.database.prepare(
         `INSERT INTO phronesis_event_sale_item(
            entry_id, position, description, quantity, event_stock_item_id,
-           event_case_item_id, unit_list_price_cents, color, variation
-         ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           event_case_item_id, unit_list_price_cents, color, variation,
+           product_owner_id
+         ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       );
       resolvedItems.forEach((item, position) => {
         insertItem.run(
@@ -367,6 +425,7 @@ export class PurchaseLedgerRepository {
           item.unitListPriceCents ?? null,
           item.color ?? null,
           item.variation ?? null,
+          item.productOwnerId ?? null,
         );
       });
       this.eventStock.recordSaleMovements(
@@ -391,6 +450,9 @@ export class PurchaseLedgerRepository {
         itemCount: resolvedItems.length,
         trackedItemCount: resolvedItems.filter(
           (item) => item.inventoryItemId || item.caseItemId,
+        ).length,
+        consignedItemCount: resolvedItems.filter(
+          (item) => Boolean(item.productOwnerId),
         ).length,
       });
     });
@@ -1120,6 +1182,10 @@ export class PurchaseLedgerRepository {
   ): EventLedgerSnapshot {
     return {
       event,
+      productOwners: this.listEventProductOwners(
+        principal.workspaceId,
+        event.id,
+      ),
       summary: this.summarizeEvent(principal.workspaceId, event),
       entries: this.listLedgerEntries(principal.workspaceId, event.id),
       canStartNewEvent: event.status === "CLOSED",
@@ -1206,9 +1272,14 @@ export class PurchaseLedgerRepository {
         SELECT item.entry_id, item.position, item.description, item.quantity,
           item.event_stock_item_id, item.event_case_item_id,
           item.unit_list_price_cents,
-          item.color, item.variation
+          item.color, item.variation, item.product_owner_id,
+          owner.name AS product_owner_name
         FROM phronesis_event_sale_item AS item
         JOIN phronesis_event_ledger_entry AS entry ON entry.id=item.entry_id
+        LEFT JOIN phronesis_event_product_owner AS owner
+          ON owner.id=item.product_owner_id
+          AND owner.workspace_id=entry.workspace_id
+          AND owner.event_id=entry.event_id
         WHERE entry.workspace_id=? AND entry.event_id=?
         ORDER BY item.entry_id, item.position
       `,
@@ -1234,6 +1305,12 @@ export class PurchaseLedgerRepository {
             : Number(row.unit_list_price_cents),
         color: row.color ? String(row.color) : null,
         variation: row.variation ? String(row.variation) : null,
+        productOwnerId: row.product_owner_id
+          ? String(row.product_owner_id)
+          : null,
+        productOwnerName: row.product_owner_name
+          ? String(row.product_owner_name)
+          : null,
       });
       result.set(entryId, items);
     });
@@ -1258,11 +1335,14 @@ export class PurchaseLedgerRepository {
     if (!row) throw new Error("Ledger entry was not found.");
     const itemRows = this.database
       .prepare(
-        `SELECT position, description, quantity, event_stock_item_id,
-           event_case_item_id,
-           unit_list_price_cents, color, variation
-         FROM phronesis_event_sale_item
-         WHERE entry_id=? ORDER BY position`,
+        `SELECT item.position, item.description, item.quantity,
+           item.event_stock_item_id, item.event_case_item_id,
+           item.unit_list_price_cents, item.color, item.variation,
+           item.product_owner_id, owner.name AS product_owner_name
+         FROM phronesis_event_sale_item AS item
+         LEFT JOIN phronesis_event_product_owner AS owner
+           ON owner.id=item.product_owner_id
+         WHERE item.entry_id=? ORDER BY item.position`,
       )
       .all(entryId) as SqlRow[];
     const items = new Map<string, EventSaleItem[]>();
@@ -1284,6 +1364,12 @@ export class PurchaseLedgerRepository {
             : Number(item.unit_list_price_cents),
         color: item.color ? String(item.color) : null,
         variation: item.variation ? String(item.variation) : null,
+        productOwnerId: item.product_owner_id
+          ? String(item.product_owner_id)
+          : null,
+        productOwnerName: item.product_owner_name
+          ? String(item.product_owner_name)
+          : null,
       })),
     );
     return this.entryFromRow(row, items);
@@ -1397,6 +1483,69 @@ export class PurchaseLedgerRepository {
     if (!row || row.status !== "ACTIVE") {
       throw new Error("Active event was not found.");
     }
+  }
+
+  private assertSaleProductOwners(
+    workspaceId: string,
+    eventId: string,
+    items: EventSaleDraft["items"],
+  ) {
+    const ownerIds = [
+      ...new Set(
+        items.flatMap((item) =>
+          item.productOwnerId ? [item.productOwnerId] : [],
+        ),
+      ),
+    ];
+    if (!ownerIds.length) return;
+    const placeholders = ownerIds.map(() => "?").join(",");
+    const rows = this.database
+      .prepare(
+        `SELECT id FROM phronesis_event_product_owner
+         WHERE workspace_id=? AND event_id=? AND id IN (${placeholders})`,
+      )
+      .all(workspaceId, eventId, ...ownerIds) as SqlRow[];
+    if (rows.length !== ownerIds.length) {
+      throw new Error(
+        "Every consigned sale item must use a product owner registered before this event opened.",
+      );
+    }
+  }
+
+  private listEventProductOwners(
+    workspaceId: string,
+    eventId: string,
+  ): EventProductOwner[] {
+    const rows = this.database
+      .prepare(
+        `SELECT id, event_id, name, reference, position, created_at
+         FROM phronesis_event_product_owner
+         WHERE workspace_id=? AND event_id=?
+         ORDER BY position, id`,
+      )
+      .all(workspaceId, eventId) as SqlRow[];
+    return rows.map((row) => ({
+      id: String(row.id),
+      eventId: String(row.event_id),
+      name: String(row.name),
+      reference: row.reference ? String(row.reference) : undefined,
+      position: Number(row.position),
+      createdAt: String(row.created_at),
+    }));
+  }
+
+  private sameProductOwnerRoster(
+    existing: readonly EventProductOwner[],
+    requested: readonly EventProductOwnerDraft[],
+  ): boolean {
+    return (
+      existing.length === requested.length &&
+      existing.every(
+        (owner, index) =>
+          owner.name === requested[index]?.name &&
+          (owner.reference ?? undefined) === requested[index]?.reference,
+      )
+    );
   }
 
   private getEventById(

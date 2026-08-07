@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Event Consignment Ownership And Settings Control Center
+
+- Implemented and privately live: pre-opening event product-owner rosters, locked owner identity, house-or-consignor selection per sold item, and preserved active/closed attribution across full Event Ledger, Vendor Quick Sale, Event Stock, and Display Case (`PHR-WORKFLOW-006`).
+- Implemented and privately live: Overview plus five direct-linkable Settings work panels with desktop rail, phone selector, native history, and same-session unfinished-state preservation (`PHR-UX-029`).
+- Preserved: one canonical Sale repository, immutable historical evidence, all existing Settings components/APIs, Administration authorization, and provider-secret boundaries.
+- Verified: full 441/441 suite, TypeScript, warning-free lint, Next.js 16.2.12 production build, isolated end-to-end consignor Sale/close/report, desktop/phone Settings navigation and state preservation, live additive database migration, private HTTP 200, no horizontal overflow, 44-pixel controls, and zero console errors.
+- Next: Product Owner reviews the next event's roster setup and the redesigned live Settings surface. Commission policy, per-line sale allocation, payout statements, settlement, and Settings search remain future work.
+
 ## Product Review Candidate: Past Event Ledger Reports
 
 - Implemented and privately live: one-click closed-event archive inside Event Ledger, newest-first summary cards, local search, exact report deep links, browser history, and current-event return (`PHR-UX-028`).

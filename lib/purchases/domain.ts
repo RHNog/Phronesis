@@ -25,6 +25,19 @@ export type EventSaleItemDraft = {
   quantity: number;
   inventoryItemId?: string;
   caseItemId?: string;
+  productOwnerId?: string;
+};
+
+export type EventProductOwnerDraft = {
+  name: string;
+  reference?: string;
+};
+
+export type EventProductOwner = EventProductOwnerDraft & {
+  id: string;
+  eventId: string;
+  position: number;
+  createdAt: string;
 };
 
 export type EventSaleDraft = {
@@ -125,7 +138,7 @@ export type PurchasePrincipal = { workspaceId: string; operatorUserId: string };
 
 export type EventSaleItem = Omit<
   EventSaleItemDraft,
-  "inventoryItemId" | "caseItemId"
+  "inventoryItemId" | "caseItemId" | "productOwnerId"
 > & {
   position: number;
   inventoryItemId: string | null;
@@ -133,6 +146,8 @@ export type EventSaleItem = Omit<
   unitListPriceCents: number | null;
   color: string | null;
   variation: string | null;
+  productOwnerId: string | null;
+  productOwnerName: string | null;
 };
 
 export type EventLedgerEntry = {
@@ -169,6 +184,7 @@ export type EventLedgerSummary = {
 
 export type EventLedgerSnapshot = {
   event: PurchaseEvent | null;
+  productOwners: EventProductOwner[];
   summary: EventLedgerSummary | null;
   entries: EventLedgerEntry[];
   canStartNewEvent: boolean;
@@ -218,6 +234,36 @@ export function validateEventSaleDraft(value: unknown): EventSaleDraft {
     items: items.map((item, index) => validateSaleItem(item, index)),
     notes: optionalText(input.notes, 500),
   };
+}
+
+export function validateEventProductOwnerDrafts(
+  value: unknown,
+): EventProductOwnerDraft[] {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value) || value.length > 50) {
+    throw new Error("An event can have at most 50 product owners.");
+  }
+  const seen = new Set<string>();
+  return value.map((candidate, index) => {
+    if (!candidate || typeof candidate !== "object") {
+      throw new Error(`Product owner ${index + 1} is invalid.`);
+    }
+    const input = candidate as Record<string, unknown>;
+    const name = requiredText(
+      input.name,
+      `Product owner ${index + 1} name`,
+      100,
+    );
+    const identity = name.toLocaleLowerCase("en-US");
+    if (seen.has(identity)) {
+      throw new Error(`Product owner names must be unique within the event.`);
+    }
+    seen.add(identity);
+    return {
+      name,
+      reference: optionalText(input.reference, 120),
+    };
+  });
 }
 
 export function validateEventManualPurchaseDraft(
@@ -418,5 +464,6 @@ function validateSaleItem(value: unknown, index: number): EventSaleItemDraft {
     quantity,
     inventoryItemId: optionalText(input.inventoryItemId, 120),
     caseItemId: optionalText(input.caseItemId, 120),
+    productOwnerId: optionalText(input.productOwnerId, 120),
   };
 }

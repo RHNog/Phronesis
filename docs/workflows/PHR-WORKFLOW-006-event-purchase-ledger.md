@@ -32,14 +32,18 @@ The current purchase-only checkout cannot explain drawer cash. Sales can be reco
 
 Evolve the existing event record into a single-currency Event Cash Ledger. A new event requires an opening cash amount. Operators record payment-method-aware Sale, Purchase, or Cash Adjustment entries directly into an append-only ledger. A Sale has one overall amount and one or more sold-item lines. Manual lines require only description and quantity; `PHR-WORKFLOW-012` additively permits an exact event-stock option link without requiring or mutating a global Inventory lot. Evaluated Vendor Workspace purchases continue to create immutable receipts and Inventory intake, and also create one linked ledger Purchase atomically.
 
-The active Event Ledger shows opening cash, cash sales, cash purchases, cash adjustments, expected cash, gross sales, non-cash sales, purchase spend, and net event cash movement. Closing records the physical cash count and reports variance. The product never labels event cash movement as profit because manual sale items have no allocated cost basis.
+The active Event Ledger shows opening cash, cash sales, cash purchases, cash adjustments, expected cash, gross sales, non-cash sales, purchase spend, and net event cash movement. An event may also declare a bounded roster of consigned-product owners before opening. Each sold-item line then records either house inventory or one exact rostered owner, preserving consignment attribution in activity and historical reports. Closing records the physical cash count and reports variance. The product never labels event cash movement as profit because manual sale items have no allocated cost basis or per-line sale allocation.
 
 ## Functional Requirements
 
 - Create one active event per workspace with name, date, optional location, event currency (`USD` or `BRL`), and non-negative opening cash.
+- Permit zero to 50 event-specific consigned-product owners to be named before the event opens, with an optional short reference for booth/vendor identification. Names are unique within the event after trim and case folding.
+- Create the event and its product-owner roster atomically. Once the event is active, the roster is immutable; corrections require closing/reversing affected evidence rather than silently rewriting historical owner identity.
+- Treat house inventory as a built-in sale-line choice that is not a fabricated external owner row.
 - Preserve historical event and purchase-receipt evidence through additive migration; do not invent opening cash or payment method for legacy receipts.
 - Record a manual Sale with a positive total amount, payment method, optional note, and between one and 25 sold-item lines.
 - Require every manual sold-item line to contain a human-entered description and every sold-item line to contain a quantity from 1 through 1,000.
+- Permit every sold-item line to identify house inventory or one owner from the active event's locked roster. Reject missing/foreign/stale roster identifiers at the repository boundary.
 - Permit multiple sold-item lines in one Sale without requiring SKU, catalogue search, customer, global Inventory lot, or disposition; an exact event-stock link remains optional under `PHR-WORKFLOW-012`.
 - Record a manual Purchase with positive amount, payment method, and optional description without fabricating Inventory identity.
 - Continue exact/Bulk Vendor Workspace receipt checkout and Inventory intake; create its ledger Purchase in the same database transaction with the selected payment method.
@@ -47,6 +51,7 @@ The active Event Ledger shows opening cash, cash sales, cash purchases, cash adj
 - Treat Cash Sale as positive drawer movement and Cash Purchase as negative drawer movement. Card, Transfer, and Other transactions affect event totals but not expected drawer cash.
 - Permit reasoned Cash In or Cash Out adjustments. Adjustments affect expected cash but are not sales, purchases, revenue, or expense.
 - List ledger entries newest first with type, amount, payment method, item/description detail, timestamp, operator, linkage, and reversal state.
+- Display the immutable owner attribution beside every sold-item line in active activity and closed-event reports.
 - Reverse eligible manual entries by appending a reasoned reversal; never delete the original. A linked purchase must be corrected through its receipt-void workflow so Inventory and cash evidence remain atomic.
 - Close an active event with a non-negative physical closing count, calculate expected cash and over/short variance, and lock ordinary entry.
 - Keep a closed event summary visible after reload and permit a new event only after the current event is closed.
@@ -101,11 +106,14 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - As a buyer who makes an incidental Sale, I want to record it without leaving Vendor Workspace or creating a second event record.
 - As an owner, I want a closing cash variance and immutable audit trail so discrepancies are visible.
 - As an owner, I want to reopen any past Event Ledger report from the ledger itself so older closeouts never become hidden behind a newer event.
+- As a booth operator, I want to register consignors before opening and identify the owner of each sold product so consigned merchandise remains attributable after the event.
 
 ## Acceptance Criteria
 
 - A new event cannot start without explicit valid opening cash and currency.
 - One Sale can persist multiple manual or event-stock-linked item lines and one total amount without any global Inventory reference or mutation.
+- An event atomically preserves its pre-opening consignment roster, and every sale line can be read back as house inventory or the exact event owner selected at sale time.
+- A product-owner ID from another event or workspace is rejected and no owner roster can be mutated after opening.
 - A Cash sale increases expected cash; a Cash purchase decreases it; non-cash entries leave expected cash unchanged.
 - An evaluated receipt checkout creates exactly one linked Purchase ledger entry and one Inventory intake, atomically and idempotently.
 - A manual-entry reversal preserves the original and restores its cash effect exactly once.
@@ -121,6 +129,8 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - Zero opening cash is valid; negative opening cash is not.
 - Zero-value sales and purchases are rejected.
 - Empty or duplicate-looking sold-item descriptions remain separate only when the operator entered separate lines; blank lines are rejected.
+- Duplicate product-owner names that differ only by case or surrounding whitespace are rejected before event creation.
+- Events created before consignment attribution remain readable; their existing sale lines resolve to house inventory and are never assigned a fabricated consignor.
 - A retry with the same idempotency key returns the original entry.
 - An event cannot be closed twice or accept entries after closing.
 - A manual line does not decrement event stock or global Inventory even if its description resembles a known product; only an explicit validated `PHR-WORKFLOW-012` option link moves event stock.
@@ -141,10 +151,11 @@ The complete start, entry, activity, adjustment, and close workflow must work at
 - Optional later reconciliation or allocation to global Inventory without changing the original Sale.
 - Configurable quick-item presets and event-specific categories.
 - Multi-currency drawers, taxes, payment settlement, and accounting export under separate specifications.
+- Consignment commission rules, per-line sale allocation, owner payout statements, and settlement remain a future additive workflow; owner attribution alone must not imply an amount owed.
 
 ## Technical Notes
 
-Use additive columns on `phronesis_purchase_event` plus normalized ledger-entry and sold-item tables. Store positive transaction amounts and an explicit signed cash effect. Reversal rows refer to the original entry and negate its cash effect. Summaries exclude reversed originals from business totals while retaining both records in activity.
+Use additive columns on `phronesis_purchase_event` plus normalized ledger-entry and sold-item tables. Store an immutable event-owner roster in a workspace/event-scoped child table and a nullable owner reference on each sold-item row, where null means house inventory. Validate ownership manually at the repository boundary because SQLite cannot add a foreign-key constraint to an existing table column without rebuilding historical data. Store positive transaction amounts and an explicit signed cash effect. Reversal rows refer to the original entry and negate its cash effect. Summaries exclude reversed originals from business totals while retaining both records in activity.
 
 ## UI / UX Notes
 
@@ -153,8 +164,10 @@ Use additive columns on `phronesis_purchase_event` plus normalized ledger-entry 
 - Present Vendor Workspace event operations as one Event station with default `Purchase intake` and secondary `Quick sale` modes.
 - Keep the Lite Quick Sale to current expected cash, gross sales, manual Sale entry, and a link to the full Event Ledger.
 - Start view contains only event identity, currency, and opening cash.
+- Start view also contains a compact optional `Product owners` roster editor with Add/Remove controls and clear copy that the list locks when the event opens.
 - Active view leads with expected cash and a Sale/Purchase segmented control.
 - Sale entry always shows one `Item sold` row and an `Add another item` action; quantity defaults to one.
+- Every sale-item row exposes an owner selector with `House inventory` first and the event's rostered owners following; the choice remains available in both full Event Ledger and Vendor Workspace Quick Sale.
 - Payment defaults to Cash. Amount and sold-item descriptions are the only required Sale facts.
 - Advanced notes and cash adjustments stay secondary.
 - Success returns focus to fast entry and exposes a visible reasoned Undo action.
@@ -179,5 +192,5 @@ Use additive columns on `phronesis_purchase_event` plus normalized ledger-entry 
 - Related design direction: `docs/design/PHR-WORKFLOW-006-event-cash-ledger.md`.
 - Related tests: `tests/event-cash-ledger.test.ts` and existing purchase/inventory tests.
 - Related release notes: `docs/release-notes/PHR-WORKFLOW-006-event-cash-ledger.md`.
-- Last modified: 2026-07-31.
-- Modification reason: Product Owner approved opening-cash, frictionless Sale/Purchase entry, multi-item manual sales, closing reconciliation, a Vendor Workspace Lite Quick Sale, and the additive `PHR-WORKFLOW-012` event-stock option link feeding the same event control.
+- Last modified: 2026-08-06.
+- Modification reason: Product Owner added pre-opening event product-owner rosters and immutable per-sold-item consignment attribution across full, Lite, and historical Ledger surfaces.

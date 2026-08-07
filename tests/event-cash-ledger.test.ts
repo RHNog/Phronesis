@@ -6,11 +6,126 @@ import { PurchaseLedgerRepository } from "../lib/purchases/PurchaseLedgerReposit
 import {
   validateEventCashAdjustmentDraft,
   validateEventManualPurchaseDraft,
+  validateEventProductOwnerDrafts,
   validateEventSaleDraft,
   validatePurchaseLineDraft,
 } from "../lib/purchases/domain.ts";
 
 const principal = { workspaceId: "workspace-a", operatorUserId: "operator-a" };
+
+test("event product owners lock at opening and remain attributable per sold item", () => {
+  assert.deepEqual(
+    validateEventProductOwnerDrafts([
+      { name: "  Ana Collection  ", reference: " Booth B12 " },
+    ]),
+    [{ name: "Ana Collection", reference: "Booth B12" }],
+  );
+  assert.throws(
+    () =>
+      validateEventProductOwnerDrafts([
+        { name: "Ana Collection" },
+        { name: " ana collection " },
+      ]),
+    /unique within the event/i,
+  );
+
+  const database = new DatabaseSync(":memory:");
+  const ledger = new PurchaseLedgerRepository(database);
+  const event = ledger.createEvent(principal, {
+    name: "Consignment Showcase",
+    eventDate: "2026-08-06",
+    currency: "USD",
+    openingCashCents: 5_000,
+    productOwners: [
+      { name: "Ana Collection", reference: "Booth B12" },
+      { name: "Bruno Cards" },
+    ],
+  });
+  assert.equal(
+    ledger.createEvent(principal, {
+      name: "Consignment Showcase",
+      eventDate: "2026-08-06",
+      currency: "USD",
+      openingCashCents: 5_000,
+      productOwners: [
+        { name: "Ana Collection", reference: "Booth B12" },
+        { name: "Bruno Cards" },
+      ],
+    }).id,
+    event.id,
+    "an exact opening retry returns the active event",
+  );
+  let snapshot = ledger.getEventLedgerSnapshot(principal);
+  assert.deepEqual(
+    snapshot.productOwners.map(({ name, reference }) => ({ name, reference })),
+    [
+      { name: "Ana Collection", reference: "Booth B12" },
+      { name: "Bruno Cards", reference: undefined },
+    ],
+  );
+  const ana = snapshot.productOwners[0]!;
+  const sale = ledger.recordSale(
+    principal,
+    event.id,
+    validateEventSaleDraft({
+      amountCents: 3_000,
+      paymentMethod: "CASH",
+      items: [
+        {
+          description: "Consigned Charizard",
+          quantity: 1,
+          productOwnerId: ana.id,
+        },
+        { description: "House playmat", quantity: 1 },
+      ],
+    }),
+    "sale:consignment-0001",
+  );
+  assert.equal(sale.items[0]?.productOwnerId, ana.id);
+  assert.equal(sale.items[0]?.productOwnerName, "Ana Collection");
+  assert.equal(sale.items[1]?.productOwnerId, null);
+  assert.equal(sale.items[1]?.productOwnerName, null);
+
+  const foreignPrincipal = {
+    workspaceId: "workspace-b",
+    operatorUserId: "operator-b",
+  };
+  const foreignEvent = ledger.createEvent(foreignPrincipal, {
+    name: "Foreign Consignment",
+    eventDate: "2026-08-06",
+    currency: "USD",
+    openingCashCents: 0,
+    productOwners: [{ name: "Foreign Owner" }],
+  });
+  const foreignOwner = ledger.getEventLedgerSnapshot(foreignPrincipal)
+    .productOwners[0]!;
+  assert.throws(
+    () =>
+      ledger.recordSale(
+        principal,
+        event.id,
+        validateEventSaleDraft({
+          amountCents: 100,
+          paymentMethod: "CASH",
+          items: [
+            {
+              description: "Invalid owner attempt",
+              quantity: 1,
+              productOwnerId: foreignOwner.id,
+            },
+          ],
+        }),
+        "sale:foreign-owner",
+      ),
+    /registered before this event opened/i,
+  );
+  ledger.closeEvent(foreignPrincipal, foreignEvent.id, 0);
+  ledger.closeEvent(principal, event.id, 8_000);
+  snapshot = ledger.getClosedEventLedgerSnapshot(principal, event.id);
+  assert.equal(snapshot.productOwners[0]?.name, "Ana Collection");
+  assert.equal(snapshot.entries[0]?.items[0]?.productOwnerName, "Ana Collection");
+  database.close();
+});
 
 test("manual sales require and preserve one to 25 explicitly described items", () => {
   const sale = validateEventSaleDraft({
@@ -343,6 +458,7 @@ test("legacy event rows remain readable without invented opening cash", () => {
   const snapshot = ledger.getEventLedgerSnapshot(principal);
   assert.equal(snapshot.event?.id, "legacy-event");
   assert.equal(snapshot.event?.currency, null);
+  assert.deepEqual(snapshot.productOwners, []);
   assert.equal(snapshot.summary?.openingCashCents, null);
   assert.equal(snapshot.summary?.expectedCashCents, null);
   database.close();
@@ -475,6 +591,10 @@ test("the production surface exposes authorized multi-item entry and canonical e
   assert.match(workspace, /router\.push\(`\/event-ledger\?eventId=/);
   assert.match(workspace, /!viewingPastReport/);
   assert.match(saleEditor, /What was actually sold\?/);
+  assert.match(saleEditor, /Product owner/);
+  assert.match(saleEditor, /House inventory/);
+  assert.match(workspace, /Add product owner/);
+  assert.match(workspace, /Locked at opening/);
   assert.match(saleEditor, /Add untracked item/);
   assert.match(workspace, /Record sale/);
   assert.doesNotMatch(workspace, /\/api\/inventory/);

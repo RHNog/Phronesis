@@ -14,9 +14,15 @@ import {
   type EventLedgerReportSummary,
   type EventLedgerSnapshot,
   type EventPaymentMethod,
+  type EventProductOwnerDraft,
 } from "@/lib/purchases/domain";
 
 type EntryMode = "SALE" | "PURCHASE";
+type ProductOwnerInput = EventProductOwnerDraft & { id: string };
+
+function newProductOwnerInput(): ProductOwnerInput {
+  return { id: crypto.randomUUID(), name: "", reference: "" };
+}
 
 const paymentLabels: Record<EventPaymentMethod, string> = {
   CASH: "Cash",
@@ -116,6 +122,7 @@ function StartEventForm({
     location: string;
     currency: EventCurrency;
     openingCashCents: number;
+    productOwners: EventProductOwnerDraft[];
   }) => Promise<void>;
 }) {
   const [name, setName] = useState("Current Card Show");
@@ -123,6 +130,7 @@ function StartEventForm({
   const [location, setLocation] = useState("");
   const [currency, setCurrency] = useState<EventCurrency>("USD");
   const [openingCash, setOpeningCash] = useState("0.00");
+  const [productOwners, setProductOwners] = useState<ProductOwnerInput[]>([]);
   const [localError, setLocalError] = useState<string | null>(null);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -133,7 +141,17 @@ function StartEventForm({
       return;
     }
     setLocalError(null);
-    await onSubmit({ name, eventDate, location, currency, openingCashCents });
+    await onSubmit({
+      name,
+      eventDate,
+      location,
+      currency,
+      openingCashCents,
+      productOwners: productOwners.map((owner) => ({
+        name: owner.name,
+        reference: owner.reference,
+      })),
+    });
   }
 
   return (
@@ -209,6 +227,106 @@ function StartEventForm({
               />
             </label>
           </div>
+          <fieldset
+            aria-labelledby="event-product-owners-heading"
+            className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-4 lg:col-span-2"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3
+                  id="event-product-owners-heading"
+                  className="text-sm font-semibold text-zinc-200"
+                >
+                  Product owners · optional
+                </h3>
+                <p className="mt-1 max-w-2xl text-xs leading-5 text-zinc-500">
+                  Add consignors before opening. The roster locks when the
+                  event starts; house inventory is always available.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={productOwners.length >= 50}
+                onClick={() =>
+                  setProductOwners((current) => [
+                    ...current,
+                    newProductOwnerInput(),
+                  ])
+                }
+                className="min-h-11 rounded-lg border border-cyan-800 px-3 text-sm font-semibold text-cyan-200 disabled:opacity-50"
+              >
+                + Add product owner
+              </button>
+            </div>
+            {productOwners.length ? (
+              <div className="mt-4 space-y-3">
+                {productOwners.map((owner, index) => (
+                  <div
+                    key={owner.id}
+                    className="grid gap-2 rounded-lg border border-zinc-800 bg-zinc-900/70 p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end"
+                  >
+                    <label className="text-xs text-zinc-400">
+                      Owner name
+                      <input
+                        required
+                        maxLength={100}
+                        value={owner.name}
+                        onChange={(event) =>
+                          setProductOwners((current) =>
+                            current.map((candidate) =>
+                              candidate.id === owner.id
+                                ? { ...candidate, name: event.target.value }
+                                : candidate,
+                            ),
+                          )
+                        }
+                        placeholder={`Consignor ${index + 1}`}
+                        className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-zinc-100 outline-none focus:border-cyan-400"
+                      />
+                    </label>
+                    <label className="text-xs text-zinc-400">
+                      Reference · optional
+                      <input
+                        maxLength={120}
+                        value={owner.reference ?? ""}
+                        onChange={(event) =>
+                          setProductOwners((current) =>
+                            current.map((candidate) =>
+                              candidate.id === owner.id
+                                ? {
+                                    ...candidate,
+                                    reference: event.target.value,
+                                  }
+                                : candidate,
+                            ),
+                          )
+                        }
+                        placeholder="Vendor, booth, or account note"
+                        className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-base text-zinc-100 outline-none focus:border-cyan-400"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setProductOwners((current) =>
+                          current.filter(
+                            (candidate) => candidate.id !== owner.id,
+                          ),
+                        )
+                      }
+                      className="min-h-11 rounded-lg px-3 text-sm font-semibold text-red-300"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 rounded-lg border border-dashed border-zinc-800 px-3 py-4 text-center text-xs text-zinc-500">
+                No consignors added. Every sale will default to house inventory.
+              </p>
+            )}
+          </fieldset>
           <button
             disabled={pending}
             className="min-h-12 rounded-lg bg-cyan-300 px-5 font-semibold text-zinc-950 transition hover:bg-cyan-200 disabled:opacity-50 lg:col-span-2"
@@ -371,9 +489,14 @@ export default function EventLedgerWorkspace({
     location: string;
     currency: EventCurrency;
     openingCashCents: number;
+    productOwners: EventProductOwnerDraft[];
   }) {
     const success = await mutate({ action: "create-event", ...input });
-    if (success) setMessage("Event ledger started. Opening cash is locked in.");
+    if (success) {
+      setMessage(
+        "Event ledger started. Opening cash and product owners are locked in.",
+      );
+    }
   }
 
   async function recordEntry(event: React.FormEvent<HTMLFormElement>) {
@@ -391,6 +514,7 @@ export default function EventLedgerWorkspace({
         quantity: Number(item.quantity),
         inventoryItemId: item.inventoryItemId,
         caseItemId: item.caseItemId,
+        productOwnerId: item.productOwnerId ?? undefined,
       }));
       if (items.some((item) => !item.description.trim())) {
         setError("Describe every item sold.");
@@ -508,6 +632,7 @@ export default function EventLedgerWorkspace({
   const event = snapshot?.event ?? null;
   const summary = snapshot?.summary ?? null;
   const entries = snapshot?.entries ?? [];
+  const productOwners = snapshot?.productOwners ?? [];
   const canStartNewEvent = snapshot?.canStartNewEvent ?? false;
   const viewingPastReport = Boolean(initialEventId);
   const currency = event?.currency ?? null;
@@ -664,6 +789,38 @@ export default function EventLedgerWorkspace({
             />
           </section>
 
+          <section
+            aria-label="Event product owners"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-900/70 bg-violet-950/15 px-4 py-3"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-300">
+                Sale ownership
+              </p>
+              <p className="mt-1 text-sm text-zinc-300">
+                House inventory
+                {productOwners.length
+                  ? ` + ${productOwners.length} consignor${productOwners.length === 1 ? "" : "s"}`
+                  : " only"}
+              </p>
+            </div>
+            <div className="flex max-w-full flex-wrap justify-end gap-2">
+              {productOwners.map((owner) => (
+                <span
+                  key={owner.id}
+                  title={owner.reference}
+                  className="max-w-full truncate rounded-full border border-violet-800 bg-violet-950/30 px-2.5 py-1 text-xs text-violet-200"
+                >
+                  {owner.name}
+                  {owner.reference ? ` · ${owner.reference}` : ""}
+                </span>
+              ))}
+              <span className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-500">
+                Locked at opening
+              </span>
+            </div>
+          </section>
+
           <EventInventoryControl
             eventId={event.id}
             eventStatus={event.status}
@@ -749,6 +906,7 @@ export default function EventLedgerWorkspace({
                         eventId={event.id}
                         currency={event.currency}
                         items={saleItems}
+                        productOwners={productOwners}
                         onChange={setSaleItems}
                         disabled={pending}
                         refreshToken={stockRefreshToken}
@@ -979,11 +1137,19 @@ export default function EventLedgerWorkspace({
                         {entry.items.length ? (
                           <ul className="mt-3 space-y-1 text-sm text-zinc-300">
                             {entry.items.map((item) => (
-                              <li key={item.position}>
-                                <span className="font-semibold tabular-nums text-zinc-500">
-                                  {item.quantity}×
-                                </span>{" "}
-                                {item.description}
+                              <li
+                                key={item.position}
+                                className="flex flex-wrap items-center gap-x-2 gap-y-1"
+                              >
+                                <span>
+                                  <span className="font-semibold tabular-nums text-zinc-500">
+                                    {item.quantity}×
+                                  </span>{" "}
+                                  {item.description}
+                                </span>
+                                <span className="rounded-full border border-violet-900/80 bg-violet-950/20 px-2 py-0.5 text-[11px] font-medium text-violet-200">
+                                  {item.productOwnerName ?? "House inventory"}
+                                </span>
                               </li>
                             ))}
                           </ul>

@@ -812,6 +812,7 @@ export class DisplayCaseRepository {
           .join(" · "),
         quantity: item.quantity,
         caseItemId: item.caseItemId,
+        productOwnerId: item.productOwnerId,
         unitListPriceCents: Number(caseItem.current_sale_price_cents),
         color,
         variation: variation || undefined,
