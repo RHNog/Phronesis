@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-017 Ongoing Event Team Access
+
+- Added an `Event team` control to the active Event Ledger with distinct approved-account and temporary-worker paths.
+- Added Event Ledger presets plus immediate non-destructive Ledger assignment for existing permanent members.
+- Reused the secure temporary-access workflow in an exact current-event `EVENT_LEDGER:OPERATE` variant with close invalidation and filtered grant history.
+- Kept access management permanent-Administrator-only, directed compatibility sessions to sign in, and excluded live controls from historical reports.
+- Verified focused 13/13 and full 449/449 tests, TypeScript, lint, production build, diff hygiene, private HTTP 200, responsive overflow/touch behavior, historical-report separation, and zero browser-console entries.
+
 ## Unreleased — PHR-WORKFLOW-012 Authorized Case Source Preparation
 
 - Renamed the canonical native Sheet to `Phronesis Case Source — Opening Display Inventory` and documented its exact-email access rule in the Sheet.

@@ -43,6 +43,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Redemption creates a separate random session and an HttpOnly, SameSite=Lax cookie.
 - A task session expires at its configured expiry or grant revocation. An event session additionally ends immediately when its event closes.
 - Settings shows active and historical grants and permits immediate revocation.
+- The current active Event Ledger exposes a collapsed, in-context worker workflow that always grants exactly `EVENT_LEDGER:OPERATE`, lists only that event's Ledger grants, and disappears from historical reports.
 - The sign-in screen presents both permanent GitHub sign-in and event-code access.
 - Authorization audit records issuance, redemption, revocation, and event-session logout.
 - A successful code redemption returns the first authorized module destination so an Artwork Review-only worker lands on `/artwork-review` instead of an unauthorized default module.
@@ -74,6 +75,7 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 ## User Stories
 
 - As an owner, I can generate an event code for a worker without creating an external account.
+- As an owner, I can issue that event-only code after opening without leaving the active Event Ledger.
 - As an Artwork Review worker, I can enter one code on my phone without an Event Ledger event and work until the timer ends or access is revoked.
 - As an event worker, I can enter one code on my phone and work until the event or timer ends.
 - As an owner, I can revoke a worker immediately.
@@ -127,5 +129,5 @@ For workers who cannot install Tailscale, expose a separate localhost-only gatew
 - Originating direction: CTO request on 2026-07-31.
 - Related implementation prompt: `docs/prompts/PHR-ARCH-014-timed-event-worker-access-prompt.md`.
 - Related tests: `tests/timed-event-access.test.ts`.
-- Last modified: 2026-08-03.
-- Modification reason: Product Owner required account-free Artwork Review task access without an event and later required safe recovery after owner page navigation without weakening one-time-code storage.
+- Last modified: 2026-08-06.
+- Modification reason: expose exact Ledger-only temporary issuance inside the ongoing event while retaining all permanent-administrator, one-time-code, event-binding, and close-invalidation rules.

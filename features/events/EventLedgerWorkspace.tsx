@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import EventInventoryControl from "@/features/events/EventInventoryControl";
+import OngoingEventTeamAccess from "@/features/events/OngoingEventTeamAccess";
 import EventSaleItemsEditor, {
   newEventSaleItem,
   type EventSaleItemInput,
@@ -350,10 +351,16 @@ function StartEventForm({
 
 export default function EventLedgerWorkspace({
   canOperate,
+  canManageEventTeam,
+  eventTeamSignInRequired,
+  publicEventLoginUrl,
   caseSourceSheetUrl,
   initialEventId,
 }: {
   canOperate: boolean;
+  canManageEventTeam: boolean;
+  eventTeamSignInRequired: boolean;
+  publicEventLoginUrl: string | null;
   caseSourceSheetUrl: string | null;
   initialEventId: string | null;
 }) {
@@ -822,6 +829,14 @@ export default function EventLedgerWorkspace({
               </span>
             </div>
           </section>
+
+          {event.status === "ACTIVE" && !viewingPastReport ? (
+            <OngoingEventTeamAccess
+              canManage={canManageEventTeam}
+              signInRequired={eventTeamSignInRequired}
+              publicLoginUrl={publicEventLoginUrl}
+            />
+          ) : null}
 
           <EventInventoryControl
             eventId={event.id}

@@ -56,6 +56,7 @@ An authenticated person without an active membership is routed to an explicit wa
 - Keep the Sign Up invite generic and non-secret. Possession of the link must create no invitation, membership, entitlement, role, module assignment, or approval shortcut.
 - Require the owner to select at least one explicit module before approval.
 - Let the owner select `VIEW`, `OPERATE`, or `ADMIN` per assigned module using existing entitlement rules.
+- Let an Administration Admin add Event Ledger access to an already-approved account while an event is active; the next authorization decision observes the change without event restart or sign-out, and that permanent module access remains until explicitly changed.
 - Approval must be atomic, auditable, workspace-scoped, and idempotently fail closed when a request is no longer pending.
 - Rejection must be atomic, auditable, and create no membership.
 - Preserve direct invitation/activation-code workflows for owner-initiated onboarding.
@@ -165,6 +166,7 @@ The sign-in page leads with email/password and offers GitHub only when configure
 
 - Zero newly registered accounts receive a module before approval.
 - One owner action can approve a verified person and assign all intended modules.
+- One owner action can add `EVENT_LEDGER:OPERATE` to an existing approved member without removing that member's other modules.
 - Denied/pending users receive a clear recovery path instead of an empty application.
 
 ## Open Questions
@@ -181,4 +183,4 @@ The sign-in page leads with email/password and offers GitHub only when configure
 - Related conformance review: `docs/reviews/PHR-ARCH-016-trusted-account-registration-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-ARCH-016.md`.
 - Last modified: 2026-08-06.
-- Modification reason: add a safe owner-shareable Sign Up invite while preserving zero-access registration and restricted-public origin governance.
+- Modification reason: add discoverable ongoing-event assignment while preserving permanent-account lifecycle, explicit entitlements, and Administration-only mutation.

@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-06 — Ongoing Event Team Access
+
+- Source: Product Owner asked whether users could be added to an already-running Event Ledger and directed implementation if not.
+- Feature: `PHR-WORKFLOW-017`; assignment `PHR-ONGOING-EVENT-TEAM-20260806`.
+- Implementation prompt: `docs/prompts/PHR-WORKFLOW-017-ongoing-event-team-access-prompt.md`.
+- Result: active-ledger access hub, immediate non-destructive permanent Ledger assignment, exact event-bound temporary issuance, permanent administrator gating, and closed-report exclusion without a second authorization model.
+
 ## 2026-08-06 — Authorized Case Source Preparation
 
 - Source: Product Owner request to let authorized people edit the Case Source Google Sheet while preparing inventory.

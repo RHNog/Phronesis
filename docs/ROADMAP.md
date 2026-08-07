@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Ongoing Event Team Access
+
+- Implemented and privately live: active Event Ledger `Event team` surface with approved-account and event-bound temporary-worker paths (`PHR-WORKFLOW-017`).
+- Implemented: `Event Ledger only` approval/invitation presets, one-action non-destructive access for existing members, and collapsed exact-Ledger temporary issuance filtered to the current event.
+- Preserved: permanent `ADMINISTRATION:ADMIN` management, per-request SQLite authorization, one-time hashed worker codes, expiry/revocation/close invalidation, immutable product-owner rosters, and read-only historical reports.
+- Verified: focused 13/13, full 449/449, TypeScript, warning-free lint, production build, diff hygiene, private HTTP 200, desktop/390px no-overflow review, 44px phone action, historical-report exclusion, and zero browser errors.
+- Next: Product Owner signs in permanently and reviews the real approved-account and temporary-worker ceremonies. Identity-bound account access that expires with one event remains a future slice.
+
 ## Product Review Candidate: Authorized Case Source Preparation
 
 - Implemented and privately live: pre-event native Sheet access for active Inventory Operators, retained Event Ledger edit access, and server-only authorization-gated URL disclosure (`PHR-WORKFLOW-012`).

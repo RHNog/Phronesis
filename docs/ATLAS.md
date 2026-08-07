@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Ongoing Event Team Access
+
+- `PHR-WORKFLOW-017` makes both valid post-opening access lifecycles discoverable inside the active Event Ledger: persistent approved-account entitlements and exact-event temporary worker codes.
+- Permanent membership changes remain workspace-module authority and are read on every protected request. `Add Event Ledger` preserves other modules and persists `EVENT_LEDGER:OPERATE` immediately; it does not auto-expire with the event.
+- Temporary Ledger access remains an `EVENT` grant from `EventAccessRepository`: exactly `EVENT_LEDGER:OPERATE`, one active event, single-use code, hashed credential storage, bounded expiry, revocation, and immediate close invalidation.
+- Management still requires a permanent `ADMINISTRATION:ADMIN` membership. Compatibility and temporary principals cannot issue access, and historical reports never expose the live team surface.
+
 ## Authorized Case Source Preparation
 
 - `PHR-WORKFLOW-012` exposes the private native Case Source before event opening to active members with `INVENTORY:OPERATE` or stronger, without granting Event Ledger, Vendor Workspace, or Administration access.

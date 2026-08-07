@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-06 — Ongoing event staffing uses two explicit access lifecycles
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-WORKFLOW-017`).
+- **Decision:** An approved account may receive permanent `EVENT_LEDGER:VIEW`, `OPERATE`, or `ADMIN` while an event is active. The next protected request reads the updated membership entitlement; no event restart or sign-out is needed, and the entitlement persists until an administrator changes it.
+- **Decision:** A walk-up worker may instead receive an account-free event grant created after opening. The in-ledger path hard-wires exactly `EVENT_LEDGER:OPERATE`; expiry, revocation, or the exact event's close ends it.
+- **Decision:** Access management continues to require permanent `ADMINISTRATION:ADMIN`. Compatibility and temporary principals are never promoted into management, and closed reports never display live staffing controls.
+- **Consequences:** The owner can staff an ongoing event without rebuilding ledger evidence or over-granting modules. Event-specific expiration for a permanent identity remains a future identity-bound grant model rather than an ambiguous membership rule.
+
 ## 2026-08-06 — Case Source collaboration uses two explicit authorization gates
 
 - **Status:** Implemented and privately live; Product Review pending (`PHR-WORKFLOW-012`).

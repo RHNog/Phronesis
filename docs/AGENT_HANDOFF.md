@@ -1,5 +1,13 @@
 # Agent Handoff
 
+## Product Review Candidate — Ongoing Event Team Access — 2026-08-06
+
+- `PHR-WORKFLOW-017` adds `Event team` inside the current active Event Ledger and keeps mutable user access separate from the product-owner roster locked at opening.
+- Approved accounts deep-link to People & access. Pending/direct flows include `Event Ledger only`, and an existing member's `Add Event Ledger` action persists `EVENT_LEDGER:OPERATE` immediately while preserving every other module.
+- Temporary workers use the existing single-use, hashed, audited event grant with exactly `EVENT_LEDGER:OPERATE`; it ends at expiry, revocation, or event close and lists only the current event inside the embedded view.
+- Access management requires permanent `ADMINISTRATION:ADMIN` plus a membership. The current compatibility session receives a truthful sign-in action, temporary workers cannot manage grants, and historical reports omit Event team entirely.
+- Focused 13/13, full 449/449, TypeScript, warning-free lint, production build, diff hygiene, private HTTP 200, desktop/390px no-overflow checks, 44px phone action, closed-report exclusion, and zero browser errors pass. No live account, grant, membership, entitlement, or ledger data was changed. Same-session conformance is not independent Product Owner approval.
+
 ## Product Review Candidate — Authorized Case Source Preparation — 2026-08-06
 
 - `PHR-WORKFLOW-012` now exposes `Phronesis Case Source — Opening Display Inventory` before event opening to active members with `INVENTORY:OPERATE` or stronger.

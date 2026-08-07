@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Ongoing Event Team Access
+
+- Assignment: `PHR-ONGOING-EVENT-TEAM-20260806`
+- Feature: `PHR-WORKFLOW-017`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: let administrators add approved accounts or event-bound temporary workers after an Event Ledger has started, without recreating the event or changing ledger evidence.
+- Account rule: `EVENT_LEDGER:VIEW` or `OPERATE` assigned to an active permanent membership takes effect on the next request and persists until explicitly changed.
+- Temporary rule: an account-free code created after opening is bound to the exact active event and ends at expiry, revocation, or event close.
+- Authorization rule: access management continues to require permanent `ADMINISTRATION:ADMIN`; compatibility and temporary sessions cannot issue access.
+- UX rule: active Event Ledger distinguishes both paths, embeds a collapsed Ledger-only temporary form, and deep-links permanent account management with Event Ledger presets.
+- Work order: `docs/prompts/PHR-WORKFLOW-017-ongoing-event-team-access-prompt.md`.
+- Verification: focused 13/13 ongoing/timed access tests, full 449/449 suite, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, private HTTP 200, desktop/390px no-overflow review, 44px phone action, historical-report exclusion, and zero browser-console entries pass.
+- Runtime: the active Event Ledger exposes Event team at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/event-ledger`. The current compatibility principal is truthfully directed to permanent owner sign-in before access management.
+- Next accountable role: Product Owner signs in with the permanent owner account and reviews both account and temporary-worker paths. Same-session conformance is not independent approval.
+
 ## Active Revision — Authorized Case Source Preparation
 
 - Assignment: `PHR-CASE-SOURCE-COLLABORATION-20260806`

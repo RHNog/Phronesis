@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Ongoing Event Team Access
+
+### User Intent
+
+- Confirm whether people can be added to an Event Ledger after it has opened and implement the capability if it is not operationally ready.
+
+### Decision And Implementation
+
+- Preserved the two existing authorization lifecycles instead of inventing a second ledger or user store: persistent module entitlements for approved accounts and exact-event account-free grants for temporary workers.
+- Added `Event team` to the active ledger with explicit lifecycle copy, a People & access deep link, Event Ledger approval/invitation presets, and immediate non-destructive access for existing members.
+- Embedded a collapsed temporary form that always grants exactly `EVENT_LEDGER:OPERATE` for the current event and filters its history accordingly.
+- Required permanent `ADMINISTRATION:ADMIN` plus membership for management, directed compatibility sessions to permanent sign-in, and excluded live controls from historical reports.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. Focused 13/13 and full 449/449 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, private HTTP 200, 1280px and 390px no-overflow review, 44px phone action, closed-report exclusion, and zero browser-console entries pass. No live account, grant, membership, entitlement, or ledger state was changed during validation. A permanent owner sign-in is required before exercising real access administration.
+
 ## 2026-08-06 — Authorized Case Source Preparation
 
 ### User Intent

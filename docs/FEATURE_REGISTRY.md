@@ -98,6 +98,7 @@ The Feature Registry records permanent Project Phronesis feature identifiers and
 | `PHR-WORKFLOW-013` | Event Flip Queue                                  | Implemented — Product Review Pending                 | Workflow / Inventory / Event Operations / Audit / UX                         | `docs/workflows/PHR-WORKFLOW-013-event-flip-queue.md`                      |
 | `PHR-WORKFLOW-014` | Display Case Inventory                            | Implemented — Product Review Pending                 | Workflow / Database / Inventory / Event Operations / Audit / Reporting / UX  | `docs/workflows/PHR-WORKFLOW-014-display-case-inventory.md`                |
 | `PHR-WORKFLOW-015` | Binder Inventory                                  | Backlog — Product Intent Recorded                    | Backlog / Workflow / Inventory / Event Operations / UX                       | `docs/backlog/PHR-WORKFLOW-015-binder-inventory.md`                        |
+| `PHR-WORKFLOW-017` | Ongoing Event Team Access                         | Implemented — Privately Live; Product Review Ready   | Workflow / Authentication / Authorization / Event Operations / UX            | `docs/workflows/PHR-WORKFLOW-017-ongoing-event-team-access.md`             |
 
 ## Registry Rule
 

@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-08-06 — Ongoing Event Team Access
+
+Added a live `Event team` workflow to the current Event Ledger. Approved accounts can receive `EVENT_LEDGER:OPERATE` immediately without losing existing modules, while account-free temporary workers receive one exact-event Ledger code that expires, revokes, or closes with the event. Management still requires permanent Administration Admin authority; compatibility sessions are directed to sign in and historical reports hide live controls. Focused 13/13, full 449/449, TypeScript, lint, production build, diff hygiene, private health, desktop/390px overflow, 44px action, historical-report exclusion, and console gates pass. Product Review remains pending.
+
 ## 2026-08-06 — Authorized Case Source Preparation
 
 Extended `PHR-WORKFLOW-012` so active Inventory Operators can reach the private native Case Source before an event without receiving selling or Administration access. Moved the Sheet URL server-side, added a pre-event Display Case card, retained Event Ledger editing, added a Case-only entitlement preset and exact eligible-editor roster, and updated the renamed Sheet's own instructions. Google Editor permission remains an independent explicit-email owner action and Drive metadata remains owner-only until a real approved preparer exists. Full 446/446 tests, TypeScript, lint, build, diff hygiene, private health, desktop/390px overflow, 44px action, copy-feedback, and console gates pass. Product Review remains pending.

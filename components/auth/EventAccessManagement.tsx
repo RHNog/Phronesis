@@ -3,12 +3,18 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ModuleEntitlement } from "@/lib/auth/domain";
 import CopyTextButton from "@/components/ui/CopyTextButton";
-import { forgetIssuedCode, rememberIssuedCode, restoreIssuedCode } from "@/lib/auth/EventAccessIssuedCodeStorage";
+import {
+  forgetIssuedCode,
+  rememberIssuedCode,
+  restoreIssuedCode,
+  type StoredEventAccessCode,
+} from "@/lib/auth/EventAccessIssuedCodeStorage";
 
 type EventSummary = { id: string; name: string; event_date: string };
 type Grant = {
   id: string;
   scopeType: "EVENT" | "TASK";
+  eventId: string | null;
   eventName: string | null;
   workerLabel: string;
   entitlements: ModuleEntitlement[];
@@ -17,26 +23,50 @@ type Grant = {
   code?: string;
 };
 
+type EventAccessVariant = "SETTINGS" | "EVENT_LEDGER";
+type IssuedGrant = Grant | StoredEventAccessCode;
+
+function grantsForVariant(
+  grants: readonly Grant[],
+  event: EventSummary | null,
+  variant: EventAccessVariant,
+): Grant[] {
+  if (variant === "SETTINGS") return [...grants];
+  if (!event) return [];
+  return grants.filter(
+    (grant) =>
+      grant.scopeType === "EVENT" &&
+      grant.eventId === event.id &&
+      grant.entitlements.length === 1 &&
+      grant.entitlements[0]?.module === "EVENT_LEDGER" &&
+      grant.entitlements[0].access === "OPERATE",
+  );
+}
+
 export default function EventAccessManagement({
   active,
   publicLoginUrl,
+  variant = "SETTINGS",
 }: {
   active: boolean;
   publicLoginUrl: string | null;
+  variant?: EventAccessVariant;
 }) {
+  const eventLedgerOnly = variant === "EVENT_LEDGER";
   const [event, setEvent] = useState<EventSummary | null>(null);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [name, setName] = useState("");
   const [hours, setHours] = useState(12);
   const [vendor, setVendor] = useState(false);
-  const [ledger, setLedger] = useState(false);
+  const [ledger, setLedger] = useState(eventLedgerOnly);
   const [flip, setFlip] = useState(false);
   const [inventory, setInventory] = useState(false);
-  const [artworkReview, setArtworkReview] = useState(true);
-  const [issued, setIssued] = useState<Grant | null>(null);
+  const [artworkReview, setArtworkReview] = useState(!eventLedgerOnly);
+  const [issued, setIssued] = useState<IssuedGrant | null>(null);
   const [replaceConfirmId, setReplaceConfirmId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const eventBound = vendor || ledger || flip || inventory;
+  const eventBound = eventLedgerOnly || vendor || ledger || flip || inventory;
+  const visibleGrants = grantsForVariant(grants, event, variant);
 
   const load = useCallback(async () => {
     if (!active) return;
@@ -48,9 +78,16 @@ export default function EventAccessManagement({
     const body = (await response.json()) as { event: EventSummary | null; grants: Grant[] };
     setEvent(body.event);
     setGrants(body.grants);
-    const restored = restoreIssuedCode(window.sessionStorage, new Set(body.grants.filter((grant) => grant.status === "ACTIVE").map((grant) => grant.id)));
+    const restored = restoreIssuedCode(
+      window.sessionStorage,
+      new Set(
+        grantsForVariant(body.grants, body.event, variant)
+          .filter((grant) => grant.status === "ACTIVE")
+          .map((grant) => grant.id),
+      ),
+    );
     setIssued(restored);
-  }, [active]);
+  }, [active, variant]);
 
   useEffect(() => {
     if (!active) return;
@@ -64,7 +101,14 @@ export default function EventAccessManagement({
         if (!cancelled) {
           setEvent(body.event);
           setGrants(body.grants);
-          const restored = restoreIssuedCode(window.sessionStorage, new Set(body.grants.filter((grant) => grant.status === "ACTIVE").map((grant) => grant.id)));
+          const restored = restoreIssuedCode(
+            window.sessionStorage,
+            new Set(
+              grantsForVariant(body.grants, body.event, variant)
+                .filter((grant) => grant.status === "ACTIVE")
+                .map((grant) => grant.id),
+            ),
+          );
           setIssued(restored);
         }
       })
@@ -78,16 +122,20 @@ export default function EventAccessManagement({
     return () => {
       cancelled = true;
     };
-  }, [active]);
+  }, [active, variant]);
 
   async function create(submission: React.FormEvent) {
     submission.preventDefault();
     const entitlements: ModuleEntitlement[] = [];
-    if (vendor) entitlements.push({ module: "VENDOR_WORKSPACE", access: "OPERATE" });
-    if (ledger) entitlements.push({ module: "EVENT_LEDGER", access: "OPERATE" });
-    if (flip) entitlements.push({ module: "EVENT_FLIP", access: "OPERATE" });
-    if (inventory) entitlements.push({ module: "INVENTORY", access: "OPERATE" });
-    if (artworkReview) entitlements.push({ module: "ARTWORK_REVIEW", access: "OPERATE" });
+    if (eventLedgerOnly) {
+      entitlements.push({ module: "EVENT_LEDGER", access: "OPERATE" });
+    } else {
+      if (vendor) entitlements.push({ module: "VENDOR_WORKSPACE", access: "OPERATE" });
+      if (ledger) entitlements.push({ module: "EVENT_LEDGER", access: "OPERATE" });
+      if (flip) entitlements.push({ module: "EVENT_FLIP", access: "OPERATE" });
+      if (inventory) entitlements.push({ module: "INVENTORY", access: "OPERATE" });
+      if (artworkReview) entitlements.push({ module: "ARTWORK_REVIEW", access: "OPERATE" });
+    }
     if (!entitlements.length) {
       setMessage("Assign at least one temporary-access module.");
       return;
@@ -162,11 +210,15 @@ export default function EventAccessManagement({
   }
 
   return (
-    <section className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5" aria-labelledby="temporary-access-title">
+    <section className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5" aria-labelledby={eventLedgerOnly ? "event-ledger-worker-access-title" : "temporary-access-title"}>
       <p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Access security</p>
-      <h3 id="temporary-access-title" className="mt-2 text-lg font-semibold text-white">Temporary worker login</h3>
+      <h3 id={eventLedgerOnly ? "event-ledger-worker-access-title" : "temporary-access-title"} className="mt-2 text-lg font-semibold text-white">
+        {eventLedgerOnly ? "Temporary Event Ledger worker" : "Temporary worker login"}
+      </h3>
       <p className="mt-2 text-sm leading-6 text-zinc-400">
-        Generate account-free access. Artwork Review-only access needs no event and ends at the selected time or when revoked. Transactional access also ends when its Event Ledger event closes.
+        {eventLedgerOnly
+          ? "Generate account-free Event Ledger access for this event. It ends at the selected time, when revoked, or immediately when the event closes."
+          : "Generate account-free access. Artwork Review-only access needs no event and ends at the selected time or when revoked. Transactional access also ends when its Event Ledger event closes."}
       </p>
 
       {!active ? (
@@ -181,13 +233,15 @@ export default function EventAccessManagement({
             </p>
           ) : (
             <p className="rounded-lg border border-violet-800 bg-violet-950/20 p-3 text-sm text-violet-100">
-              Artwork Review task access is available now. Transactional modules unlock after an Event Ledger event starts.
+              {eventLedgerOnly
+                ? "The Event Ledger is no longer active. Reload the ledger before issuing access."
+                : "Artwork Review task access is available now. Transactional modules unlock after an Event Ledger event starts."}
             </p>
           )}
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_9rem]">
             <label className="text-sm text-zinc-300">
               Worker name or station
-              <input required minLength={2} maxLength={80} value={name} onChange={(change) => setName(change.target.value)} placeholder="Artwork desk — Ana" className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-white" />
+              <input required minLength={2} maxLength={80} value={name} onChange={(change) => setName(change.target.value)} placeholder={eventLedgerOnly ? "Front counter — Ana" : "Artwork desk — Ana"} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-white" />
             </label>
             <label className="text-sm text-zinc-300">
               Duration
@@ -196,21 +250,33 @@ export default function EventAccessManagement({
               </select>
             </label>
           </div>
-          <fieldset>
-            <legend className="text-sm text-zinc-300">Assigned access</legend>
-            <button type="button" onClick={artworkOnly} className="mt-2 min-h-11 rounded-lg border border-violet-700 px-3 text-sm font-semibold text-violet-200">
-              Artwork Review only
-            </button>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" checked={artworkReview} onChange={(change) => setArtworkReview(change.target.checked)} /> Artwork Review</label>
-              <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={vendor} onChange={(change) => setVendor(change.target.checked)} /> Vendor Workspace {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
-              <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={ledger} onChange={(change) => setLedger(change.target.checked)} /> Event Ledger {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
-              <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={flip} onChange={(change) => setFlip(change.target.checked)} /> Event Flip {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
-              <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={inventory} onChange={(change) => setInventory(change.target.checked)} /> General Inventory / Display Case {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
+          {eventLedgerOnly ? (
+            <div className="rounded-lg border border-emerald-900/70 bg-emerald-950/20 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">Assigned access</p>
+              <p className="mt-1 text-sm font-semibold text-emerald-100">Event Ledger · Operate</p>
+              <p className="mt-1 text-xs leading-5 text-zinc-500">No other Phronesis module is included from this embedded workflow.</p>
             </div>
-          </fieldset>
+          ) : (
+            <fieldset>
+              <legend className="text-sm text-zinc-300">Assigned access</legend>
+              <button type="button" onClick={artworkOnly} className="mt-2 min-h-11 rounded-lg border border-violet-700 px-3 text-sm font-semibold text-violet-200">
+                Artwork Review only
+              </button>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" checked={artworkReview} onChange={(change) => setArtworkReview(change.target.checked)} /> Artwork Review</label>
+                <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={vendor} onChange={(change) => setVendor(change.target.checked)} /> Vendor Workspace {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
+                <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={ledger} onChange={(change) => setLedger(change.target.checked)} /> Event Ledger {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
+                <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={flip} onChange={(change) => setFlip(change.target.checked)} /> Event Flip {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
+                <label className="flex min-h-11 items-center gap-2 text-sm text-zinc-200"><input type="checkbox" disabled={!event} checked={inventory} onChange={(change) => setInventory(change.target.checked)} /> General Inventory / Display Case {!event ? <span className="text-xs text-zinc-500">Event required</span> : null}</label>
+              </div>
+            </fieldset>
+          )}
           <button className="min-h-11 rounded-lg bg-cyan-300 px-4 font-semibold text-zinc-950">
-            {eventBound ? "Generate event code" : "Generate timed task code"}
+            {eventLedgerOnly
+              ? "Generate Event Ledger code"
+              : eventBound
+                ? "Generate event code"
+                : "Generate timed task code"}
           </button>
         </form>
       )}
@@ -228,10 +294,12 @@ export default function EventAccessManagement({
         </div>
       ) : null}
 
-      {grants.length ? (
+      {visibleGrants.length ? (
         <div className="mt-6 space-y-3">
-          <h4 className="text-sm font-semibold text-zinc-200">Issued temporary access</h4>
-          {grants.map((grant) => (
+          <h4 className="text-sm font-semibold text-zinc-200">
+            {eventLedgerOnly ? "Current Event Ledger access" : "Issued temporary access"}
+          </h4>
+          {visibleGrants.map((grant) => (
             <article key={grant.id} className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
