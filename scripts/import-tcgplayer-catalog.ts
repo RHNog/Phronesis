@@ -3,6 +3,7 @@ import { closeSync, openSync, readSync } from "node:fs";
 import { resolve } from "node:path";
 import { operationalPricingDatabasePath } from "../lib/pricing/databasePath";
 import { PricingRepository } from "../lib/pricing/repository";
+import { rebuildPokemonRegionalCrosswalk } from "../lib/regional/pokemonReconciliation";
 import {
   readTcgplayerCatalog,
   TCGPLAYER_CATALOG_CONTRACT_VERSION,
@@ -57,4 +58,21 @@ try {
   process.stdout.write(`${JSON.stringify({ ...result, categoryId: category, checkpointAt })}\n`);
 } finally {
   repository.close();
+}
+
+if (category === "pokemon-en") {
+  try {
+    const regional = rebuildPokemonRegionalCrosswalk({ databasePath });
+    process.stdout.write(
+      `${JSON.stringify({ event: "pokemon-regional-crosswalk-reconciled", sourceRunId: regional.sourceRunId, matched: regional.matched, targetExact: regional.targetExact, targetCompatible: regional.targetCompatible, fingerprint: regional.targetLedgerFingerprint })}\n`,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes("No complete LigaPokemon dry-run snapshot")) {
+      throw error;
+    }
+    process.stdout.write(
+      `${JSON.stringify({ event: "pokemon-regional-crosswalk-skipped", reason: "NO_COMPLETE_SNAPSHOT" })}\n`,
+    );
+  }
 }

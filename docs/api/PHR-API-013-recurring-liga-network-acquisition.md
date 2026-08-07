@@ -42,7 +42,7 @@ LigaMagic regional evidence is frozen at the July 30 supervised run. There is no
 - Add a once-only regional acquisition orchestrator with an exclusive lock, atomic status receipt, last-good preservation, and sanitized errors.
 - Run LigaMagic daily at 03:00 America/New_York through a repository-owned per-user LaunchAgent definition.
 - Register LigaPokemon profile/pilot/full-snapshot commands. Recurrence reports `NOT_CONFIGURED` until the Product Owner completes login and a pilot validates the exact format; it must not scrape public marketplace pages or assume schema compatibility.
-- After a complete LigaMagic snapshot, rebuild the operational Magic regional crosswalk. LigaPokemon promotion into arbitrage remains gated on its verified pilot and a separate exact Pokémon crosswalk result.
+- After a complete LigaMagic snapshot, rebuild the operational Magic regional crosswalk. After a complete LigaPokemon snapshot, rebuild the strict Pokémon source crosswalk and the Vendor target-equivalence ledger defined by `PHR-API-016`; only strict source-crosswalk matches may feed Arbitrage.
 
 ## Functional Requirements
 
@@ -57,6 +57,7 @@ LigaMagic regional evidence is frozen at the July 30 supervised run. There is no
 - The only approved count exception is LigaPokemon `Lote 10 (9.704 cards)`: the repeat-identical 9,700-card collection-model CSV is authoritative. Receipts and snapshots must preserve both the source-advertised 9,704 and authoritative 9,700 values plus `PRODUCT_OWNER_EXPORT` provenance. Any other label or quantity fails closed.
 - The recurring orchestrator prevents overlap, records provider outcomes, preserves last-good runs, and never deletes failed evidence automatically.
 - LigaMagic success triggers regional reconciliation against the canonical pricing database.
+- LigaPokemon success triggers `PHR-API-016` reconciliation against the canonical Pokémon catalogue. Exact and compatible target dispositions may appear in Vendor Workspace, while compatible evidence remains excluded from Arbitrage.
 - LigaPokemon absence or expired authentication is explicit and does not invalidate last-good LigaMagic evidence.
 - The LaunchAgent definition schedules 03:00 local time and uses the canonical JarvisSSD checkout.
 
@@ -133,7 +134,7 @@ Not applicable to this command-line acquisition slice.
 
 ## Future Enhancements
 
-- Exact LigaPokemon-to-TCGplayer Pokémon crosswalk and two-way Pokémon arbitrage.
+- Two-way Pokémon arbitrage beyond the strict exact source-crosswalk authority. Vendor-facing exact and bounded-compatible reconciliation is implemented by `PHR-API-016`.
 - Owner-triggered acquisition and reauthentication actions in Settings after a separate audited security/workflow decision. Read-only owner-facing acquisition health is implemented by `PHR-UX-012`.
 
 ## Technical Notes
@@ -149,12 +150,12 @@ CLI outcomes use concise provider-specific states and exact reauthentication ins
 - One complete LigaMagic snapshot per authorized day or one actionable failure receipt.
 - Zero overlapping acquisitions.
 - Zero credential/session values in repository or generated receipts.
-- LigaPokemon remains unpromoted until a complete count-reconciled snapshot and a separately approved exact regional crosswalk exist.
+- Incomplete LigaPokemon acquisitions never replace last-good evidence; complete acquisitions deterministically rebuild the `PHR-API-016` strict crosswalk and target-equivalence ledger.
 
 ## Open Questions
 
 - Should LigaPokemon's repeat-identical Lote 4 export of 9,868 cards become authoritative over the source label's 9,870 claim? It remains `SOURCE_COUNT_MISMATCH` because the Product Owner authorized only Lote 10's 9,700-card export.
-- LigaPokemon regional promotion still requires its separately approved exact Pokémon crosswalk.
+- No open reconciliation question remains for Vendor Workspace; `PHR-API-016` now owns exact and bounded-compatible LigaPokemon display coverage. Arbitrage remains limited to its strict source crosswalk.
 
 ## Traceability
 
@@ -163,4 +164,4 @@ CLI outcomes use concise provider-specific states and exact reauthentication ins
 - Related tests: `docs/testing/PHR-API-013-recurring-liga-network-acquisition-validation.md`.
 - Related release notes: `docs/release-notes/PHR-API-013.md`.
 - Last modified: 2026-08-07.
-- Modification reason: cross-reference the implemented read-only Settings health projection while retaining owner-triggered acquisition and reauthentication as separate future decisions.
+- Modification reason: connect complete LigaPokemon acquisition to the implemented `PHR-API-016` reconciliation products while preserving fail-closed acquisition and strict Arbitrage boundaries.

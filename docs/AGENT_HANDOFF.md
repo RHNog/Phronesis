@@ -2,12 +2,13 @@
 
 ## Product Review Candidate — Vendor Workspace Liga And PriceCharting Stack — 2026-08-07
 
-- `PHR-UX-013` is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.
-- The selected-card Snapshot evidence contains one TCGplayer + LigaMagic/LigaPokémon raw-card card. The provider-aware API returns only exact promoted matches and discloses provider, observation, source run, and Pokémon condition/language.
-- Magic currently resolves from latest complete last-good `dry-run-20260730T203243818Z`; Pokémon resolves from promoted `dry-run-20260805T070105248Z`. Acquisition health and usable last-good evidence are intentionally separate.
-- PriceCharting is closed by default immediately below the combined card, loads after expansion, resets closed when selection changes, and owns the single certificate lookup. Buying decision has no duplicate regional panel.
-- Full 461/461 tests, TypeScript, warning-free lint/build, diff hygiene, live APIs, live Magic/Pokémon selection, disclosure expansion, and 364-pixel evidence-column no-overflow/81-pixel summary checks pass.
-- No provider acquisition or credential change occurred. Next: Product Owner reviews the live Vendor Workspace. Same-session conformance is not independent approval.
+- `PHR-API-016` and `PHR-UX-013` are privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.
+- The selected-card Snapshot evidence contains one TCGplayer + LigaMagic/LigaPokémon raw-card card. Pokémon now reads 30,864 exact plus 2,681 bounded-compatible target matches, disclosing provider, observation, source run, condition/language, quality, method, confidence, and reason.
+- Gardevoir GX Hidden Fates: Shiny Vault `SV75/SV94` resolves to HIF/SV75 Holofoil, NM/EN, R$169.90 from promoted run `dry-run-20260805T070105248Z` at 92% exact structural confidence.
+- Compatible evidence is comparison-only and excluded from Arbitrage. Ambiguous/unavailable targets remain unpriced; the 26,288-row strict source crosswalk remains Arbitrage authority.
+- PriceCharting stays closed by default immediately below the combined card, loads after expansion, resets closed when selection changes, and owns the single certificate lookup.
+- The operational rebuild is recoverable through `.data/backups/mobile-review-before-phr-api-016-20260807T143515Z.sqlite`; database integrity is `ok`.
+- Full 465/465 tests, TypeScript, warning-free lint/build, diff hygiene, complete-snapshot replay, live exact/compatible selections, and 328-pixel no-overflow evidence checks pass. No provider acquisition, credential, source snapshot, transaction workflow, or public route changed. Next: Product Owner reviews the live evidence. Same-session conformance is not independent approval.
 
 ## Product Review Candidate — Provider Connections And Regional Health — 2026-08-07
 
@@ -102,7 +103,7 @@
 - `PHR-TECH-012` resolves the zero Arbitrage queue to a private runtime selecting `.data/pricing-lookup.sqlite` rather than the verified `.data/mobile-review.sqlite`; the former has zero matches and the latter has 131,869.
 - All supported runtime and maintenance paths now share the operational resolver. Private launch supervises the catalogue observer, and new Magic imports or complete LigaMagic runs rebuild regional reconciliation.
 - `PHR-API-013` adds a daily 03:00 LigaMagic LaunchAgent, overlap lock, same-day idempotency, atomic status, complete-receipt gate, and independent provider results.
-- LigaPokemon has isolated profile/pilot/full commands, an authenticated 20-column parser, and isolated snapshots. Its Lote 1 pilot passed at 9,772/9,772. The Product Owner authorized Lote 10's repeat-identical 9,700-card export over its 9,704 label through an exact provenance-bearing exception. Full acquisition then reached Lote 4 and failed closed at 9,868 exported versus 9,870 advertised; regional Pokémon promotion is not implemented.
+- LigaPokemon has isolated profile/pilot/full commands, an authenticated 20-column parser, and isolated snapshots. Its Lote 1 pilot passed at 9,772/9,772. The Product Owner authorized Lote 10's repeat-identical 9,700-card export over its 9,704 label through an exact provenance-bearing exception. Full acquisition then reached Lote 4 and failed closed at 9,868 exported versus 9,870 advertised. At this historical checkpoint regional Pokémon promotion was not implemented; the 2026-08-07 `PHR-API-016` handoff above supersedes that limitation for complete snapshots and Vendor evidence.
 - The five TCG catalogue checkpoints remain at 2026-08-01. The sibling acquisition dashboard is down and its four-daily schedule is stale; do not represent Phronesis catalogue data as up to date.
 - Focused checks and full 392/392 tests, TypeScript, warning-free lint, production build, plist validation, and diff hygiene pass. Same-session conformance passes but is not independent approval.
 - Live recovery passed: the supervisor owns observer plus Next.js, and the API returns 50 ranked identity-verified candidates instead of zero. They remain blocked by incomplete route costs and zero availability verifications.

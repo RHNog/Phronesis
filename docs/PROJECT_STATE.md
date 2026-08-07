@@ -3,12 +3,13 @@
 
 ## 2026-08-07 Vendor Workspace Regional Evidence State
 
-- `PHR-UX-013` is restored and privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.
-- Selected Magic and English Pokémon singles now show one `Raw-card market evidence` card containing TCGplayer plus LigaMagic or LigaPokémon respectively. Buying decision contains no duplicate regional panel.
-- Live LigaMagic reads use the newest complete last-good operational run `dry-run-20260730T203243818Z`. The later reauthentication-required acquisition state does not replace it. Live LigaPokémon reads use promoted run `dry-run-20260805T070105248Z` with condition/language provenance.
-- PriceCharting is directly below the combined card, closed on selection, lazy on expansion, and contains the single grading-certificate path. Live expansion returned provider candidates without changing raw-card valuation.
-- All 461 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, live provider APIs, selection switching, lazy disclosure behavior, and 364-pixel evidence-column no-overflow checks pass.
-- No acquisition, reauthentication, crosswalk rebuild, credential mutation, transaction, or public deployment occurred. Product Owner visual acceptance is next.
+- `PHR-API-016` and `PHR-UX-013` are privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.
+- Selected Magic and English Pokémon singles show one `Raw-card market evidence` card containing TCGplayer plus LigaMagic or LigaPokémon respectively. PriceCharting remains a collapsed lazy card immediately below; Buying decision contains no duplicate regional panel.
+- Pokémon Vendor reads now use the complete target-equivalence ledger: 30,864 exact, 2,681 compatible, 103 ambiguous, and 13,003 unavailable targets. Exact plus compatible coverage is 33,545, including 33,190 with Liga consumer-price evidence; the former live path exposed only 25,549 legacy exact targets.
+- Gardevoir GX Hidden Fates: Shiny Vault `SV75/SV94` resolves at 92% exact structural confidence to promoted HIF/SV75 Holofoil, NM/EN evidence from `dry-run-20260805T070105248Z`, consumer low/average/high R$169.90.
+- Compatible evidence is visibly labelled with method, confidence, and comparison-only/Arbitrage-excluded copy. Ambiguous and unavailable targets remain unpriced. The strict source crosswalk contains 26,288 accepted mappings and remains Arbitrage authority.
+- A verified 1.8 GB pre-change backup is retained at `.data/backups/mobile-review-before-phr-api-016-20260807T143515Z.sqlite`. Source and target fingerprints are `fedfd9adb99e465f351189f4a5f8a02e96943b8af908baae6da175f1fb37de70` and `27f87216714097d7a0cb1eb1e2a17a966f5faf4ec2236fc0b6a4d4881b84aa93`; operational integrity is `ok`.
+- All 465 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, complete-snapshot dry run, live exact/compatible selections, and 328-pixel evidence-card no-overflow check pass. No provider acquisition, credential, source snapshot, transaction workflow, or public deployment changed. Product Owner review is next.
 
 ## 2026-08-07 Provider Connections State
 

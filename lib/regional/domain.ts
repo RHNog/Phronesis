@@ -17,6 +17,10 @@ export type RegionalMarketEvidence = {
   providerId: "ligamagic" | "ligapokemon";
   providerLabel: "LigaMagic" | "LigaPokémon";
   sourceRunId: string;
+  matchQuality: "EXACT" | "COMPATIBLE";
+  matchMethod: string;
+  matchConfidence: number;
+  matchReason: string;
   ligaIdentityKey: string;
   categoryId: string;
   sku: string;
@@ -34,6 +38,15 @@ export type RegionalMarketEvidence = {
   storeBuyLowCentavos: number | null;
   storeBuyAverageCentavos: number | null;
   storeBuyHighCentavos: number | null;
+};
+
+export type RegionalProductEquivalenceDisposition = {
+  providerId: RegionalMarketEvidence["providerId"];
+  providerLabel: RegionalMarketEvidence["providerLabel"];
+  status: "EXACT" | "COMPATIBLE" | "AMBIGUOUS" | "UNAVAILABLE";
+  method: string;
+  confidence: number;
+  reason: string;
 };
 
 export type RegionalCostProfile = {

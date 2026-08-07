@@ -8,6 +8,10 @@ Phronesis uses provider-owned raw evidence, strict contracts, and last-good pres
 
 `PHR-API-013`
 
+## Supersession Note
+
+This prompt preserves the original acquisition-only work-order boundary. `PHR-API-016` subsequently approved and implemented the complete-snapshot Pokémon reconciliation handoff; use its prompt for current crosswalk and Vendor target-equivalence behavior.
+
 ## Objective
 
 Add a reliable daily LigaMagic acquisition lane and an isolated, pilot-gated LigaPokemon acquisition connector.

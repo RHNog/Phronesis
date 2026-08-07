@@ -32,6 +32,7 @@ import {
   type ArbitrageDirection,
   type RegionalCostProfile,
   type RegionalMarketEvidence,
+  type RegionalProductEquivalenceDisposition,
 } from "@/lib/regional/domain";
 import { normalizeSearchText } from "@/lib/pricing/domain";
 
@@ -426,17 +427,60 @@ export class RegionalIntelligenceRepository {
   }
 
   evidenceFor(categoryId: string, sku: string): RegionalMarketEvidence | null {
-    const row =
+    let row: Sql | undefined;
+    if (
       categoryId === "pokemon-en" &&
       this.tableExists("regional_pokemon_crosswalk") &&
       this.tableExists("regional_pokemon_evidence")
-        ? (this.database
-            .prepare(`
+    ) {
+      if (this.tableExists("regional_product_equivalence")) {
+        row = this.database
+          .prepare(`
+            SELECT
+              'ligapokemon' AS provider_id,
+              q.source_run_id,
+              q.category_id,
+              q.sku,
+              q.status AS match_quality,
+              q.method AS match_method,
+              q.confidence AS match_confidence,
+              q.reason AS match_reason,
+              e.liga_identity_key,
+              e.card_name,
+              e.set_name AS edition_name,
+              e.set_code AS edition_code,
+              e.collector_number,
+              e.variant,
+              e.condition_key,
+              e.language,
+              e.observed_at,
+              e.consumer_low_centavos,
+              e.consumer_average_centavos,
+              e.consumer_high_centavos,
+              e.store_buy_low_centavos,
+              e.store_buy_average_centavos,
+              e.store_buy_high_centavos
+            FROM regional_product_equivalence q
+            JOIN regional_pokemon_evidence e
+              ON e.liga_identity_key=q.liga_identity_key
+            WHERE q.provider_id='ligapokemon'
+              AND q.status IN ('EXACT','COMPATIBLE')
+              AND q.category_id=? AND q.sku=?
+            LIMIT 1
+          `)
+          .get(categoryId, sku) as Sql | undefined;
+      }
+      row ??= this.database
+        .prepare(`
           SELECT
             'ligapokemon' AS provider_id,
             c.source_run_id,
             c.category_id,
             c.sku,
+            'EXACT' AS match_quality,
+            c.method AS match_method,
+            100 AS match_confidence,
+            c.reason AS match_reason,
             e.liga_identity_key,
             e.card_name,
             e.set_name AS edition_name,
@@ -458,28 +502,62 @@ export class RegionalIntelligenceRepository {
           ORDER BY e.observed_at DESC, c.reconciled_at DESC, e.liga_identity_key
           LIMIT 1
         `)
-            .get(categoryId, sku) as Sql | undefined)
-        : categoryId === "magic-en"
-          ? (this.database
-              .prepare(`
-            SELECT
-              'ligamagic' AS provider_id,
-              c.source_run_id,
-              c.category_id,
-              c.sku,
-              e.*,
-              NULL AS condition_key,
-              NULL AS language
-            FROM regional_crosswalk c
-            JOIN regional_evidence e USING(liga_identity_key)
-            WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?
-            ORDER BY e.observed_at DESC, c.reconciled_at DESC, e.liga_identity_key
-            LIMIT 1
-          `)
-              .get(categoryId, sku) as Sql | undefined)
-          : undefined;
+        .get(categoryId, sku) as Sql | undefined;
+    } else if (categoryId === "magic-en") {
+      row = this.database
+        .prepare(`
+          SELECT
+            'ligamagic' AS provider_id,
+            c.source_run_id,
+            c.category_id,
+            c.sku,
+            'EXACT' AS match_quality,
+            c.method AS match_method,
+            100 AS match_confidence,
+            c.reason AS match_reason,
+            e.*,
+            NULL AS condition_key,
+            NULL AS language
+          FROM regional_crosswalk c
+          JOIN regional_evidence e USING(liga_identity_key)
+          WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?
+          ORDER BY e.observed_at DESC, c.reconciled_at DESC, e.liga_identity_key
+          LIMIT 1
+        `)
+        .get(categoryId, sku) as Sql | undefined;
+    }
     if (!row) return null;
     return evidenceDto(row);
+  }
+
+  equivalenceFor(
+    categoryId: string,
+    sku: string,
+  ): RegionalProductEquivalenceDisposition | null {
+    if (
+      categoryId !== "pokemon-en" ||
+      !this.tableExists("regional_product_equivalence")
+    ) {
+      return null;
+    }
+    const row = this.database
+      .prepare(`
+        SELECT status,method,confidence,reason
+        FROM regional_product_equivalence
+        WHERE provider_id='ligapokemon' AND category_id=? AND sku=?
+      `)
+      .get(categoryId, sku) as Sql | undefined;
+    if (!row) return null;
+    return {
+      providerId: "ligapokemon",
+      providerLabel: "LigaPokémon",
+      status: String(
+        row.status,
+      ) as RegionalProductEquivalenceDisposition["status"],
+      method: String(row.method),
+      confidence: Number(row.confidence),
+      reason: String(row.reason),
+    };
   }
 
   private tableExists(tableName: string): boolean {
@@ -1889,6 +1967,12 @@ function evidenceDto(row: Sql): RegionalMarketEvidence {
     providerLabel:
       providerId === "ligapokemon" ? "LigaPokémon" : "LigaMagic",
     sourceRunId: String(row.source_run_id),
+    matchQuality: String(
+      row.match_quality,
+    ) as RegionalMarketEvidence["matchQuality"],
+    matchMethod: String(row.match_method),
+    matchConfidence: Number(row.match_confidence),
+    matchReason: String(row.match_reason),
     ligaIdentityKey: String(row.liga_identity_key),
     categoryId: String(row.category_id),
     sku: String(row.sku),

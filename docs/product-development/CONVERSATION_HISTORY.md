@@ -1,5 +1,24 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — Maximum LigaPokémon Vendor Evidence Coverage
+
+### User Intent
+
+- Explain why Gardevoir GX did not reconcile to LigaPokémon.
+- Make the most LigaPokémon matches available in Vendor Workspace.
+
+### Decision And Implementation
+
+- Assigned `PHR-API-016` after identifying the precise set-label gap: TCGplayer `Hidden Fates: Shiny Vault` versus LigaPokémon `Hidden Fates`, with matching Gardevoir GX, `SV75`, Holofoil, English Near Mint evidence.
+- Restored the complete provider-aware target-equivalence implementation to the active branch instead of keeping Vendor Workspace on the 25,549-row legacy exact source crosswalk.
+- Preserved the strict source crosswalk and Arbitrage boundary. Vendor Workspace now reads exact and bounded-compatible target rows, displays quality/method/confidence/reason, and explains ambiguous or unavailable dispositions.
+- Added measured presentation-equivalent set conventions plus SV- and RC-collector subset guards. Rejected physical-treatment families such as Jumbo, Prize Pack, Alternate Art, Deck Exclusive, and stamped promos from broad matching.
+- Dry-ran the complete 167,912-row promoted snapshot against an operational clone, proved no accepted target downgrade, took a consistent live backup, rebuilt transactionally, restarted the private app, and verified exact and compatible selections.
+
+### Acceptance State
+
+Implementation and same-session conformance are privately live and Product Review ready. The target ledger contains 30,864 exact, 2,681 compatible, 103 ambiguous, and 13,003 unavailable dispositions; 33,190 eligible targets contain Liga consumer-price evidence. Gardevoir GX SV75 renders HIF/SV75 Holofoil, NM/EN, R$169.90, promoted run provenance, and 92% exact structural confidence. Full 465/465 tests, TypeScript, warning-free lint/build, deterministic snapshot replay, operational integrity, live exact/compatible UI checks, and 328-pixel no-overflow rendering pass. No provider acquisition, credential, source snapshot, transaction workflow, or public transport changed.
+
 ## 2026-08-07 — Vendor Workspace Liga And PriceCharting Evidence Restoration
 
 ### User Intent

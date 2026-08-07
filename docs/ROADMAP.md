@@ -2,11 +2,13 @@
 
 ## Product Review Candidate: Vendor Workspace Regional Evidence Composition
 
-- Implemented and privately live: one TCGplayer plus LigaMagic/LigaPokémon raw-card card for the exact selected printing (`PHR-UX-013`).
-- Implemented: provider-aware newest promoted reads, source-run/condition/language provenance, unsupported-game fail-closed behavior, and last-good retention independent of acquisition health.
+- Implemented and privately live: one TCGplayer plus LigaMagic/LigaPokémon raw-card card for the selected printing (`PHR-UX-013`).
+- Implemented: provider-aware exact and bounded-compatible Pokémon target dispositions, source-run/condition/language/match provenance, unavailable/ambiguous fail-closed behavior, and last-good retention (`PHR-API-016`).
+- Coverage: 33,545 exact/compatible Pokémon targets, including 33,190 with consumer-price evidence; 7,996 more matches are visible than under the former legacy-only Vendor read.
+- Verified regression: Gardevoir GX SV75 resolves to HIF/SV75 Holofoil at R$169.90 and 92% exact structural confidence. Compatible treatments are labelled and excluded from Arbitrage.
 - Implemented: PriceCharting immediately below the raw-card card as a closed lazy disclosure with the single certificate lookup (`PHR-API-010`).
-- Verified: 461/461 tests, TypeScript, warning-free lint/build, diff hygiene, live Magic/Pokémon APIs, deployed selection switching, expansion behavior, and narrow-column no-overflow/touch sizing.
-- Next: Product Owner reviews the deployed evidence hierarchy. A new LigaMagic acquisition still requires local reauthentication and is not part of this UI restoration.
+- Verified: 465/465 tests, TypeScript, warning-free lint/build, diff hygiene, snapshot rebuild, operational integrity, live exact/compatible selections, and 328-pixel no-overflow evidence rendering.
+- Next: Product Owner reviews the deployed evidence and confidence labelling. Further set relationships require measured, explicitly bounded revisions; a new LigaMagic acquisition still requires local reauthentication.
 
 ## Product Review Candidate: Provider Connections And Regional Acquisition Health
 

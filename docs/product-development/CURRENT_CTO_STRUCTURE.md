@@ -3,13 +3,13 @@
 ## Active Revision — Vendor Workspace Liga And PriceCharting Evidence Stack
 
 - Assignment: `PHR-VENDOR-REGIONAL-EVIDENCE-20260807`
-- Feature: `PHR-UX-013`; related API placement contract: `PHR-API-010`
+- Features: `PHR-UX-013`, `PHR-API-016`; related API placement contract: `PHR-API-010`
 - Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
-- Objective: show TCGplayer plus the exact applicable LigaMagic/LigaPokémon raw-card evidence inside Vendor Workspace, with PriceCharting as a collapsed optional card immediately below.
-- Data rule: read only exact promoted operational matches. Magic uses latest complete last-good run `dry-run-20260730T203243818Z`; Pokémon uses promoted run `dry-run-20260805T070105248Z`; failed acquisition health never replaces usable last-good evidence.
+- Objective: show TCGplayer plus the maximum defensible LigaMagic/LigaPokémon raw-card evidence inside Vendor Workspace, with PriceCharting as a collapsed optional card immediately below.
+- Data rule: Magic reads exact promoted matches. Pokémon reads exact and explicitly bounded-compatible target dispositions from promoted run `dry-run-20260805T070105248Z`; compatible evidence is comparison-only and excluded from Arbitrage. Failed acquisition health never replaces usable last-good evidence.
 - Composition rule: Snapshot evidence owns the combined raw-card card; Buying decision does not duplicate regional evidence; PriceCharting is closed on selection and loads only after expansion.
-- Work order: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
-- Verification: full 461/461 suite, TypeScript, warning-free lint/build, diff hygiene, live Magic/Pokémon APIs, live selection switching, expansion behavior, and 364-pixel evidence-column no-overflow/81-pixel summary checks pass.
+- Work orders: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md` and `docs/prompts/PHR-API-016-maximum-ligapokemon-vendor-evidence-prompt.md`.
+- Verification: full 465/465 suite, TypeScript, warning-free lint/build, diff hygiene, deterministic full-corpus reconciliation, live exact/compatible Pokémon selections, expansion behavior, and 328-pixel evidence-column no-overflow checks pass.
 - Runtime: `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`.
 - Next accountable role: Product Owner reviews the selected-card hierarchy. Same-session conformance is not independent approval.
 

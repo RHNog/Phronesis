@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { RegionalMarketEvidence } from "@/lib/regional/domain";
+import type {
+  RegionalMarketEvidence,
+  RegionalProductEquivalenceDisposition,
+} from "@/lib/regional/domain";
+
+type RegionalEvidenceResult = {
+  evidence: RegionalMarketEvidence | null;
+  disposition: RegionalProductEquivalenceDisposition | null;
+};
 
 function brl(centavos: number | null): string {
   if (centavos === null) return "Unavailable";
@@ -22,9 +30,7 @@ export default function RegionalMarketPanel({
   categoryId: string;
   sku: string;
 }) {
-  const [evidence, setEvidence] = useState<
-    RegionalMarketEvidence | null | undefined
-  >(undefined);
+  const [result, setResult] = useState<RegionalEvidenceResult | undefined>();
   useEffect(() => {
     const controller = new AbortController();
     void fetch(
@@ -33,45 +39,61 @@ export default function RegionalMarketPanel({
     )
       .then(async (response) => {
         if (!response.ok) throw new Error("Regional evidence unavailable.");
-        const body = (await response.json()) as {
-          evidence: RegionalMarketEvidence | null;
-        };
-        setEvidence(body.evidence);
+        const body = (await response.json()) as RegionalEvidenceResult;
+        setResult(body);
       })
       .catch((error) => {
         if (!(error instanceof DOMException && error.name === "AbortError"))
-          setEvidence(null);
+          setResult({ evidence: null, disposition: null });
       });
     return () => controller.abort();
   }, [categoryId, sku]);
 
-  if (evidence === undefined)
+  if (result === undefined)
     return (
       <section className="rounded-xl border border-zinc-800 bg-zinc-950/70 p-4 text-sm text-zinc-500">
         Loading {providerLabel(categoryId)} evidence…
       </section>
     );
-  if (!evidence)
+  if (!result.evidence) {
+    const disposition = result.disposition;
+    const ambiguous = disposition?.status === "AMBIGUOUS";
     return (
       <section className="rounded-xl border border-dashed border-zinc-700 bg-zinc-950/70 p-4">
         <p className="text-sm font-semibold text-zinc-300">
-          {providerLabel(categoryId)} evidence not reconciled
+          {ambiguous
+            ? `${providerLabel(categoryId)} equivalent is ambiguous`
+            : disposition?.status === "UNAVAILABLE"
+              ? `${providerLabel(categoryId)} equivalent unavailable`
+              : `${providerLabel(categoryId)} evidence not reconciled`}
         </p>
         <p className="mt-1 text-xs text-zinc-500">
-          This exact printing remains unmatched or quarantined. Phronesis will
-          not substitute another variation.
+          {disposition?.reason ??
+            "This exact printing remains unmatched or quarantined. Phronesis will not substitute another variation."}
         </p>
       </section>
     );
+  }
+  const evidence = result.evidence;
+  const compatible = evidence.matchQuality === "COMPATIBLE";
   return (
     <section
       aria-label="Brazil market evidence"
-      className="rounded-xl border border-emerald-900 bg-emerald-950/20 p-4"
+      className={`rounded-xl border p-4 ${
+        compatible
+          ? "border-amber-800 bg-amber-950/20"
+          : "border-emerald-900 bg-emerald-950/20"
+      }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-            {evidence.providerLabel} · exact match
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${
+              compatible ? "text-amber-300" : "text-emerald-300"
+            }`}
+          >
+            {evidence.providerLabel} ·{" "}
+            {compatible ? "compatible Liga equivalent" : "exact printing"}
           </p>
           <p className="mt-1 text-xs text-zinc-500">
             Observed {new Date(evidence.observedAt).toLocaleString()}
@@ -91,6 +113,12 @@ export default function RegionalMarketPanel({
           {evidence.language ?? "Language not supplied"}
         </p>
       ) : null}
+      <p className="mt-3 text-xs text-zinc-400">
+        {evidence.matchReason} Confidence {evidence.matchConfidence}%.
+        {compatible
+          ? " Comparison evidence only; excluded from Arbitrage."
+          : " Exact identity evidence."}
+      </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
         <div className="rounded-lg bg-zinc-950 p-3">
           <p className="text-xs text-zinc-500">Retail evidence (Compra)</p>

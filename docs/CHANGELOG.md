@@ -5,6 +5,8 @@
 
 ### Added
 
+- Maximum bounded LigaPokémon Vendor coverage through a complete target-equivalence ledger, guarded set conventions, exact/compatible provenance, truthful unavailable states, and automatic reconciliation continuity; Gardevoir GX SV75 now resolves from the promoted snapshot (`PHR-API-016`, `PHR-UX-013`).
+
 - Provider-aware LigaMagic/LigaPokémon selected-card evidence with promoted source-run provenance, exact newest-match selection, combined TCGplayer/Liga presentation, and a lazy collapsed PriceCharting card directly below (`PHR-UX-013`, `PHR-API-010`).
 
 - Read-only LigaMagic/LigaPokémon acquisition health, semantic provider groups, live Refresh status, and correct PriceCharting placement beside JustTCG in Settings → Providers (`PHR-UX-012`).

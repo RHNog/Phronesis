@@ -12,6 +12,7 @@ import {
   getWatchlistRepository,
 } from "../lib/watchlist/repositories";
 import { rebuildRegionalCrosswalk } from "../lib/regional/reconciliation";
+import { rebuildPokemonRegionalCrosswalk } from "../lib/regional/pokemonReconciliation";
 
 const once = process.argv.includes("--once");
 const databasePath = operationalPricingDatabasePath();
@@ -55,6 +56,22 @@ async function synchronize() {
       process.stdout.write(
         `${JSON.stringify({ event: "regional-crosswalk-reconciled", sourceRunId: report.sourceRunId, matched: report.matched, comparableBoth: report.comparableBoth, fingerprint: report.crosswalkFingerprint })}\n`,
       );
+    }
+    if (verifiedCategories.has("pokemon-en")) {
+      try {
+        const report = rebuildPokemonRegionalCrosswalk({ databasePath });
+        process.stdout.write(
+          `${JSON.stringify({ event: "pokemon-regional-crosswalk-reconciled", sourceRunId: report.sourceRunId, matched: report.matched, targetExact: report.targetExact, targetCompatible: report.targetCompatible, fingerprint: report.targetLedgerFingerprint })}\n`,
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!message.includes("No complete LigaPokemon dry-run snapshot")) {
+          throw error;
+        }
+        process.stdout.write(
+          `${JSON.stringify({ event: "pokemon-regional-crosswalk-skipped", reason: "NO_COMPLETE_SNAPSHOT" })}\n`,
+        );
+      }
     }
     for (const categoryId of verifiedCategories) {
       const enrichment = await enrichWatchedCategoryWithJustTCG({

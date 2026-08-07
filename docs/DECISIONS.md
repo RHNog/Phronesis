@@ -1,11 +1,19 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — Maximize Pokémon Vendor evidence through a separate bounded target ledger
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-API-016`, `PHR-UX-013`).
+- **Decision:** Preserve the collision-safe source crosswalk as the strict source-adoption and Arbitrage authority. Build a separate provider-aware target ledger for every TCGplayer product and classify it `EXACT`, `COMPATIBLE`, `AMBIGUOUS`, or `UNAVAILABLE`.
+- **Decision:** Vendor Workspace may render exact and bounded-compatible rows with method, confidence, reason, and source provenance. Compatible rows are comparison-only and never enter Arbitrage; ambiguous and unavailable rows remain unpriced.
+- **Decision:** Admit only explicit presentation aliases and collector-guarded subset conventions. Hidden Fates Shiny Vault requires an `SV` collector, Generations Radiant Collection requires `RC`, and no rule may use price, rarity, row order, colour, edit distance, or broad fuzzy text.
+- **Consequences:** Current Vendor-eligible LigaPokémon coverage rises from 25,549 legacy exact targets to 33,545 exact/compatible targets without downgrading an accepted target. Gardevoir GX SV75 resolves safely, while treatment-specific proxies remain visibly qualified.
+
 ## 2026-08-07 — Raw-card markets stay together; PriceCharting stays secondary
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-UX-013`, `PHR-API-010`).
 - **Decision:** The selected-card Snapshot evidence owns one combined TCGplayer/Liga raw-card card. Magic uses LigaMagic, English Pokémon uses LigaPokémon, and unsupported catalogues receive no regional claim.
-- **Decision:** Consume only exact promoted operational matches, choose the newest observation/reconciliation for the requested SKU, expose source-run provenance, and retain last-good evidence when acquisition health is failed or reauthentication-required.
+- **Decision:** Consume exact promoted Magic matches and the exact/bounded-compatible Pokémon dispositions governed by `PHR-API-016`; expose source-run and match provenance, and retain last-good evidence when acquisition health is failed or reauthentication-required.
 - **Decision:** Place PriceCharting directly below the combined raw-card card as a closed, lazy disclosure. It remains independent graded corroboration and cannot own or overwrite raw-card valuation, artwork, or offers.
 - **Consequences:** The operator sees the two raw-card markets before optional graded detail; phone work is shorter, provider freshness is auditable, and Settings health no longer substitutes for the Vendor pricing workflow.
 

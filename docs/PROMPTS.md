@@ -1,5 +1,13 @@
 # Prompt History
 
+## 2026-08-07 — Maximum LigaPokémon Vendor Evidence Coverage
+
+- Source: Product Owner required the most LigaPokémon matches available after Gardevoir GX SV75 appeared unreconciled despite existing source evidence.
+- Feature: `PHR-API-016`, with an additive `PHR-UX-013` evidence-quality revision.
+- Implementation prompt: `docs/prompts/PHR-API-016-maximum-ligapokemon-vendor-evidence-prompt.md`.
+- Decision: restore the complete exact-plus-bounded-compatible target ledger to Vendor Workspace, add an SV-collector-guarded Hidden Fates Shiny Vault convention, and keep compatible evidence outside Arbitrage.
+- Result: 33,545 exact/compatible target matches are privately live; Gardevoir GX SV75 resolves to R$169.90 evidence; 465/465 tests and every deployment gate pass.
+
 ## 2026-08-07 — Vendor Workspace Liga And PriceCharting Composition Restoration
 
 - Source: Product Owner corrected the scope mismatch and required LigaMagic/LigaPokémon inside Vendor Workspace, with PriceCharting as an expandable card below TCGplayer/Liga and the newest available LigaMagic snapshot.

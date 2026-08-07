@@ -36,6 +36,7 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 
 - Show LigaMagic consumer retail (`Compra`) and dealer buy benchmark (`Venda`) in BRL for the exact selected printing.
 - Show LigaPokémon consumer retail (`Compra`) and dealer buy benchmark (`Venda`) in BRL for an exact promoted English Pokémon printing, including its source condition and language when present.
+- Show bounded-compatible LigaPokémon evidence when `PHR-API-016` proves one deterministic equivalent; label it as compatible, disclose confidence and reason, and keep it outside Arbitrage.
 - Choose LigaMagic only for `magic-en`, LigaPokémon only for `pokemon-en`, and never imply Liga coverage for another catalogue.
 - Read the latest promoted last-good evidence already present in the operational pricing database. A failed or reauthentication-required acquisition must not erase or hide that snapshot.
 - Include the source provider and snapshot run ID in the regional evidence response and visible provenance.
@@ -47,6 +48,7 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - Do not issue a PriceCharting lookup until the disclosure is expanded; collapse must keep it secondary and reduce initial phone work.
 - PriceCharting values remain independent graded corroboration and never overwrite TCGplayer, Liga, artwork, or the offer reference.
 - Clearly distinguish unavailable, stale, unmatched, and ambiguous states.
+- Prefer the provider-aware target-equivalence disposition over the legacy source-crosswalk read so all safely classified target matches are available.
 - Remain desktop-first with a single-column mobile adaptation.
 - Keep all four direction-specific cost inputs in Settings while allowing them to remain empty until the Product Owner defines policy.
 - Add nullable, direction-specific target profiles in Settings: acquisition-value range, minimum gross resale value, minimum gross spread, minimum net profit, minimum profit margin, minimum ROI, and maximum evidence age. Every monetary field must name its currency.
@@ -68,6 +70,7 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - A matched fresh card exposes local evidence without manual catalogue switching.
 - A matched Magic card labels LigaMagic and the latest promoted LigaMagic snapshot run.
 - A matched Pokémon card labels LigaPokémon and the latest promoted LigaPokémon snapshot run.
+- Gardevoir GX SV75 and other safely classified exact/compatible targets expose LigaPokémon evidence with visible match quality; ambiguous and unavailable targets remain unpriced.
 - The PriceCharting disclosure is closed on selection and appears after the combined TCGplayer/Liga card.
 - Expanding PriceCharting loads its evidence; leaving it closed performs no PriceCharting request.
 - No recommendation appears as certain when costs or evidence are incomplete.
@@ -86,6 +89,7 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - `PHR-WORKFLOW-006`
 - `PHR-API-010`
 - `PHR-API-013`
+- `PHR-API-016`
 - `PHR-UX-022`
 
 ## Traceability
@@ -94,13 +98,14 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
 - Current revision work order: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
 - Last modified: 2026-08-07.
-- Modification reason: restore the previously approved combined TCGplayer/Liga evidence stack, add promoted LigaPokémon consumption, and return PriceCharting to a secondary collapsed position.
+- Modification reason: add maximum bounded LigaPokémon target-equivalence coverage and visible evidence quality without changing the approved evidence stack.
 
 ## Implementation Evidence
 
 - Vendor Workspace now renders TCGplayer plus the applicable Liga provider inside one `Raw-card market evidence` card.
-- The provider-aware read model consumes only exact `MATCHED` rows and chooses the newest promoted observation/reconciliation for the requested SKU.
+- The provider-aware read model consumes exact Magic rows plus exact/bounded-compatible Pokémon target dispositions and exposes a truthful ambiguous/unavailable reason otherwise.
 - Live LigaMagic evidence resolves from last-good run `dry-run-20260730T203243818Z`; live LigaPokémon evidence resolves from run `dry-run-20260805T070105248Z` and preserves condition/language provenance.
+- Live Pokémon coverage is 30,864 exact plus 2,681 compatible targets; Gardevoir GX SV75 resolves to HIF/SV75 Holofoil at R$169.90 with 92% exact structural confidence.
 - PriceCharting is a closed-by-default disclosure immediately below the combined card, resets closed when selection changes, and begins its lookup only after expansion.
 - Validation: `docs/testing/PHR-UX-013-arbitrage-presentation-validation.md`.
 - Implementation report: `docs/implementation-reports/PHR-UX-013-vendor-evidence-composition-report.md`.

@@ -25,7 +25,7 @@ Passed with an upstream data-integrity gate. The 03:00 schedule is loaded, the L
 - The recurring runner uses an exclusive owner-readable lock, rejects live overlap, preserves stale-lock evidence, atomically updates status, and records provider outcomes independently.
 - A same-day successful provider outcome is not reacquired unless `--force` is explicit.
 - Only a `DRY_RUN_COMPLETE` receipt can proceed; conflicting duplicate evidence fails closed.
-- Complete LigaMagic acquisition triggers the operational Magic regional crosswalk rebuild. LigaPokemon remains unpromoted.
+- Complete LigaMagic acquisition triggers the operational Magic regional crosswalk rebuild. Subsequent `PHR-API-016` integration makes complete LigaPokemon acquisition rebuild both the strict Pokémon source crosswalk and the Vendor target-equivalence ledger; incomplete runs remain unpromoted.
 - `com.phronesis.regional-acquisition.plist` schedules 03:00 America/New_York through the canonical JarvisSSD checkout.
 
 ## Research Boundary
