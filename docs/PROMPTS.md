@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-06 — Authorized Case Source Preparation
+
+- Source: Product Owner request to let authorized people edit the Case Source Google Sheet while preparing inventory.
+- Feature: additive `PHR-WORKFLOW-012` revision; assignment `PHR-CASE-SOURCE-COLLABORATION-20260806`.
+- Implementation prompt: `docs/prompts/PHR-WORKFLOW-012-event-stock-control-prompt.md`.
+- Result: Inventory Operate-gated pre-event Sheet access, server-only URL disclosure, Case-only entitlement preset, exact eligible-editor roster, and explicit per-email Google Editor sharing without public access or live-event Google dependency.
+
 ## 2026-08-06 — Trusted Account Sign Up Invitation
 
 - Source: Product Owner request for an easily shareable Sign Up option.

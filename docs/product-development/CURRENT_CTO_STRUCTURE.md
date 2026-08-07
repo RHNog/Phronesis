@@ -1,5 +1,20 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Authorized Case Source Preparation
+
+- Assignment: `PHR-CASE-SOURCE-COLLABORATION-20260806`
+- Feature: `PHR-WORKFLOW-012`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: let trusted inventory preparers edit the native Case Source Google Sheet before an event without granting broader Event Ledger, Vendor Workspace, or Administration access.
+- Authorization rule: `INVENTORY:OPERATE` (or stronger) is the Phronesis eligibility gate. Google separately grants Editor permission to the exact approved account email; the Sheet must never become public or anonymous-link editable.
+- Exposure rule: keep the Sheet URL in server-only runtime configuration and disclose it only to authorized preparation surfaces. Remove the client-bundled `NEXT_PUBLIC_` dependency.
+- UX rule: Display Case presents Case Source preparation even when no event exists. People & access provides a Case-preparation assignment preset and a copyable eligible-editor roster for native Google sharing.
+- Reliability rule: live event sales continue from the immutable local CSV snapshot and never depend on Google availability.
+- Work order: `docs/prompts/PHR-WORKFLOW-012-event-stock-control-prompt.md`.
+- Verification: full 446/446 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, private HTTP 200, explicit-owner-only Drive metadata, desktop/390px no-overflow review, 44px actions, Copy feedback, and zero browser-console entries pass.
+- Runtime: the canonical Sheet is privately linked from Display Case and Event Ledger at `https://ramons-mac-studio.tailaa2d39.ts.net:9444`; Settings exposes assignment/share guidance under `?panel=people`. No additional editor exists yet, so native Drive permissions truthfully remain owner-only.
+- Next accountable role: Product Owner approves the first real Case preparer, then grants Google Editor to the exact eligible email shown in Settings. Same-session conformance is not independent approval.
+
 ## Active Revision — Trusted Account Sign Up Invitation
 
 - Assignment: `PHR-TRUSTED-SIGNUP-INVITE-20260806`

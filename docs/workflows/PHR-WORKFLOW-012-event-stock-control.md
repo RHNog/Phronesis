@@ -22,7 +22,7 @@ Workflow / Database / Inventory / Event Operations / Audit / Reporting / UX
 
 ## Objective
 
-Let event operators prepare sellable stock in a simple Google Sheet, ingest a verified snapshot into local SQLite, sell against the exact imported option from either Event Ledger surface, and reconcile sold and leftover quantities at the end of the event.
+Let authorized inventory operators prepare sellable stock together in a private Google Sheet before an event, ingest a verified snapshot into local SQLite, sell against the exact imported option from either Event Ledger surface, and reconcile sold and leftover quantities at the end of the event.
 
 ## Background
 
@@ -35,6 +35,8 @@ Manual Sale descriptions do not identify a prepared stock row and cannot decreme
 ## Proposed Solution
 
 Treat Google Sheets as the human authoring surface and a versioned CSV export as the ingestion contract. Phronesis imports that file into an event-scoped stock manifest stored in the same local SQLite database as the Event Ledger. The Sheet is not queried during live selling.
+
+Case Source preparation uses two independent authorization gates. Phronesis exposes the private Sheet address only to a user with `INVENTORY:OPERATE` or stronger access. Google grants native edit permission separately to the same approved account email. The Sheet must never use public or anonymous link-editing as a substitute for either gate. Settings lists the active Phronesis members eligible for Case Source preparation so the owner can add those exact emails as Google Editors.
 
 Each imported row becomes one explicit sellable option distinguished by Item Name, Price, Quantity, Color, and Variation. Sellers search the active manifest and add one or more exact options to a Sale. The canonical Event Ledger Sale and append-only negative stock movements commit atomically. Reversal appends compensating positive movements. Expected leftover quantity is opening quantity plus active movements; physical counts remain separate append-only observations. Sold and leftover CSV reports are generated from that evidence.
 
@@ -55,6 +57,11 @@ Blank trailing rows are ignored. Exact duplicate Item Name + Price + Color + Var
 ## Functional Requirements
 
 - Event Ledger exposes an Import Event Inventory control only when an event exists and the operator can Operate.
+- Display Case exposes a Case Source preparation card before an event exists, but only to `INVENTORY:OPERATE` or stronger users. The same authorized preparation entry remains available during the event.
+- The Case Source Sheet URL is read only on the server and passed to an authorized Client Component as a serializable prop. It is not compiled into a public JavaScript bundle through a `NEXT_PUBLIC_` variable.
+- Settings -> People & access provides a `Case preparation only` entitlement preset and lists active members whose `INVENTORY` entitlement satisfies `OPERATE`, including their exact account email for Google Editor sharing.
+- Google Editor access is granted per approved email through native Drive sharing. Phronesis entitlement changes do not make the Sheet public and do not silently mutate external permissions.
+- A user who has Phronesis Case preparation access but lacks native Google permission receives Google's ordinary access-request boundary; the owner grants Editor only after confirming that the email matches the eligible-member roster.
 - Import accepts a `.csv` downloaded from the canonical Google Sheet template and records source filename, SHA-256, contract version, row count, total opening quantity, actor, and timestamp.
 - The same hash is idempotent. A different import may supersede the active manifest only before the first inventory-linked Sale; after that, import is locked to protect baseline evidence.
 - Stock search covers Item Name, Color, Variation, and formatted price; results show exact option attributes, list price, opening quantity, sold quantity, and expected remaining quantity.
@@ -100,7 +107,7 @@ After CSV ingestion, the entire selling, reversal, count, and report workflow is
 
 ### Security
 
-Reads require `VENDOR_WORKSPACE:VIEW`; import, count, Sale, and reversal require `VENDOR_WORKSPACE:OPERATE`. Event and stock ownership are rechecked in the server repository. No Google credential or Sheet URL is stored in this slice.
+Prepared-stock reads retain the established event authorization. Import, count, Sale, and reversal retain their existing mutation gates. Case Source authoring-link disclosure independently requires `INVENTORY:OPERATE`. Google native edit permission is per approved email, and anonymous/link-wide editing is prohibited. The Sheet URL is server configuration rather than a public build-time environment value; no Google credential is stored in this slice.
 
 ### Extensibility
 
@@ -116,6 +123,8 @@ Import, stock selection, summary, count, and reports must remain usable at 390px
 - As a buyer making an incidental Sale in Vendor Workspace, I decrement the same event stock as the seller panel.
 - As an event manager, I can compare what should remain with what was physically counted.
 - As an owner, I can audit the exact Sheet snapshot, Sales, reversals, counts, and discrepancies without trusting mutable spreadsheet state.
+- As an inventory preparer, I can open the native Case Source Sheet before an event without receiving Event Ledger, Vendor Workspace, or Administration access.
+- As an owner, I can identify the exact approved account emails eligible for Google Editor access without making the Sheet public.
 
 ## Acceptance Criteria
 
@@ -125,6 +134,9 @@ Import, stock selection, summary, count, and reports must remain usable at 390px
 - Both Event Ledger Sale surfaces use the same stock search and canonical `record-sale` path.
 - Sold and leftover reports truthfully distinguish whole-Sale actual amount from imported per-item list price.
 - Physical count and variance are append-only and do not alter expected quantity.
+- A member with `INVENTORY:OPERATE` can reach Case Source preparation before an event; a viewer cannot receive the Sheet URL.
+- Settings exposes a Case preparation preset and an email-exact eligible-editor roster while clearly separating Phronesis permission from Google permission.
+- Native Drive metadata confirms the Sheet remains restricted to explicit users rather than anonymous or public writers.
 - TypeScript, lint, full tests, production build, diff hygiene, private runtime, desktop, and 390px workflow review pass.
 
 ## Edge Cases
@@ -150,6 +162,7 @@ Import, stock selection, summary, count, and reports must remain usable at 390px
 ## Future Enhancements
 
 - Authenticated Google Sheets read/sync after owner credential-vault activation.
+- Optional audited Google Drive permission synchronization after a dedicated owner OAuth/service-account boundary is approved; until then, native per-email sharing remains owner-controlled.
 - Allocation from receipt-backed global Inventory and automatic post-event return-to-location.
 - Barcode, QR, image, and custom SKU columns through contract version 2.
 - Batch physical-count scanner and printable count sheets.
@@ -171,7 +184,7 @@ Place Event Inventory below the event cash summary and before transaction entry.
 
 ## Open Questions
 
-- None blocking for the CSV snapshot workflow. Authenticated live Sheet synchronization is intentionally deferred to secure connector work.
+- None blocking. Native per-email Google sharing is the approved external authorization boundary; automatic Drive permission synchronization remains intentionally deferred until Phronesis has a dedicated Google credential boundary.
 
 ## Traceability
 
@@ -183,5 +196,5 @@ Place Event Inventory below the event cash summary and before transaction entry.
 - Related implementation report: `docs/implementation-reports/PHR-WORKFLOW-012-event-stock-control-report.md`.
 - Related conformance review: `docs/reviews/PHR-WORKFLOW-012-event-stock-control-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-WORKFLOW-012.md`.
-- Last modified: 2026-07-31.
-- Modification reason: implementation, deterministic/performance verification, native Sheet validation, and private responsive review completed.
+- Last modified: 2026-08-06.
+- Modification reason: authorized collaborative Case Source preparation before event opening, server-only link disclosure, and per-email Google Editor governance.

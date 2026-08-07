@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Authorized Case Source Preparation
+
+- `PHR-WORKFLOW-012` exposes the private native Case Source before event opening to active members with `INVENTORY:OPERATE` or stronger, without granting Event Ledger, Vendor Workspace, or Administration access.
+- Phronesis and Google are independent gates: the owner assigns the Phronesis module, then grants native Google Editor permission to the exact eligible account email shown in Settings. Anonymous and link-wide editing are prohibited.
+- The validated Sheet address is server-only configuration. Display Case and Event Ledger receive it only after their own authorization checks; the live event still consumes an immutable local CSV snapshot and has no Google runtime dependency.
+- The canonical file is `Phronesis Case Source — Opening Display Inventory` (`1yqGJMvyL_zzMuDQPOdnLi0UUuyIF1-B3-9iwpkEUv50`). Its current Drive permission set contains only the explicit owner.
+
 ## Trusted Account Invitation
 
 - `PHR-ARCH-016` exposes one generic Sign Up invitation in Settings → People & access with exact URL display, resilient Copy, supported-device Share, and Preview.

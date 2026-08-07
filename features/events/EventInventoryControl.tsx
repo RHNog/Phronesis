@@ -139,6 +139,7 @@ export default function EventInventoryControl({
   eventStatus,
   currency,
   canOperate,
+  caseSourceSheetUrl,
   refreshToken = 0,
   onChanged,
 }: {
@@ -146,6 +147,7 @@ export default function EventInventoryControl({
   eventStatus: "ACTIVE" | "CLOSED";
   currency: EventCurrency | null;
   canOperate: boolean;
+  caseSourceSheetUrl: string | null;
   refreshToken?: number;
   onChanged?: () => void;
 }) {
@@ -282,8 +284,6 @@ export default function EventInventoryControl({
 
   const manifest = snapshot?.manifest ?? null;
   const summary = snapshot?.summary;
-  const templateUrl = process.env.NEXT_PUBLIC_EVENT_INVENTORY_TEMPLATE_URL;
-
   return (
     <section
       aria-labelledby="event-inventory-heading"
@@ -306,14 +306,14 @@ export default function EventInventoryControl({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {templateUrl ? (
+          {canOperate && caseSourceSheetUrl ? (
             <a
-              href={templateUrl}
+              href={caseSourceSheetUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex min-h-11 items-center rounded-lg border border-zinc-700 px-3 text-sm font-semibold text-zinc-200"
             >
-              Open Google Sheet
+              Edit Case Source Sheet
             </a>
           ) : null}
           <a

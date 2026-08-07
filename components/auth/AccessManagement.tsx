@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import AccountInviteLink from "@/components/auth/AccountInviteLink";
+import CaseSourceAccessManagement from "@/components/auth/CaseSourceAccessManagement";
 import CopyTextButton from "@/components/ui/CopyTextButton";
 import {
   MEMBERSHIP_ROLES,
@@ -34,6 +35,18 @@ type AccessRequest = {
 
 function label(value: string): string {
   return value.toLowerCase().replaceAll("_", " ").replace(/(^|\s)\S/g, (letter) => letter.toUpperCase());
+}
+
+function casePreparationSelection(): Record<
+  PhronesisModule,
+  ModuleAccessLevel | "NONE"
+> {
+  return Object.fromEntries(
+    PHRONESIS_MODULES.map((module) => [
+      module,
+      module === "INVENTORY" ? "OPERATE" : "NONE",
+    ]),
+  ) as Record<PhronesisModule, ModuleAccessLevel | "NONE">;
 }
 
 function MemberEntitlements({ member, onSaved }: { member: Member; onSaved: () => Promise<void> }) {
@@ -77,6 +90,11 @@ function MemberEntitlements({ member, onSaved }: { member: Member; onSaved: () =
             <option value="NONE">Not assigned</option>
             {MODULE_ACCESS_LEVELS.map((access) => <option key={access} value={access}>{label(access)}</option>)}
           </select>
+          {module === "INVENTORY" ? (
+            <span className="mt-1 block text-[11px] text-emerald-300">
+              Operate enables private Case Source preparation.
+            </span>
+          ) : null}
         </label>
       ))}
       <div className="flex items-end gap-3">
@@ -125,7 +143,8 @@ function PendingAccessRequest({ request, onDecided }: { request: AccessRequest; 
       <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold text-white">{request.name ?? "Unnamed account"}</p><p className="mt-1 text-sm text-zinc-400">{request.email}</p><p className="mt-1 text-xs text-zinc-600">Requested {new Date(request.requestedAt).toLocaleString()}</p></div><span className="rounded-full border border-amber-700 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-amber-200">Pending</span></div>
       <p className="mt-4 rounded-lg border border-zinc-800 bg-zinc-950/70 p-3 text-xs leading-5 text-zinc-400"><span className="font-semibold text-zinc-200">Verify this person outside Phronesis before approval.</span> The submitted email is not yet independently verified.</p>
       <label className="mt-4 block max-w-xs text-xs font-medium text-zinc-400">Role<select value={role} onChange={(event) => setRole(event.target.value as Exclude<MembershipRole, "OWNER">)} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-zinc-100">{MEMBERSHIP_ROLES.filter((option) => option !== "OWNER").map((option) => <option key={option} value={option}>{label(option)}</option>)}</select></label>
-      <fieldset className="mt-4"><legend className="text-sm font-medium text-zinc-300">Modules granted on approval</legend><div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{PHRONESIS_MODULES.map((module) => <label key={module} className="text-xs text-zinc-400">{label(module)}<select value={values[module]} onChange={(event) => setValues((current) => ({ ...current, [module]: event.target.value as ModuleAccessLevel | "NONE" }))} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-zinc-100"><option value="NONE">Not assigned</option>{MODULE_ACCESS_LEVELS.map((access) => <option key={access} value={access}>{label(access)}</option>)}</select></label>)}</div></fieldset>
+      <button type="button" onClick={() => setValues(casePreparationSelection())} className="mt-4 min-h-11 rounded-lg border border-emerald-800 px-3 text-sm font-semibold text-emerald-200">Case preparation only</button>
+      <fieldset className="mt-4"><legend className="text-sm font-medium text-zinc-300">Modules granted on approval</legend><div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{PHRONESIS_MODULES.map((module) => <label key={module} className="text-xs text-zinc-400">{label(module)}<select value={values[module]} onChange={(event) => setValues((current) => ({ ...current, [module]: event.target.value as ModuleAccessLevel | "NONE" }))} className="mt-1 min-h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-zinc-100"><option value="NONE">Not assigned</option>{MODULE_ACCESS_LEVELS.map((access) => <option key={access} value={access}>{label(access)}</option>)}</select>{module === "INVENTORY" ? <span className="mt-1 block text-[11px] text-emerald-300">Operate enables private Case Source preparation.</span> : null}</label>)}</div></fieldset>
       <div className="mt-4 flex flex-wrap items-center gap-3"><button type="button" disabled={busy} onClick={() => void decide("APPROVE")} className="min-h-11 rounded-lg bg-cyan-300 px-4 text-sm font-semibold text-zinc-950 disabled:opacity-50">Approve and assign modules</button><button type="button" disabled={busy} onClick={() => void decide("REJECT")} className="min-h-11 rounded-lg border border-rose-800 px-4 text-sm font-semibold text-rose-200 disabled:opacity-50">Reject</button>{message ? <span role="status" className="text-xs text-zinc-400">{message}</span> : null}</div>
     </article>
   );
@@ -134,9 +153,11 @@ function PendingAccessRequest({ request, onDecided }: { request: AccessRequest; 
 export default function AccessManagement({
   active,
   restrictedPublicOrigin,
+  caseSourceSheetUrl,
 }: {
   active: boolean;
   restrictedPublicOrigin: string | null;
+  caseSourceSheetUrl: string | null;
 }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [requests, setRequests] = useState<AccessRequest[]>([]);
@@ -150,21 +171,27 @@ export default function AccessManagement({
   );
   const [activation, setActivation] = useState<{ code: string; url: string } | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [directoryStatus, setDirectoryStatus] = useState<
+    "LOADING" | "READY" | "ERROR"
+  >("LOADING");
 
   const load = useCallback(async () => {
     if (!active) return;
+    setDirectoryStatus("LOADING");
     const [memberResponse, requestResponse] = await Promise.all([
       fetch("/api/administration/memberships", { cache: "no-store" }),
       fetch("/api/administration/access-requests", { cache: "no-store" }),
     ]);
     if (!memberResponse.ok || !requestResponse.ok) {
       setMessage("People and access requests could not be loaded.");
+      setDirectoryStatus("ERROR");
       return;
     }
     const memberBody = await memberResponse.json() as { memberships: Member[] };
     const requestBody = await requestResponse.json() as { requests: AccessRequest[] };
     setMembers(memberBody.memberships);
     setRequests(requestBody.requests);
+    setDirectoryStatus("READY");
   }, [active]);
 
   useEffect(() => {
@@ -177,6 +204,7 @@ export default function AccessManagement({
       if (cancelled) return;
       if (!memberResponse.ok || !requestResponse.ok) {
         setMessage("People and access requests could not be loaded.");
+        setDirectoryStatus("ERROR");
         return;
       }
       const memberBody = await memberResponse.json() as { memberships: Member[] };
@@ -184,9 +212,13 @@ export default function AccessManagement({
       if (!cancelled) {
         setMembers(memberBody.memberships);
         setRequests(requestBody.requests);
+        setDirectoryStatus("READY");
       }
     }).catch(() => {
-      if (!cancelled) setMessage("People and access requests could not be loaded.");
+      if (!cancelled) {
+        setMessage("People and access requests could not be loaded.");
+        setDirectoryStatus("ERROR");
+      }
     });
     return () => { cancelled = true; };
   }, [active]);
@@ -245,6 +277,11 @@ export default function AccessManagement({
           <AccountInviteLink
             restrictedPublicOrigin={restrictedPublicOrigin}
           />
+          <CaseSourceAccessManagement
+            members={members}
+            sheetUrl={caseSourceSheetUrl}
+            directoryStatus={directoryStatus}
+          />
           <div className="mt-4"><div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-semibold text-white">Pending accounts</p><p className="mt-1 text-sm text-zinc-400">Accounts stay outside every module until you verify the person and approve exact access.</p></div><span className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-300">{requests.length} waiting</span></div>{requests.length ? <div className="mt-4 space-y-4">{requests.map((request) => <PendingAccessRequest key={request.id} request={request} onDecided={load} />)}</div> : <p className="mt-3 rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 p-4 text-sm text-zinc-500">No accounts are waiting for approval.</p>}</div>
           <details className="mt-6 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4"><summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-zinc-200">Create a direct invitation instead</summary><p className="mt-2 text-sm leading-6 text-zinc-500">Optional owner-initiated flow. Assign modules now and send a single-use activation link.</p><form onSubmit={invite} className="mt-4 space-y-4">
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem]">
@@ -259,13 +296,22 @@ export default function AccessManagement({
             </div>
             <fieldset>
               <legend className="text-sm font-medium text-zinc-300">Assigned modules</legend>
-              <button
-                type="button"
-                onClick={() => setInviteModules(Object.fromEntries(PHRONESIS_MODULES.map((module) => [module, module === "ARTWORK_REVIEW" ? "OPERATE" : "NONE"])) as Record<PhronesisModule, ModuleAccessLevel | "NONE">)}
-                className="mt-2 min-h-11 rounded-lg border border-violet-700 px-3 text-sm font-semibold text-violet-200"
-              >
-                Artwork Review only
-              </button>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setInviteModules(Object.fromEntries(PHRONESIS_MODULES.map((module) => [module, module === "ARTWORK_REVIEW" ? "OPERATE" : "NONE"])) as Record<PhronesisModule, ModuleAccessLevel | "NONE">)}
+                  className="min-h-11 rounded-lg border border-violet-700 px-3 text-sm font-semibold text-violet-200"
+                >
+                  Artwork Review only
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInviteModules(casePreparationSelection())}
+                  className="min-h-11 rounded-lg border border-emerald-800 px-3 text-sm font-semibold text-emerald-200"
+                >
+                  Case preparation only
+                </button>
+              </div>
               <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {PHRONESIS_MODULES.map((module) => (
                   <label key={module} className="text-xs text-zinc-400">{label(module)}
@@ -273,6 +319,7 @@ export default function AccessManagement({
                       <option value="NONE">Not assigned</option>
                       {MODULE_ACCESS_LEVELS.map((access) => <option key={access} value={access}>{label(access)}</option>)}
                     </select>
+                    {module === "INVENTORY" ? <span className="mt-1 block text-[11px] text-emerald-300">Operate enables private Case Source preparation.</span> : null}
                   </label>
                 ))}
               </div>

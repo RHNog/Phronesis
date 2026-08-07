@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — PHR-WORKFLOW-012 Authorized Case Source Preparation
+
+- Renamed the canonical native Sheet to `Phronesis Case Source — Opening Display Inventory` and documented its exact-email access rule in the Sheet.
+- Added Inventory Operate-gated preparation before event opening, retained Event Ledger access, and moved the external URL to validated server-only configuration.
+- Added a Case-only access preset and exact eligible-editor roster to Settings while retaining native explicit-user Google Editor permissions and prohibiting public/link editing.
+- Verified 446/446 tests, TypeScript, lint, production build, diff hygiene, private health, desktop/390px no-overflow layouts, 44px actions, Copy feedback, and zero browser-console entries.
+
 ## Unreleased — PHR-WORKFLOW-012 Event Stock Control / PHR-UX-016 Intent-Aware Search
 
 ### Local event inventory

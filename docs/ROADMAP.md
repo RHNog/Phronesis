@@ -1,5 +1,14 @@
 # Roadmap
 
+## Product Review Candidate: Authorized Case Source Preparation
+
+- Implemented and privately live: pre-event native Sheet access for active Inventory Operators, retained Event Ledger edit access, and server-only authorization-gated URL disclosure (`PHR-WORKFLOW-012`).
+- Implemented: `Case preparation only` assignment preset, exact eligible-editor email roster, resilient Sheet-link Copy, and truthful permanent-owner sign-in recovery in Settings → People & access.
+- Preserved: explicit-user Google Editor sharing, no public/link editing, no Google credential or automatic ACL mutation, and fully local immutable CSV-backed live selling.
+- Current external state: the renamed canonical Sheet remains owner-only because no additional approved member exists yet. Grant Editor only after the person's account is active with `Inventory · Operate`.
+- Verified: 446/446 tests, TypeScript, lint, production build, diff hygiene, private HTTP 200, desktop/390px no-overflow layouts, 44px actions, Copy feedback, and zero browser-console entries.
+- Next: Product Owner approves the first real Case preparer, copies their exact email from Settings, and adds it as a native Google Editor. Automated permission synchronization remains a separately gated future slice.
+
 ## Product Review Candidate: Trusted Account Sign Up Invitation
 
 - Implemented and privately live: prominent generic Sign Up URL in People & access with resilient Copy, supported-device Share, Preview, and explicit zero-access/owner-approval disclosure (`PHR-ARCH-016`).

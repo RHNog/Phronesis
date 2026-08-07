@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-06 — Case Source collaboration uses two explicit authorization gates
+
+- **Status:** Implemented and privately live; Product Review pending (`PHR-WORKFLOW-012`).
+- **Decision:** `INVENTORY:OPERATE` or stronger is the Phronesis eligibility gate for opening-inventory preparation. It does not imply Event Ledger, Vendor Workspace, or Administration authority.
+- **Decision:** Google separately grants native Editor permission to the exact approved account email. Phronesis lists eligible emails and links to the Share dialog but does not store a Google credential, automate ACL changes, or enable public/link-wide editing.
+- **Decision:** Keep the Sheet URL in validated server-only configuration and disclose it only after a server authorization decision. Display Case exposes preparation before an event; live Event Ledger operation continues from the immutable imported CSV snapshot.
+- **Consequences:** Trusted people can collaboratively prepare Case Source without receiving selling or administrative access. Revocation remains a deliberate two-system action until a separately approved owner OAuth/service-account boundary exists.
+
 ## 2026-08-06 — Separate account creation, module approval, and custom-domain transport
 
 - **Status:** Implemented privately; custom-domain activation gated (`PHR-ARCH-016`, `PHR-TECH-016`).

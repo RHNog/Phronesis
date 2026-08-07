@@ -1,5 +1,9 @@
 # Sprint History
 
+## 2026-08-06 — Authorized Case Source Preparation
+
+Extended `PHR-WORKFLOW-012` so active Inventory Operators can reach the private native Case Source before an event without receiving selling or Administration access. Moved the Sheet URL server-side, added a pre-event Display Case card, retained Event Ledger editing, added a Case-only entitlement preset and exact eligible-editor roster, and updated the renamed Sheet's own instructions. Google Editor permission remains an independent explicit-email owner action and Drive metadata remains owner-only until a real approved preparer exists. Full 446/446 tests, TypeScript, lint, build, diff hygiene, private health, desktop/390px overflow, 44px action, copy-feedback, and console gates pass. Product Review remains pending.
+
 ## 2026-07-31 — Event Flip And Display Case Inventory
 
 Added a Purchase-derived Event Flip queue for exact single-card lots, multi-select quantity and intended-price allocation, and one retry-safe Add-to-Case action. Added a Display Case allocation ledger over receipt-backed ownership, combined prepared/event-flip visibility, one source-labelled Sale picker shared by full and Lite Event Ledger, atomic Case/General Sale and guarded reversal, returns, counts, verification CSV, and General Inventory reservation math/guards. Vendor Workspace now offers direct-to-Case routing with a required Case price inside the atomic receipt transaction. Exact sealed, aggregate Bulk, and manual Purchase outcomes remain truthfully General-only. Binder Inventory is recorded for later design. Focused 6/6 and full 290/290 tests, TypeScript, lint, production build, diff hygiene, private health, desktop, and 390px no-overflow/clean-console gates pass. Product Review remains pending.

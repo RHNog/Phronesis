@@ -1,10 +1,22 @@
 # PHR-WORKFLOW-012 Event Stock Control Validation
 
-Date: 2026-07-31
+Date: 2026-07-31; authorized collaboration revision 2026-08-06
 
 Feature: `PHR-WORKFLOW-012`
 
-Verdict: **PASS — PRODUCT REVIEW PENDING**
+Verdict: **PASS — PRIVATELY LIVE; PRODUCT REVIEW PENDING**
+
+## Authorized Collaboration Revision — 2026-08-06
+
+- Canonical Drive identity: `1yqGJMvyL_zzMuDQPOdnLi0UUuyIF1-B3-9iwpkEUv50`, titled `Phronesis Case Source — Opening Display Inventory`.
+- Native Drive permission readback returned exactly one explicit `user/owner` permission for `nogueirarh@gmail.com`; no anonymous, anyone, domain-wide, or future-editor grant exists.
+- Instructions readback includes the exact dual gate: assign `Inventory · Operate` in Phronesis and grant Google Editor to the same approved account email.
+- URL validation accepts only HTTPS `docs.google.com/spreadsheets/d/<id>` addresses. An explicitly invalid primary value fails closed instead of falling through to the bounded legacy configuration.
+- Display Case discloses the Sheet only after Inventory Operate authorization and renders the preparation card before the no-event branch. Event Ledger performs its own independent Inventory Operate authorization before passing the link.
+- People & access exposes the Case-only entitlement preset, eligible exact-email roster, revocation guidance, and a truthful permanent-owner sign-in state when the protected directory cannot load.
+- Full behavioral suite: 446/446 passed. Standalone TypeScript, repository-wide ESLint, Next.js 16.2.12 production build, and `git diff --check` passed.
+- Live desktop review at 1280 × 720 measured 1265px document width inside a 1280px viewport; phone review at 390 × 844 measured 375px document width, 44px actions, successful Copy feedback, and no browser-console entries.
+- Loopback and private tailnet Display Case returned HTTP 200 after the production rebuild and service restart.
 
 ## Contract Verification
 
@@ -40,4 +52,4 @@ Verdict: **PASS — PRODUCT REVIEW PENDING**
 - Document width and body width both measured 375px; horizontal overflow was zero.
 - Browser logs contained development information only and no warning/error entry.
 - Physical count rows are behind a labelled, keyboard-operable `Physical verification` disclosure, preventing a large manifest from obstructing live Sale entry.
-- No persistent user event, external transaction, public Sheet, credential, dependency, commit, or push was created.
+- No persistent user event, external transaction, public Sheet, Google credential, or external editor permission was created during validation.

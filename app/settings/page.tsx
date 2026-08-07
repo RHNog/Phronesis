@@ -5,6 +5,7 @@ import {
   getAuthRuntimeStatus,
   getPublicEventAccessOrigin,
 } from "@/lib/auth/config";
+import { getCaseSourceSheetUrl } from "@/lib/events/caseSourceConfig";
 import { normalizeSettingsPanel } from "@/lib/settings/panels";
 
 export default async function SettingsPage({
@@ -27,6 +28,7 @@ export default async function SettingsPage({
         initialPanel={initialPanel}
         secureRegistrationReady={secureRegistrationReady}
         restrictedPublicOrigin={restrictedPublicOrigin}
+        caseSourceSheetUrl={getCaseSourceSheetUrl()}
         publicLoginUrl={
           publicEventOrigin ? `${publicEventOrigin}/event-access` : null
         }

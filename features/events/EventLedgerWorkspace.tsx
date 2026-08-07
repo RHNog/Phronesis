@@ -350,9 +350,11 @@ function StartEventForm({
 
 export default function EventLedgerWorkspace({
   canOperate,
+  caseSourceSheetUrl,
   initialEventId,
 }: {
   canOperate: boolean;
+  caseSourceSheetUrl: string | null;
   initialEventId: string | null;
 }) {
   const router = useRouter();
@@ -826,6 +828,7 @@ export default function EventLedgerWorkspace({
             eventStatus={event.status}
             currency={event.currency}
             canOperate={canOperate}
+            caseSourceSheetUrl={caseSourceSheetUrl}
             refreshToken={stockRefreshToken}
             onChanged={() => setStockRefreshToken((value) => value + 1)}
           />

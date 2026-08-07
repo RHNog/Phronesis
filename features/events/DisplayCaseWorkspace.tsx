@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CaseSourcePreparation from "@/components/inventory/CaseSourcePreparation";
 import type { EventStockItem } from "@/lib/events/eventStock";
 import type {
   DisplayCaseItem,
@@ -381,8 +382,10 @@ function CaseItemRow({
 
 export default function DisplayCaseWorkspace({
   canOperate,
+  caseSourceSheetUrl,
 }: {
   canOperate: boolean;
+  caseSourceSheetUrl: string | null;
 }) {
   const [snapshot, setSnapshot] = useState<DisplayCaseSnapshot | null>(null);
   const [query, setQuery] = useState("");
@@ -517,6 +520,10 @@ export default function DisplayCaseWorkspace({
           </p>
         ) : null}
       </header>
+
+      {canOperate ? (
+        <CaseSourcePreparation sheetUrl={caseSourceSheetUrl} />
+      ) : null}
 
       {error ? (
         <p

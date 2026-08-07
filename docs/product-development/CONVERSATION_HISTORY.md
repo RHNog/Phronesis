@@ -1,5 +1,23 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Authorized Case Source Preparation
+
+### User Intent
+
+- Let authorized people edit the Case Source Google Sheet to prepare opening inventory.
+
+### Decision And Implementation
+
+- Extended `PHR-WORKFLOW-012` instead of creating a second inventory authoring contract. Active `INVENTORY:OPERATE` is the narrow Phronesis gate; it does not grant Event Ledger, Vendor Workspace, or Administration.
+- Kept Google as an independent native authorization boundary. Settings lists exact eligible account emails, and the owner grants each one explicit Editor access; public or anonymous link editing is prohibited.
+- Moved the Sheet address from client-public configuration to validated server-only configuration and added independently gated preparation actions to pre-event Display Case and Event Ledger.
+- Added `Case preparation only` to pending-account approval and direct invitations, plus an eligible-editor roster and permanent-owner sign-in recovery in People & access.
+- Renamed the existing canonical file to `Phronesis Case Source — Opening Display Inventory` without changing its ID or CSV contract, and updated its Instructions tab with the dual-gate rule.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. The Sheet currently has only its explicit owner because no additional approved member exists. Full 446/446 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, private HTTP 200, 1280px and 390px no-overflow review, 44px actions, Copy feedback, and zero browser-console entries pass. The first real editor grant remains an intentional owner action after that person's Phronesis account is approved.
+
 ## 2026-08-06 — Trusted Account Sign Up Invitation
 
 ### User Intent

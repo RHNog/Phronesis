@@ -1,8 +1,17 @@
 # PHR-WORKFLOW-012 Engineer Report — Event Stock Control
 
-Date: 2026-07-31
+Date: 2026-07-31; authorized collaboration revision 2026-08-06
 
-Status: **IMPLEMENTED — PRODUCT REVIEW PENDING**
+Status: **IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW PENDING**
+
+## 2026-08-06 Authorized Collaboration Revision
+
+- Renamed the canonical native Sheet to [Phronesis Case Source — Opening Display Inventory](https://docs.google.com/spreadsheets/d/1yqGJMvyL_zzMuDQPOdnLi0UUuyIF1-B3-9iwpkEUv50/edit) without changing its file ID or five-column ingestion contract.
+- Moved the Sheet address from a client-public `NEXT_PUBLIC_` variable to validated server-only configuration. Display Case and Event Ledger receive it only after an independent `INVENTORY:OPERATE` authorization decision.
+- Added a pre-event Case Source preparation card to Display Case, plus a `Case preparation only` assignment preset and exact eligible-editor email roster in Settings → People & access.
+- Preserved Google as a separate native authorization boundary. The owner grants Editor to the exact approved Phronesis email and removes that same Drive permission on revocation; Phronesis does not enable public/link editing or silently mutate Google permissions.
+- Updated the Sheet Instructions tab with the same dual-gate access rule. Drive metadata confirms the only current permission is the explicit owner account, so no nonexistent future editor was pre-authorized.
+- Verified all 446 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, private HTTP 200, desktop and 390px no-overflow behavior, 44px actions, copy feedback, and zero browser-console entries.
 
 ## Delivered
 
@@ -21,4 +30,4 @@ The focused stock workflow and complete 284/284 behavioral suite pass, along wit
 
 ## Boundaries
 
-This increment does not add live Google credential access, background Sheet synchronization, global Inventory allocation, payment processing, revenue allocation, cost basis, profit, settlement, external transactions, public deployment, commit, or push. The Google Sheet remains owner-scoped; the live event remains local after explicit CSV ingestion.
+This increment does not add live Google credential access, background Sheet synchronization, automatic Drive ACL mutation, global Inventory allocation, payment processing, revenue allocation, cost basis, profit, settlement, external transactions, or public deployment. The Google Sheet remains explicit-user scoped; the live event remains local after explicit CSV ingestion.

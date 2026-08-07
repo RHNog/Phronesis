@@ -1,8 +1,17 @@
 # PHR-WORKFLOW-012 Chief Architect Conformance Review
 
-Date: 2026-07-31
+Date: 2026-07-31; authorized collaboration revision 2026-08-06
 
 Verdict: **CONFORMS — READY FOR PRODUCT REVIEW**
+
+## 2026-08-06 Collaboration Conformance
+
+- `INVENTORY:OPERATE` is the single Phronesis Case-preparation eligibility rule and is checked server-side before the external URL crosses a Server/Client Component boundary.
+- Google Editor permission remains an independent explicit-user control. The application neither stores a Google credential nor broadens the Sheet to anonymous/link-wide editing.
+- Display Case supports preparation before event creation; Event Ledger retains the immutable CSV ingestion boundary, so live selling never depends on Google reachability or mutable Sheet state.
+- Settings derives the sharing roster from active module entitlements, provides a bounded Case-only preset, and fails truthfully to permanent-owner sign-in when the protected member directory is unavailable.
+- The renamed native Sheet retains its exact ID and contract. Its Instructions tab documents the dual gate, and permission metadata remains owner-only until a real approved editor exists.
+- Deterministic, build, private-runtime, responsive, copy-feedback, and console gates pass as recorded in the validation report.
 
 ## Findings
 

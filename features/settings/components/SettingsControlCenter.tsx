@@ -42,11 +42,13 @@ export default function SettingsControlCenter({
   initialPanel,
   secureRegistrationReady,
   restrictedPublicOrigin,
+  caseSourceSheetUrl,
   publicLoginUrl,
 }: {
   initialPanel: SettingsPanelId;
   secureRegistrationReady: boolean;
   restrictedPublicOrigin: string | null;
+  caseSourceSheetUrl: string | null;
   publicLoginUrl: string | null;
 }) {
   const [activePanel, setActivePanel] = useState(initialPanel);
@@ -215,6 +217,7 @@ export default function SettingsControlCenter({
             <AccessManagement
               active={secureRegistrationReady}
               restrictedPublicOrigin={restrictedPublicOrigin}
+              caseSourceSheetUrl={caseSourceSheetUrl}
             />
           </div>
           <div id="settings-panel-temporary" hidden={activePanel !== "temporary"}>

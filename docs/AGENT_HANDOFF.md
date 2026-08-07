@@ -1,5 +1,14 @@
 # Agent Handoff
 
+## Product Review Candidate — Authorized Case Source Preparation — 2026-08-06
+
+- `PHR-WORKFLOW-012` now exposes `Phronesis Case Source — Opening Display Inventory` before event opening to active members with `INVENTORY:OPERATE` or stronger.
+- Display Case owns the pre-event preparation card; Event Ledger retains the edit/import workflow. The Sheet URL moved from a client-public variable to validated server-only configuration and crosses to the client only after an independent authorization check.
+- Settings → People & access now provides `Case preparation only`, lists exact eligible account emails for native Google sharing, supports resilient link/email Copy, and directs compatibility-mode users to permanent owner sign-in before trusting the roster.
+- Google remains a second explicit-user gate. Current Drive metadata contains only owner `nogueirarh@gmail.com`; no public, anonymous, domain, or unapproved editor permission exists. Add the first real editor only after approving that exact Phronesis account.
+- The Sheet title and Instructions tab now identify the Case Source and its dual-gate rule. Live Sale, reversal, count, and reporting remain local after immutable CSV import.
+- Full 446/446 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, loopback/tailnet HTTP 200, 1280px/390px no-overflow review, 44px actions, Copy feedback, and zero browser-console entries pass. Same-session conformance is not independent Product Owner approval.
+
 ## Product Review Candidate — Trusted Account Sign Up Invitation — 2026-08-06
 
 - `PHR-ARCH-016` now gives the owner one generic Sign Up invite in Settings → People & access with exact URL display, resilient Copy, supported-device Share, Preview, and zero-access disclosure.
