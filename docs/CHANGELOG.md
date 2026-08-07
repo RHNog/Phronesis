@@ -5,6 +5,8 @@
 
 ### Added
 
+- Cross-platform scanner appliance control plane with one-time pairing, revocable outbound agent credentials, readiness, durable Start/Cancel commands, front-only direct recognition ingest, portable agent setup, and macOS/Windows native build automation (`PHR-TECH-017`).
+
 - Phronesis-assisted Pokémon sealed artwork recovery with conservative versioned selection, reversible owner exceptions, separate exact/assisted/owner coverage, and truthful Vendor Workspace provenance; v1 added 118 visible representatives (`PHR-UX-024`).
 
 - Exact TCG Direct Low ingestion, persistence, prominent evidence, and first-priority buying valuation (`PHR-BR-001`).

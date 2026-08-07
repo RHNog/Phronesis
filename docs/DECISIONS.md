@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-06 — Scanner computers are outbound Phronesis appliances, not trusted servers
+
+- **Status:** Control-plane foundation implemented; signed distribution and physical qualification gated (`PHR-TECH-017`).
+- **Decision:** Phronesis owns appliance identity, one-time pairing, revocation, readiness, durable Start/Cancel lifecycle, exact recognition-session binding, and front-only evidence admission. The scanner computer owns only its local vendor driver, capture executable configuration, bounded spool, hashing, retries, and exact child-process termination.
+- **Decision:** Agents make outbound authenticated requests and expose no listener. Pairing codes and device credentials are stored server-side only as hashes; the browser never receives a device credential. Commands contain no executable path, argument template, or shell input.
+- **Decision:** Package one dependency-free reference agent as separate native macOS and Windows executables. Do not describe an operating system or scanner model as supported until that target artifact, driver, and physical device combination passes qualification; signing, notarization, installers, and unattended services remain distinct release gates.
+- **Consequences:** A booth laptop can be paired and controlled through one Phronesis ceremony without a shared-folder bridge or repository checkout, while vendor-driver failures remain isolated and visible. Universal plug-and-play compatibility is an evidence goal, not an unverified claim.
+
 ## 2026-08-06 — Ongoing event staffing uses two explicit access lifecycles
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-WORKFLOW-017`).

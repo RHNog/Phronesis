@@ -51,7 +51,7 @@
 
 1. `PHR-TECH-013-A` — macOS fi-8170 capability probe and supervised low-value hardware qualification.
 2. `PHR-TECH-015` — temporary Windows/Parallels PaperStream bridge; duplex acquisition, sealing, and Mac hash import verified, final acceptance gates in progress.
-3. `PHR-TECH-013-B` — signed durable acquisition agent and Windows-neutral protocol.
+3. `PHR-TECH-017` — cross-platform appliance control-plane foundation implemented: one-time pairing, readiness, outbound Start/Cancel, front-only direct ingest, portable native executable builds, and Scanner-to-Offer setup. Signed installers, unattended services, and per-driver physical qualification remain gated.
 4. `PHR-TECH-014` — conservative local engine and calibration toolchain implemented; next gate is Product Owner-approved English Magic corpus provenance and a powered holdout before auto-accept.
 5. `PHR-WORKFLOW-016` — offline scanner-to-offer Vendor workflow implemented and Product Review ready.
 6. `PHR-API-015` — marketplace-neutral recognized-asset interchange and draft adapters implemented; independent consumer adoption remains.

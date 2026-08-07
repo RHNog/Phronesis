@@ -1,5 +1,19 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Cross-Platform Scanner Appliance Control Plane
+
+- Assignment: `PHR-SCANNER-APPLIANCE-20260806`
+- Feature: `PHR-TECH-017`
+- Status: `CONTROL-PLANE FOUNDATION IMPLEMENTED AND PRIVATELY LIVE — SIGNED DISTRIBUTION AND PHYSICAL QUALIFICATION GATED`
+- Objective: make an approved Mac or Windows computer connected to a scanner behave as a Phronesis-controlled appliance without requiring a repository checkout, shared-folder bridge, or inbound network listener.
+- Authority rule: permanent Administration Admin creates/revokes pairings; Vendor Workspace Operators queue Start/Cancel; every agent call uses its own hashed, revocable bearer identity with no browser-auth fallback.
+- Control rule: Phronesis owns readiness, durable command lifecycle, exact session binding, cancellation, front-only evidence validation, and recognition scheduling. The agent owns only local vendor-driver configuration, bounded capture, hashing, retry, and exact child-process termination.
+- Distribution rule: the dependency-free agent supports `pair`, `configure`, `doctor`, and `run`; Node SEA builds a native executable independently on each target OS. CI produces unsigned macOS arm64 and Windows x64 qualification artifacts.
+- Work order: `docs/prompts/PHR-TECH-017-cross-platform-scanner-appliance-control-plane-prompt.md`.
+- Verification: focused 8/8, full 457/457, TypeScript, warning-free lint, production build, diff hygiene, current-host native executable help/signature/checksum, additive live migration/integrity, loopback/tailnet HTTP 200, and responsive browser acceptance pass.
+- Runtime: Scanner-to-Offer at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor/scanner` now exposes appliance readiness, refresh, setup/download, Pair, Start, Cancel, and Revoke according to the current principal's authorization. No live appliance or physical capture was fabricated during validation.
+- Next accountable role: Product Owner pairs the first real Windows scanner computer while supervised. Before wider tester distribution, select signing identities, ship signed installers/background services, execute the Windows artifact, and qualify every claimed scanner/driver/OS combination. Same-session conformance is not independent approval.
+
 ## Active Revision — Ongoing Event Team Access
 
 - Assignment: `PHR-ONGOING-EVENT-TEAM-20260806`

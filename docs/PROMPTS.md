@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-06 — Cross-Platform Scanner Appliance Control Plane
+
+- Source: Product Owner requested the most plug-and-play scanner setup possible across MacBook and Windows devices, with Phronesis acting as the appliance controller.
+- Feature: `PHR-TECH-017`; assignment `PHR-SCANNER-APPLIANCE-20260806`.
+- Implementation prompt: `docs/prompts/PHR-TECH-017-cross-platform-scanner-appliance-control-plane-prompt.md`.
+- Result: one-time device pairing, revocable outbound agent identity, readiness heartbeats, durable Start/Cancel control, command-bound front-only ingest, portable agent/setup UX, and target-OS native packaging workflow. Signed installers and physical driver qualification remain gated.
+
 ## 2026-08-06 — Ongoing Event Team Access
 
 - Source: Product Owner asked whether users could be added to an already-running Event Ledger and directed implementation if not.

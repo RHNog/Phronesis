@@ -1,5 +1,12 @@
 # Product Roadmap
 
+## Product Review Candidate — Plug-And-Play Scanner Appliances
+
+- Pair an approved Mac or Windows scanner computer once, see its exact readiness in Scanner-to-Offer, and control Start or Cancel from Phronesis (`PHR-TECH-017`).
+- Keep the booth computer closed to inbound access: its agent polls outbound, executes only a locally configured vendor adapter, and uploads checksum-verified front images to the command-bound batch.
+- Provide a dependency-free portable agent and target-OS native executable build so a repository checkout and local Node installation are unnecessary for testers.
+- Preserve truthful qualification: current-host macOS packaging and synthetic capture/cancellation are verified; signed installers, automatic service setup, Windows artifact execution, and each physical scanner/driver combination remain release gates.
+
 ## Current Delivery — Arbitrage Evidence Continuity
 
 - Restore the existing Cross-market decision queue from the verified 131,869-match LigaMagic/TCGplayer crosswalk by keeping runtime and acquisition on one operational database (`PHR-TECH-012`).

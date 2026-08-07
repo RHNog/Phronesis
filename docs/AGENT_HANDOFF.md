@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## Product Review Candidate — Cross-Platform Scanner Appliance Control Plane — 2026-08-06
+
+- `PHR-TECH-017` turns an approved scanner computer into an outbound-polling Phronesis appliance with single-use pairing, hashed/revocable device identity, readiness, durable Start/Cancel, and exact recognition-session binding.
+- Agent endpoints never fall back to browser, compatibility, or event-worker identity. Permanent Administration Admin owns Pair/Revoke; Vendor Workspace Operate owns Start/Cancel.
+- The dependency-free agent keeps executable paths and argument templates local, uses no shell, uploads only bounded checksum-verified front images, retries idempotently, preserves its spool, and cancels the exact capture child.
+- Scanner-to-Offer now includes appliance state, explicit Refresh, portable download/setup steps, pairing, Start, coordinated Cancel, and revoke. Compatibility users see permanent-sign-in recovery instead of unauthorized controls.
+- Target-OS Node SEA packaging and GitHub artifact builds remove the repository/Node requirement for testers. The current macOS executable passes help, ad-hoc signature verification, and checksum verification.
+- Focused 8/8, full 457/457, TypeScript, warning-free lint, production build, diff hygiene, live additive migration/integrity, private HTTP 200, and desktop/phone browser checks pass. No live pairing or physical scan was fabricated.
+- Next gates: execute and physically qualify the Windows artifact with fi-8170/PaperStream, select signing identities, ship signed installers and supervised background services, then qualify each Mac/Windows driver combination before claiming support. Same-session conformance is not independent Product Owner approval.
+
 ## Product Review Candidate — Ongoing Event Team Access — 2026-08-06
 
 - `PHR-WORKFLOW-017` adds `Event team` inside the current active Event Ledger and keeps mutable user access separate from the product-owner roster locked at opening.

@@ -5,6 +5,11 @@ Use `- [ ] [P0]`, `[P1]`, `[P2]`, or `[P3]` for machine ordering.
 
 ## Active gates
 
+- [x] [P0] Implement the `PHR-TECH-017` scanner appliance control-plane foundation with secure pairing, readiness, outbound Start/Cancel, front-only ingest, portable-agent setup, and target-OS native build automation.
+- [ ] [P0] Physically qualify the packaged agent with the fi-8170 and supported PaperStream/TWAIN adapter on Windows; record exact OS, driver, job, capture, upload, cancel, and restart evidence.
+- [ ] [P1] Select signing identities and ship signed/notarized macOS and signed Windows installers with supervised background-service registration and rollback before general trusted-tester distribution.
+- [ ] [P1] Re-run the `PHR-TECH-013` physical ICA gate on each claimed supported macOS release/hardware combination; do not infer support from the portable control protocol.
+
 - [x] [P0] Privately activate and validate `PHR-WORKFLOW-016` at tailnet-only `:9444/vendor/scanner`; preserve existing services and do not publish.
 - [x] [P0] Make English Pokémon the default private recognition lane and replay the accepted 18-frame batch append-only; verify eight reviews and ten safe abstentions.
 - [ ] [P0] Product Owner resolves one of the eight current English Pokémon review results and confirms the exact-variant/condition/price experience.

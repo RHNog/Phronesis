@@ -1,6 +1,15 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-06 Scanner Appliance Control State
+
+- `PHR-TECH-017` implements the Phronesis-owned cross-platform control-plane foundation on `codex/phr-local-card-recognition-20260804`: one-time pairing, hashed revocable device identity, readiness, durable Start/Cancel, exact session binding, and front-only direct recognition ingest.
+- The scanner computer exposes no listener and receives no remote executable or shell configuration. Its dependency-free agent keeps the vendor-driver command local, polls outbound, stages a bounded spool, verifies hashes, retries uploads, and terminates only its exact capture child.
+- Scanner-to-Offer exposes setup, portable-agent download, readiness, refresh, pairing, Start, Cancel, and revoke under existing permanent-admin and Vendor Workspace gates. Compatibility users are directed to permanent sign-in for device administration.
+- Host-native Node SEA packaging passes on the current macOS host using an official checksum-verified Node distribution. GitHub Actions defines independent unsigned macOS arm64 and Windows x64 artifact builds; the Windows artifact has not yet executed in this session.
+- The private `:9444` runtime has the additive appliance tables and remains healthy with database integrity `ok`. No fake appliance or physical capture was created.
+- Signed/notarized installers, unattended service registration, auto-update, and each claimed scanner/vendor-driver/OS combination remain separately gated; portable control-plane compatibility is not a universal hardware-support claim.
+
 ## 2026-08-05 Local Card Recognition State
 
 - `PHR-TECH-014`, `PHR-WORKFLOW-016`, `PHR-API-015`, and the `PHR-UX-026` region foundation are implemented in the isolated `codex/phr-local-card-recognition-20260804` worktree. English Pokémon is the first active lane, and the scanner-to-offer path is privately operational at tailnet-only `:9444`; real-corpus qualification remains gated.

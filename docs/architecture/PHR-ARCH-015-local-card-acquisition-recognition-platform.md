@@ -44,6 +44,8 @@ Create three isolated runtime boundaries:
 
 Until Ricoh supports the host macOS 27 release, `PHR-TECH-015` may qualify acquisition through a temporary Windows/Parallels adapter. PaperStream remains behind the acquisition boundary; Windows-local originals cross only as sealed hash-bound bundles and are independently verified on macOS. This contingency grants Windows no canonical identity, database, recognition, commerce, or publication authority.
 
+`PHR-TECH-017` implements the portable production control-plane foundation. A dependency-free Scanner Agent pairs once through a short-lived code, keeps its revocable device credential locally, reports driver readiness, polls outbound for bounded Start/Cancel commands, and uploads checksum-verified front frames into the exact recognition session. Phronesis never sends executable paths or shell input; vendor-driver configuration remains local to the scanner computer.
+
 Original frames are stored outside SQLite in an immutable content-addressed spool. SQLite stores metadata, provenance, jobs, candidates, decisions, overrides, price bindings, offer lines, and downstream intents. Recognition never publishes externally.
 
 ## Functional Requirements
@@ -141,6 +143,7 @@ Original frames are stored outside SQLite in an immutable content-addressed spoo
 - `PHR-TECH-013` fi-8170 Local Acquisition Agent.
 - `PHR-TECH-014` Local Recognition Corpus And Engine.
 - `PHR-TECH-015` Temporary Windows Scanner Bridge.
+- `PHR-TECH-017` Cross-Platform Scanner Appliance Control Plane.
 - `PHR-WORKFLOW-016` Scanner-To-Offer Vendor Buying.
 - `PHR-API-015` Recognized Asset Interchange.
 
@@ -177,7 +180,7 @@ The first source-changing slice is a native capability probe with no product UI.
 
 ## Open Questions
 
-- Production Windows deployment topology remains deferred; `PHR-TECH-015` defines only the temporary local Parallels bridge.
+- The cross-platform control protocol and target-OS single-executable build are implemented under `PHR-TECH-017`; signed installers, unattended service registration, and per-driver physical qualification remain release gates.
 - Raw scan retention defaults require Product Owner approval before production evidence storage.
 - Corpus licensing and redistribution terms must be accepted before catalogue-scale ingestion.
 
@@ -186,5 +189,5 @@ The first source-changing slice is a native capability probe with no product UI.
 - Originating brief: Product Owner-supplied `Phronesis Local Card Recognition Product Brief`.
 - Slice plan: `docs/product-development/PHR-LOCAL-CARD-RECOGNITION-20260804-slice-plan.md`.
 - First implementation prompt: `docs/prompts/PHR-TECH-013-fi8170-local-acquisition-agent-prompt.md`.
-- Last modified: 2026-08-05.
-- Modification reason: change the Product Owner-selected first recognition product line from English Magic to English Pokémon while preserving conservative review and publication boundaries.
+- Last modified: 2026-08-06.
+- Modification reason: adopt the outbound-polling cross-platform scanner appliance control plane while preserving local vendor-driver and recognition boundaries.

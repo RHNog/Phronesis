@@ -55,6 +55,8 @@
 
 - `PHR-ARCH-015` treats scanning as one acquisition adapter into immutable frames and regions, not as a Vendor Workspace-only feature.
 - Phronesis owns authorization, canonical identity, pricing, offers, and operator decisions. Native macOS/Windows agents own scanner sessions; an isolated local worker owns recognition.
+- `PHR-TECH-017` makes each scanner computer a revocable outbound-polling appliance. Phronesis owns one-time pairing, readiness, durable Start/Cancel commands, exact session binding, and front-only frame admission; the computer retains only local vendor-driver configuration and its device credential.
+- The reference agent is dependency-free and can be packaged as a native Node single executable on macOS and Windows. Unsigned CI artifacts are available for qualification; signed installers, background-service registration, and each physical driver/OS combination remain explicit release gates.
 - `PHR-TECH-013` first proves the actual fi-8170/ImageCaptureCore contract with a standalone Swift probe and low-value physical gate.
 - `PHR-TECH-015` temporarily routes supported fi-8170 acquisition through Windows PaperStream, seals Windows-local frames into a hash-bound Parallels bundle, and requires a distrustful macOS import; it owns no identity or product state.
 - `PHR-TECH-014` now provides immutable local evidence, deterministic corpus-bundle construction, split-leakage and recognition-use approval gates, corpus activation/rollback, Apple Vision evidence, English Pokémon game/language gating, name-plus-collector read-only retrieval, append-only reprocessing, sealed multi-metric benchmark qualification, candidate review, and abstention. Real licensed artwork indexing and auto-accept remain gated.

@@ -1,0 +1,38 @@
+name: Scanner appliance agent packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - scanner-agent-v*
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            artifact: phronesis-scanner-agent-macos-arm64
+            executable: phronesis-scanner-agent
+          - runner: windows-2025
+            artifact: phronesis-scanner-agent-windows-x64
+            executable: phronesis-scanner-agent.exe
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+      - name: Build host-native single executable
+        run: node scripts/build-scanner-appliance-agent.mjs
+      - name: Smoke test executable
+        shell: bash
+        run: ./build/scanner-agent/${{ matrix.executable }} help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            build/scanner-agent/${{ matrix.executable }}
+            build/scanner-agent/${{ matrix.executable }}.sha256
+          if-no-files-found: error

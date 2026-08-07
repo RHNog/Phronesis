@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Cross-Platform Scanner Appliance Control Plane
+
+### User Intent
+
+- Make scanner setup as plug-and-play as possible on MacBook and Windows devices, with Phronesis itself controlling the appliance.
+
+### Decision And Implementation
+
+- Assigned `PHR-TECH-017` and implemented an adapter-neutral, outbound-polling scanner appliance instead of remotely trusting a booth computer or embedding PaperStream paths in the web application.
+- Added short-lived single-use pairing, hashed and revocable device credentials, readiness heartbeats, durable Start/Cancel commands, exact recognition-session binding, and bounded checksum-verified front-only uploads.
+- Added a dependency-free portable agent with local-only capture configuration, diagnosis, retry-safe upload, spool recovery, exact child cancellation, Node SEA native packaging, and separate macOS/Windows CI artifacts.
+- Added appliance setup and control before the Scanner-to-Offer batch workflow. Pair/revoke remain permanent-admin actions; Start/Cancel require Vendor Workspace operation; compatibility sessions receive truthful permanent-sign-in recovery instead of management authority.
+
+### Acceptance State
+
+The control-plane foundation is implemented and privately live. Focused 8/8 and full 457/457 tests, TypeScript, warning-free lint, production build, diff hygiene, current-host native-executable help/signature/checksum, live additive database migration/integrity, loopback/tailnet HTTP 200, and desktop/phone browser checks pass. No real appliance, driver, or card batch was invented for acceptance. Signed installers, unattended service setup, target Windows artifact execution, and physical scanner/driver/OS qualification remain explicit gates before general tester distribution.
+
 ## 2026-08-06 — Ongoing Event Team Access
 
 ### User Intent

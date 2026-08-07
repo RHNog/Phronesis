@@ -4,9 +4,15 @@
 
 ## Objective
 
-Continue the privately activated English Pokémon vision workflow with acquisition-proven duplex evidence and one operator-declared condition/finish per homogeneous batch while preserving every recognition/publication gate.
+Complete the `PHR-TECH-017` cross-platform scanner appliance control-plane foundation while preserving the privately activated English Pokémon recognition, operator review, and publication gates.
 
 ## Acceptance criteria
+
+- [x] Pair and revoke macOS/Windows appliance identities through short-lived one-time codes without storing plaintext credentials server-side.
+- [x] Report readiness and control durable Start/Cancel commands from Scanner-to-Offer through existing permanent-admin and Vendor Workspace authorization.
+- [x] Admit only command-bound, checksum-verified, bounded front images to the exact active recognition session.
+- [x] Provide a dependency-free local agent with local-only adapter configuration, doctor/run workflows, safe capture, retry, spool preservation, and exact child cancellation.
+- [x] Build a current-host native executable and define independent macOS/Windows CI artifact builds.
 
 - [x] Preserve legacy `v1` bundles as unpaired evidence without guessing from sequence or filenames.
 - [x] Add and validate a `v2` adjacent-duplex-front-first manifest with reciprocal pairs and complete-pair enforcement.
@@ -20,6 +26,8 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 - [x] Complete one new low-value `v2` duplex capture in the interactive Windows session.
 
 ## Completed this session
+
+- Implemented `PHR-TECH-017`: secure appliance registry/command repository, agent-only APIs, portable agent, native packaging workflow, Scanner-to-Offer setup/control UI, deterministic tests, additive live migration, and private runtime activation.
 
 - Implemented `PHR-UX-027`: authenticated Dashboard tool hub, `/opportunities` route split, persistent collapsible desktop navigation, Dashboard-first worker login, exact approved Phronesis shell/favicon/iOS identity, origin-relative standalone installation metadata, and static Event Operations containment. Focused 8/8, full 423/423, TypeScript, lint, build, live metadata, responsive, and zero-overlap scroll gates pass. The retired local Safari installation requires one reinstall from the current tailnet URL.
 - Completed and sealed the scanner-to-offer foundation through the Product Review boundary.
@@ -49,6 +57,10 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 
 ## Remaining work
 
+- Pair and physically qualify the first real Windows fi-8170/PaperStream appliance, including capture, front-only upload, Phronesis Cancel, interruption recovery, and restart behavior.
+- Select code-signing identities and distribution, then produce signed/notarized installers with supervised background-service registration before general trusted-tester use.
+- Re-run physical acquisition qualification for every Mac/Windows OS, driver, scanner, and architecture combination Phronesis claims to support.
+
 - Enable **Release after scan** in the supported PaperStream profile UI before the next routine batch.
 - Product Owner declares a homogeneous batch condition/finish before resolving a future English Pokémon review candidate with both sides and exact price evidence.
 - Acquire a labeled real binder holdout before any segmentation activation.
@@ -63,4 +75,4 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 
 ## Exact next action
 
-In PaperStream's supported profile UI, enable **Release after scan** before the next capture. Then acquire a homogeneous batch, declare its condition/finish, and review any candidate with both sides visible. Do not enable auto-accept, grading, finish classification, or segmentation suggestions.
+On the scanner Windows computer, download the target Windows agent artifact, configure the local PaperStream capture command, run `doctor`, pair it from Scanner-to-Offer with permanent owner authority, and execute one supervised low-value front-only batch plus Cancel/restart recovery. Do not enable auto-accept, grading, finish classification, or publication.
