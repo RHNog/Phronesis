@@ -51,3 +51,11 @@ Result: Pass — implemented and privately live; unattended restart persistence 
 - The Copy action produced visible `Sign Up link copied` / `Copied to clipboard` confirmation; Share appeared on the supported browser; Preview targeted the exact displayed URL.
 - The configured future custom domain failed DNS resolution during read-only validation. Because `PHRONESIS_RESTRICTED_PUBLIC_MODE` is not enabled, the live card correctly selected `https://ramons-mac-studio.tailaa2d39.ts.net:9444/sign-up`, which returns HTTP 200.
 - Browser warning/error count: zero. No account, access request, membership, entitlement, invitation code, message, or public infrastructure was created.
+
+## 2026-08-07 No-Client Public Activation
+
+- People & access now displays exactly `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up` while public mode is enabled.
+- An isolated migrated production database proved registration, secure session issuance, pending-room access, and zero-module root redirection through restricted ingress; the temporary identity/database were removed.
+- A live public registration request reached Better Auth's normal password validation instead of failing origin validation and created no probe account.
+- Distributed public checks returned Sign Up `200`; public Settings remained `404`; private Scanner-to-Offer and Event Ledger remained `200`; live SQLite integrity remained `ok`.
+- Focused gateway/auth 18/18, full 458/458, TypeScript, warning-free lint, and production build pass. Detailed transport evidence is in `docs/testing/PHR-TECH-016-restricted-public-custom-domain-ingress-validation.md`.

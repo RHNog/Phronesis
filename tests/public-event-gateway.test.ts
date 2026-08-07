@@ -24,7 +24,12 @@ test("loopback public gateway marks forwarded traffic and blocks owner-only path
   const target = http.createServer((request, response) => {
     upstreamRequests += 1;
     response.writeHead(200, { "content-type": "application/json" });
-    response.end(JSON.stringify({ marker: request.headers["x-phronesis-public-event"], proto: request.headers["x-forwarded-proto"], path: request.url }));
+    response.end(JSON.stringify({
+      marker: request.headers["x-phronesis-public-event"],
+      restricted: request.headers["x-phronesis-restricted-public"] ?? null,
+      proto: request.headers["x-forwarded-proto"],
+      path: request.url,
+    }));
   });
   const targetPort = await listen(target);
   const reservation = http.createServer();
@@ -50,8 +55,112 @@ test("loopback public gateway marks forwarded traffic and blocks owner-only path
     assert.equal(permanentAuth.status, 404);
     assert.equal(upstreamRequests, 0);
     const worker = await fetch(`http://127.0.0.1:${gatewayPort}/event-access`);
-    assert.deepEqual(await worker.json(), { marker: "1", proto: "https", path: "/event-access" });
+    assert.deepEqual(await worker.json(), { marker: "1", restricted: null, proto: "https", path: "/event-access" });
     assert.equal(upstreamRequests, 1);
+  } finally {
+    child.kill("SIGTERM");
+    await new Promise<void>((resolve) => target.close(() => resolve()));
+  }
+});
+
+test("shared public Funnel keeps event workers separate from permanent accounts", async () => {
+  const requests: Array<Record<string, string | string[] | undefined>> = [];
+  const target = http.createServer((request, response) => {
+    requests.push({ ...request.headers, path: request.url });
+    response.writeHead(200, { "content-type": "application/json" });
+    response.end(JSON.stringify({
+      event: request.headers["x-phronesis-public-event"] ?? null,
+      restricted: request.headers["x-phronesis-restricted-public"] ?? null,
+      proto: request.headers["x-forwarded-proto"],
+      forwardedHost: request.headers["x-forwarded-host"],
+      forwardedFor: request.headers["x-forwarded-for"],
+      path: request.url,
+    }));
+  });
+  const targetPort = await listen(target);
+  const reservation = http.createServer();
+  const gatewayPort = await listen(reservation);
+  await new Promise<void>((resolve) => reservation.close(() => resolve()));
+  const child = spawn(process.execPath, [new URL("../scripts/public-event-gateway.mjs", import.meta.url).pathname], {
+    env: {
+      ...process.env,
+      PHRONESIS_PUBLIC_GATEWAY_PORT: String(gatewayPort),
+      PHRONESIS_PUBLIC_GATEWAY_TARGET_PORT: String(targetPort),
+      PHRONESIS_RESTRICTED_PUBLIC_HOSTNAME: "access.example.test",
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const request = (path: string, headers: http.OutgoingHttpHeaders = {}) => new Promise<{ status: number; body: string }>((resolve, reject) => {
+    const outbound = http.request({ host: "127.0.0.1", port: gatewayPort, path, headers }, (response) => {
+      const chunks: Buffer[] = [];
+      response.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+      response.on("end", () => resolve({ status: response.statusCode ?? 0, body: Buffer.concat(chunks).toString("utf8") }));
+    });
+    outbound.on("error", reject);
+    outbound.end();
+  });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error("Gateway did not start.")), 5_000);
+      child.stdout.on("data", (chunk) => {
+        if (String(chunk).includes("listening")) { clearTimeout(timer); resolve(); }
+      });
+      child.once("exit", (code) => { clearTimeout(timer); reject(new Error(`Gateway exited ${code}.`)); });
+    });
+
+    assert.equal((await request("/sign-up")).status, 404);
+
+    const spoofedSignUp = await request("/sign-up", {
+      host: "access.example.test:10000",
+      "x-phronesis-public-event": "1",
+      "x-phronesis-restricted-public": "0",
+      "x-forwarded-for": "203.0.113.1",
+      "x-forwarded-host": "attacker.example",
+      "x-forwarded-proto": "http",
+    });
+    assert.deepEqual(JSON.parse(spoofedSignUp.body), {
+      event: null,
+      restricted: "1",
+      proto: "https",
+      forwardedHost: "access.example.test:10000",
+      forwardedFor: "127.0.0.1",
+      path: "/sign-up",
+    });
+
+    const eventLogin = await request("/event-access", {
+      host: "access.example.test:10000",
+      cookie: "better-auth.session_token=forged",
+    });
+    assert.equal(JSON.parse(eventLogin.body).event, "1");
+    assert.equal(JSON.parse(eventLogin.body).restricted, null);
+
+    const anonymousRoot = await request("/", { host: "access.example.test:10000" });
+    assert.equal(JSON.parse(anonymousRoot.body).event, "1");
+
+    for (const cookie of [
+      "better-auth.session_token=forged",
+      "better-auth-session_token=forged",
+      "__Secure-better-auth.session_token=forged",
+    ]) {
+      const accountRoute = await request("/event-ledger", { host: "access.example.test:10000", cookie });
+      assert.equal(JSON.parse(accountRoute.body).restricted, "1", cookie);
+      assert.equal(JSON.parse(accountRoute.body).event, null, cookie);
+    }
+
+    const accountApi = await request("/api/auth/sign-up/email", { host: "access.example.test:10000" });
+    assert.equal(JSON.parse(accountApi.body).restricted, "1");
+
+    for (const path of [
+      "/settings",
+      "/api/administration/access-requests",
+      "/dev/test",
+      "/activate",
+      "/api/auth/activate",
+    ]) {
+      assert.equal((await request(path, { host: "access.example.test:10000", cookie: "better-auth.session_token=forged" })).status, 404, path);
+    }
+
+    assert.equal(requests.length, 7);
   } finally {
     child.kill("SIGTERM");
     await new Promise<void>((resolve) => target.close(() => resolve()));

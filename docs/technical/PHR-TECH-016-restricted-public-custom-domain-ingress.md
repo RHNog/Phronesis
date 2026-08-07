@@ -1,4 +1,4 @@
-# PHR-TECH-016 — Restricted Public Custom-Domain Ingress
+# PHR-TECH-016 — Restricted Public Account Ingress
 
 ## Feature ID
 
@@ -6,11 +6,11 @@
 
 ## Title
 
-Restricted Public Custom-Domain Gateway
+Restricted Public Account Gateway
 
 ## Status
 
-Implemented — External Activation Gated
+Completed — No-Client Public Funnel Live; Custom Domain Pending
 
 ## Priority
 
@@ -22,7 +22,7 @@ Technical / Infrastructure / Security / Authentication / Networking / Deployment
 
 ## Objective
 
-Provide a deployment-ready path for trusted account holders to reach Phronesis at `https://access.phronesis.com` without installing Tailscale or seeing a `*.ts.net` hostname, while preserving private owner access and enforcing Phronesis membership/module authorization.
+Let trusted account holders create accounts and use their assigned Phronesis modules from an ordinary browser without installing Tailscale. Activate the existing public Funnel as the immediate no-client transport without weakening the event-worker boundary, then retain `https://access.phronesis.com` as the branded transport once owner-controlled DNS and tunnel sessions are available.
 
 ## Background
 
@@ -34,7 +34,12 @@ Pointing ordinary DNS directly at a tailnet address does not make the service us
 
 ## Proposed Solution
 
-Use a dedicated loopback-only restricted-access gateway and route `access.phronesis.com` to it through a custom-domain tunnel such as Cloudflare Tunnel. The gateway validates the expected Host, strips any client-supplied Phronesis ingress markers, adds `x-phronesis-restricted-public: 1`, overwrites forwarded transport headers, blocks owner-only paths, and proxies to the existing loopback Phronesis service. Phronesis treats this marker as strict identity-only ingress: no `DISABLED`/`OPTIONAL` compatibility, no timed worker session, and no anonymous module access.
+Use two deployment phases with one authorization contract:
+
+1. The already-public Tailscale Funnel on port `10000` becomes the immediate no-client pilot transport. Its loopback gateway classifies only explicit permanent-account entry paths or requests carrying a Better Auth session cookie as restricted-public. Event-worker entry paths and event-only requests retain the public-event marker. The gateway strips client-supplied trust markers, applies the path policy for the selected surface, and proxies both surfaces to the same current Phronesis build. Cookie presence selects the strict policy but never grants authority; Phronesis still validates the signed Better Auth session, active membership, and exact module entitlement.
+2. The existing dedicated loopback restricted-access gateway remains the preferred branded deployment. A future Cloudflare Tunnel routes only `access.phronesis.com` to it after provider authentication and DNS validation.
+
+Phronesis treats restricted-public traffic as strict identity-only ingress: no `DISABLED`/`OPTIONAL` compatibility, no timed worker authorization, and no anonymous module access.
 
 ## Functional Requirements
 
@@ -44,11 +49,17 @@ Use a dedicated loopback-only restricted-access gateway and route `access.phrone
 - Strip and overwrite restricted-public and public-event ingress headers.
 - Mark every forwarded request as restricted-public HTTPS traffic.
 - Expose a local health endpoint that reveals no secrets.
-- Block Settings, all administration APIs, developer routes, provider credential routes, direct employee activation, and timed event-worker login at the gateway.
+- Under restricted-account policy, block Settings, all administration APIs, developer routes, provider credential routes, direct employee activation, and timed event-worker login at the gateway.
 - Permit sign-up, sign-in, sign-out, account-pending, Better Auth account endpoints, static assets, and module routes.
+- When the shared Funnel pilot is explicitly configured, validate the expected Funnel hostname before selecting restricted-public behavior.
+- Route `/sign-up`, `/sign-in`, `/access-pending`, `/access-denied`, and non-worker Better Auth endpoints through restricted-public policy even before a permanent session exists.
+- Route `/event-access` and `/api/auth/event-access` through public-event policy even when another cookie is present.
+- Route protected application and API requests carrying a Better Auth session cookie through restricted-public policy; a forged or stale cookie must still fail application authentication.
+- Strip both Phronesis ingress markers before setting exactly one trusted marker on every proxied request.
+- Preserve the existing public event-worker URL, login, event cookie, and exact Event Ledger authorization behavior while both public surfaces use the current application build.
 - Make protected route Proxy checks require a Better Auth session on restricted-public ingress even when the private application remains `OPTIONAL`.
 - Make DAL/API authorization accept only an active permanent membership on restricted-public ingress.
-- Preserve existing tailnet Serve and event-worker Funnel configuration unchanged.
+- Preserve existing tailnet Serve routes and the public Funnel hostname/port. Do not expose any additional occupied Serve port.
 
 ## Non-Functional Requirements
 
@@ -58,16 +69,17 @@ Gateway overhead must remain bounded to header normalization, path policy, Host 
 
 ### Reliability
 
-The gateway and tunnel are separate from existing private Serve and public event-worker services. Failure or shutdown must leave private owner access unchanged.
+The pilot shares one public transport process with event-worker access but keeps authorization markers, cookies, path policy, and application authorization distinct. Gateway or Funnel failure may affect both public surfaces, but must leave private owner access unchanged. The future branded tunnel remains independently deployable.
 
 ### Security
 
 - The tunnel points only to the loopback gateway, never directly to the application.
 - The gateway fails closed on missing/mismatched deployment hostname.
-- Public ingress never honors compatibility mode or timed worker cookies.
+- Restricted-account ingress never honors compatibility mode or timed-worker cookies.
+- Better Auth cookie detection is routing only; possession of a cookie name or forged value never authorizes a request.
 - Administration remains transport-blocked and application-authorized as defense in depth.
 - No tunnel credential, API token, origin certificate, session secret, or account data is committed.
-- Public activation requires explicit Product Owner control of DNS/tunnel credentials and a verified rollback command.
+- Further custom-domain activation requires Product Owner control of DNS/tunnel credentials and a verified rollback command.
 
 ### Extensibility
 
@@ -85,7 +97,9 @@ Cloudflare Access may later provide an additional outer allowlist or device post
 - Restricted-public authorization tests prove compatibility and event-worker fallbacks cannot authorize a protected module.
 - The existing private review and public event-worker gateway tests remain green.
 - A deployment runbook documents `access.phronesis.com`, tunnel/DNS prerequisites, health checks, rollback, and secret boundaries.
-- No DNS, tunnel, certificate, or public route is activated without a separate explicit deployment action.
+- The existing Funnel on port `10000` serves Sign Up and permanent-account access without requiring a visitor-side Tailscale installation, while event-worker access remains functional.
+- The live Funnel uses TLS-terminated TCP forwarding to the loopback HTTP gateway because regional validation rejected the host's Tailscale HTTPS reverse-proxy mode with connection-level failures.
+- No custom DNS, certificate, or custom-domain route is activated without an authenticated owner-controlled provider action.
 
 ## Edge Cases
 
@@ -100,6 +114,7 @@ Cloudflare Access may later provide an additional outer allowlist or device post
 - `PHR-ARCH-016` trusted account registration.
 - `PHR-ARCH-011` server authorization.
 - A DNS/tunnel provider under Product Owner control.
+- The already-enabled Tailscale Funnel for immediate no-client access.
 - Official Tailscale Funnel and chosen tunnel-provider documentation.
 
 ## Future Enhancements
@@ -110,21 +125,22 @@ Cloudflare Access may later provide an additional outer allowlist or device post
 
 ## Technical Notes
 
-Recommended route: Cloudflare Tunnel public hostname `access.phronesis.com` -> `http://127.0.0.1:<restricted-gateway-port>` -> existing Phronesis loopback port. Tailscale Funnel is not the custom-domain endpoint because Funnel officially permits only tailnet-domain names. Private Serve remains the owner path.
+Current route: Tailscale Funnel `:10000` in TLS-terminated TCP mode -> `127.0.0.1:3101` dual-policy gateway -> `127.0.0.1:3200` current Phronesis build. Recommended branded route: Cloudflare Tunnel public hostname `access.phronesis.com` -> `http://127.0.0.1:<restricted-gateway-port>` -> the same Phronesis loopback service. Funnel is not the custom-domain endpoint because Funnel officially permits only tailnet-domain names. Private Serve remains the owner path.
 
 ## UI / UX Notes
 
-Application code and the WebApp manifest must remain hostname-neutral. Share `https://access.phronesis.com` only after tunnel activation, strict end-to-end verification, and explicit `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; configuration as a future Better Auth trusted origin alone is not activation evidence.
+Application code and the WebApp manifest remain hostname-neutral. The verified live invitation is `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`; visitors do not install or join Tailscale. Share `https://access.phronesis.com` only after its separate tunnel activation and strict end-to-end verification; configuration as a future Better Auth trusted origin alone is not activation evidence.
 
 ## Success Metrics
 
-- Trusted people see only the custom hostname.
+- Trusted people can register and use assigned modules from a browser with no Tailscale client.
 - Zero restricted-public requests receive compatibility access.
+- Existing event-worker access remains functional on the same public Funnel URL.
 - Private owner access remains available during gateway/tunnel failure.
 
 ## Open Questions
 
-- Cloudflare account/DNS onboarding and any Access policy are deployment-time Product Owner actions.
+- Cloudflare and GoDaddy sessions are not available in the current browsers. Branded-domain activation remains blocked on owner-controlled provider authentication, but no-client access does not wait on it.
 
 ## Traceability
 
@@ -135,5 +151,5 @@ Application code and the WebApp manifest must remain hostname-neutral. Share `ht
 - Related implementation report: `docs/implementation-reports/PHR-TECH-016-restricted-public-custom-domain-ingress-report.md`.
 - Related conformance review: `docs/reviews/PHR-TECH-016-restricted-public-custom-domain-ingress-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-TECH-016.md`.
-- Last modified: 2026-08-06.
-- Modification reason: define a custom-domain restricted-public transport without weakening app authorization.
+- Last modified: 2026-08-07.
+- Modification reason: authorize immediate no-client account access over the existing public Funnel while preserving the dedicated branded-domain design and both authorization boundaries.

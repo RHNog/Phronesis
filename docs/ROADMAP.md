@@ -19,11 +19,11 @@
 
 ## Product Review Candidate: Trusted Account Sign Up Invitation
 
-- Implemented and privately live: prominent generic Sign Up URL in People & access with resilient Copy, supported-device Share, Preview, and explicit zero-access/owner-approval disclosure (`PHR-ARCH-016`).
+- Implemented and publicly live: prominent generic Sign Up URL in People & access with resilient Copy, supported-device Share, Preview, and explicit zero-access/owner-approval disclosure (`PHR-ARCH-016`).
 - Preserved: account creation creates no membership or entitlement; the invite contains no secret or preapproval and all server authorization remains unchanged.
-- Corrected: a configured future custom origin is advertised only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`. Current unresolved public DNS therefore falls back to the working private tailnet URL (`PHR-TECH-016`).
-- Verified: focused 35/35, full 443/443, TypeScript, warning-free lint, production build, 1280×720 and 390×844 no-overflow review, 44-pixel controls, Copy feedback, exact Preview target, private HTTP 200, and zero browser errors.
-- Next: Product Owner sends the private invite to the first trusted tester. Custom-domain activation remains a separate Cloudflare/DNS/tunnel action.
+- Activated: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up` works from the public internet without Tailscale software or tailnet membership; `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` makes this verified origin the advertised invite (`PHR-TECH-016`).
+- Verified: focused gateway/auth 18/18, full 458/458, TypeScript, warning-free lint, production build, isolated registration/pending-session lifecycle, public registration API exercise, distributed HTTP 200 probes, transport denials, database integrity, and private-module health.
+- Next: Product Owner sends the public invite to the first trusted tester and approves exact modules privately. Branded `access.phronesis.com` activation remains a separate provider/DNS action, and unattended gateway/app reboot supervision remains gated.
 
 ## Product Review Candidate: Event Consignment Ownership And Settings Control Center
 
@@ -42,10 +42,10 @@
 
 ## Product Review Candidate: Trusted Accounts And Restricted Custom Domain
 
-- Implemented and privately live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, auditable approval/rejection, and a safe generic Sign Up invitation (`PHR-ARCH-016`).
-- Implemented and activation-gated: loopback custom-domain gateway, strict permanent-session authorization, Host/forwarding normalization, and transport blocking for owner, administration, developer, activation, and timed-worker routes (`PHR-TECH-016`).
-- Verified: 437/437 tests, TypeScript, warning-free lint, production build, isolated end-to-end account approval, responsive phone/desktop layouts, live additive migration/private deployment, and actual Next gateway probes.
-- Next: owner experience review with one real trusted person. Resolve macOS launchd access to the external-volume runtime (privacy authorization or internal-volume deployment) before relying on reboot persistence. Separately activate `access.phronesis.com` through Cloudflare Tunnel/Access only after provider credentials and DNS authority are available. Verified email, password reset, passkeys, and MFA remain future security slices.
+- Implemented and publicly live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, auditable approval/rejection, and a safe generic Sign Up invitation (`PHR-ARCH-016`).
+- Implemented and active: a dual-policy loopback gateway behind Funnel port 10000, strict permanent-session authorization, event-worker route preservation, Host/forwarding normalization, and transport blocking for owner, administration, developer, activation, and cross-surface login routes (`PHR-TECH-016`).
+- Verified: focused 18/18 and full 458/458 tests, TypeScript, warning-free lint, production build, isolated account lifecycle, actual Next gateway probes, public-relay registration and page checks, distributed 200 responses, and live additive database integrity.
+- Next: owner experience review with one real remote trusted person. Resolve macOS launchd access to the external-volume runtime before relying on reboot persistence. Separately activate `access.phronesis.com` after provider credentials and DNS authority are available. Verified email, password reset, passkeys, and MFA remain future security slices.
 
 ## Active Controlled Program: Local Card Acquisition And Recognition
 

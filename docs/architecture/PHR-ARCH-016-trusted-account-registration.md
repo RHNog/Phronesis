@@ -10,7 +10,7 @@ Trusted Account Registration And Owner-Controlled Module Approval
 
 ## Status
 
-Implemented — Privately Live; Supervisor Persistence Gated
+Implemented — Publicly Live; Supervisor Persistence Gated
 
 ## Priority
 
@@ -52,7 +52,7 @@ An authenticated person without an active membership is routed to an explicit wa
 - Show pending, approved, and rejected state without exposing another user's data.
 - Add an owner-only pending-account queue to Settings.
 - Add a prominent generic Sign Up invite link to People & access with resilient Copy, supported-device Share, and Preview actions.
-- Prefer the validated `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN` only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` confirms that DNS, tunnel, gateway, and end-to-end checks are active; otherwise derive the invite from the owner's current private application origin.
+- Prefer the validated `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN` only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` confirms that public transport, gateway, and end-to-end checks are active; otherwise derive the invite from the owner's current private application origin.
 - Keep the Sign Up invite generic and non-secret. Possession of the link must create no invitation, membership, entitlement, role, module assignment, or approval shortcut.
 - Require the owner to select at least one explicit module before approval.
 - Let the owner select `VIEW`, `OPERATE`, or `ADMIN` per assigned module using existing entitlement rules.
@@ -87,7 +87,7 @@ Forms use associated labels, native input semantics, visible errors, status regi
 
 ### Offline Support
 
-Account creation and authentication require the private Phronesis origin and local authorization database; no offline login is claimed.
+Account creation and authentication require a reachable Phronesis origin and the local authorization database; no offline login is claimed.
 
 ### Security
 
@@ -138,14 +138,14 @@ Sign-in, sign-up, pending access, account menu, and owner approval must work at 
 - A request whose account was removed remains non-actionable and cannot be approved.
 - An owner cannot approve an account with zero modules.
 - Native Web Share is unavailable or the user cancels it: Copy and Preview remain available and no false success is shown.
-- The custom domain is configured as a future trusted origin but DNS/tunnel activation is not complete: without the separate enabled mode, the invite remains a private-origin link and is labelled accordingly.
+- A candidate public origin is configured but its transport is not active: without the separate enabled mode, the invite remains a private-origin link and is labelled accordingly.
 
 ## Dependencies
 
 - `PHR-ARCH-011` internal identity and module authorization.
 - `PHR-ARCH-012` direct employee activation.
 - Better Auth 1.6.25 or a compatible verified release.
-- `PHR-TECH-016` for restricted-public custom-domain ingress.
+- `PHR-TECH-016` for restricted-public account ingress and future branded-domain transport.
 
 ## Future Enhancements
 
@@ -182,5 +182,5 @@ The sign-in page leads with email/password and offers GitHub only when configure
 - Related implementation report: `docs/implementation-reports/PHR-ARCH-016-trusted-account-registration-report.md`.
 - Related conformance review: `docs/reviews/PHR-ARCH-016-trusted-account-registration-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-ARCH-016.md`.
-- Last modified: 2026-08-06.
-- Modification reason: add discoverable ongoing-event assignment while preserving permanent-account lifecycle, explicit entitlements, and Administration-only mutation.
+- Last modified: 2026-08-07.
+- Modification reason: record live no-client public transport while preserving zero-access registration, explicit entitlements, and Administration-only mutation.

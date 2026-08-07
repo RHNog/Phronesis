@@ -6,4 +6,4 @@ Approved users see only assigned tools. Rejected users receive no membership. Ex
 
 Until verified-email delivery is implemented, owners must confirm the person outside Phronesis before approval. Password reset, passkeys, and MFA remain future security work.
 
-People & access now provides one prominent Sign Up invite with the exact URL, resilient Copy, native Share on supported phones, and Preview. The generic link grants zero access and contains no credential or module decision. It advertises the restricted-public custom domain only after explicit infrastructure activation; until then it automatically uses the working private Phronesis origin.
+People & access now provides one prominent Sign Up invite with the exact URL, resilient Copy, native Share on supported phones, and Preview. The generic link grants zero access and contains no credential or module decision. Its active public origin is `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`, which works without a Tailscale client; it falls back to the current private origin whenever public mode is disabled.

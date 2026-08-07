@@ -25,14 +25,15 @@
 - **Decision:** Keep the Sheet URL in validated server-only configuration and disclose it only after a server authorization decision. Display Case exposes preparation before an event; live Event Ledger operation continues from the immutable imported CSV snapshot.
 - **Consequences:** Trusted people can collaboratively prepare Case Source without receiving selling or administrative access. Revocation remains a deliberate two-system action until a separately approved owner OAuth/service-account boundary exists.
 
-## 2026-08-06 — Separate account creation, module approval, and custom-domain transport
+## 2026-08-07 — Separate account creation, module approval, and public transport
 
-- **Status:** Implemented privately; custom-domain activation gated (`PHR-ARCH-016`, `PHR-TECH-016`).
+- **Status:** No-client public account transport live; branded custom-domain activation gated (`PHR-ARCH-016`, `PHR-TECH-016`).
 - **Decision:** Better Auth owns email/password and optional GitHub identity plus sessions. Phronesis account creation creates one pending request and zero membership/module authority until an Administration Admin verifies the person out of band and grants exact modules.
 - **Decision:** A rejected account receives no membership; approval cannot create another Owner and cannot proceed with zero modules. Existing direct invitations remain an optional owner-initiated path.
-- **Decision:** Tailscale Serve remains the private owner transport. A normal public hostname uses Cloudflare Tunnel only through a dedicated loopback restricted gateway. Restricted ingress ignores optional compatibility and timed-worker sessions and transport-blocks Settings, administration, developer, activation, and worker-login routes.
-- **Decision:** People & access may share one generic `/sign-up` URL, but the link is never an invitation credential or access grant. A configured future custom origin is advertised only after `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise the current working private origin is authoritative.
-- **Consequences:** Trusted people can establish identity before the owner chooses work access. Owning `phronesis.com` enables `access.phronesis.com`, but obscurity is not security; external DNS/tunnel activation, verified email, password recovery, passkeys, and MFA remain explicit gates.
+- **Decision:** Tailscale Serve remains the private owner transport. Public Funnel port 10000 terminates TLS and forwards raw HTTP to one loopback dual-policy gateway. Permanent-account routes and permanent-session requests receive restricted ingress; event-worker routes retain the bounded public-event policy. Both policies fail closed on spoofed markers and transport-block Settings, administration, developer, activation, and cross-surface login routes.
+- **Decision:** People & access shares `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`. The link is never an invitation credential or access grant, and visitors do not install Tailscale or join the tailnet. A future `access.phronesis.com` route may replace the visible origin only after authenticated provider/DNS activation.
+- **Decision:** Prefer Funnel TLS-terminated TCP forwarding for this host after its HTTPS reverse-proxy mode failed distributed public TLS checks. Preserve ports 443/8443 and the event-worker path while sharing only port 10000.
+- **Consequences:** Trusted people can register, sign in, and use owner-assigned modules remotely now. Owning `phronesis.com` still enables a less conspicuous `access.phronesis.com`, but obscurity is not security; provider activation, verified email, password recovery, passkeys, MFA, and unattended reboot supervision remain explicit gates.
 
 ## 2026-08-04 — Use a sealed Windows bridge while macOS 27 ICA is unsupported
 

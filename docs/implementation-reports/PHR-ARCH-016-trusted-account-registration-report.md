@@ -14,4 +14,8 @@ People & access now leads with one generic permanent-account invitation. The own
 
 The link contains no token, email, role, module, workspace identity, or approval. A recipient still creates a zero-access pending account and requires out-of-band owner verification plus exact module approval.
 
-Link origin selection is deployment-aware. A validated custom origin is advertised only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise the hydrated current private origin is used. Live validation proved that the configured future `access.phronesis.com` name does not currently resolve, so the delivered invite correctly remains the working tailnet `/sign-up` URL instead of publishing a broken address.
+Link origin selection is deployment-aware. A validated restricted-public origin is advertised only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise the hydrated current private origin is used. The original 2026-08-06 validation proved that the configured future `access.phronesis.com` name did not resolve, so that release correctly retained the working tailnet `/sign-up` URL instead of publishing a broken address.
+
+## 2026-08-07 No-Client Public Activation
+
+`PHR-TECH-016` now supplies an externally verified restricted-account origin at `https://ramons-mac-studio.tailaa2d39.ts.net:10000`. Public mode is enabled for that origin, so the unchanged invite component advertises the working no-client Sign Up route. Registration, pending state, membership approval, and exact module authorization remain unchanged; the future `access.phronesis.com` hostname is still withheld.

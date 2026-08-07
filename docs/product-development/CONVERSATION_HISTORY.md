@@ -1,5 +1,24 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — Remote Trusted Accounts Without Tailscale
+
+### User Intent
+
+- Make account creation remotely available without installing Tailscale.
+- Let approved people use Phronesis remotely without Tailscale after the owner assigns their modules.
+
+### Decision And Implementation
+
+- Extended `PHR-TECH-016` rather than creating a second authentication system or weakening `PHR-ARCH-016`. The existing Funnel port 10000 now fronts one dual-policy loopback gateway.
+- Routed permanent-account entry paths and Better Auth session-cookie traffic through strict restricted ingress while preserving `/event-access` under the existing timed-worker policy. Both policies overwrite spoofable markers; a cookie is only a routing hint, never authorization.
+- Kept Settings, administration, developer, activation, and cross-surface login paths transport-blocked. Registration still creates zero access, and protected requests still require a signed permanent session, active membership, and exact module entitlement.
+- Activated `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up` using Funnel TLS-terminated TCP mode after the HTTPS reverse-proxy mode failed distributed public TLS checks. Visitors need no Tailscale software or tailnet membership.
+- Did not mutate GoDaddy, Cloudflare, DNS, certificates, or provider accounts because no authenticated owner-controlled session was available. `access.phronesis.com` remains a later branded-hostname upgrade.
+
+### Acceptance State
+
+The no-client public account route is live and Product Review ready. Focused gateway/auth 18/18, full 458/458, TypeScript, warning-free lint, production build, isolated registration/pending-session validation, loopback/tailnet/private-module health, database integrity, public registration-origin exercise, transport denials, and distributed Sign Up HTTP 200 probes pass. The next real-world gate is one trusted person registering through the public link and the owner approving exact modules privately. Detached app/gateway processes are healthy now; unattended reboot supervision remains separately gated.
+
 ## 2026-08-06 — Cross-Platform Scanner Appliance Control Plane
 
 ### User Intent

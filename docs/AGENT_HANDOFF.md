@@ -1,5 +1,14 @@
 # Agent Handoff
 
+## Product Review Candidate — Public Trusted Accounts Without Tailscale — 2026-08-07
+
+- `PHR-TECH-016` is publicly active at `https://ramons-mac-studio.tailaa2d39.ts.net:10000`; remote visitors need no Tailscale client or tailnet membership. Share the exact Sign Up path: `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`.
+- Funnel port 10000 uses TLS-terminated TCP forwarding to loopback `127.0.0.1:3101`. Detached session `phronesis-public-gateway` runs the dual-policy gateway and targets the current app in `phronesis-scanner-review` on `127.0.0.1:3200`.
+- Permanent-account entry/session requests receive `x-phronesis-restricted-public`; `/event-access` retains `x-phronesis-public-event`. Both paths replace forwarded/client markers. Signed session, active membership, and exact entitlements remain application-owned authorization.
+- New accounts remain zero-access pending owner verification. Public Settings/administration/developer/activation and cross-surface login requests are transport-blocked; owner approval remains on the private tailnet Settings surface.
+- Focused gateway/auth 18/18, full 458/458, TypeScript, lint, build, isolated registration/pending lifecycle, public registration-origin exercise, distributed HTTP 200 checks, private-module health, and database integrity pass.
+- `access.phronesis.com` remains unresolved because no authenticated provider/DNS session was available. Current screen processes are not an unattended reboot guarantee; preserve the runbook's supervisor gate. Next: test with one real trusted person, approve exact modules privately, then separately connect the branded hostname when provider authority is available.
+
 ## Product Review Candidate — Cross-Platform Scanner Appliance Control Plane — 2026-08-06
 
 - `PHR-TECH-017` turns an approved scanner computer into an outbound-polling Phronesis appliance with single-use pairing, hashed/revocable device identity, readiness, durable Start/Cancel, and exact recognition-session binding.
@@ -31,8 +40,8 @@
 
 - `PHR-ARCH-016` now gives the owner one generic Sign Up invite in Settings → People & access with exact URL display, resilient Copy, supported-device Share, Preview, and zero-access disclosure.
 - The link contains no credential or access decision; registrants remain pending until out-of-band verification and exact module approval.
-- `PHR-TECH-016` now distinguishes configured from active public origin through `PHRONESIS_RESTRICTED_PUBLIC_MODE`. Current custom-domain DNS is unresolved, so the live card correctly uses the private tailnet `/sign-up` URL rather than advertising a broken address.
-- Focused 35/35, full 443/443, TypeScript, lint, build, desktop/phone no-overflow, 44-pixel controls, copy feedback, private HTTP 200, and zero browser errors pass. No account or infrastructure mutation occurred.
+- `PHR-TECH-016` distinguishes configured from active public origin through `PHRONESIS_RESTRICTED_PUBLIC_MODE`. The 2026-08-07 activation now selects the verified public Funnel `/sign-up` URL while `access.phronesis.com` remains unresolved.
+- The original invitation UX evidence remains valid; current public-ingress evidence is recorded in the newer handoff entry above.
 
 ## Product Review Candidate — Back-First Duplex And Review Recovery — 2026-08-06
 

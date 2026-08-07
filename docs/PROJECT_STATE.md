@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-07 Public Trusted Account Access State
+
+- `PHR-ARCH-016` and `PHR-TECH-016` are publicly operational for trusted-account registration, sign-in, and approved-module use at `https://ramons-mac-studio.tailaa2d39.ts.net:10000`; remote visitors need neither Tailscale software nor tailnet membership.
+- Share `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`. Every registrant remains zero-access until a permanent Administrator verifies the person and assigns exact modules from the private Settings surface.
+- Funnel port 10000 uses TLS-terminated TCP forwarding to the loopback dual-policy gateway. Permanent-account entry/session traffic receives strict restricted ingress; `/event-access` remains the public timed-worker entry. Settings, administration, developer, activation, and cross-surface login paths are transport-blocked.
+- Distributed internet probes returned 200 for Sign Up, the public registration API reached Better Auth with the trusted origin, private protected modules remained healthy, and database integrity stayed `ok`. Focused 18/18, full 458/458, TypeScript, lint, and production build pass.
+- `access.phronesis.com` remains unresolved because authenticated DNS/provider control was unavailable. The live detached app/gateway processes also need an approved internal-volume or privacy-permitted supervisor strategy before reboot persistence can be claimed.
+
 ## 2026-08-06 Scanner Appliance Control State
 
 - `PHR-TECH-017` implements the Phronesis-owned cross-platform control-plane foundation on `codex/phr-local-card-recognition-20260804`: one-time pairing, hashed revocable device identity, readiness, durable Start/Cancel, exact session binding, and front-only direct recognition ingest.
@@ -69,7 +77,7 @@ Phronesis is a private, evidence-driven decision operating system for collectibl
 
 ## Current constraints
 
-- The public event-worker gateway is active through Tailscale Funnel on port 10000 following a separately authorized activation. It accepts only timed event sessions; the existing private 9443 mapping remains tailnet-only and unchanged. Disable the public path with `tailscale funnel --https=10000 off` when the bounded event window ends.
+- The public dual-policy gateway is active through Tailscale Funnel on port 10000. It preserves timed event sessions at `/event-access` and routes permanent-account entry/session traffic through restricted ingress; the existing private 9443/9444 mappings remain tailnet-only. Disable it with `tailscale funnel --tls-terminated-tcp=10000 off` only when both public account and event access are intentionally being withdrawn.
 - Handoff continuity is publishable only after a clean implementation commit and a successful local bare `./handoff` seal; hosted GitHub checks verify that committed result.
 - The active private runtime has no `PKMNPRICES_API_KEY` or `PSA_API_TOKEN`. Sealed ingestion and live PSA lookup remain dormant until server-side registration and service restart; PkmnPrices sealed access must be enabled by the provider plan.
 - Beckett/BCCG, TAG, CGC, and SGC expose official public lookup pages but no documented machine API found in the 2026-08-01 research, so Phronesis does not automate them.

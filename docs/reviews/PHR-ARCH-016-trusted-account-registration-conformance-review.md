@@ -17,3 +17,7 @@ This review is not an independent approval because architecture, implementation,
 The revision conforms. The shared URL is a navigation convenience rather than an authorization artifact: it carries no secret or access decision and terminates in the existing zero-membership registration lifecycle. Copy reuses the resilient browser boundary, Share uses the browser capability only after hydration, and Preview is an ordinary visible link.
 
 The public-origin activation guard also conforms to `PHR-TECH-016`. Merely trusting a future auth origin cannot cause Phronesis to advertise an unreachable public hostname; explicit enabled mode is required after infrastructure verification. Private owner access and every server authorization gate are unchanged.
+
+## 2026-08-07 No-Client Public Activation
+
+The architecture remains conformant after public activation. The verified Funnel origin is advertised only because public mode is enabled; ordinary visitors need no Tailscale client. Registration still produces zero membership, pending users remain outside protected modules, and approved users receive only exact owner-assigned entitlements. `PHR-TECH-016` retains the transport boundary and the branded-domain gate.

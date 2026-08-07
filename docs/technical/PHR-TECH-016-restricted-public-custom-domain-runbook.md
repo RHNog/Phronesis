@@ -1,18 +1,67 @@
-# PHR-TECH-016 Restricted Public Custom-Domain Runbook
+# PHR-TECH-016 Restricted Public Access Runbook
 
-## Intended topology
+## Live no-client topology
 
-`https://access.phronesis.com` → Cloudflare Tunnel → `http://127.0.0.1:3102` restricted gateway → `http://127.0.0.1:3200` Phronesis.
+`https://ramons-mac-studio.tailaa2d39.ts.net:10000` → Tailscale Funnel TLS termination → raw HTTP at `127.0.0.1:3101` dual-policy gateway → `127.0.0.1:3200` Phronesis.
 
-Tailscale Serve remains the private owner transport. Tailscale Funnel is not used for this hostname because Funnel issues and serves only tailnet `*.ts.net` names.
+The visitor does not install Tailscale or join the tailnet. Tailscale runs only on the host as the public relay transport. Private owner access remains at tailnet-only port `9444`. The same public port retains `/event-access` for account-free event workers.
 
 ## Current state
 
-- The restricted gateway and application enforcement are implemented and tested.
-- `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN=https://access.phronesis.com` is configured locally as a Better Auth trusted origin.
-- `PHRONESIS_RESTRICTED_PUBLIC_MODE` remains `DISABLED`, so owner Sign Up invites use the working private application origin until the public route passes activation.
-- No Cloudflare account, tunnel, DNS route, Access policy, tunnel token, public process, or LaunchAgent was created by this implementation.
-- The private scanner-review application remains on loopback port `3200` and tailnet port `9444`.
+- `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN=https://ramons-mac-studio.tailaa2d39.ts.net:10000` and `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` are active in the ignored local environment.
+- Settings → People & access advertises `https://ramons-mac-studio.tailaa2d39.ts.net:10000/sign-up`.
+- The public gateway validates `ramons-mac-studio.tailaa2d39.ts.net`, strips both trust markers, sets exactly one marker, and sends permanent-account and event-worker requests to the same current build.
+- The application runs in detached `screen` session `phronesis-scanner-review`; the public gateway runs in `phronesis-public-gateway`. Their listeners remain loopback-only on `3200` and `3101`.
+- Funnel is persisted by Tailscale in background TLS-terminated TCP mode on port `10000`. On this host, Tailscale's HTTPS reverse-proxy mode produced `Broken pipe`/closed connections from independent public probes and must not be substituted without fresh regional validation.
+- The previous public-gateway LaunchAgent is booted out for this login session because it targets the legacy checkout/build. Reboot/login persistence of the external-volume application remains gated on a supervised internal-volume or privacy-authorized deployment.
+- GoDaddy and Cloudflare were signed out in every available browser. `access.phronesis.com` remains unresolved and no DNS, Cloudflare account, nameserver, certificate, or custom-domain route was changed.
+
+## Live start and health commands
+
+Start the current public gateway from the active release checkout:
+
+```sh
+PHRONESIS_PUBLIC_GATEWAY_PORT=3101 \
+PHRONESIS_PUBLIC_GATEWAY_TARGET_PORT=3200 \
+PHRONESIS_RESTRICTED_PUBLIC_HOSTNAME=ramons-mac-studio.tailaa2d39.ts.net \
+node scripts/public-event-gateway.mjs
+```
+
+Persist the already-authorized Funnel mode:
+
+```sh
+tailscale funnel --bg --tls-terminated-tcp=10000 --yes tcp://127.0.0.1:3101
+```
+
+Expected checks:
+
+- `GET /healthz` on loopback `3101` returns `200` and `restrictedAccounts: true`.
+- Public `/sign-up` and `/sign-in` return `200`.
+- Public `/settings`, `/api/administration/*`, `/dev/*`, and `/activate` return `404`.
+- Public `/event-access` returns `200`; anonymous `/` redirects there.
+- A Better Auth session request uses restricted-public policy; a stale or forged cookie cannot authorize anything.
+- A new real account reaches `/access-pending` and has zero modules until private owner approval.
+- Private tailnet `9444`, Scanner-to-Offer, and Event Ledger remain healthy.
+
+## Live rollback while preserving event workers
+
+1. Set `PHRONESIS_RESTRICTED_PUBLIC_MODE=DISABLED` and restore the private invite origin.
+2. Restart Phronesis on loopback `3200`.
+3. Restart `scripts/public-event-gateway.mjs` without `PHRONESIS_RESTRICTED_PUBLIC_HOSTNAME`; this restores legacy event-only policy on the same loopback port.
+4. Leave Funnel `:10000` enabled so `/event-access` continues to work.
+5. Confirm private tailnet `9444`, public `/event-access`, and database integrity.
+
+To disable the whole public transport, including event workers, use only this exact command:
+
+```sh
+tailscale funnel --tls-terminated-tcp=10000 off
+```
+
+Do not use `tailscale funnel reset`; other Serve/Funnel configuration belongs to unrelated services.
+
+## Future branded topology
+
+`https://access.phronesis.com` → Cloudflare Tunnel → `http://127.0.0.1:3102` dedicated restricted gateway → `http://127.0.0.1:3200` Phronesis.
 
 ## Required owner-controlled activation
 
@@ -30,10 +79,10 @@ Tailscale Serve remains the private owner transport. Tailscale Funnel is not use
    ```
 
 6. Start `cloudflared` with the provider-issued tunnel credential and route only to `127.0.0.1:3102`.
-7. Complete every activation check below, then set `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` and restart Phronesis so owner Sign Up invitations may advertise the verified public origin.
+7. Complete every custom-domain activation check below, then replace the restricted-public origin with `https://access.phronesis.com` and restart Phronesis so owner Sign Up invitations advertise only the verified branded origin.
 8. Install unattended services only after the foreground checks below pass. Service definitions must reference credentials by protected file or environment, never inline in the repository.
 
-## Activation checks
+## Custom-domain activation checks
 
 - `GET /healthz` on loopback gateway returns `200`.
 - A request with any Host other than `access.phronesis.com` returns `404`.
@@ -45,14 +94,14 @@ Tailscale Serve remains the private owner transport. Tailscale Funnel is not use
 - After owner approval, the account sees exactly its assigned modules.
 - Private tailnet Settings and the existing event-worker URL remain unchanged.
 
-## Rollback
+## Custom-domain rollback
 
 1. Disable or delete only the `access.phronesis.com` public-hostname route in Cloudflare.
 2. Stop the restricted gateway and tunnel processes.
-3. Set `PHRONESIS_RESTRICTED_PUBLIC_MODE=DISABLED` and restart Phronesis so new invitations immediately return to the private origin.
+3. Restore the verified Funnel origin and keep `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; disable the mode only if both public transports are intentionally unavailable.
 4. Confirm that loopback `3200`, private tailnet `9444`, and the separate event-worker gateway retain their prior health.
 5. Leave account, membership, entitlement, and audit records intact unless a separately approved data action is required.
 
 ## Secret boundary
 
-Never commit Cloudflare API tokens, tunnel tokens, origin certificates, Better Auth secrets, passwords, session cookies, activation codes, or Access identity assertions. Obscure hostnames are not authorization controls.
+Never commit Cloudflare API tokens, tunnel tokens, origin certificates, Better Auth secrets, passwords, session cookies, activation codes, or Access identity assertions. The ignored `.env.local` is runtime-only configuration and must not be copied into documentation or commits. Obscure hostnames and cookie names are not authorization controls.
