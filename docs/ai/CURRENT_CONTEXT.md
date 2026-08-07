@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-06T13:32:36Z","generation_id":"b991d8e5a20801d3a237","head":"8369d108906872bb92dd0200f0b893dded01838a","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-07T16:08:45Z","generation_id":"e37a4994d9afc38b166e","head":"c88e2cef23419c29833e15e4acd85d0c1eee7380","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,16 +6,28 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **HEAD:** `8369d108906872bb92dd0200f0b893dded01838a`
+- **HEAD:** `c88e2cef23419c29833e15e4acd85d0c1eee7380`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-06T13:32:36Z
+- **Generated:** 2026-08-07T16:08:45Z
 
 ## Current objective
 
-Continue the privately activated English Pokémon vision workflow with acquisition-proven duplex evidence and one operator-declared condition/finish per homogeneous batch while preserving every recognition/publication gate.
+Complete and hand off `PHR-MARKET-PERSONALIZATION-20260807`: expanded defensible LigaPokémon coverage, provider-specific retained price history, personal market settings, and conservative typo recovery, while preserving exact-only identity and transaction boundaries.
 
 ## Acceptance criteria
+
+- [x] Expand only explicit LigaPokémon special-distribution comparison families while preserving 30,864 exact targets, strict-crosswalk Arbitrage authority, and fail-closed ambiguity.
+- [x] Expose separate TCGplayer, LigaMagic/LigaPokémon, and PriceCharting 7D/30D/3M/1Y history without merging currencies or fabricating points.
+- [x] Give every active permanent member `My settings`, default-enabled providers, nullable personal cost overrides, workspace inheritance, audited writes, and no Administration/module/credential broadening.
+- [x] Recover dominant category-scoped alphabetic typos only after zero literal results and keep structured identifiers, reconciliation, and selection unchanged.
+- [x] Back up, migrate, reconcile, backfill, deploy privately, and pass full tests, TypeScript, lint, build, database integrity, live API, and 390-pixel mobile gates.
+
+- [x] Pair and revoke macOS/Windows appliance identities through short-lived one-time codes without storing plaintext credentials server-side.
+- [x] Report readiness and control durable Start/Cancel commands from Scanner-to-Offer through existing permanent-admin and Vendor Workspace authorization.
+- [x] Admit only command-bound, checksum-verified, bounded front images to the exact active recognition session.
+- [x] Provide a dependency-free local agent with local-only adapter configuration, doctor/run workflows, safe capture, retry, spool preservation, and exact child cancellation.
+- [x] Build a current-host native executable and define independent macOS/Windows CI artifact builds.
 
 - [x] Preserve legacy `v1` bundles as unpaired evidence without guessing from sequence or filenames.
 - [x] Add and validate a `v2` adjacent-duplex-front-first manifest with reciprocal pairs and complete-pair enforcement.
@@ -37,4 +49,4 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 
 ## Exact next action
 
-In PaperStream's supported profile UI, enable **Release after scan** before the next capture. Then acquire a homogeneous batch, declare its condition/finish, and review any candidate with both sides visible. Do not enable auto-accept, grading, finish classification, or segmentation suggestions.
+Sign in with the permanent owner account, open `/user-settings`, review/save one provider and cost preference, then confirm Vendor Workspace history/provider visibility and one regional Arbitrage read. Do not treat same-session conformance as independent Product Owner acceptance.

@@ -1,11 +1,15 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-06T13:32:36Z","generation_id":"b991d8e5a20801d3a237","head":"8369d108906872bb92dd0200f0b893dded01838a","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"SESSION_SUMMARY","generated":true,"generated_at":"2026-08-07T16:08:45Z","generation_id":"e37a4994d9afc38b166e","head":"c88e2cef23419c29833e15e4acd85d0c1eee7380","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Session Summary
 
 ## Objective
 
-Continue the privately activated English Pokémon vision workflow with acquisition-proven duplex evidence and one operator-declared condition/finish per homogeneous batch while preserving every recognition/publication gate.
+Complete and hand off `PHR-MARKET-PERSONALIZATION-20260807`: expanded defensible LigaPokémon coverage, provider-specific retained price history, personal market settings, and conservative typo recovery, while preserving exact-only identity and transaction boundaries.
 
 ## Completed in the closing session
+
+- Implemented and privately activated `PHR-API-017`, `PHR-ARCH-017`, and the `PHR-API-016`/`PHR-UX-013`/`PHR-UX-016` revisions. The live Pokémon ledger contains 30,864 exact and 3,312 compatible targets; provider history retains 969,284 Liga observations; `Gsrdevoir SV75` recovers the exact Gardevoir GX printing; and personal provider/cost settings are active-member scoped.
+
+- Implemented `PHR-TECH-017`: secure appliance registry/command repository, agent-only APIs, portable agent, native packaging workflow, Scanner-to-Offer setup/control UI, deterministic tests, additive live migration, and private runtime activation.
 
 - Implemented `PHR-UX-027`: authenticated Dashboard tool hub, `/opportunities` route split, persistent collapsible desktop navigation, Dashboard-first worker login, exact approved Phronesis shell/favicon/iOS identity, origin-relative standalone installation metadata, and static Event Operations containment. Focused 8/8, full 423/423, TypeScript, lint, build, live metadata, responsive, and zero-overlap scroll gates pass. The retired local Safari installation requires one reinstall from the current tailnet URL.
 - Completed and sealed the scanner-to-offer foundation through the Product Review boundary.
@@ -35,11 +39,19 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 
 ## State left behind
 
-- Branch `codex/phr-local-card-recognition-20260804` at `8369d108906872bb92dd0200f0b893dded01838a`.
+- Branch `codex/phr-local-card-recognition-20260804` at `c88e2cef23419c29833e15e4acd85d0c1eee7380`.
 - Implementation worktree is clean.
-- Continuity generation `b991d8e5a20801d3a237` was prepared successfully.
+- Continuity generation `e37a4994d9afc38b166e` was prepared successfully.
 
 ## Remaining work
+
+- Product Owner reviews `/user-settings` with a real approved account, saves provider/cost preferences, and confirms the resulting Vendor and Arbitrage behavior.
+- Product Owner reviews representative exact, compatible, ambiguous, and unavailable LigaPokémon products plus TCGplayer/Liga/PriceCharting movement over every range.
+- Future separately scoped work may add provider billing/entitlements, multi-year retention, sales-volume overlays, or measured expansion of additional identity families.
+
+- Pair and physically qualify the first real Windows fi-8170/PaperStream appliance, including capture, front-only upload, Phronesis Cancel, interruption recovery, and restart behavior.
+- Select code-signing identities and distribution, then produce signed/notarized installers with supervised background-service registration before general trusted-tester use.
+- Re-run physical acquisition qualification for every Mac/Windows OS, driver, scanner, and architecture combination Phronesis claims to support.
 
 - Enable **Release after scan** in the supported PaperStream profile UI before the next routine batch.
 - Product Owner declares a homogeneous batch condition/finish before resolving a future English Pokémon review candidate with both sides and exact price evidence.
@@ -55,4 +67,4 @@ Continue the privately activated English Pokémon vision workflow with acquisiti
 
 ## Next action
 
-In PaperStream's supported profile UI, enable **Release after scan** before the next capture. Then acquire a homogeneous batch, declare its condition/finish, and review any candidate with both sides visible. Do not enable auto-accept, grading, finish classification, or segmentation suggestions.
+Sign in with the permanent owner account, open `/user-settings`, review/save one provider and cost preference, then confirm Vendor Workspace history/provider visibility and one regional Arbitrage read. Do not treat same-session conformance as independent Product Owner acceptance.
