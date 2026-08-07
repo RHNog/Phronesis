@@ -48,6 +48,15 @@ export function getRestrictedPublicOrigin(environment: AuthEnvironment = process
   }
 }
 
+export function getActiveRestrictedPublicOrigin(
+  environment: AuthEnvironment = process.env,
+): string | null {
+  return environment.PHRONESIS_RESTRICTED_PUBLIC_MODE?.trim().toUpperCase() ===
+    "ENABLED"
+    ? getRestrictedPublicOrigin(environment)
+    : null;
+}
+
 export function getAuthRuntimeStatus(environment: AuthEnvironment = process.env): AuthRuntimeStatus {
   const baseUrlConfigured = Boolean(environment.BETTER_AUTH_URL?.trim());
   const secretConfigured = Boolean(environment.BETTER_AUTH_SECRET?.trim());

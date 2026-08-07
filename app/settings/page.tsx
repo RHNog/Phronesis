@@ -1,6 +1,10 @@
 import AppShell from "@/components/ui/AppShell";
 import SettingsControlCenter from "@/features/settings/components/SettingsControlCenter";
-import { getAuthRuntimeStatus, getPublicEventAccessOrigin } from "@/lib/auth/config";
+import {
+  getActiveRestrictedPublicOrigin,
+  getAuthRuntimeStatus,
+  getPublicEventAccessOrigin,
+} from "@/lib/auth/config";
 import { normalizeSettingsPanel } from "@/lib/settings/panels";
 
 export default async function SettingsPage({
@@ -10,6 +14,7 @@ export default async function SettingsPage({
 }) {
   const authStatus = getAuthRuntimeStatus();
   const publicEventOrigin = getPublicEventAccessOrigin();
+  const restrictedPublicOrigin = getActiveRestrictedPublicOrigin();
   const params = await searchParams;
   const initialPanel = normalizeSettingsPanel(
     typeof params.panel === "string" ? params.panel : null,
@@ -21,6 +26,7 @@ export default async function SettingsPage({
       <SettingsControlCenter
         initialPanel={initialPanel}
         secureRegistrationReady={secureRegistrationReady}
+        restrictedPublicOrigin={restrictedPublicOrigin}
         publicLoginUrl={
           publicEventOrigin ? `${publicEventOrigin}/event-access` : null
         }

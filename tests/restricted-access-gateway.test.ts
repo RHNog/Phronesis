@@ -3,7 +3,10 @@ import { spawn } from "node:child_process";
 import http from "node:http";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { getRestrictedPublicOrigin } from "../lib/auth/config.ts";
+import {
+  getActiveRestrictedPublicOrigin,
+  getRestrictedPublicOrigin,
+} from "../lib/auth/config.ts";
 
 async function listen(server: http.Server): Promise<number> {
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -29,6 +32,26 @@ test("restricted public origin accepts only a clean HTTPS origin", () => {
   assert.equal(getRestrictedPublicOrigin({ PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "http://access.phronesis.com" }), null);
   assert.equal(getRestrictedPublicOrigin({ PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "https://access.phronesis.com/path" }), null);
   assert.equal(getRestrictedPublicOrigin({ PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "not a url" }), null);
+  assert.equal(
+    getActiveRestrictedPublicOrigin({
+      PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "https://access.phronesis.com",
+    }),
+    null,
+  );
+  assert.equal(
+    getActiveRestrictedPublicOrigin({
+      PHRONESIS_RESTRICTED_PUBLIC_MODE: "ENABLED",
+      PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "https://access.phronesis.com",
+    }),
+    "https://access.phronesis.com",
+  );
+  assert.equal(
+    getActiveRestrictedPublicOrigin({
+      PHRONESIS_RESTRICTED_PUBLIC_MODE: "ENABLED",
+      PHRONESIS_RESTRICTED_PUBLIC_ORIGIN: "http://access.phronesis.com",
+    }),
+    null,
+  );
 });
 
 test("restricted gateway validates Host, overwrites markers, and blocks owner-only paths", async () => {

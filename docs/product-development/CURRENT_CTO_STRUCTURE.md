@@ -1,5 +1,19 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Trusted Account Sign Up Invitation
+
+- Assignment: `PHR-TRUSTED-SIGNUP-INVITE-20260806`
+- Features: `PHR-ARCH-016`, `PHR-TECH-016`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY; CUSTOM DOMAIN ACTIVATION GATED`
+- Objective: give the owner one easy Sign Up link to send to trustworthy people without granting or preselecting access.
+- UX rule: Settings → People & access displays the exact URL and provides resilient Copy, supported-device Share, and Preview with 44-pixel actions and explicit owner-approval copy.
+- Security rule: the link carries no token, email, role, workspace, entitlement, or approval; registration creates zero access and waits for out-of-band verification plus exact module assignment.
+- Origin rule: use the validated restricted-public origin only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise hydrate the current private origin. Configuration as a future Better Auth trusted origin is not evidence of live DNS/tunnel availability.
+- Current runtime: `access.phronesis.com` did not resolve during validation, so the live card truthfully exposes `https://ramons-mac-studio.tailaa2d39.ts.net:9444/sign-up`, which returns 200.
+- Work order: `docs/prompts/PHR-ARCH-016-trusted-account-registration-prompt.md`.
+- Verification: focused 35/35, full 443/443, TypeScript, lint, Next.js 16.2.12 build, desktop/phone no-overflow review, Copy feedback, exact Preview target, 44-pixel controls, private health, and zero browser errors pass.
+- Next accountable role: Product Owner sends the private invite to a trusted tester and reviews the pending request. Public custom-domain activation remains separate.
+
 ## Active Revision — Event Consignment Ownership
 
 - Assignment: `PHR-EVENT-CONSIGNMENT-OWNERSHIP-20260806`

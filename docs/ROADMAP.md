@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Trusted Account Sign Up Invitation
+
+- Implemented and privately live: prominent generic Sign Up URL in People & access with resilient Copy, supported-device Share, Preview, and explicit zero-access/owner-approval disclosure (`PHR-ARCH-016`).
+- Preserved: account creation creates no membership or entitlement; the invite contains no secret or preapproval and all server authorization remains unchanged.
+- Corrected: a configured future custom origin is advertised only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`. Current unresolved public DNS therefore falls back to the working private tailnet URL (`PHR-TECH-016`).
+- Verified: focused 35/35, full 443/443, TypeScript, warning-free lint, production build, 1280×720 and 390×844 no-overflow review, 44-pixel controls, Copy feedback, exact Preview target, private HTTP 200, and zero browser errors.
+- Next: Product Owner sends the private invite to the first trusted tester. Custom-domain activation remains a separate Cloudflare/DNS/tunnel action.
+
 ## Product Review Candidate: Event Consignment Ownership And Settings Control Center
 
 - Implemented and privately live: pre-opening event product-owner rosters, locked owner identity, house-or-consignor selection per sold item, and preserved active/closed attribution across full Event Ledger, Vendor Quick Sale, Event Stock, and Display Case (`PHR-WORKFLOW-006`).
@@ -17,7 +25,7 @@
 
 ## Product Review Candidate: Trusted Accounts And Restricted Custom Domain
 
-- Implemented and privately live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, and auditable approval/rejection (`PHR-ARCH-016`).
+- Implemented and privately live: email/password account creation, permanent sign-in/logout, zero-access pending state, owner approval queue, exact role/module/access assignment, auditable approval/rejection, and a safe generic Sign Up invitation (`PHR-ARCH-016`).
 - Implemented and activation-gated: loopback custom-domain gateway, strict permanent-session authorization, Host/forwarding normalization, and transport blocking for owner, administration, developer, activation, and timed-worker routes (`PHR-TECH-016`).
 - Verified: 437/437 tests, TypeScript, warning-free lint, production build, isolated end-to-end account approval, responsive phone/desktop layouts, live additive migration/private deployment, and actual Next gateway probes.
 - Next: owner experience review with one real trusted person. Resolve macOS launchd access to the external-volume runtime (privacy authorization or internal-volume deployment) before relying on reboot persistence. Separately activate `access.phronesis.com` through Cloudflare Tunnel/Access only after provider credentials and DNS authority are available. Verified email, password reset, passkeys, and MFA remain future security slices.

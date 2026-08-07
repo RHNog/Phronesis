@@ -114,7 +114,7 @@ Recommended route: Cloudflare Tunnel public hostname `access.phronesis.com` -> `
 
 ## UI / UX Notes
 
-Application code and the WebApp manifest must remain hostname-neutral. Share `https://access.phronesis.com` only after tunnel activation and strict end-to-end verification.
+Application code and the WebApp manifest must remain hostname-neutral. Share `https://access.phronesis.com` only after tunnel activation, strict end-to-end verification, and explicit `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; configuration as a future Better Auth trusted origin alone is not activation evidence.
 
 ## Success Metrics
 

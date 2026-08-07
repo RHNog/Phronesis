@@ -38,3 +38,16 @@ Result: Pass — implemented and privately live; unattended restart persistence 
 - Password reset, verified-email delivery, passkeys, and MFA are not included.
 - Custom-domain public activation remains gated under `PHR-TECH-016`.
 - Reboot/login persistence for the external-volume scanner-review runtime requires a separate macOS Files & Folders/Full Disk Access decision or an internal-volume runtime deployment. The current detached process remains available during the active login session.
+
+## 2026-08-06 Sign Up Invite Revision
+
+- Origin tests prove active restricted-public precedence, disabled/inactive public fallback, private-origin URL construction, and relative pre-hydration safety.
+- Static UI contracts prove the generic invite contains Copy, supported-device Share, Preview, zero-access disclosure, 44-pixel controls, and no activation code, email, role, or module query.
+- Focused trusted-account, Settings, restricted-gateway, resilient-copy, and card-show coverage: 35/35 pass.
+- Full supported suite: 443/443 pass.
+- Standalone TypeScript, warning-free lint, Next.js 16.2.12 production build, and diff hygiene pass.
+- Live desktop 1280×720 review measured a 623-pixel invite card with three 44-pixel actions and no horizontal overflow (1,265 document pixels within 1,280).
+- Live phone 390×844 review measured a 301-pixel card, three 44-pixel actions, and no horizontal overflow (375 document pixels within 390).
+- The Copy action produced visible `Sign Up link copied` / `Copied to clipboard` confirmation; Share appeared on the supported browser; Preview targeted the exact displayed URL.
+- The configured future custom domain failed DNS resolution during read-only validation. Because `PHRONESIS_RESTRICTED_PUBLIC_MODE` is not enabled, the live card correctly selected `https://ramons-mac-studio.tailaa2d39.ts.net:9444/sign-up`, which returns HTTP 200.
+- Browser warning/error count: zero. No account, access request, membership, entitlement, invitation code, message, or public infrastructure was created.

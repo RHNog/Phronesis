@@ -1,5 +1,12 @@
 # Agent Handoff
 
+## Product Review Candidate — Trusted Account Sign Up Invitation — 2026-08-06
+
+- `PHR-ARCH-016` now gives the owner one generic Sign Up invite in Settings → People & access with exact URL display, resilient Copy, supported-device Share, Preview, and zero-access disclosure.
+- The link contains no credential or access decision; registrants remain pending until out-of-band verification and exact module approval.
+- `PHR-TECH-016` now distinguishes configured from active public origin through `PHRONESIS_RESTRICTED_PUBLIC_MODE`. Current custom-domain DNS is unresolved, so the live card correctly uses the private tailnet `/sign-up` URL rather than advertising a broken address.
+- Focused 35/35, full 443/443, TypeScript, lint, build, desktop/phone no-overflow, 44-pixel controls, copy feedback, private HTTP 200, and zero browser errors pass. No account or infrastructure mutation occurred.
+
 ## Product Review Candidate — Back-First Duplex And Review Recovery — 2026-08-06
 
 - Direct evidence establishes that `Phronesis Card Duplex` is back-first: odd observations are Pokémon backs and even observations are the actual card faces.

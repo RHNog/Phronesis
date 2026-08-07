@@ -41,10 +41,12 @@ function PanelIcon({ icon }: { icon: SettingsPanelIcon }) {
 export default function SettingsControlCenter({
   initialPanel,
   secureRegistrationReady,
+  restrictedPublicOrigin,
   publicLoginUrl,
 }: {
   initialPanel: SettingsPanelId;
   secureRegistrationReady: boolean;
+  restrictedPublicOrigin: string | null;
   publicLoginUrl: string | null;
 }) {
   const [activePanel, setActivePanel] = useState(initialPanel);
@@ -210,7 +212,10 @@ export default function SettingsControlCenter({
             <ProviderConnections secureRegistrationReady={secureRegistrationReady} />
           </div>
           <div id="settings-panel-people" hidden={activePanel !== "people"}>
-            <AccessManagement active={secureRegistrationReady} />
+            <AccessManagement
+              active={secureRegistrationReady}
+              restrictedPublicOrigin={restrictedPublicOrigin}
+            />
           </div>
           <div id="settings-panel-temporary" hidden={activePanel !== "temporary"}>
             <EventAccessManagement

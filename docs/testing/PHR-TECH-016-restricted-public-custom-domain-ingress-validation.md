@@ -12,3 +12,5 @@ Result: Pass — gateway implementation ready; external activation intentionally
 - Existing public event gateway tests remain green in the 437/437 full suite.
 - Warning-free lint, TypeScript, production build, and diff checks pass.
 - Cloudflare/DNS/tunnel state was not changed. Provider activation and public end-to-end checks remain a separate owner-controlled deployment action.
+- `PHRONESIS_RESTRICTED_PUBLIC_MODE` defaults to disabled. Tests prove a configured future origin is not considered active or exposed in owner invitations until mode is explicitly enabled with a valid HTTPS origin.
+- Read-only DNS validation on 2026-08-06 returned unresolved for `access.phronesis.com`; the private invite fallback remained active and no DNS/tunnel state changed.

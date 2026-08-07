@@ -22,7 +22,7 @@ Architecture / Security / Authentication / Authorization / Database / UI / UX / 
 
 ## Objective
 
-Let a trustworthy person create and authenticate a permanent Phronesis account, while ensuring that the account receives no product access until an Owner or Administration Admin explicitly approves the request and assigns exact module/access pairs.
+Let a trustworthy person create and authenticate a permanent Phronesis account, give the owner one safe link to invite that person into the registration flow, and ensure that the account receives no product access until an Owner or Administration Admin explicitly approves the request and assigns exact module/access pairs.
 
 ## Background
 
@@ -51,6 +51,9 @@ An authenticated person without an active membership is routed to an explicit wa
 - Route authenticated accounts without an active membership to `/access-pending` rather than a blank shell or generic module-denial page.
 - Show pending, approved, and rejected state without exposing another user's data.
 - Add an owner-only pending-account queue to Settings.
+- Add a prominent generic Sign Up invite link to People & access with resilient Copy, supported-device Share, and Preview actions.
+- Prefer the validated `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN` only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` confirms that DNS, tunnel, gateway, and end-to-end checks are active; otherwise derive the invite from the owner's current private application origin.
+- Keep the Sign Up invite generic and non-secret. Possession of the link must create no invitation, membership, entitlement, role, module assignment, or approval shortcut.
 - Require the owner to select at least one explicit module before approval.
 - Let the owner select `VIEW`, `OPERATE`, or `ADMIN` per assigned module using existing entitlement rules.
 - Approval must be atomic, auditable, workspace-scoped, and idempotently fail closed when a request is no longer pending.
@@ -93,6 +96,7 @@ Account creation and authentication require the private Phronesis origin and loc
 - New accounts receive zero entitlements until explicit approval.
 - Owner approval requires `ADMINISTRATION:ADMIN` and same-workspace ownership.
 - Until transactional email verification is installed, the owner UI must require an out-of-band identity check before approval and must not claim that the submitted email is verified.
+- Invite-link presentation must explain that registration remains pending with zero access and that the recipient may need private-network access when no restricted-public origin is configured.
 - Public-ingress compatibility bypass is prohibited by `PHR-TECH-016`.
 
 ### Extensibility
@@ -107,6 +111,7 @@ Sign-in, sign-up, pending access, account menu, and owner approval must work at 
 
 - As a trusted collaborator, I want to create my own Phronesis account so I do not need the owner to create my identity.
 - As the owner, I want new accounts to wait for my approval so account creation never implies product access.
+- As the owner, I want one Sign Up link that I can copy or share so trusted people can request access without me creating their identity first.
 - As the owner, I want to assign exact modules and access levels during approval so each person receives only the work they need.
 - As an approved person, I want a clear account menu and logout so I understand which identity is active.
 
@@ -116,6 +121,8 @@ Sign-in, sign-up, pending access, account menu, and owner approval must work at 
 - The pending account can authenticate but cannot read any protected Phronesis module.
 - An owner can approve the request with exact modules, after which the next authorization decision and navigation reflect those modules.
 - An owner can reject the request without creating a membership.
+- The owner can copy, share on supported devices, preview, and visibly inspect the exact Sign Up link from People & access.
+- An explicitly enabled restricted-public origin wins over the current private origin, while an inactive or absent public route produces a usable current-origin `/sign-up` link without inventing a reachable address.
 - Existing invitation and active-member behavior remains green.
 - Logout invalidates the browser session and returns to sign-in.
 - Focused repository/API/UI tests, the full suite, TypeScript, lint, build, diff hygiene, and responsive browser validation pass.
@@ -129,6 +136,8 @@ Sign-in, sign-up, pending access, account menu, and owner approval must work at 
 - A direct invitation activated after account creation can provision the existing identity without creating a second account.
 - A request whose account was removed remains non-actionable and cannot be approved.
 - An owner cannot approve an account with zero modules.
+- Native Web Share is unavailable or the user cancels it: Copy and Preview remain available and no false success is shown.
+- The custom domain is configured as a future trusted origin but DNS/tunnel activation is not complete: without the separate enabled mode, the invite remains a private-origin link and is labelled accordingly.
 
 ## Dependencies
 
@@ -150,7 +159,7 @@ Use an additive `phronesis_access_request` table. Better Auth core tables remain
 
 ## UI / UX Notes
 
-The sign-in page leads with email/password and offers GitHub only when configured. `Create account` explains that registration does not grant access. The waiting room identifies the signed-in account and tells the user to ask the owner to approve modules. Settings leads with pending requests before the existing direct-invitation and active-member sections. Administration copy explicitly says to verify identity out of band.
+The sign-in page leads with email/password and offers GitHub only when configured. `Create account` explains that registration does not grant access. The waiting room identifies the signed-in account and tells the user to ask the owner to approve modules. People & access leads with a visually distinct `Invite people` card containing the exact Sign Up URL, Copy, supported-device Share, and Preview actions, followed by pending requests, the existing direct-invitation flow, and active members. Administration copy explicitly says to verify identity out of band.
 
 ## Success Metrics
 
@@ -172,4 +181,4 @@ The sign-in page leads with email/password and offers GitHub only when configure
 - Related conformance review: `docs/reviews/PHR-ARCH-016-trusted-account-registration-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-ARCH-016.md`.
 - Last modified: 2026-08-06.
-- Modification reason: establish self-registration with owner-controlled module approval.
+- Modification reason: add a safe owner-shareable Sign Up invite while preserving zero-access registration and restricted-public origin governance.

@@ -7,6 +7,7 @@
 - **Decision:** Better Auth owns email/password and optional GitHub identity plus sessions. Phronesis account creation creates one pending request and zero membership/module authority until an Administration Admin verifies the person out of band and grants exact modules.
 - **Decision:** A rejected account receives no membership; approval cannot create another Owner and cannot proceed with zero modules. Existing direct invitations remain an optional owner-initiated path.
 - **Decision:** Tailscale Serve remains the private owner transport. A normal public hostname uses Cloudflare Tunnel only through a dedicated loopback restricted gateway. Restricted ingress ignores optional compatibility and timed-worker sessions and transport-blocks Settings, administration, developer, activation, and worker-login routes.
+- **Decision:** People & access may share one generic `/sign-up` URL, but the link is never an invitation credential or access grant. A configured future custom origin is advertised only after `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise the current working private origin is authoritative.
 - **Consequences:** Trusted people can establish identity before the owner chooses work access. Owning `phronesis.com` enables `access.phronesis.com`, but obscurity is not security; external DNS/tunnel activation, verified email, password recovery, passkeys, and MFA remain explicit gates.
 
 ## 2026-08-04 — Use a sealed Windows bridge while macOS 27 ICA is unsupported

@@ -1,5 +1,12 @@
 # Project Atlas
 
+## Trusted Account Invitation
+
+- `PHR-ARCH-016` exposes one generic Sign Up invitation in Settings → People & access with exact URL display, resilient Copy, supported-device Share, and Preview.
+- The link is not an authorization object: it carries no token, identity, role, entitlement, or approval, and every resulting account remains zero-access pending owner verification and module assignment.
+- `getActiveRestrictedPublicOrigin` separates a configured future trusted origin from an operational public route. Only explicit `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` selects the restricted custom domain; disabled mode derives the working private origin in the browser.
+- `PHR-TECH-016` remains externally gated. Current `access.phronesis.com` DNS is unresolved, so private tailnet Sign Up is the truthful invite until provider activation succeeds.
+
 ## Event Consignment Ownership
 
 - `PHR-WORKFLOW-006` now creates an optional event-specific product-owner roster atomically at event opening and treats that roster as immutable evidence.

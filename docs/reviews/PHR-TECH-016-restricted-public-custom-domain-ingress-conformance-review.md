@@ -10,3 +10,5 @@ Status: Implementation conforms — external activation gated.
 - Cloudflare/DNS/tunnel activation is correctly withheld pending the owner-controlled deployment action.
 
 This review is same-session conformance evidence, not independent security certification.
+
+The later Sign Up invite revision preserves this boundary: only an explicitly enabled, validated public origin may be advertised. Disabled mode falls back to private origin without attempting to infer infrastructure health or weaken restricted-public authorization.

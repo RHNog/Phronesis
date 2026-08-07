@@ -1,5 +1,22 @@
 # CTO Product Development Conversation History
 
+## 2026-08-06 — Trusted Account Sign Up Invitation
+
+### User Intent
+
+- Add an invite link that makes it easy to send trustworthy people to account Sign Up.
+
+### Decision And Implementation
+
+- Extended `PHR-ARCH-016` rather than creating a second invitation authority. People & access now shows one generic permanent-account link with resilient Copy, native Share when supported, and Preview.
+- Kept the link non-secret and zero-authority: it includes no identity or module decision, and every registrant remains pending until owner verification and exact module approval.
+- Live review discovered that the configured future `access.phronesis.com` origin does not currently resolve. Added `PHRONESIS_RESTRICTED_PUBLIC_MODE` so a trusted-origin configuration cannot be mistaken for live infrastructure; disabled mode uses the current private origin.
+- Rebuilt and restarted the private scanner-review service. The live invitation is `https://ramons-mac-studio.tailaa2d39.ts.net:9444/sign-up` until the restricted-public route passes activation.
+
+### Acceptance State
+
+Implementation and same-session conformance are Product Review ready and privately live. Focused 35/35 and full 443/443 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, desktop/phone no-overflow review, 44-pixel actions, Copy confirmation, exact Preview target, private HTTP 200, and zero browser warnings/errors pass. No account, request, membership, entitlement, invitation code, message, DNS, tunnel, or public route was created.
+
 ## 2026-08-06 — Event Consignment Ownership And Settings Control Center
 
 ### User Intent

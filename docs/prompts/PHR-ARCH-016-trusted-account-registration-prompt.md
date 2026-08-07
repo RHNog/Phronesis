@@ -25,6 +25,9 @@ Implement account-first registration with zero access until explicit owner appro
 - Add an append-only/auditable access-request lifecycle to `AuthorizationRepository`.
 - Enable Better Auth email/password with a 12-character minimum while retaining GitHub when configured.
 - Create sign-up and email sign-in UI, pending-access UI, owner approval/rejection UI, and account/logout UI.
+- Add a prominent People & access invite card that exposes one generic Sign Up URL with the shared resilient Copy control, native Share when supported, and a Preview action.
+- Build the link from validated `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN` only when `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED`; otherwise use the hydrated current private origin and never hard-code or advertise an inactive deployment hostname.
+- State explicitly that the link grants zero access and that owner identity verification plus module approval remain mandatory.
 - Preserve invitation activation and current members.
 - Enforce zero modules before approval in DAL, pages, APIs, and navigation.
 - Add owner-only access-request administration endpoints with strict validation.
@@ -34,6 +37,7 @@ Implement account-first registration with zero access until explicit owner appro
 - Do not invent an email verification or password-reset provider.
 - Do not expose passwords, hashes, secrets, sessions, or activation codes.
 - Do not grant a default module.
+- Do not put a credential, token, email, entitlement, role, workspace identity, or preapproval decision in the generic Sign Up URL.
 - Do not weaken existing server-side entitlement enforcement.
 - Preserve event-worker access as a separate ceremony.
 
@@ -46,6 +50,7 @@ Better Auth owns identity and sessions. `AuthorizationRepository` owns pending a
 - Repository tests for request, approve, reject, idempotency, existing membership, and audit behavior.
 - Auth configuration/hook tests for account-first registration.
 - API/UI contract tests for strict administration and pending-state routing.
+- UI/origin tests for restricted-public precedence, private-origin fallback, generic-link safety, Copy/Share/Preview controls, and phone-width presentation.
 - Full suite, TypeScript, lint, build, diff hygiene, and desktop/phone browser checks.
 
 ## Documentation Updates

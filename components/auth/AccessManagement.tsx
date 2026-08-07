@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import AccountInviteLink from "@/components/auth/AccountInviteLink";
 import CopyTextButton from "@/components/ui/CopyTextButton";
 import {
   MEMBERSHIP_ROLES,
@@ -130,7 +131,13 @@ function PendingAccessRequest({ request, onDecided }: { request: AccessRequest; 
   );
 }
 
-export default function AccessManagement({ active }: { active: boolean }) {
+export default function AccessManagement({
+  active,
+  restrictedPublicOrigin,
+}: {
+  active: boolean;
+  restrictedPublicOrigin: string | null;
+}) {
   const [members, setMembers] = useState<Member[]>([]);
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [email, setEmail] = useState("");
@@ -235,6 +242,9 @@ export default function AccessManagement({ active }: { active: boolean }) {
         </div>
       ) : (
         <>
+          <AccountInviteLink
+            restrictedPublicOrigin={restrictedPublicOrigin}
+          />
           <div className="mt-4"><div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-semibold text-white">Pending accounts</p><p className="mt-1 text-sm text-zinc-400">Accounts stay outside every module until you verify the person and approve exact access.</p></div><span className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-300">{requests.length} waiting</span></div>{requests.length ? <div className="mt-4 space-y-4">{requests.map((request) => <PendingAccessRequest key={request.id} request={request} onDecided={load} />)}</div> : <p className="mt-3 rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 p-4 text-sm text-zinc-500">No accounts are waiting for approval.</p>}</div>
           <details className="mt-6 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4"><summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-zinc-200">Create a direct invitation instead</summary><p className="mt-2 text-sm leading-6 text-zinc-500">Optional owner-initiated flow. Assign modules now and send a single-use activation link.</p><form onSubmit={invite} className="mt-4 space-y-4">
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem]">

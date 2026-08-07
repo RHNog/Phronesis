@@ -11,3 +11,9 @@ Status: Conforms — same-session review; Product Owner experience review remain
 - Email verification and recovery are accurately disclosed as residual security work.
 
 This review is not an independent approval because architecture, implementation, and conformance were performed in one session.
+
+## 2026-08-06 Sign Up Invite Revision
+
+The revision conforms. The shared URL is a navigation convenience rather than an authorization artifact: it carries no secret or access decision and terminates in the existing zero-membership registration lifecycle. Copy reuses the resilient browser boundary, Share uses the browser capability only after hydration, and Preview is an ordinary visible link.
+
+The public-origin activation guard also conforms to `PHR-TECH-016`. Merely trusting a future auth origin cannot cause Phronesis to advertise an unreachable public hostname; explicit enabled mode is required after infrastructure verification. Private owner access and every server authorization gate are unchanged.

@@ -10,6 +10,7 @@ Tailscale Serve remains the private owner transport. Tailscale Funnel is not use
 
 - The restricted gateway and application enforcement are implemented and tested.
 - `PHRONESIS_RESTRICTED_PUBLIC_ORIGIN=https://access.phronesis.com` is configured locally as a Better Auth trusted origin.
+- `PHRONESIS_RESTRICTED_PUBLIC_MODE` remains `DISABLED`, so owner Sign Up invites use the working private application origin until the public route passes activation.
 - No Cloudflare account, tunnel, DNS route, Access policy, tunnel token, public process, or LaunchAgent was created by this implementation.
 - The private scanner-review application remains on loopback port `3200` and tailnet port `9444`.
 
@@ -29,7 +30,8 @@ Tailscale Serve remains the private owner transport. Tailscale Funnel is not use
    ```
 
 6. Start `cloudflared` with the provider-issued tunnel credential and route only to `127.0.0.1:3102`.
-7. Install unattended services only after the foreground checks below pass. Service definitions must reference credentials by protected file or environment, never inline in the repository.
+7. Complete every activation check below, then set `PHRONESIS_RESTRICTED_PUBLIC_MODE=ENABLED` and restart Phronesis so owner Sign Up invitations may advertise the verified public origin.
+8. Install unattended services only after the foreground checks below pass. Service definitions must reference credentials by protected file or environment, never inline in the repository.
 
 ## Activation checks
 
@@ -47,8 +49,9 @@ Tailscale Serve remains the private owner transport. Tailscale Funnel is not use
 
 1. Disable or delete only the `access.phronesis.com` public-hostname route in Cloudflare.
 2. Stop the restricted gateway and tunnel processes.
-3. Confirm that loopback `3200`, private tailnet `9444`, and the separate event-worker gateway retain their prior health.
-4. Leave account, membership, entitlement, and audit records intact unless a separately approved data action is required.
+3. Set `PHRONESIS_RESTRICTED_PUBLIC_MODE=DISABLED` and restart Phronesis so new invitations immediately return to the private origin.
+4. Confirm that loopback `3200`, private tailnet `9444`, and the separate event-worker gateway retain their prior health.
+5. Leave account, membership, entitlement, and audit records intact unless a separately approved data action is required.
 
 ## Secret boundary
 

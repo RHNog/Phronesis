@@ -1,5 +1,12 @@
 # Prompt History
 
+## 2026-08-06 — Trusted Account Sign Up Invitation
+
+- Source: Product Owner request for an easily shareable Sign Up option.
+- Features: additive `PHR-ARCH-016` registration UX and `PHR-TECH-016` public-origin activation guard.
+- Implementation prompt: `docs/prompts/PHR-ARCH-016-trusted-account-registration-prompt.md`.
+- Result: generic zero-access Sign Up card with Copy, supported-device Share, Preview, and private-origin fallback until the custom domain is explicitly enabled after verified infrastructure activation.
+
 ## 2026-08-06 — Event Consignment Ownership And Settings Control Center
 
 - Source: Product Owner request to attribute sold products to pre-registered event consignors and replace the endless Settings page.
