@@ -171,7 +171,11 @@ export function searchScore(
   score += matchedTokens.length * 6;
   for (const interpretation of plan.interpretations) {
     const canonical = normalizeSearchText(interpretation.canonical);
-    if (canonical && (set === canonical || set.includes(canonical))) {
+    if (!canonical) continue;
+    if (name === canonical) score += 90;
+    else if (name.startsWith(canonical)) score += 65;
+    else if (name.includes(canonical)) score += 35;
+    if (set === canonical || set.includes(canonical)) {
       score += 45;
     }
   }

@@ -21,6 +21,7 @@ import {
   seedStrategyProfiles,
 } from "@/data/seedStrategies";
 import EvaluationSummary from "@/features/vendor/components/EvaluationSummary";
+import ProviderPriceHistory from "@/features/vendor/components/ProviderPriceHistory";
 import VendorCheckout from "@/features/vendor/components/VendorCheckout";
 import RegionalMarketPanel from "@/features/vendor/components/RegionalMarketPanel";
 import PriceChartingGradedArea from "@/features/vendor/components/PriceChartingGradedArea";
@@ -38,9 +39,12 @@ import { defaultBusinessProfiles } from "@/lib/business/BusinessDefaults";
 import {
   conditionLabel,
   groupSearchMatchesByArtwork,
-  movementFor,
   nearestPricedCondition,
 } from "@/lib/pricing/domain";
+import {
+  MARKET_PROVIDER_IDS,
+  type MarketProviderId,
+} from "@/lib/market/providers";
 import {
   evaluatePurchase,
   type PurchaseEvaluation,
@@ -96,6 +100,14 @@ function regionalProviderLabel(
 ): "LigaMagic" | "LigaPokémon" | null {
   if (categoryId === "magic-en") return "LigaMagic";
   if (categoryId === "pokemon-en") return "LigaPokémon";
+  return null;
+}
+
+function regionalProviderId(
+  categoryId: string,
+): "ligamagic" | "ligapokemon" | null {
+  if (categoryId === "magic-en") return "ligamagic";
+  if (categoryId === "pokemon-en") return "ligapokemon";
   return null;
 }
 
@@ -250,6 +262,7 @@ function ResultButton({
   condition,
   group,
   highlighted,
+  showReference,
   selected,
   onSelect,
 }: {
@@ -257,6 +270,7 @@ function ResultButton({
   condition: PricingCondition;
   group: ArtworkSearchGroup;
   highlighted: boolean;
+  showReference: boolean;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -305,7 +319,7 @@ function ResultButton({
             </span>
           </span>
           <span className="shrink-0 text-right text-sm font-semibold tabular-nums text-cyan-200">
-            {money(reference.cents)}
+            {showReference ? money(reference.cents) : "Select"}
           </span>
         </span>
       </span>
@@ -315,8 +329,10 @@ function ResultButton({
 
 export default function SnapshotVendorWorkspace({
   canOperate,
+  enabledProviderIds = MARKET_PROVIDER_IDS,
 }: {
   canOperate: boolean;
+  enabledProviderIds?: readonly MarketProviderId[];
 }) {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<UnifiedPricingSearchResponse | null>(
@@ -493,16 +509,46 @@ export default function SnapshotVendorWorkspace({
     .map((variant) => artworkProvenance[variant.sku])
     .find(Boolean);
   const selectedArtworkGallery = selectedMatch ? artworkGalleries[selectedMatch.sku] : undefined;
-  const price = selectedMatch ? selectedPrice(selectedMatch, condition) : null;
+  const enabledProviders = useMemo(
+    () => new Set(enabledProviderIds),
+    [enabledProviderIds],
+  );
+  const tcgplayerEnabled = enabledProviders.has("tcgplayer");
+  const priceChartingEnabled = enabledProviders.has("pricecharting");
+  const selectedRegionalProviderId = selectedMatch
+    ? regionalProviderId(selectedMatch.categoryId)
+    : null;
+  const regionalEnabled = selectedRegionalProviderId
+    ? enabledProviders.has(selectedRegionalProviderId)
+    : false;
+  const rawHistoryProviderIds = useMemo(() => {
+    const providerIds: MarketProviderId[] = [];
+    if (tcgplayerEnabled) providerIds.push("tcgplayer");
+    if (selectedRegionalProviderId && regionalEnabled) {
+      providerIds.push(selectedRegionalProviderId);
+    }
+    return providerIds;
+  }, [regionalEnabled, selectedRegionalProviderId, tcgplayerEnabled]);
+  const cataloguePrice = selectedMatch
+    ? selectedPrice(selectedMatch, condition)
+    : null;
+  const price = tcgplayerEnabled ? cataloguePrice : null;
   const reference = bestReference(price);
-  const movement =
-    selectedMatch && price
-      ? movementFor(selectedMatch, price.marketPriceCents, price)
-      : null;
   const nearest =
-    selectedMatch?.productType === "SINGLE" && !price
+    tcgplayerEnabled && selectedMatch?.productType === "SINGLE" && !price
       ? nearestPricedCondition(selectedMatch.prices, condition)
       : null;
+  const marketProviderHeading = (() => {
+    const regionalLabel = selectedMatch
+      ? regionalProviderLabel(selectedMatch.categoryId)
+      : null;
+    if (tcgplayerEnabled && regionalEnabled && regionalLabel) {
+      return `TCGplayer + ${regionalLabel} pricing`;
+    }
+    if (tcgplayerEnabled) return "TCGplayer pricing";
+    if (regionalEnabled && regionalLabel) return `${regionalLabel} pricing`;
+    return "Market providers hidden";
+  })();
   const numericAskingPrice = Number(askingPrice);
   const offerEvaluation =
     selectedMatch && price && reference.cents !== null
@@ -814,6 +860,7 @@ export default function SnapshotVendorWorkspace({
                       group={group}
                       condition={condition}
                       highlighted={index === highlightedIndex}
+                      showReference={tcgplayerEnabled}
                       selected={group.id === selectedGroupId}
                       onSelect={() => selectResult(group)}
                     />
@@ -982,12 +1029,7 @@ export default function SnapshotVendorWorkspace({
                       id="combined-pricing-heading"
                       className="mt-1 text-base font-semibold text-white"
                     >
-                      {selectedMatch.productType === "SINGLE" &&
-                      regionalProviderLabel(selectedMatch.categoryId)
-                        ? `TCGplayer + ${regionalProviderLabel(
-                            selectedMatch.categoryId,
-                          )} pricing`
-                        : "TCGplayer pricing"}
+                      {marketProviderHeading}
                     </h3>
                   </div>
                   <span className="rounded-full border border-zinc-700 bg-zinc-950 px-2.5 py-1 text-[11px] text-zinc-400">
@@ -997,7 +1039,23 @@ export default function SnapshotVendorWorkspace({
                   </span>
                 </div>
 
-                {!price ? (
+                {!tcgplayerEnabled ? (
+                  <div className="mt-4 rounded-lg border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-400">
+                    <p className="font-semibold text-zinc-200">
+                      TCGplayer evidence is hidden.
+                    </p>
+                    <p className="mt-1">
+                      Re-enable this provider in{" "}
+                      <Link
+                        href="/user-settings"
+                        className="font-semibold text-cyan-300 hover:text-cyan-200"
+                      >
+                        My settings
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                ) : !price ? (
                   <div className="mt-4 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
                     <p className="font-semibold">No price in this condition.</p>
                     {nearest ? (
@@ -1061,11 +1119,6 @@ export default function SnapshotVendorWorkspace({
                     </div>
                     <div className="mt-4 border-t border-zinc-800 pt-4 text-sm text-zinc-400">
                       <p>
-                        {movement
-                          ? `${movement.percentage >= 0 ? "Up" : "Down"} ${Math.abs(movement.percentage).toFixed(1)}% since ${timestamp(movement.comparisonDate)}`
-                          : "No earlier price change yet."}
-                      </p>
-                      <p className="mt-1">
                         Snapshot {timestamp(price.snapshotDate)} · Source SKU{" "}
                         {price.sourceSku ?? "Unavailable"}
                       </p>
@@ -1074,7 +1127,8 @@ export default function SnapshotVendorWorkspace({
                 )}
 
                 {selectedMatch.productType === "SINGLE" &&
-                regionalProviderLabel(selectedMatch.categoryId) ? (
+                regionalProviderLabel(selectedMatch.categoryId) &&
+                regionalEnabled ? (
                   <div className="mt-4 border-t border-zinc-800 pt-4">
                     <RegionalMarketPanel
                       key={`${selectedMatch.categoryId}:${selectedMatch.sku}`}
@@ -1084,7 +1138,21 @@ export default function SnapshotVendorWorkspace({
                   </div>
                 ) : null}
 
-                <div className="mt-5 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
+                {rawHistoryProviderIds.length > 0 ? (
+                  <div className="mt-4 border-t border-zinc-800 pt-4">
+                    <ProviderPriceHistory
+                      key={`${selectedMatch.categoryId}:${selectedMatch.sku}:${condition}`}
+                      categoryId={selectedMatch.categoryId}
+                      sku={selectedMatch.sku}
+                      condition={condition}
+                      enabledProviderIds={rawHistoryProviderIds}
+                      providerFilter={rawHistoryProviderIds}
+                    />
+                  </div>
+                ) : null}
+
+                {tcgplayerEnabled ? (
+                  <div className="mt-5 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
                   <button
                     type="button"
                     aria-busy={
@@ -1134,10 +1202,12 @@ export default function SnapshotVendorWorkspace({
                       Market Watch list. Target and alerts stay optional.
                     </p>
                   )}
-                </div>
+                  </div>
+                ) : null}
               </section>
 
-              {selectedMatch.productType === "SINGLE" ? (
+              {selectedMatch.productType === "SINGLE" &&
+              priceChartingEnabled ? (
                 <PriceChartingGradedArea
                   key={`${selectedMatch.categoryId}:${selectedMatch.sku}`}
                   match={selectedMatch}

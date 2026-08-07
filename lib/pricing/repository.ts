@@ -16,6 +16,7 @@ import {
 import type { CardImageUrls } from "@/types/card";
 import {
   createPricingSearchPlan,
+  type PricingSearchResolvedAlias,
   type PricingSearchPlan,
 } from "@/lib/pricing/searchPlan";
 import {
@@ -24,6 +25,11 @@ import {
   deriveOnePieceSetAliases,
   type OnePieceSetEvidenceRow,
 } from "@/lib/pricing/setAliases";
+import { normalizeSearchText } from "@/lib/pricing/searchText";
+import {
+  dominantTypoCorrection,
+  searchTrigrams,
+} from "@/lib/pricing/typoCorrection";
 import type { PricingExportContract } from "@/lib/pricing/contract";
 import {
   parsePricingExport,
@@ -306,6 +312,24 @@ export class PricingRepository {
         runner_up_count INTEGER NOT NULL CHECK(runner_up_count >= 0),
         PRIMARY KEY(category_id, alias)
       );
+      CREATE TABLE IF NOT EXISTS pricing_search_vocabulary (
+        category_id TEXT NOT NULL,
+        term TEXT NOT NULL,
+        document_count INTEGER NOT NULL CHECK(document_count > 0),
+        PRIMARY KEY(category_id, term)
+      );
+      CREATE TABLE IF NOT EXISTS pricing_search_trigrams (
+        category_id TEXT NOT NULL,
+        trigram TEXT NOT NULL,
+        term TEXT NOT NULL,
+        document_count INTEGER NOT NULL CHECK(document_count > 0),
+        PRIMARY KEY(category_id, trigram, term),
+        FOREIGN KEY(category_id, term)
+          REFERENCES pricing_search_vocabulary(category_id, term)
+          ON DELETE CASCADE
+      );
+      CREATE INDEX IF NOT EXISTS pricing_search_trigram_lookup
+        ON pricing_search_trigrams(category_id, trigram, document_count DESC);
       CREATE VIRTUAL TABLE IF NOT EXISTS pricing_search USING fts5(
         category_id UNINDEXED,
         sku UNINDEXED,
@@ -326,7 +350,87 @@ export class PricingRepository {
     this.ensureColumn("pricing_category_state", "checkpoint_at", "TEXT");
     this.ensureColumn("pricing_category_state", "source_hash", "TEXT");
     this.ensureColumn("pricing_category_state", "contract_version", "TEXT");
+    this.ensureSearchVocabulary();
     this.refreshOnePieceSetAliases();
+  }
+
+  private ensureSearchVocabulary(): void {
+    const searchable = Number(
+      (
+        this.database.prepare("SELECT COUNT(*) count FROM pricing_search").get() as
+          | SqlRow
+          | undefined
+      )?.count ?? 0,
+    );
+    const vocabulary = Number(
+      (
+        this.database
+          .prepare("SELECT COUNT(*) count FROM pricing_search_vocabulary")
+          .get() as SqlRow
+      ).count,
+    );
+    if (searchable > 0 && vocabulary === 0) this.refreshSearchVocabulary();
+  }
+
+  private refreshSearchVocabulary(categoryId?: string): void {
+    const rows = this.database
+      .prepare(
+        `SELECT s.category_id, s.sku, p.name
+         FROM pricing_search s
+         JOIN pricing_products p
+           ON p.category_id = s.category_id AND p.sku = s.sku
+         ${categoryId ? "WHERE s.category_id = ?" : ""}`,
+      )
+      .all(...(categoryId ? [categoryId] : [])) as SqlRow[];
+    const counts = new Map<string, number>();
+    for (const row of rows) {
+      const terms = new Set(
+        normalizeSearchText(String(row.name))
+          .split(" ")
+          .filter((term) => /^[a-z]{4,}$/.test(term)),
+      );
+      for (const term of terms) {
+        const key = `${String(row.category_id)}\u0000${term}`;
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+    }
+    this.database.exec("SAVEPOINT refresh_search_vocabulary");
+    try {
+      if (categoryId) {
+        this.database
+          .prepare("DELETE FROM pricing_search_vocabulary WHERE category_id = ?")
+          .run(categoryId);
+      } else {
+        this.database.prepare("DELETE FROM pricing_search_vocabulary").run();
+      }
+      const insertTerm = this.database.prepare(
+        `INSERT INTO pricing_search_vocabulary(
+          category_id, term, document_count
+        ) VALUES(?, ?, ?)`,
+      );
+      const insertTrigram = this.database.prepare(
+        `INSERT INTO pricing_search_trigrams(
+          category_id, trigram, term, document_count
+        ) VALUES(?, ?, ?, ?)`,
+      );
+      for (const [key, documentCount] of counts) {
+        const [candidateCategoryId, term] = key.split("\u0000");
+        insertTerm.run(candidateCategoryId, term, documentCount);
+        for (const trigram of searchTrigrams(term)) {
+          insertTrigram.run(
+            candidateCategoryId,
+            trigram,
+            term,
+            documentCount,
+          );
+        }
+      }
+      this.database.exec("RELEASE refresh_search_vocabulary");
+    } catch (error) {
+      this.database.exec("ROLLBACK TO refresh_search_vocabulary");
+      this.database.exec("RELEASE refresh_search_vocabulary");
+      throw error;
+    }
   }
 
   private migrateArtworkRepresentativeProvenance(): void {
@@ -414,8 +518,9 @@ export class PricingRepository {
   private createSearchPlan(
     categoryId: string,
     query: string,
+    suppliedAliases: readonly PricingSearchResolvedAlias[] = [],
   ): PricingSearchPlan {
-    const basePlan = createPricingSearchPlan(query);
+    const basePlan = createPricingSearchPlan(query, suppliedAliases);
     if (categoryId !== "onepiece-en" || !basePlan.tokens.length) {
       return basePlan;
     }
@@ -449,8 +554,68 @@ export class PricingRepository {
       ];
     });
     return resolved.length
-      ? createPricingSearchPlan(query, resolved)
+      ? createPricingSearchPlan(query, [...suppliedAliases, ...resolved])
       : basePlan;
+  }
+
+  private typoAliases(
+    categoryId: string,
+    plan: PricingSearchPlan,
+  ): PricingSearchResolvedAlias[] {
+    const exactTerm = this.database.prepare(
+      `SELECT 1 FROM pricing_search_vocabulary
+       WHERE category_id = ? AND term = ?`,
+    );
+    const aliases: PricingSearchResolvedAlias[] = [];
+    for (const token of plan.tokens) {
+      if (aliases.length >= 2) break;
+      if (!/^[a-z]{4,}$/.test(token.token)) continue;
+      if (exactTerm.get(categoryId, token.token)) continue;
+      const trigrams = searchTrigrams(token.token);
+      if (!trigrams.length) continue;
+      const rows = this.database
+        .prepare(
+          `SELECT term, MAX(document_count) document_count,
+                  COUNT(DISTINCT trigram) overlap_count
+           FROM pricing_search_trigrams
+           WHERE category_id = ? AND trigram IN (${trigrams
+             .map(() => "?")
+             .join(", ")})
+           GROUP BY term
+           ORDER BY overlap_count DESC, document_count DESC, term
+           LIMIT 32`,
+        )
+        .all(categoryId, ...trigrams) as SqlRow[];
+      const correction = dominantTypoCorrection(
+        token.token,
+        rows.map((row) => ({
+          term: String(row.term),
+          documentCount: Number(row.document_count),
+        })),
+      );
+      if (!correction) continue;
+      const display = `${correction.term[0].toUpperCase()}${correction.term.slice(1)}`;
+      aliases.push({
+        input: token.token,
+        canonical: correction.term,
+        message: `Did you mean ${display}? Showing matches for ${display}.`,
+      });
+    }
+    return aliases;
+  }
+
+  private searchCandidates(
+    categoryId: string,
+    plan: PricingSearchPlan,
+  ): SqlRow[] {
+    return this.database
+      .prepare(
+        `SELECT p.* FROM pricing_search s
+         JOIN pricing_products p
+           ON p.category_id = s.category_id AND p.sku = s.sku
+         WHERE pricing_search MATCH ? AND s.category_id = ? LIMIT 160`,
+      )
+      .all(plan.ftsQuery, categoryId) as SqlRow[];
   }
 
   private ensureColumn(
@@ -710,13 +875,14 @@ export class PricingRepository {
           OR l.shipping_source IS NOT s.shipping_source
           OR l.delivered_price_cents IS NOT s.delivered_price_cents;
       `);
-      if (metadata.categoryId === "onepiece-en") {
-        this.refreshOnePieceSetAliases();
-      }
       snapshotsInserted = Number(
         (this.database.prepare("SELECT changes() AS count").get() as SqlRow)
           .count,
       );
+      this.refreshSearchVocabulary(metadata.categoryId);
+      if (metadata.categoryId === "onepiece-en") {
+        this.refreshOnePieceSetAliases();
+      }
       this.database.exec(`
         INSERT INTO pricing_latest(
           category_id, sku, condition_key, market_price_cents, direct_low_cents, listing_price_cents,
@@ -861,7 +1027,7 @@ export class PricingRepository {
     query: string,
     now = new Date(),
   ): PricingSearchResponse {
-    const plan = this.createSearchPlan(categoryId, query);
+    let plan = this.createSearchPlan(categoryId, query);
     const category = getActivePricingCategory(categoryId);
     if (!category) {
       return {
@@ -919,15 +1085,25 @@ export class PricingRepository {
         singles: [],
         sealedSuppressed: queryClearlyTargetsSingle(query),
       };
-    const candidates = this.database
-      .prepare(
-        `
-      SELECT p.* FROM pricing_search s
-      JOIN pricing_products p ON p.category_id=s.category_id AND p.sku=s.sku
-      WHERE pricing_search MATCH ? AND s.category_id=? LIMIT 160
-    `,
-      )
-      .all(plan.ftsQuery, categoryId) as SqlRow[];
+    let candidates = this.searchCandidates(categoryId, plan);
+    if (candidates.length === 0) {
+      const typoAliases = this.typoAliases(categoryId, plan);
+      if (typoAliases.length) {
+        const correctedPlan = this.createSearchPlan(
+          categoryId,
+          query,
+          typoAliases,
+        );
+        const correctedCandidates = this.searchCandidates(
+          categoryId,
+          correctedPlan,
+        );
+        if (correctedCandidates.length) {
+          plan = correctedPlan;
+          candidates = correctedCandidates;
+        }
+      }
+    }
     const matches = candidates
       .map((candidate) => this.hydrateMatch(candidate, query, plan))
       .filter((match) => match.score > 0)

@@ -47,6 +47,9 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - Place the PriceCharting card immediately after that combined card, closed by default, with a minimum 44-pixel summary control.
 - Do not issue a PriceCharting lookup until the disclosure is expanded; collapse must keep it secondary and reduce initial phone work.
 - PriceCharting values remain independent graded corroboration and never overwrite TCGplayer, Liga, artwork, or the offer reference.
+- Show provider-specific price movement for `7D`, `30D`, `3M`, and `1Y` from retained local observations.
+- Keep TCGplayer and Liga history inside the raw-card card and PriceCharting history inside the collapsed PriceCharting disclosure.
+- Honor the active user's enabled-provider preferences; disabled evidence never silently participates in the visible offer reference.
 - Clearly distinguish unavailable, stale, unmatched, and ambiguous states.
 - Prefer the provider-aware target-equivalence disposition over the legacy source-crosswalk read so all safely classified target matches are available.
 - Remain desktop-first with a single-column mobile adaptation.
@@ -72,6 +75,7 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - A matched Pokémon card labels LigaPokémon and the latest promoted LigaPokémon snapshot run.
 - Gardevoir GX SV75 and other safely classified exact/compatible targets expose LigaPokémon evidence with visible match quality; ambiguous and unavailable targets remain unpriced.
 - The PriceCharting disclosure is closed on selection and appears after the combined TCGplayer/Liga card.
+- Range/provider history controls remain usable at 390 pixels, show an honest sparse-history state, and never combine USD and BRL on one scale.
 - Expanding PriceCharting loads its evidence; leaving it closed performs no PriceCharting request.
 - No recommendation appears as certain when costs or evidence are incomplete.
 - Existing purchase evaluation and checkout paths remain unchanged unless the operator explicitly adds a line.
@@ -90,6 +94,8 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - `PHR-API-010`
 - `PHR-API-013`
 - `PHR-API-016`
+- `PHR-API-017`
+- `PHR-ARCH-017`
 - `PHR-UX-022`
 
 ## Traceability
@@ -98,14 +104,14 @@ Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGpl
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
 - Current revision work order: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
 - Last modified: 2026-08-07.
-- Modification reason: add maximum bounded LigaPokémon target-equivalence coverage and visible evidence quality without changing the approved evidence stack.
+- Modification reason: add provider-specific retained history and personal provider visibility without changing the approved evidence stack.
 
 ## Implementation Evidence
 
 - Vendor Workspace now renders TCGplayer plus the applicable Liga provider inside one `Raw-card market evidence` card.
 - The provider-aware read model consumes exact Magic rows plus exact/bounded-compatible Pokémon target dispositions and exposes a truthful ambiguous/unavailable reason otherwise.
 - Live LigaMagic evidence resolves from last-good run `dry-run-20260730T203243818Z`; live LigaPokémon evidence resolves from run `dry-run-20260805T070105248Z` and preserves condition/language provenance.
-- Live Pokémon coverage is 30,864 exact plus 2,681 compatible targets; Gardevoir GX SV75 resolves to HIF/SV75 Holofoil at R$169.90 with 92% exact structural confidence.
+- Live Pokémon coverage is 30,864 exact plus 3,312 compatible targets; Gardevoir GX SV75 resolves to HIF/SV75 Holofoil at R$169.90 with 92% exact structural confidence.
 - PriceCharting is a closed-by-default disclosure immediately below the combined card, resets closed when selection changes, and begins its lookup only after expansion.
 - Validation: `docs/testing/PHR-UX-013-arbitrage-presentation-validation.md`.
 - Implementation report: `docs/implementation-reports/PHR-UX-013-vendor-evidence-composition-report.md`.

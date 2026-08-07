@@ -5,6 +5,14 @@
 
 ### Added
 
+- Provider-specific 7D/30D/3M/1Y price movement for retained TCGplayer, LigaMagic/LigaPokémon, and PriceCharting evidence, with separate currencies/lanes, honest one-point states, and responsive accessible controls (`PHR-API-017`, `PHR-UX-013`).
+
+- Active-member `My settings` with all current market providers included by default, personal provider visibility, nullable regional cost overrides, workspace inheritance, audited writes, and no Administration or credential exposure (`PHR-ARCH-017`).
+
+- Conservative category-scoped name typo correction after zero literal results; interpretations are visible, structured identifiers stay literal, ambiguity fails closed, and manual selection remains required (`PHR-UX-016`).
+
+- An explicit special-distribution comparison tier increases LigaPokémon eligible coverage to 34,176 targets while retaining 776 ambiguous quarantines and exact-only Arbitrage authority (`PHR-API-016`).
+
 - Maximum bounded LigaPokémon Vendor coverage through a complete target-equivalence ledger, guarded set conventions, exact/compatible provenance, truthful unavailable states, and automatic reconciliation continuity; Gardevoir GX SV75 now resolves from the promoted snapshot (`PHR-API-016`, `PHR-UX-013`).
 
 - Provider-aware LigaMagic/LigaPokémon selected-card evidence with promoted source-run provenance, exact newest-match selection, combined TCGplayer/Liga presentation, and a lazy collapsed PriceCharting card directly below (`PHR-UX-013`, `PHR-API-010`).

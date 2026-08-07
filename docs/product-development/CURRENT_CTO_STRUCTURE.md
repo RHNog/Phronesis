@@ -1,15 +1,29 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Personal Market Intelligence And Search Recovery
+
+- Assignment: `PHR-MARKET-PERSONALIZATION-20260807`
+- Features: `PHR-API-017`, `PHR-ARCH-017`; additive revisions to `PHR-API-016`, `PHR-UX-013`, and `PHR-UX-016`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: maximize defensible LigaPokémon comparison coverage, expose truthful provider movement, give each permanent member private provider/cost preferences, and recover obvious name typos without weakening identity authority.
+- Evidence rule: history remains append-only and provider/currency/lane specific; absent history is not interpolated. PriceCharting remains inside its closed secondary disclosure.
+- Identity rule: special-distribution compatibility requires an explicit family plus exact normalized name, collector numerator, finish, and one unique source row. Search typo correction is a zero-result fallback only and can never become reconciliation evidence.
+- Authorization rule: `/user-settings` requires an active permanent membership but no Administration module. It grants no module or credential; nullable cost values inherit workspace policy and official FX remains workspace-owned.
+- Work orders: `docs/prompts/PHR-API-017-provider-price-history-prompt.md`, `docs/prompts/PHR-ARCH-017-personal-market-settings-prompt.md`, `docs/prompts/PHR-API-016-maximum-ligapokemon-vendor-evidence-prompt.md`, and `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+- Verification: 30,864 exact plus 3,312 compatible Pokémon targets; 969,284 retained Liga observations; live `Gsrdevoir SV75` recovery; full 470/470 suite; TypeScript, warning-free lint, production build, database integrity, API/gateway checks, and 390×844 no-overflow/44-pixel/clean-console review pass.
+- Runtime: Vendor Workspace at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`; active permanent members reach `https://ramons-mac-studio.tailaa2d39.ts.net:9444/user-settings`.
+- Next accountable role: Product Owner reviews the personal settings and market-history experience with a real approved account. Same-session conformance is not independent approval.
+
 ## Active Revision — Vendor Workspace Liga And PriceCharting Evidence Stack
 
 - Assignment: `PHR-VENDOR-REGIONAL-EVIDENCE-20260807`
 - Features: `PHR-UX-013`, `PHR-API-016`; related API placement contract: `PHR-API-010`
 - Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
 - Objective: show TCGplayer plus the maximum defensible LigaMagic/LigaPokémon raw-card evidence inside Vendor Workspace, with PriceCharting as a collapsed optional card immediately below.
-- Data rule: Magic reads exact promoted matches. Pokémon reads exact and explicitly bounded-compatible target dispositions from promoted run `dry-run-20260805T070105248Z`; compatible evidence is comparison-only and excluded from Arbitrage. Failed acquisition health never replaces usable last-good evidence.
+- Data rule: Magic reads exact promoted matches. Pokémon reads 30,864 exact and 3,312 explicitly bounded-compatible target dispositions from promoted run `dry-run-20260805T070105248Z`; compatible evidence is comparison-only and excluded from Arbitrage. Failed acquisition health never replaces usable last-good evidence.
 - Composition rule: Snapshot evidence owns the combined raw-card card; Buying decision does not duplicate regional evidence; PriceCharting is closed on selection and loads only after expansion.
 - Work orders: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md` and `docs/prompts/PHR-API-016-maximum-ligapokemon-vendor-evidence-prompt.md`.
-- Verification: full 465/465 suite, TypeScript, warning-free lint/build, diff hygiene, deterministic full-corpus reconciliation, live exact/compatible Pokémon selections, expansion behavior, and 328-pixel evidence-column no-overflow checks pass.
+- Verification: full 470/470 suite, TypeScript, warning-free lint/build, diff hygiene, deterministic full-corpus reconciliation, live exact/compatible Pokémon selections, expansion behavior, and 390-pixel evidence-column no-overflow checks pass.
 - Runtime: `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`.
 - Next accountable role: Product Owner reviews the selected-card hierarchy. Same-session conformance is not independent approval.
 

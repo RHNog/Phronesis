@@ -69,3 +69,18 @@ SQLite FTS stores the printed collector suffix as `022`; an unpadded `22*` prefi
 ### Live Runtime Verification
 
 The rebuilt private API discloses `Understood collector 22 as 022` and returns both loaded `OP16-022` identities: Normal and Alternate Art. Padded input returns the same two identities without redundant collector interpretation. The private LaunchAgent is healthy and serving the rebuilt application.
+
+## 2026-08-07 — Conservative Name Typo Correction
+
+### Deterministic Verification
+
+- Vocabulary and trigram tables are category-scoped and rebuild transactionally from canonical catalogue product names.
+- Corrections run only after the original literal/structured plan returns zero products.
+- Tests cover insertion/deletion/substitution/transposition distance, length bounds, ambiguous runner-up rejection, structured-token preservation, and the two-correction maximum.
+- `Gsrdevoir SV75` resolves to `Gardevoir SV75`; the exact Gardevoir GX Hidden Fates: Shiny Vault `SV75/SV94` printing ranks first.
+- Exact queries, digits, set codes, collector numbers, short terms, and ambiguous names remain unchanged.
+- Focused pricing tests: 20/20; full suite: 470/470; TypeScript, warning-free lint, production build, and diff hygiene pass.
+
+### Live Runtime Verification
+
+At 390×844, the private Vendor Workspace visibly presented `Did you mean Gardevoir? Showing matches for Gardevoir.`, returned the intended SV75 printing, introduced no horizontal overflow, and logged no browser errors. Selection remained manual and the correction created no catalogue, reconciliation, or pricing mutation.

@@ -210,6 +210,7 @@ test("Pokémon target ledger maximizes bounded evidence and fixes encoded Lucari
         ('pokemon-en','gardevoir-sv75','SINGLE','Gardevoir GX','Hidden Fates: Shiny Vault','SV75/SV94','Holofoil','English'),
         ('pokemon-en','title-drift','SINGLE','Pikachu V (43)','Vivid Voltage','43/185','Holofoil','English'),
         ('pokemon-en','material-proxy','SINGLE','Pikachu V [Jumbo]','Vivid Voltage','43/185','Holofoil','English'),
+        ('pokemon-en','special-distribution','SINGLE','Pikachu V','Jumbo Cards','43/185','Holofoil','English'),
         ('pokemon-en','compatible','SINGLE','Charizard','Base Set','4/102','1st Edition Holofoil','English'),
         ('pokemon-en','ambiguous','SINGLE','Eevee Special','Example Set','1/10','Normal','English'),
         ('pokemon-en','missing','SINGLE','Code Card','Promo Codes','SWSH999','Normal','English'),
@@ -219,6 +220,7 @@ test("Pokémon target ledger maximizes bounded evidence and fixes encoded Lucari
         ('pokemon-en','gardevoir-sv75','NEAR_MINT',8998,7999,8521),
         ('pokemon-en','title-drift','NEAR_MINT',200,200,200),
         ('pokemon-en','material-proxy','NEAR_MINT',200,200,200),
+        ('pokemon-en','special-distribution','NEAR_MINT',200,200,200),
         ('pokemon-en','compatible','NEAR_MINT',10000,10000,10000);
     `);
     const source = new DatabaseSync(sourcePath);
@@ -264,12 +266,12 @@ test("Pokémon target ledger maximizes bounded evidence and fixes encoded Lucari
         priced: first.targetWithLigaConsumerPrice,
       },
       {
-        total: 8,
+        total: 9,
         exact: 3,
-        compatible: 2,
+        compatible: 3,
         ambiguous: 1,
         unavailable: 2,
-        priced: 5,
+        priced: 6,
       },
     );
     assert.equal(first.targetLedgerFingerprint, second.targetLedgerFingerprint);
@@ -280,7 +282,7 @@ test("Pokémon target ledger maximizes bounded evidence and fixes encoded Lucari
           WHERE provider_id='ligapokemon' AND category_id='pokemon-en'`,
         )
         .get()?.count,
-      8,
+      9,
     );
     assert.equal(
       pricing
@@ -332,6 +334,15 @@ test("Pokémon target ledger maximizes bounded evidence and fixes encoded Lucari
     assert.equal(
       materialProxy?.matchMethod,
       "COMPATIBLE_POKEMON_UNSPECIFIED_MATERIAL_TREATMENT_V1",
+    );
+    const specialDistribution = regional.evidenceFor(
+      "pokemon-en",
+      "special-distribution",
+    );
+    assert.equal(specialDistribution?.matchQuality, "COMPATIBLE");
+    assert.equal(
+      specialDistribution?.matchMethod,
+      "COMPATIBLE_POKEMON_SPECIAL_DISTRIBUTION_PROXY_V1",
     );
     assert.equal(
       regional.equivalenceFor("pokemon-en", "ambiguous")?.status,

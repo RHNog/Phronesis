@@ -1,5 +1,13 @@
 # Prompt History
 
+## 2026-08-07 — Personal Market Intelligence, History, Coverage, And Typo Recovery
+
+- Source: Product Owner requested further LigaPokémon coverage, provider movement over 7D/30D/3M/1Y, default per-user provider/cost settings, and typo-tolerant search such as `Gsrdevoir` → `Gardevoir`.
+- Assignment: `PHR-MARKET-PERSONALIZATION-20260807`.
+- Features: new `PHR-API-017` and `PHR-ARCH-017`; additive revisions to `PHR-API-016`, `PHR-UX-013`, and `PHR-UX-016`.
+- Implementation prompts: `docs/prompts/PHR-API-017-provider-price-history-prompt.md`, `docs/prompts/PHR-ARCH-017-personal-market-settings-prompt.md`, `docs/prompts/PHR-API-016-maximum-ligapokemon-vendor-evidence-prompt.md`, and `docs/prompts/PHR-UX-016-intent-aware-catalogue-search-prompt.md`.
+- Result: 34,176 exact/compatible LigaPokémon targets; separate retained provider histories; active-member My settings with provider and cost choices; live conservative typo recovery; private deployment and 470/470 verification.
+
 ## 2026-08-07 — Maximum LigaPokémon Vendor Evidence Coverage
 
 - Source: Product Owner required the most LigaPokémon matches available after Gardevoir GX SV75 appeared unreconciled despite existing source evidence.

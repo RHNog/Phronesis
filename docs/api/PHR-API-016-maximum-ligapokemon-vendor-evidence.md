@@ -56,6 +56,9 @@ Add an explicit Hidden Fates Shiny Vault identity rule: `Hidden Fates: Shiny Vau
 - Admit presentation-only HTML entity and ampersand drift.
 - Admit explicit set aliases and bounded structural set decorations.
 - Admit the Hidden Fates Shiny Vault subset convention only under the SV-collector guard.
+- Admit an explicitly named special-distribution comparison tier only for Prize Pack, Jumbo, Deck Exclusives, Alternate Art Promos, Countdown Calendar, Professor Program, First Partner, Trainer Kit/Battle Stadium, and League & Championship target families.
+- Require exact normalized name, collector numerator, and physical finish plus one semantic Liga source identity and one evidence signature for that comparison tier.
+- Label the special-distribution result `COMPATIBLE`, disclose that the provider does not represent the target stamp, size, deck, or distribution treatment, and exclude it from Arbitrage.
 - Admit a source candidate only when the strongest applicable tier yields one semantic identity and one evidence signature.
 - Return exact and compatible evidence to Vendor Workspace with visible quality and confidence.
 - Return ambiguous or unavailable disposition details instead of a generic unmatched message.
@@ -126,6 +129,8 @@ Evidence and disposition copy must remain readable without horizontal overflow o
 - A finish differs: do not promote it to exact; only an explicitly defined compatible finish-family tier may apply.
 - A non-English, non-NM, sealed, or incomplete target identity remains unavailable.
 - A new acquisition fails: retain the last-good operational evidence and ledger.
+- A special-distribution name/collector/finish lookup has more than one source set or evidence signature: classify `AMBIGUOUS` at that strongest applicable tier.
+- Base Set Shadowless and World Championship products remain outside the distribution-proxy policy because their identity/value distinctions are too material for a generic comparison.
 
 ## Dependencies
 
@@ -137,6 +142,7 @@ Evidence and disposition copy must remain readable without horizontal overflow o
 ## Future Enhancements
 
 - Add provider-specific reviewed aliases from measured unavailable families.
+- Re-evaluate currently excluded Shadowless and World Championship families only if a provider exposes their distinguishing identity fields.
 - Add an Administration coverage explorer for exact, compatible, ambiguous, and unavailable populations.
 - Support other regional Pokémon providers through independent ledgers.
 
@@ -157,7 +163,7 @@ Exact evidence uses the current regional styling. Compatible evidence uses a dis
 
 ## Open Questions
 
-- None for this delivery. Further aliases require measured evidence and a separate bounded revision.
+- None for this delivery. Further aliases require measured evidence and a separate bounded revision; search typo correction is never reconciliation evidence.
 
 ## Traceability
 
@@ -166,12 +172,13 @@ Exact evidence uses the current regional styling. Compatible evidence uses a dis
 - Related tests: `tests/pokemon-regional-reconciliation.test.ts`, `tests/regional-intelligence.test.ts`.
 - Related release notes: `docs/release-notes/PHR-API-016.md`.
 - Last modified: 2026-08-07.
-- Modification reason: record the completed reconciliation, operational coverage, live deployment, and acquisition/catalogue rebuild integration.
+- Modification reason: complete and privately deploy the measured comparison-only special-distribution coverage tier while preserving exact identity and Arbitrage boundaries.
 
 ## Implementation Evidence
 
-- Operational target ledger: 30,864 exact, 2,681 compatible, 103 ambiguous, and 13,003 unavailable dispositions.
-- Vendor-eligible coverage: 33,545 targets, including 33,190 with Liga consumer price evidence.
+- Operational target ledger: 30,864 exact, 3,312 compatible, 776 ambiguous, and 11,699 unavailable dispositions.
+- Vendor-eligible coverage: 34,176 targets, including 33,795 with Liga consumer price evidence.
+- The special-distribution tier added 631 deterministic compatible targets without reducing exact coverage; 673 formerly unavailable targets became explicit ambiguity instead of guessed matches.
 - Gardevoir GX SV75 resolves at 92% exact structural confidence to promoted HIF/SV75 Holofoil evidence at R$169.90.
 - Validation: `docs/testing/PHR-API-016-maximum-ligapokemon-vendor-evidence-validation.md`.
 - Implementation report: `docs/implementation-reports/PHR-API-016-maximum-ligapokemon-vendor-evidence-report.md`.

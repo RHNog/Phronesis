@@ -80,6 +80,82 @@ export type RegionalCostProfile = {
   updatedAt: string | null;
 };
 
+export function validateRegionalCostProfile(
+  profile: RegionalCostProfile,
+): void {
+  for (const value of [
+    profile.usToBrazilFixedBrl,
+    profile.usToBrazilPercent,
+    profile.usToBrazilMinAcquisitionUsd,
+    profile.usToBrazilMaxAcquisitionUsd,
+    profile.usToBrazilMinGrossProceedsBrl,
+    profile.usToBrazilMinGrossSpreadBrl,
+    profile.usToBrazilMinNetProfitBrl,
+    profile.usToBrazilMinProfitMarginPercent,
+    profile.usToBrazilMinRoiPercent,
+    profile.brazilToUsFixedUsd,
+    profile.brazilToUsPercent,
+    profile.brazilToUsMinAcquisitionBrl,
+    profile.brazilToUsMaxAcquisitionBrl,
+    profile.brazilToUsMinGrossProceedsUsd,
+    profile.brazilToUsMinGrossSpreadUsd,
+    profile.brazilToUsMinNetProfitUsd,
+    profile.brazilToUsMinProfitMarginPercent,
+    profile.brazilToUsMinRoiPercent,
+  ]) {
+    if (value !== null && (!Number.isFinite(value) || value < 0)) {
+      throw new Error("Costs and targets must be non-negative numbers or null.");
+    }
+  }
+  if (
+    profile.maxEvidenceAgeHours !== null &&
+    (!Number.isFinite(profile.maxEvidenceAgeHours) ||
+      profile.maxEvidenceAgeHours <= 0)
+  ) {
+    throw new Error("Maximum evidence age must be a positive number or null.");
+  }
+  if (
+    profile.usToBrazilMinAcquisitionUsd !== null &&
+    profile.usToBrazilMaxAcquisitionUsd !== null &&
+    profile.usToBrazilMinAcquisitionUsd > profile.usToBrazilMaxAcquisitionUsd
+  ) {
+    throw new Error("US acquisition minimum cannot exceed its maximum.");
+  }
+  if (
+    profile.brazilToUsMinAcquisitionBrl !== null &&
+    profile.brazilToUsMaxAcquisitionBrl !== null &&
+    profile.brazilToUsMinAcquisitionBrl > profile.brazilToUsMaxAcquisitionBrl
+  ) {
+    throw new Error("Brazil acquisition minimum cannot exceed its maximum.");
+  }
+  if (
+    profile.brlPerUsd !== null &&
+    (!Number.isFinite(profile.brlPerUsd) || profile.brlPerUsd <= 0)
+  ) {
+    throw new Error("BRL per USD must be positive.");
+  }
+  for (const value of [profile.brlPerUsdBuy, profile.brlPerUsdSell]) {
+    if (value !== null && (!Number.isFinite(value) || value <= 0)) {
+      throw new Error("Official BRL per USD quotes must be positive.");
+    }
+  }
+  if (
+    profile.brlPerUsdBuy !== null &&
+    profile.brlPerUsdSell !== null &&
+    profile.brlPerUsdBuy > profile.brlPerUsdSell
+  ) {
+    throw new Error("Official PTAX buy cannot exceed sell.");
+  }
+  if (profile.fxObservedAt && Number.isNaN(Date.parse(profile.fxObservedAt))) {
+    throw new Error("FX observation time must be valid.");
+  }
+  for (const value of [profile.fxFetchedAt, profile.fxLastAttemptAt]) {
+    if (value && Number.isNaN(Date.parse(value))) {
+      throw new Error("FX retrieval time must be valid.");
+    }
+  }
+}
+
 export type ArbitrageCalculation = {
   state: ArbitrageState;
   blocker: string | null;

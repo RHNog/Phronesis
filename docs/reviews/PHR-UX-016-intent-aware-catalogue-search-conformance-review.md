@@ -20,5 +20,9 @@ Verdict: **CONFORMS — READY FOR PRODUCT REVIEW**
 - Collector padding is scoped to bounded numeric tokens within the One Piece category and produces at most one canonical alternative, preserving the search-plan bound.
 - Already padded, zero, four-digit, alphanumeric, and non-One Piece input remain unchanged or fail closed.
 - Exact positive and mismatched-name negative evidence proves `22`/`022` equivalence does not weaken AND semantics.
+- Name correction runs only after zero literal/structured results, consumes a category-scoped canonical vocabulary, and requires bounded Damerau-Levenshtein distance plus a dominant winner.
+- Structured identifiers, digits, short words, exact terms, and ambiguous candidates remain literal. At most two alphabetic terms may change.
+- The correction is disclosed to the operator, exact canonical-name matches receive only a ranking boost, and neither identity reconciliation nor automatic selection consumes fuzzy evidence.
+- Live `Gsrdevoir SV75` evidence proves the intended Gardevoir GX printing ranks first without weakening the manual-choice boundary.
 
 This same-session review verifies architecture and specification conformance but is not independent Product Owner approval.

@@ -19,18 +19,18 @@ The implementation ran twice against a disposable copy of the operational databa
 | Target disposition | Before | After |
 | --- | ---: | ---: |
 | Exact | 30,061 | 30,864 |
-| Compatible | 2,539 | 2,681 |
-| Ambiguous | 102 | 103 |
-| Unavailable | 13,949 | 13,003 |
-| Exact + compatible | 32,600 | 33,545 |
-| With Liga consumer price | not previously exposed as the Vendor read | 33,190 |
+| Compatible | 2,539 | 3,312 |
+| Ambiguous | 102 | 776 |
+| Unavailable | 13,949 | 11,699 |
+| Exact + compatible | 32,600 | 34,176 |
+| With Liga consumer price | not previously exposed as the Vendor read | 33,795 |
 
-The revised policy adds 803 exact, 142 compatible, and one explicit ambiguous disposition. No previously exact or compatible target is downgraded. Compared with the former Vendor Workspace read path, which exposed only 25,549 legacy exact targets, 7,996 additional matches become eligible.
+The complete policy adds 803 exact and 773 compatible targets over the original ledger. The final special-distribution revision contributes 631 of those compatible targets and explicitly quarantines 673 additional collisions. No previously exact or compatible target is downgraded. Compared with the former Vendor Workspace read path, which exposed only 25,549 legacy exact targets, 8,627 additional matches become eligible.
 
 Final fingerprints:
 
 - Source crosswalk: `fedfd9adb99e465f351189f4a5f8a02e96943b8af908baae6da175f1fb37de70`
-- Target ledger: `27f87216714097d7a0cb1eb1e2a17a966f5faf4ec2236fc0b6a4d4881b84aa93`
+- Target ledger: `e0d4015e92ad4f4d3016b62b49bd004cedb6e44061f2887c514aa2e7b82e3ad7`
 
 ## Operational Application
 
@@ -41,7 +41,7 @@ Final fingerprints:
 
 ## Product Verification
 
-- Full suite: 465/465 passing.
+- Full suite: 470/470 passing.
 - Focused reconciliation, regional repository, and Vendor Workspace tests: 26/26 passing.
 - Standalone TypeScript: passing.
 - ESLint: passing without warnings.
@@ -52,6 +52,13 @@ Final fingerprints:
 - Signed-in live Vendor selection renders `Charizard (Black Dot Error)` as `compatible Liga equivalent`, 72% confidence, and explicitly excludes it from Arbitrage.
 - The live regional evidence panel is 328 pixels wide with equal client/scroll width and zero overflowing descendants.
 - PriceCharting remains collapsed directly below the raw-card evidence card.
+
+## 2026-08-07 — Special-Distribution Expansion
+
+- The compatibility tier is limited to explicit Prize Pack, Jumbo, Deck Exclusive, Alternate Art Promo, Countdown, Professor Program, First Partner, Trainer Kit/Battle Stadium, and League/Championship source families.
+- A target must still agree on normalized card name, collector numerator, and exact finish and must have one unique eligible source/evidence pair.
+- Base Set Shadowless and World Championship identities are excluded from the proxy tier.
+- Special-distribution evidence remains comparison-only and never enters the strict source crosswalk or Arbitrage.
 
 ## Boundaries Verified
 

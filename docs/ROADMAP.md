@@ -1,13 +1,22 @@
 # Roadmap
 
+## Product Review Candidate: Personal Market Intelligence
+
+- Implemented and privately live: provider-specific 7D, 30D, 3M, and 1Y movement for TCGplayer, LigaMagic/LigaPokémon, and PriceCharting without currency merging or fabricated history (`PHR-API-017`, `PHR-UX-013`).
+- Implemented: `My settings` for every active permanent member, with all providers included by default, per-user visibility, nullable cost overrides, workspace inheritance, audited writes, and no Administration/module broadening (`PHR-ARCH-017`).
+- Implemented: category-scoped typo recovery after zero literal results; `Gsrdevoir SV75` visibly corrects to Gardevoir and ranks the exact SV75 printing first while structured identifiers and ambiguous words fail closed (`PHR-UX-016`).
+- Expanded: LigaPokémon coverage now contains 30,864 exact and 3,312 compatible targets; 776 ambiguous targets are quarantined and compatible special-distribution evidence remains comparison-only (`PHR-API-016`).
+- Operational evidence: 969,284 retained Liga history observations, database integrity `ok`, live 390×844 provider/range switching, 44-pixel controls, no overflow, and no console errors.
+- Next: Product Owner reviews `My settings`, provider visibility, movement lanes/ranges, the Gardevoir typo flow, and a representative compatible special-distribution match. Provider billing/entitlements, multi-year history, and sales-volume overlays remain future slices.
+
 ## Product Review Candidate: Vendor Workspace Regional Evidence Composition
 
 - Implemented and privately live: one TCGplayer plus LigaMagic/LigaPokémon raw-card card for the selected printing (`PHR-UX-013`).
 - Implemented: provider-aware exact and bounded-compatible Pokémon target dispositions, source-run/condition/language/match provenance, unavailable/ambiguous fail-closed behavior, and last-good retention (`PHR-API-016`).
-- Coverage: 33,545 exact/compatible Pokémon targets, including 33,190 with consumer-price evidence; 7,996 more matches are visible than under the former legacy-only Vendor read.
+- Coverage: 34,176 exact/compatible Pokémon targets, including 33,795 with consumer-price evidence; 8,627 more matches are visible than under the former legacy-only Vendor read.
 - Verified regression: Gardevoir GX SV75 resolves to HIF/SV75 Holofoil at R$169.90 and 92% exact structural confidence. Compatible treatments are labelled and excluded from Arbitrage.
 - Implemented: PriceCharting immediately below the raw-card card as a closed lazy disclosure with the single certificate lookup (`PHR-API-010`).
-- Verified: 465/465 tests, TypeScript, warning-free lint/build, diff hygiene, snapshot rebuild, operational integrity, live exact/compatible selections, and 328-pixel no-overflow evidence rendering.
+- Verified: 470/470 tests, TypeScript, warning-free lint/build, diff hygiene, snapshot rebuild, operational integrity, live exact/compatible selections, and 390-pixel no-overflow evidence rendering.
 - Next: Product Owner reviews the deployed evidence and confidence labelling. Further set relationships require measured, explicitly bounded revisions; a new LigaMagic acquisition still requires local reauthentication.
 
 ## Product Review Candidate: Provider Connections And Regional Acquisition Health

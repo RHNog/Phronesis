@@ -1,5 +1,18 @@
 # Project Atlas
 
+## Personal Market Intelligence And Provider History
+
+- `PHR-API-017` projects one exact printing's retained TCGplayer, LigaMagic/LigaPokémon, and PriceCharting observations into bounded 7D, 30D, 3M, and 1Y series. Provider, lane, currency, timestamp, source receipt/run, and regional match quality remain explicit; currencies are never merged and missing history is never interpolated.
+- TCGplayer history stays in `pricing_history`; PriceCharting history stays receipt-owned; `regional_price_history` is append-only and receives observations only from a completed deterministic Liga reconciliation. The read contract returns at most 366 chronological points per series.
+- `PHR-ARCH-017` gives every active permanent member a private `/user-settings` workspace independent of Administration modules. Provider preferences and nullable personal regional-cost overrides are scoped by workspace and user; null inherits the workspace value and official FX remains workspace-owned.
+- Vendor Workspace server-loads the member's enabled providers. Regional Arbitrage reads the effective personal cost overlay. Personal settings grant no module, expose no credential, and are unavailable to pending, disabled, anonymous, or timed-worker identities.
+- `PHR-UX-016` now adds a category-scoped canonical-name vocabulary and trigram shortlist. Conservative Damerau-Levenshtein correction runs only after zero literal results, preserves structured identifiers, fails closed on ambiguity, discloses the interpretation, and never becomes reconciliation evidence.
+
+## Extended LigaPokémon Comparison Coverage
+
+- `PHR-API-016` now admits an additional comparison-only tier for explicit special-distribution families when normalized name, collector numerator, exact finish, and unique source evidence all agree.
+- The promoted Pokémon ledger contains 30,864 exact, 3,312 compatible, 776 ambiguous, and 11,699 unavailable targets. Compatible rows remain excluded from the strict source crosswalk and Arbitrage; ambiguity is quarantined rather than guessed.
+
 ## Vendor Workspace Regional Evidence Composition
 
 - `PHR-UX-013` owns the selected-card raw-market hierarchy: one TCGplayer/Liga card inside Snapshot evidence, followed immediately by optional PriceCharting graded evidence.

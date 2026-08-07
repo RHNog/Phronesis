@@ -12,6 +12,26 @@ import { PHRONESIS_MODULES } from "@/lib/auth/domain";
 import { EVENT_ACCESS_COOKIE } from "@/lib/auth/constants";
 import { getAuthorizationRepository, getAuthServer, getEventAccessRepository } from "@/lib/auth/server";
 
+export type ActiveMemberIdentity = {
+  userId: string;
+  workspaceId: string;
+  membershipId: string;
+  role: NonNullable<AuthorizationDecision["role"]>;
+  name: string;
+  email: string;
+};
+
+export type ActiveMemberDecision =
+  | { allowed: true; reason: "AUTHORIZED"; identity: ActiveMemberIdentity }
+  | {
+      allowed: false;
+      reason:
+        | "AUTH_NOT_CONFIGURED"
+        | "UNAUTHENTICATED"
+        | "NO_ACTIVE_MEMBERSHIP";
+      identity: null;
+    };
+
 function cookieValue(headers: Headers, name: string): string | null {
   const match = headers.get("cookie")?.split(";").map((entry) => entry.trim()).find((entry) => entry.startsWith(`${name}=`));
   return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
@@ -124,6 +144,75 @@ export async function authorizeIdentityRequired(
   const session = await getAuthServer().api.getSession({ headers: request.headers });
   if (!session?.user.id) return deniedDecision(module, requiredAccess, "UNAUTHENTICATED");
   return getAuthorizationRepository().authorize(session.user.id, module, requiredAccess);
+}
+
+export async function authorizeActiveMemberHeaders(
+  requestHeaders: Headers,
+): Promise<ActiveMemberDecision> {
+  const status = getAuthRuntimeStatus();
+  if (!status.readyForRequiredMode) {
+    return {
+      allowed: false,
+      reason: "AUTH_NOT_CONFIGURED",
+      identity: null,
+    };
+  }
+  const session = await getAuthServer().api.getSession({
+    headers: requestHeaders,
+  });
+  if (!session?.user.id) {
+    return { allowed: false, reason: "UNAUTHENTICATED", identity: null };
+  }
+  const profile = getAuthorizationRepository().getMembershipProfile(
+    session.user.id,
+  );
+  if (!profile || profile.status !== "ACTIVE") {
+    return {
+      allowed: false,
+      reason: "NO_ACTIVE_MEMBERSHIP",
+      identity: null,
+    };
+  }
+  return {
+    allowed: true,
+    reason: "AUTHORIZED",
+    identity: {
+      userId: session.user.id,
+      workspaceId: profile.workspaceId,
+      membershipId: profile.id,
+      role: profile.role,
+      name: session.user.name,
+      email: session.user.email,
+    },
+  };
+}
+
+export function activeMemberErrorResponse(
+  decision: Exclude<ActiveMemberDecision, { allowed: true }>,
+): Response {
+  const status = decision.reason === "UNAUTHENTICATED" ? 401 : 403;
+  return Response.json(
+    {
+      error:
+        status === 401
+          ? "Authentication required."
+          : "An active permanent membership is required.",
+      reason: decision.reason,
+    },
+    { status },
+  );
+}
+
+export async function requireActiveMemberPage(): Promise<ActiveMemberIdentity> {
+  const decision = await authorizeActiveMemberHeaders(await headers());
+  if (!decision.allowed) {
+    redirect(
+      decision.reason === "NO_ACTIVE_MEMBERSHIP"
+        ? "/access-pending"
+        : "/sign-in",
+    );
+  }
+  return decision.identity;
 }
 
 export function authorizationErrorResponse(decision: AuthorizationDecision): Response {

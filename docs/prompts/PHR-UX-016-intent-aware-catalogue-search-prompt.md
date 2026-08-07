@@ -10,7 +10,7 @@ Phronesis searches imported multi-game catalogue snapshots through local SQLite 
 
 ## Objective
 
-Preserve Pokémon shorthand behavior and make One Piece codes such as `OP13 booster` retrieve sealed products stored under the catalogue's canonical human set name, using locally derived evidence rather than hard-coded release titles.
+Preserve structured shorthand behavior, make One Piece codes such as `OP13 booster` retrieve canonical set titles, and add conservative indexed name-typo correction such as `Gsrdevoir → Gardevoir` without weakening explicit selection.
 
 ## Required Reading
 
@@ -35,10 +35,13 @@ Preserve Pokémon shorthand behavior and make One Piece codes such as `OP13 boos
 - Prove `OP13 booster` returns Carrying On His Will sealed products while `OP13` still returns singles.
 - Normalize One Piece collector-number query tokens to the catalogue's three-digit form, so `22` and `022` retrieve the same `*-022` identity.
 - Prove the reported `Monkey.D.Luffy OP16 22` query retrieves `OP16-022` while unrelated required terms still reject the candidate.
+- Build and transactionally refresh a category-scoped name vocabulary and trigram index.
+- Attempt bounded Damerau-Levenshtein correction only after the literal plan returns no candidates, and require a dominant runner-up-separated candidate.
+- Return `Did you mean …? Showing matches for …` interpretation metadata for accepted corrections.
 
 ## Constraints
 
-- No hand-authored OP13 title mapping, fuzzy identity adoption, external provider call, source-catalogue mutation, raw SQLite MATCH syntax, dependency, or auto-selection.
+- No hand-authored OP13 title mapping, fuzzy identity adoption, external provider call, source-catalogue mutation, raw SQLite MATCH syntax, dependency, or auto-selection. Typo correction is discovery only.
 - Preserve explicit human choice and existing search behavior.
 - Special-event/reprint labels, tied candidates, and weak evidence fail closed.
 
@@ -61,7 +64,7 @@ Imported One Piece singles → exact collector-code extraction → dominant comp
 
 ## Non-Goals
 
-- General typo/trigram search, OCR, barcode, voice, or cross-market identity reconciliation.
+- Natural-language extraction, OCR, barcode, voice, or cross-market identity reconciliation.
 
 ## Notes For AI Coding Agents
 

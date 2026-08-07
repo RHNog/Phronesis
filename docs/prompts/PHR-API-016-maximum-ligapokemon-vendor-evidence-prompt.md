@@ -28,6 +28,7 @@ Restore the provider-aware Pokémon target-equivalence ledger to the active Vend
 - Build the strict source crosswalk and additive target ledger transactionally from a verified complete LigaPokémon snapshot.
 - Preserve the accepted exact source crosswalk and Arbitrage isolation.
 - Add an explicit SV-collector-guarded Hidden Fates Shiny Vault set compatibility rule.
+- Add only the measured special-distribution comparison tier named in the feature specification; require exact name/collector/finish and one semantic source/evidence signature.
 - Read `EXACT` and `COMPATIBLE` target-equivalence evidence in Vendor Workspace, with a fallback for operational databases that predate the ledger.
 - Return and render provider, source run, condition, language, match quality, method, confidence, and reason.
 - Return a disposition for `AMBIGUOUS` and `UNAVAILABLE` targets.
@@ -38,6 +39,7 @@ Restore the provider-aware Pokémon target-equivalence ledger to the active Vend
 ## Constraints
 
 - Do not use fuzzy text, edit distance, price, rarity, row order, or visual colour as identity evidence.
+- Do not admit Base Set Shadowless or World Championship products through the distribution proxy.
 - Do not map a Hidden Fates non-SV collector through the Shiny Vault subset rule.
 - Do not present compatible evidence as exact.
 - Do not expose compatible evidence to Arbitrage.

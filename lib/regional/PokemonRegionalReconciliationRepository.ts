@@ -17,6 +17,11 @@ import {
   regionalProductEquivalenceSummary,
   type RegionalProductEquivalenceStatus,
 } from "@/lib/regional/ProductEquivalence";
+import {
+  appendPokemonRegionalPriceHistory,
+  ensureRegionalPriceHistoryTable,
+  seedPokemonRegionalPriceHistory,
+} from "@/lib/market/history";
 
 type Sql = Record<string, string | number | null>;
 
@@ -116,6 +121,8 @@ export class PokemonRegionalReconciliationRepository {
       );
     `);
     ensureRegionalProductEquivalenceTable(this.database);
+    ensureRegionalPriceHistoryTable(this.database);
+    seedPokemonRegionalPriceHistory(this.database);
   }
 
   buildCrosswalk(
@@ -416,6 +423,7 @@ export class PokemonRegionalReconciliationRepository {
           reconciledAt,
         );
       }
+      appendPokemonRegionalPriceHistory(this.database);
       this.database.exec("COMMIT");
     } catch (error) {
       this.database.exec("ROLLBACK");
@@ -770,6 +778,19 @@ function pokemonEquivalenceDecision(input: {
       },
     );
   }
+  if (compatibleDistributionProxyTarget(String(input.target.set_name))) {
+    tiers.push({
+      candidates:
+        input.nameCollectorVariantIndex.get(
+          [nameIdentity, collectorIdentity, variant].join("|"),
+        ) ?? [],
+      status: "COMPATIBLE",
+      method: "COMPATIBLE_POKEMON_SPECIAL_DISTRIBUTION_PROXY_V1",
+      confidence: 58,
+      reason:
+        "Unique name, collector, and finish comparison from another source set; LigaPokemon does not represent this target's stamp, size, deck, or special-distribution treatment. Comparison evidence only.",
+    });
+  }
   for (const tier of tiers) {
     const resolution = resolvePokemonCandidate(tier.candidates);
     if (resolution.kind === "none") continue;
@@ -790,6 +811,23 @@ function pokemonEquivalenceDecision(input: {
   return unavailablePokemonDecision(
     "UNAVAILABLE_NO_STRUCTURAL_LIGAPOKEMON_IDENTITY_V1",
     "No eligible LigaPokemon identity in the acquired snapshot satisfies the bounded structural matching policy.",
+  );
+}
+
+function compatibleDistributionProxyTarget(setName: string): boolean {
+  const normalized = setName.normalize("NFKC").trim();
+  return (
+    normalized === "Prize Pack Series Cards" ||
+    normalized === "Jumbo Cards" ||
+    normalized === "Deck Exclusives" ||
+    normalized === "Alternate Art Promos" ||
+    normalized === "Countdown Calendar Promos" ||
+    normalized === "Professor Program Promos" ||
+    normalized === "First Partner Pack" ||
+    normalized === "First Partner Collection 2026" ||
+    normalized === "League & Championship Cards" ||
+    normalized === "EX Battle Stadium" ||
+    /^(?:BW|DP|EX|HGSS|SM|XY) Trainer Kit(?:\s|:)/.test(normalized)
   );
 }
 

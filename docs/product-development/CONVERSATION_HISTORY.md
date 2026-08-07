@@ -1,5 +1,27 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — Personal Market Intelligence, Provider History, And Typo Recovery
+
+### User Intent
+
+- Expand LigaPokémon coverage further while preserving trustworthy identity decisions.
+- Add TCGplayer-like 7D, 30D, 3M, and 1Y movement for each selected evidence provider.
+- Give every user a private settings area for provider choices and their own cost structure, with all providers included for now.
+- Make catalogue search understand obvious typos such as `Gsrdevoir` without creating unsafe fuzzy reconciliation.
+
+### Decision And Implementation
+
+- Assigned `PHR-API-017` for provider history and `PHR-ARCH-017` for personal settings, and revised `PHR-API-016`, `PHR-UX-013`, and `PHR-UX-016` under the standard lane plan `PHR-MARKET-PERSONALIZATION-20260807`.
+- Added one explicit special-distribution comparison tier requiring exact normalized name, collector, finish, and unique evidence. The strict source crosswalk and Arbitrage remain exact-only; 776 ambiguous targets are quarantined.
+- Added append-only regional history plus one authorized bounded projection across existing TCGplayer, Liga, and PriceCharting stores. Vendor Workspace exposes provider/lane/range controls without merging currencies or fabricating history, and PriceCharting stays in the agreed collapsed position.
+- Added active-permanent-member `My settings`, default-enabled current providers, private provider visibility, nullable personal regional-cost overrides, workspace inheritance, and audited writes without Administration or credential access.
+- Added category-scoped vocabulary/trigram retrieval and conservative Damerau-Levenshtein correction only after zero literal results. Corrections are visible, structured identifiers are preserved, ambiguity fails closed, and manual selection remains mandatory.
+- Backed up both live databases, applied additive migrations/reconciliation/history backfill, rebuilt/restarted only the private scanner-review runtime, and preserved the public gateway.
+
+### Acceptance State
+
+Implementation and same-session conformance are privately live and Product Review ready. The Pokémon ledger contains 30,864 exact and 3,312 compatible targets, including 33,795 with consumer evidence; 969,284 Liga history observations are retained. Live phone review proves TCGplayer/Liga range and lane switching, honest one-point history, collapsed PriceCharting history, visible `Gsrdevoir SV75` correction to the exact Gardevoir GX printing, 44-pixel controls, no horizontal overflow, and zero console errors. Full 470/470 tests, TypeScript, warning-free lint, production build, and SQLite integrity pass. A real signed-in Product Owner review of `My settings` remains the independent acceptance gate.
+
 ## 2026-08-07 — Maximum LigaPokémon Vendor Evidence Coverage
 
 ### User Intent

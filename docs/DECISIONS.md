@@ -1,6 +1,15 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — Personal market intelligence keeps provider truth and user preference separate
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-API-017`, `PHR-ARCH-017`, `PHR-UX-013`, `PHR-UX-016`).
+- **Decision:** Retain provider observations in provider-owned append-only stores and project them into separate 7D/30D/3M/1Y series. Never merge USD and BRL, interpolate absent points, or let PriceCharting leave its secondary disclosure.
+- **Decision:** Give every active permanent member a separate `My settings` surface. All providers are included by default for now; a member may choose visible providers and nullable personal cost overrides without receiving Administration, provider credentials, or additional modules.
+- **Decision:** Improve typo tolerance only as a zero-result search fallback over a category-scoped canonical vocabulary. Corrections must be distance-bounded, dominant over runners-up, visibly disclosed, limited to alphabetic terms, and prohibited from identity reconciliation or automatic selection.
+- **Decision:** Expand LigaPokémon special-distribution comparison coverage only through explicit semantic families plus exact name/collector/finish and unique-source agreement. Compatible rows remain outside Arbitrage and ambiguity remains unpriced.
+- **Consequences:** Vendor Workspace can show truthful provider movement and personal evidence choices; Arbitrage can use a member's own non-secret cost structure; `Gsrdevoir SV75` recovers the intended printing; and the ledger reaches 34,176 eligible LigaPokémon targets while preserving 30,864 exact rows.
+
 ## 2026-08-07 — Maximize Pokémon Vendor evidence through a separate bounded target ledger
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-API-016`, `PHR-UX-013`).

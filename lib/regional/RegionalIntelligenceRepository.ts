@@ -29,12 +29,18 @@ import {
   tokenCollectorIdentity,
   tokenNameIdentity,
   variantProductNameCompatible,
+  validateRegionalCostProfile,
   type ArbitrageDirection,
   type RegionalCostProfile,
   type RegionalMarketEvidence,
   type RegionalProductEquivalenceDisposition,
 } from "@/lib/regional/domain";
 import { normalizeSearchText } from "@/lib/pricing/domain";
+import {
+  appendMagicRegionalPriceHistory,
+  ensureRegionalPriceHistoryTable,
+  seedMagicRegionalPriceHistory,
+} from "@/lib/market/history";
 
 type Sql = Record<string, string | number | null>;
 
@@ -241,6 +247,8 @@ export class RegionalIntelligenceRepository {
       "max_evidence_age_hours",
     ])
       this.ensureProfileColumn(column, "REAL");
+    ensureRegionalPriceHistoryTable(this.database);
+    seedMagicRegionalPriceHistory(this.database);
   }
 
   private ensureProfileColumn(name: string, type: "REAL" | "TEXT"): void {
@@ -318,7 +326,7 @@ export class RegionalIntelligenceRepository {
   }
 
   updateProfile(profile: RegionalCostProfile): RegionalCostProfile {
-    validateProfile(profile);
+    validateRegionalCostProfile(profile);
     const updatedAt = new Date().toISOString();
     this.database
       .prepare(
@@ -1594,6 +1602,7 @@ export class RegionalIntelligenceRepository {
           quarantineCollision.run(row.liga_identity_key);
         }
       }
+      appendMagicRegionalPriceHistory(this.database);
       this.database.exec("COMMIT");
     } catch (error) {
       this.database.exec("ROLLBACK");
@@ -1743,8 +1752,10 @@ export class RegionalIntelligenceRepository {
     }));
   }
 
-  listCandidates(limit = 100): ArbitrageCandidate[] {
-    const profile = this.getProfile();
+  listCandidates(
+    limit = 100,
+    profile: RegionalCostProfile = this.getProfile(),
+  ): ArbitrageCandidate[] {
     const maximumEvidenceAgeHours = profile.maxEvidenceAgeHours ?? 7 * 24;
     const rows = this.database
       .prepare(
@@ -1880,7 +1891,7 @@ export class RegionalIntelligenceRepository {
     counterpartyLabel: string;
     observedAt: string;
     notes: string;
-  }): string {
+  }, profile: RegionalCostProfile = this.getProfile()): string {
     if (
       !(input.executablePrice > 0) ||
       !Number.isInteger(input.quantity) ||
@@ -1891,7 +1902,7 @@ export class RegionalIntelligenceRepository {
       throw new Error(
         "Complete executable price, quantity, counterparty, and observation time are required.",
       );
-    const candidate = this.listCandidates(200).find(
+    const candidate = this.listCandidates(200, profile).find(
       (item) =>
         item.categoryId === input.categoryId &&
         item.sku === input.sku &&
@@ -2015,68 +2026,6 @@ function ageHours(value: string): number {
   if (Number.isNaN(Date.parse(value))) return Number.POSITIVE_INFINITY;
   return Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 3_600_000));
 }
-function validateProfile(profile: RegionalCostProfile): void {
-  for (const value of [
-    profile.usToBrazilFixedBrl,
-    profile.usToBrazilPercent,
-    profile.usToBrazilMinAcquisitionUsd,
-    profile.usToBrazilMaxAcquisitionUsd,
-    profile.usToBrazilMinGrossProceedsBrl,
-    profile.usToBrazilMinGrossSpreadBrl,
-    profile.usToBrazilMinNetProfitBrl,
-    profile.usToBrazilMinProfitMarginPercent,
-    profile.usToBrazilMinRoiPercent,
-    profile.brazilToUsFixedUsd,
-    profile.brazilToUsPercent,
-    profile.brazilToUsMinAcquisitionBrl,
-    profile.brazilToUsMaxAcquisitionBrl,
-    profile.brazilToUsMinGrossProceedsUsd,
-    profile.brazilToUsMinGrossSpreadUsd,
-    profile.brazilToUsMinNetProfitUsd,
-    profile.brazilToUsMinProfitMarginPercent,
-    profile.brazilToUsMinRoiPercent,
-  ])
-    if (value !== null && (!Number.isFinite(value) || value < 0))
-      throw new Error("Costs and targets must be non-negative numbers or null.");
-  if (
-    profile.maxEvidenceAgeHours !== null &&
-    (!Number.isFinite(profile.maxEvidenceAgeHours) ||
-      profile.maxEvidenceAgeHours <= 0)
-  )
-    throw new Error("Maximum evidence age must be a positive number or null.");
-  if (
-    profile.usToBrazilMinAcquisitionUsd !== null &&
-    profile.usToBrazilMaxAcquisitionUsd !== null &&
-    profile.usToBrazilMinAcquisitionUsd > profile.usToBrazilMaxAcquisitionUsd
-  )
-    throw new Error("US acquisition minimum cannot exceed its maximum.");
-  if (
-    profile.brazilToUsMinAcquisitionBrl !== null &&
-    profile.brazilToUsMaxAcquisitionBrl !== null &&
-    profile.brazilToUsMinAcquisitionBrl > profile.brazilToUsMaxAcquisitionBrl
-  )
-    throw new Error("Brazil acquisition minimum cannot exceed its maximum.");
-  if (
-    profile.brlPerUsd !== null &&
-    (!Number.isFinite(profile.brlPerUsd) || profile.brlPerUsd <= 0)
-  )
-    throw new Error("BRL per USD must be positive.");
-  for (const value of [profile.brlPerUsdBuy, profile.brlPerUsdSell])
-    if (value !== null && (!Number.isFinite(value) || value <= 0))
-      throw new Error("Official BRL per USD quotes must be positive.");
-  if (
-    profile.brlPerUsdBuy !== null &&
-    profile.brlPerUsdSell !== null &&
-    profile.brlPerUsdBuy > profile.brlPerUsdSell
-  )
-    throw new Error("Official PTAX buy cannot exceed sell.");
-  if (profile.fxObservedAt && Number.isNaN(Date.parse(profile.fxObservedAt)))
-    throw new Error("FX observation time must be valid.");
-  for (const value of [profile.fxFetchedAt, profile.fxLastAttemptAt])
-    if (value && Number.isNaN(Date.parse(value)))
-      throw new Error("FX retrieval time must be valid.");
-}
-
 function percent(numerator: number, denominator: number): number {
   return denominator > 0 ? Math.round((numerator / denominator) * 10_000) / 100 : 0;
 }

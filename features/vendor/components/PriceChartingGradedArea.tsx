@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GradingCertificateLookup from "@/features/vendor/components/GradingCertificateLookup";
+import ProviderPriceHistory from "@/features/vendor/components/ProviderPriceHistory";
 import type { SearchMatch } from "@/lib/pricing/types";
 import type { PriceChartingEvidence } from "@/lib/providers/pricecharting/PriceChartingClient";
 
@@ -173,6 +174,16 @@ export default function PriceChartingGradedArea({
             Candidate evidence remains separate until set, number, and variation
             are verified. It never overwrites TCGplayer or Liga raw-card pricing.
           </p>
+          <div className="mt-4">
+            <ProviderPriceHistory
+              categoryId={match.categoryId}
+              sku={match.sku}
+              condition="NEAR_MINT"
+              enabledProviderIds={["pricecharting"]}
+              providerFilter={["pricecharting"]}
+              heading="PriceCharting movement"
+            />
+          </div>
           <div className="mt-4">
             <GradingCertificateLookup />
           </div>

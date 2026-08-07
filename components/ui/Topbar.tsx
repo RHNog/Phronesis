@@ -106,7 +106,66 @@ export default function Topbar({ context, navigationItems, account }: TopbarProp
         >
           <span aria-hidden="true">?</span>
         </button>
-        {account ? <div ref={accountRef} className="relative"><button type="button" aria-label="Open account menu" aria-haspopup="menu" aria-expanded={accountOpen} title={account.email} onClick={() => setAccountOpen((current) => !current)} className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300">{initials(account)}</button>{accountOpen ? <div role="menu" className="absolute right-0 top-[3.25rem] z-50 w-72 rounded-xl border border-zinc-700 bg-zinc-950 p-3 shadow-2xl shadow-black"><div className="border-b border-zinc-800 px-2 pb-3"><p className="truncate text-sm font-semibold text-white">{account.name}</p><p className="mt-1 truncate text-xs text-zinc-500">{account.email}</p></div><div className="mt-2 grid gap-1">{settingsAssigned ? <Link role="menuitem" href="/settings" onClick={() => setAccountOpen(false)} className="flex min-h-11 items-center rounded-lg px-3 text-sm text-zinc-200 hover:bg-zinc-900">Settings</Link> : null}<SignOutButton className="min-h-11 rounded-lg px-3 text-left text-sm text-zinc-200 hover:bg-zinc-900" /></div></div> : null}</div> : settingsAssigned ? <Link href="/settings" aria-label="Open Settings" title="Settings" className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300">PT</Link> : null}
+        {account ? (
+          <div ref={accountRef} className="relative">
+            <button
+              type="button"
+              aria-label="Open account menu"
+              aria-haspopup="menu"
+              aria-expanded={accountOpen}
+              title={account.email}
+              onClick={() => setAccountOpen((current) => !current)}
+              className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300"
+            >
+              {initials(account)}
+            </button>
+            {accountOpen ? (
+              <div
+                role="menu"
+                className="absolute right-0 top-[3.25rem] z-50 w-72 rounded-xl border border-zinc-700 bg-zinc-950 p-3 shadow-2xl shadow-black"
+              >
+                <div className="border-b border-zinc-800 px-2 pb-3">
+                  <p className="truncate text-sm font-semibold text-white">
+                    {account.name}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-zinc-500">
+                    {account.email}
+                  </p>
+                </div>
+                <div className="mt-2 grid gap-1">
+                  <Link
+                    role="menuitem"
+                    href="/user-settings"
+                    onClick={() => setAccountOpen(false)}
+                    className="flex min-h-11 items-center rounded-lg px-3 text-sm text-zinc-200 hover:bg-zinc-900"
+                  >
+                    My settings
+                  </Link>
+                  {settingsAssigned ? (
+                    <Link
+                      role="menuitem"
+                      href="/settings"
+                      onClick={() => setAccountOpen(false)}
+                      className="flex min-h-11 items-center rounded-lg px-3 text-sm text-zinc-200 hover:bg-zinc-900"
+                    >
+                      Administration settings
+                    </Link>
+                  ) : null}
+                  <SignOutButton className="min-h-11 rounded-lg px-3 text-left text-sm text-zinc-200 hover:bg-zinc-900" />
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : settingsAssigned ? (
+          <Link
+            href="/settings"
+            aria-label="Open Settings"
+            title="Settings"
+            className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-transparent bg-zinc-800 text-sm font-semibold text-zinc-200 focus:border-cyan-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-cyan-300"
+          >
+            PT
+          </Link>
+        ) : null}
       </header>
       {shortcutsOpen ? (
         <div

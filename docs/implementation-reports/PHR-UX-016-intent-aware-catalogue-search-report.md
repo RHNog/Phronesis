@@ -27,3 +27,11 @@ The collector-padding amendment closes the reported `022`/`22` retrieval gap. Th
 ## Boundaries
 
 The interpreter is bounded high-confidence query expansion, not unbounded fuzzy matching, catalogue reconciliation, or automatic identity adoption. One Piece release titles are not hard-coded. Special-event/reprint labels and weak or contested mappings fail closed. Misspellings and natural-language/OCR interpretation beyond documented structures remain future measured search-quality work.
+
+## 2026-08-07 — Conservative Name Typo Correction
+
+Catalogue search now performs one category-scoped correction pass only after literal and structured retrieval returns no results. A transactionally maintained name vocabulary and trigram index shortlist candidates; bounded Damerau-Levenshtein distance, length rules, and runner-up dominance decide whether one or at most two alphabetic words can be corrected. Digits, collector identifiers, set codes, short terms, exact terms, and ambiguous candidates are never changed.
+
+The correction is visibly disclosed and still requires operator selection. `Gsrdevoir SV75` now says `Did you mean Gardevoir? Showing matches for Gardevoir.` and returns the exact Gardevoir GX Hidden Fates: Shiny Vault `SV75/SV94` printing first. Search relevance adds a canonical corrected-name boost so products whose actual name matches the correction outrank incidental metadata mentions.
+
+Focused pricing tests pass 20/20 and the full suite passes 470/470. TypeScript, warning-free lint, production build, private API behavior, 390×844 phone rendering, and zero-console-error checks pass.

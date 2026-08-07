@@ -10,7 +10,7 @@ Intent-Aware Catalogue Search
 
 ## Status
 
-Implemented — Product Review Pending
+Implemented — Privately Live; Product Review Ready
 
 ## Priority
 
@@ -70,6 +70,10 @@ The approved collector-number amendment treats one-to-three-digit numeric One Pi
 - Unified search must merge interpretation metadata from the category whose local catalogue supplied the alias.
 - `Monkey.D.Luffy OP16 22` and `Monkey.D.Luffy OP16 022` must retrieve the same `OP16-022` identities.
 - Collector normalization must not apply to four-digit values, alphanumeric tokens, or non-One Piece category searches.
+- When literal/structured retrieval yields no candidates, conservatively correct an alphabetic name token of at least four characters through an indexed, category-scoped trigram vocabulary and bounded Damerau-Levenshtein distance.
+- Accept a correction only when one candidate is dominant under length-aware distance, trigram similarity, and runner-up separation; otherwise keep literal behavior.
+- Never correct numbers, collector identifiers, recognized structured set codes, short tokens, or a query that already returns candidates.
+- Return visible interpretation such as `Did you mean Gardevoir? Showing matches for Gardevoir.` while retaining explicit human result selection.
 
 ## Non-Functional Requirements
 
@@ -124,6 +128,7 @@ Interpretation text wraps below the search field without changing the 390px resu
 - Repository tests prove `OP13 booster` resolves to `Carrying On His Will` sealed products while `OP13` still returns singles.
 - Tests prove OP/EB/ST/PRB padded and unpadded parsing, special-label exclusion, low-evidence rejection, ambiguity rejection, multiword matching, and unified interpretation propagation.
 - Regression tests prove `22 ↔ 022` collector equivalence and preserve all-token rejection for an unrelated card name.
+- `Gsrdevoir` returns Gardevoir candidates with a visible correction interpretation, while ambiguous typos and numeric identity tokens fail closed.
 
 ## Edge Cases
 
@@ -145,14 +150,13 @@ Interpretation text wraps below the search field without changing the 390px resu
 
 ## Future Enhancements
 
-- Typo-tolerant name retrieval using an indexed trigram strategy.
 - Natural-language field extraction, OCR, barcode, and voice input.
 - Evidence-backed aliases for other game catalogues.
 - Optional explicit provider set registries when an authoritative catalogue exposes set-code metadata directly.
 
 ## Technical Notes
 
-`pricingSearchPlan` remains the shared retrieval/scoring plan and accepts bounded resolved aliases. A separate pure One Piece derivation module extracts set codes from exact collector numbers, selects only a dominant compatible title, and persists evidence counts in `pricing_search_aliases`. Repository search resolves aliases before generating MATCH syntax. Multiword alternatives use FTS phrases and the same phrase-aware coverage rule in scoring. Return an optional `interpretations` array on search responses. Keep alias expansion separate from selected identity reconciliation; search is a discovery surface, not a crosswalk authority.
+`pricingSearchPlan` remains the shared retrieval/scoring plan and accepts bounded resolved aliases. A separate pure One Piece derivation module extracts set codes from exact collector numbers, selects only a dominant compatible title, and persists evidence counts in `pricing_search_aliases`. A category-scoped vocabulary/trigram index is rebuilt transactionally with catalogue search data and is consulted only after the original plan returns no candidates. Repository search resolves bounded aliases/corrections before generating escaped MATCH syntax. Multiword alternatives use FTS phrases and the same phrase-aware coverage rule in scoring. Return an optional `interpretations` array on search responses. Keep alias and typo expansion separate from selected identity reconciliation; search is a discovery surface, not a crosswalk authority.
 
 ## UI / UX Notes
 
@@ -167,7 +171,7 @@ Render concise feedback such as `Understood SH03 as SWSH03` beneath the search h
 
 ## Open Questions
 
-- Typo correction beyond structured aliases remains a separately measured search-quality increment.
+- Natural-language extraction beyond bounded spelling correction remains separate.
 
 ## Traceability
 
@@ -178,5 +182,5 @@ Render concise feedback such as `Understood SH03 as SWSH03` beneath the search h
 - Related implementation report: `docs/implementation-reports/PHR-UX-016-intent-aware-catalogue-search-report.md`.
 - Related conformance review: `docs/reviews/PHR-UX-016-intent-aware-catalogue-search-conformance-review.md`.
 - Related release notes: `docs/release-notes/PHR-UX-016.md`.
-- Last modified: 2026-08-01.
-- Modification reason: extend intent-aware search from static Pokémon spelling aliases to evidence-derived One Piece set-code/title resolution and zero-padded One Piece collector-number equivalence after the reported `OP13 booster` and `OP16 22` failures.
+- Last modified: 2026-08-07.
+- Modification reason: implement the already-planned indexed typo-tolerant name retrieval after the reported `Gsrdevoir` failure.

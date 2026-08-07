@@ -4,9 +4,15 @@
 
 ## Objective
 
-Complete the `PHR-TECH-017` cross-platform scanner appliance control-plane foundation while preserving the privately activated English Pokémon recognition, operator review, and publication gates.
+Complete and hand off `PHR-MARKET-PERSONALIZATION-20260807`: expanded defensible LigaPokémon coverage, provider-specific retained price history, personal market settings, and conservative typo recovery, while preserving exact-only identity and transaction boundaries.
 
 ## Acceptance criteria
+
+- [x] Expand only explicit LigaPokémon special-distribution comparison families while preserving 30,864 exact targets, strict-crosswalk Arbitrage authority, and fail-closed ambiguity.
+- [x] Expose separate TCGplayer, LigaMagic/LigaPokémon, and PriceCharting 7D/30D/3M/1Y history without merging currencies or fabricating points.
+- [x] Give every active permanent member `My settings`, default-enabled providers, nullable personal cost overrides, workspace inheritance, audited writes, and no Administration/module/credential broadening.
+- [x] Recover dominant category-scoped alphabetic typos only after zero literal results and keep structured identifiers, reconciliation, and selection unchanged.
+- [x] Back up, migrate, reconcile, backfill, deploy privately, and pass full tests, TypeScript, lint, build, database integrity, live API, and 390-pixel mobile gates.
 
 - [x] Pair and revoke macOS/Windows appliance identities through short-lived one-time codes without storing plaintext credentials server-side.
 - [x] Report readiness and control durable Start/Cancel commands from Scanner-to-Offer through existing permanent-admin and Vendor Workspace authorization.
@@ -26,6 +32,8 @@ Complete the `PHR-TECH-017` cross-platform scanner appliance control-plane found
 - [x] Complete one new low-value `v2` duplex capture in the interactive Windows session.
 
 ## Completed this session
+
+- Implemented and privately activated `PHR-API-017`, `PHR-ARCH-017`, and the `PHR-API-016`/`PHR-UX-013`/`PHR-UX-016` revisions. The live Pokémon ledger contains 30,864 exact and 3,312 compatible targets; provider history retains 969,284 Liga observations; `Gsrdevoir SV75` recovers the exact Gardevoir GX printing; and personal provider/cost settings are active-member scoped.
 
 - Implemented `PHR-TECH-017`: secure appliance registry/command repository, agent-only APIs, portable agent, native packaging workflow, Scanner-to-Offer setup/control UI, deterministic tests, additive live migration, and private runtime activation.
 
@@ -57,6 +65,10 @@ Complete the `PHR-TECH-017` cross-platform scanner appliance control-plane found
 
 ## Remaining work
 
+- Product Owner reviews `/user-settings` with a real approved account, saves provider/cost preferences, and confirms the resulting Vendor and Arbitrage behavior.
+- Product Owner reviews representative exact, compatible, ambiguous, and unavailable LigaPokémon products plus TCGplayer/Liga/PriceCharting movement over every range.
+- Future separately scoped work may add provider billing/entitlements, multi-year retention, sales-volume overlays, or measured expansion of additional identity families.
+
 - Pair and physically qualify the first real Windows fi-8170/PaperStream appliance, including capture, front-only upload, Phronesis Cancel, interruption recovery, and restart behavior.
 - Select code-signing identities and distribution, then produce signed/notarized installers with supervised background-service registration before general trusted-tester use.
 - Re-run physical acquisition qualification for every Mac/Windows OS, driver, scanner, and architecture combination Phronesis claims to support.
@@ -75,4 +87,4 @@ Complete the `PHR-TECH-017` cross-platform scanner appliance control-plane found
 
 ## Exact next action
 
-On the scanner Windows computer, download the target Windows agent artifact, configure the local PaperStream capture command, run `doctor`, pair it from Scanner-to-Offer with permanent owner authority, and execute one supervised low-value front-only batch plus Cancel/restart recovery. Do not enable auto-accept, grading, finish classification, or publication.
+Sign in with the permanent owner account, open `/user-settings`, review/save one provider and cost preference, then confirm Vendor Workspace history/provider visibility and one regional Arbitrage read. Do not treat same-session conformance as independent Product Owner acceptance.

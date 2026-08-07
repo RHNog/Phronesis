@@ -157,6 +157,42 @@ test("catalogue query planning understands bounded Pokémon set-code shorthand",
   repository.close();
 });
 
+test("catalogue search corrects dominant card-name typos only after an exact miss", () => {
+  const repository = new PricingRepository();
+  const typoCsv = [
+    headers.join(","),
+    "gardevoir,Card,Gardevoir GX,Hidden Fates,SV75/SV94,Holofoil,English,NM,85.21,79.99,0.00,2026-08-07,",
+    "gardevoir-code,Card,Code Card - League Battle Deck [Gardevoir ex],Code Cards,001,Normal,English,NM,0.10,0.05,0.20,2026-08-07,",
+    "mareep,Card,Mareep,Silver Tempest,067/195,Normal,English,NM,0.20,0.10,0.20,2026-08-07,",
+    "moreep,Card,Moreep,Fixture Set,001/010,Normal,English,NM,0.20,0.10,0.20,2026-08-07,",
+  ].join("\n");
+  repository.importTestCsv("pokemon-en", typoCsv, contract);
+
+  const substitution = repository.search("pokemon-en", "Gsrdevoir");
+  assert.equal(substitution.singles[0]?.name, "Gardevoir GX");
+  assert.equal(
+    substitution.interpretations?.[0]?.message,
+    "Did you mean Gardevoir? Showing matches for Gardevoir.",
+  );
+  const transposition = repository.search("pokemon-en", "Gadrevoir");
+  assert.equal(transposition.singles[0]?.name, "Gardevoir GX");
+
+  const exact = repository.search("pokemon-en", "Gardevoir");
+  assert.equal(exact.singles[0]?.name, "Gardevoir GX");
+  assert.equal(
+    exact.interpretations?.some((item) => /Did you mean/.test(item.message)),
+    false,
+  );
+
+  const ambiguous = repository.search("pokemon-en", "Mireep");
+  assert.equal(ambiguous.singles.length, 0);
+  assert.equal(ambiguous.interpretations?.length ?? 0, 0);
+  const structured = repository.search("pokemon-en", "SV7S");
+  assert.equal(structured.singles.length, 0);
+  assert.equal(structured.interpretations?.length ?? 0, 0);
+  repository.close();
+});
+
 test("One Piece set aliases derive from dominant exact catalogue evidence and fail closed", () => {
   assert.equal(canonicalOnePieceCollectorNumber("22"), "022");
   assert.equal(canonicalOnePieceCollectorNumber("022"), "022");

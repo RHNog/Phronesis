@@ -1,5 +1,13 @@
 # PHR-UX-013 — Regional Vending And Arbitrage Presentation
 
+## 2026-08-07 — Provider Movement And Personal Visibility
+
+- Raw-card evidence now includes 7D, 30D, 3M, and 1Y movement for separately selectable TCGplayer and LigaMagic/LigaPokémon series.
+- Each provider, evidence lane, currency, observation time, and provenance stays explicit; a one-point range says `History begins here` rather than inventing a flat trend.
+- Personal provider preferences from `My settings` control which evidence is displayed. Hidden TCGplayer evidence is not silently reused for offer or watch actions.
+- PriceCharting remains a closed expandable card directly below TCGplayer/Liga and now shows its own movement only inside that disclosure.
+- Phone verification passes at 390×844 with 44-pixel controls, no horizontal overflow, and no console errors.
+
 ## 2026-08-07 — Vendor Evidence Stack Restored And Privately Live
 
 - Vendor Workspace again combines TCGplayer and exact regional raw-card evidence in one selected-card pricing card: LigaMagic for Magic and LigaPokémon for English Pokémon.

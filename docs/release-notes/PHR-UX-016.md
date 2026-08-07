@@ -1,5 +1,12 @@
 # PHR-UX-016 — Intent-Aware Catalogue Search
 
+## 2026-08-07 — Conservative Typo Recovery
+
+- Name misspellings such as `Gsrdevoir` can now recover `Gardevoir` only after the original search returns no result.
+- Corrections are category-scoped, distance-bounded, ambiguity-aware, visibly disclosed, and limited to alphabetic name terms.
+- Set codes, collector numbers, digits, short words, and exact terms are never corrected, and Phronesis still requires manual product selection.
+- `Gsrdevoir SV75` returns the exact Gardevoir GX Hidden Fates: Shiny Vault printing first in the live phone workflow.
+
 ## 2026-08-01 — One Piece Set-Code Resolution
 
 - One Piece OP/EB/ST/PRB set codes now resolve to human catalogue titles derived from exact imported single-card evidence rather than hard-coded release names.

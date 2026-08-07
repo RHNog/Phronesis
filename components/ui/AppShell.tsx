@@ -11,6 +11,7 @@ type AppShellProps = {
   commandPaletteContext?: CommandPaletteContext;
   requiredModule?: PhronesisModule;
   requiredAccess?: ModuleAccessLevel;
+  allowNoModules?: boolean;
 };
 
 export default async function AppShell({
@@ -18,12 +19,13 @@ export default async function AppShell({
   commandPaletteContext = "General",
   requiredModule,
   requiredAccess = "VIEW",
+  allowNoModules = false,
 }: AppShellProps) {
   if (requiredModule) {
     await requirePageModule(requiredModule, requiredAccess);
   }
   const visibleModules = await getVisibleModules();
-  if (!requiredModule && visibleModules.length === 0) {
+  if (!requiredModule && !allowNoModules && visibleModules.length === 0) {
     await requirePageModule("INTELLIGENCE", "VIEW");
   }
   const navigationItems = navigationForModules(visibleModules);
