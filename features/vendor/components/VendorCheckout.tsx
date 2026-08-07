@@ -320,6 +320,10 @@ export default function VendorCheckout({
   const [bulkPaid, setBulkPaid] = useState("");
   const [bulkNotes, setBulkNotes] = useState("");
   const [bulkQuantity, setBulkQuantity] = useState("");
+  const [bulkPhoto, setBulkPhoto] = useState<File | null>(null);
+  const [bulkPhotoPreviewUrl, setBulkPhotoPreviewUrl] = useState<string | null>(
+    null,
+  );
   const [casePlacementsByLine, setCasePlacementsByLine] = useState<
     Record<string, { price: string; quantity: string }>
   >({});
@@ -328,6 +332,12 @@ export default function VendorCheckout({
   );
   const [clearCartConfirming, setClearCartConfirming] = useState(false);
   const cartRailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (bulkPhotoPreviewUrl) URL.revokeObjectURL(bulkPhotoPreviewUrl);
+    };
+  }, [bulkPhotoPreviewUrl]);
 
   const handleLineDirtyChange = useCallback(
     (lineId: string, dirty: boolean) => {
@@ -454,24 +464,65 @@ export default function VendorCheckout({
       setMessage("Bulk requires product lines, total paid, and notes.");
       return;
     }
-    const success = await mutate({
-      action: "add-line",
-      eventId: state.event.id,
-      line: {
-        kind: "BULK",
-        productLines: bulkLines,
-        actualPaidCents: paid,
-        notes: bulkNotes,
-        approximateQuantity: bulkQuantity || null,
-      },
-    });
-    if (success) {
+    setPending(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/purchases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add-line",
+          eventId: state.event.id,
+          line: {
+            kind: "BULK",
+            productLines: bulkLines,
+            actualPaidCents: paid,
+            notes: bulkNotes,
+            approximateQuantity: bulkQuantity || null,
+          },
+        }),
+      });
+      const result = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        line?: PurchaseLine;
+      };
+      if (!response.ok || !result.line) {
+        throw new Error(result.error ?? "Bulk purchase could not be added.");
+      }
+      let photoError: string | null = null;
+      if (bulkPhoto) {
+        try {
+          await storePurchasePhoto(result.line, bulkPhoto);
+        } catch (error) {
+          photoError =
+            error instanceof Error
+              ? error.message
+              : "the selected photo could not be stored";
+        }
+      }
+      await load();
       setBulkPaid("");
       setBulkNotes("");
       setBulkQuantity("");
       setBulkLines([]);
+      setBulkPhoto(null);
+      setBulkPhotoPreviewUrl(null);
       setBulkOpen(false);
-      setMessage("Bulk purchase added to event checkout.");
+      setMessage(
+        photoError
+          ? `Bulk purchase was added, but ${photoError} Use Take or upload photo on the saved cart item to retry.`
+          : bulkPhoto
+            ? "Bulk purchase and its private photo were added to the cart."
+            : "Bulk purchase added to event checkout.",
+      );
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Bulk purchase could not be added.",
+      );
+    } finally {
+      setPending(false);
     }
   }
 
@@ -509,6 +560,22 @@ export default function VendorCheckout({
     setMessage("Purchase cart cleared. Finalized receipts were not changed.");
   }
 
+  async function storePurchasePhoto(line: PurchaseLine, file: File) {
+    const form = new FormData();
+    form.set("lineId", line.id);
+    form.set("file", file);
+    const response = await fetch("/api/purchases/evidence", {
+      method: "POST",
+      body: form,
+    });
+    const result = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    if (!response.ok) {
+      throw new Error(result.error ?? "Purchase photo could not be stored.");
+    }
+  }
+
   async function uploadPurchasePhoto(line: PurchaseLine, file: File) {
     if (file.size > 8 * 1024 * 1024) {
       setMessage("Purchase photo must be no larger than 8 MB.");
@@ -517,19 +584,7 @@ export default function VendorCheckout({
     setPending(true);
     setMessage(null);
     try {
-      const form = new FormData();
-      form.set("lineId", line.id);
-      form.set("file", file);
-      const response = await fetch("/api/purchases/evidence", {
-        method: "POST",
-        body: form,
-      });
-      const result = (await response.json().catch(() => ({}))) as {
-        error?: string;
-      };
-      if (!response.ok) {
-        throw new Error(result.error ?? "Purchase photo could not be stored.");
-      }
+      await storePurchasePhoto(line, file);
       await load();
       setMessage(
         `${line.kind === "BULK" ? "Bulk purchase" : line.name} photo stored privately.`,
@@ -859,6 +914,75 @@ export default function VendorCheckout({
                       ))}
                     </div>
                   </fieldset>
+                  <div className="mt-3 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
+                    <p className="text-xs font-semibold text-cyan-200">
+                      Bulk purchase picture · optional
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-zinc-400">
+                      Photograph the collection, box, or binder now. It will be
+                      attached privately when you add this Bulk purchase.
+                    </p>
+                    {bulkPhotoPreviewUrl ? (
+                      <div className="mt-2 overflow-hidden rounded-lg border border-zinc-700 bg-black/40">
+                        <Image
+                          src={bulkPhotoPreviewUrl}
+                          alt="Selected Bulk purchase picture preview"
+                          width={640}
+                          height={480}
+                          unoptimized
+                          className="max-h-56 w-full object-contain"
+                        />
+                      </div>
+                    ) : null}
+                    <div
+                      className={`mt-2 grid gap-2 ${bulkPhoto ? "grid-cols-2" : "grid-cols-1"}`}
+                    >
+                      <label className="flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-cyan-800 bg-cyan-950/30 px-3 text-center text-xs font-semibold text-cyan-100 focus-within:ring-2 focus-within:ring-cyan-300/30">
+                        {bulkPhoto ? "Replace picture" : "Take or upload picture"}
+                        <input
+                          type="file"
+                          accept="image/avif,image/gif,image/jpeg,image/png,image/webp"
+                          disabled={pending}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0] ?? null;
+                            if (file && file.size > 8 * 1024 * 1024) {
+                              setMessage(
+                                "Bulk purchase picture must be no larger than 8 MB.",
+                              );
+                            } else if (file) {
+                              setBulkPhotoPreviewUrl(URL.createObjectURL(file));
+                              setBulkPhoto(file);
+                              setMessage(null);
+                            }
+                            event.currentTarget.value = "";
+                          }}
+                          className="sr-only"
+                        />
+                      </label>
+                      {bulkPhoto ? (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          onClick={() => {
+                            setBulkPhoto(null);
+                            setBulkPhotoPreviewUrl(null);
+                          }}
+                          className="min-h-11 rounded-lg border border-zinc-700 px-3 text-xs font-semibold text-zinc-200 disabled:opacity-40"
+                        >
+                          Remove picture
+                        </button>
+                      ) : null}
+                    </div>
+                    {bulkPhoto ? (
+                      <p className="mt-2 truncate text-[11px] text-zinc-400">
+                        Ready: {bulkPhoto.name}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-[11px] text-zinc-500">
+                        JPEG, PNG, WebP, GIF, or AVIF · 8 MB maximum
+                      </p>
+                    )}
+                  </div>
                   <label className="mt-3 block text-xs text-zinc-400">
                     Total paid
                     <input

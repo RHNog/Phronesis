@@ -11,6 +11,7 @@ Verdict: **CONFORMS — READY FOR PRODUCT REVIEW**
 - Remove item affects only the open cart and clears related local Case-placement state.
 - Clear Cart uses the same exact active-event/operator boundary, deletes every owned draft line in one transaction, audits the count, and cannot reach a colleague's cart or an immutable receipt.
 - Purchase photos are bounded private evidence rather than catalogue artwork. Signature/digest validation, opaque object identity, atomic storage, per-request authorization, and receipt-reference checks preserve confidentiality and integrity.
+- Bulk picture intake is visible before submission and composes the existing line-create and authorized evidence endpoints without creating a second draft model. A photo-only failure preserves the one created line and exposes a truthful retry path.
 - Draft remove/clear retires photo objects; finalized receipt lines retain their metadata and continue to authorize read-only evidence retrieval.
 - Corrected cart values flow through the existing unchanged receipt, ledger, Inventory, and Case transaction.
 - Automated, static, build, private runtime, and isolated desktop/phone interaction evidence satisfy the revised specification.

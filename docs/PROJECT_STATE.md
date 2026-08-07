@@ -6,8 +6,9 @@
 - The additive `PHR-UX-020` revision is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.
 - Clear Cart deletes all and only the requesting operator's unsubmitted lines in the exact active event after count-specific confirmation. It resets local editor/Case state after success and never changes a colleague's cart or finalized receipt.
 - Each exact or Bulk line supports one private JPEG, PNG, WebP, GIF, or AVIF image up to 8 MB. Phronesis validates signatures, records SHA-256 integrity, stores opaque objects outside public assets, and reauthorizes every upload/read/remove request.
+- Bulk entry exposes the picture picker and local preview before `Add Bulk`; submission creates one line and attaches the selected file to that exact returned line. Saved lines retain replace/remove controls.
 - Removing or clearing a draft retires its image object. Checkout copies the line metadata into its immutable receipt payload so authorized receipt evidence remains readable after the source cart empties.
-- Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, private HTTP health, and an isolated 390×844 upload/cancel/clear/no-overflow/44px review pass. No live event or receipt was fabricated for acceptance.
+- Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, private HTTP health, and isolated 390×844 pre-add picture/single-line persistence/cancel/clear/no-overflow/44px reviews pass. No live event or receipt was fabricated for acceptance.
 
 ## 2026-08-07 Personal Market Intelligence State
 

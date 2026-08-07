@@ -8,9 +8,10 @@
 - Objective: let an event buyer clear the entire owned draft cart with one guarded action and attach one private photo to any exact or Bulk purchase line, especially collection and box buys.
 - Ownership rule: Clear Cart affects only the requesting operator's unsubmitted lines in the exact active event. Photos bind to the same owner-scoped line and survive checkout only as immutable receipt evidence.
 - Media rule: one validated raster image per line, 8 MB maximum, opaque local object identity, private authorized retrieval, no public path, SVG, OCR, or catalogue-artwork substitution.
+- Intake rule: Bulk entry exposes the optional picture control and preview before `Add Bulk`; the selected image automatically binds to the single newly created line, with an explicit saved-line retry if only the upload fails.
 - Work order: `docs/prompts/PHR-UX-020-editable-purchase-cart-prompt.md`.
 - Acceptance: scoped confirmation and clearing, upload/preview/replace/remove, receipt retention, foreign-access denial, phone-safe controls, full verification, private deployment, commit, push, and continuity seal.
-- Verification: focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, production build, private HTTP health, owner-isolation/receipt-retention checks, and isolated 390×844 upload/clear/object-retirement review pass.
+- Verification: focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, production build, private HTTP health, owner-isolation/receipt-retention checks, and isolated 390×844 pre-add picture→single saved line plus clear/object-retirement review pass.
 - Runtime: `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` serves the rebuilt release. No live event was fabricated for acceptance.
 - Next accountable role: Product Owner reviews Clear Cart and a real bulk-purchase photo during the next active event. Same-session conformance is not independent approval.
 

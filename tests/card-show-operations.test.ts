@@ -547,6 +547,13 @@ test("the manual watch composer and compact cart-adjacent offer are wired into p
   assert.match(checkout, /Remove item/);
   assert.match(checkout, /Clear cart/);
   assert.match(checkout, /Take or upload photo/);
+  assert.match(checkout, /Bulk purchase picture · optional/);
+  assert.match(checkout, /Take or upload picture/);
+  assert.match(checkout, /Bulk purchase and its private photo were added/);
+  assert.ok(
+    checkout.indexOf("Bulk purchase picture · optional") <
+      checkout.lastIndexOf("Add Bulk"),
+  );
   assert.match(checkout, /\/api\/purchases\/evidence/);
   assert.match(checkout, /Save every cart change before finalizing/);
   assert.match(purchaseRoute, /body\.action === "update-line"/);

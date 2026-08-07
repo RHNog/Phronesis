@@ -30,7 +30,7 @@ Purchase intake already stores an employee-owned server cart and exposes line re
 
 ## Proposed Solution
 
-Render persistent inline numeric editors on every open cart line. Exact products edit unit purchase price and purchased quantity. Bulk edits total paid and its optional approximate count. Each line exposes an explicit `Save changes` action, a prominent `Remove item` action, and one optional private purchase photo. The cart exposes a guarded `Clear cart` action. Draft mutations remain limited to the employee-owned active-event cart; checkout copies attached photo metadata into the immutable receipt line while ledger, Inventory, and Display Case calculations remain unchanged.
+Render persistent inline numeric editors on every open cart line. Exact products edit unit purchase price and purchased quantity. Bulk edits total paid and its optional approximate count. The open Bulk intake form exposes the optional photo picker before `Add Bulk`, previews the selection, and attaches it immediately after the server creates the owned cart line. Every saved line retains preview/replace/remove controls. The cart exposes a guarded `Clear cart` action. Draft mutations remain limited to the employee-owned active-event cart; checkout copies attached photo metadata into the immutable receipt line while ledger, Inventory, and Display Case calculations remain unchanged.
 
 ## Functional Requirements
 
@@ -44,6 +44,8 @@ Render persistent inline numeric editors on every open cart line. Exact products
 - Cart subtotal refreshes from persisted values after a successful save.
 - Checkout refuses to finalize while any visible cart editor has unsaved changes.
 - Each exact or Bulk cart line accepts at most one JPEG, PNG, WebP, GIF, or AVIF image no larger than 8 MB. File content must match its declared raster media type; SVG, HTML, empty, oversized, and malformed payloads fail closed.
+- The open Bulk form visibly exposes `Take or upload picture` before `Add Bulk`, shows the selected image and a removal action, and carries that file onto the newly created Bulk line without requiring the operator to find a second control below the cart.
+- If Bulk-line creation succeeds but its optional photo upload fails, the line remains visible and the UI explicitly directs the operator to retry from that saved line; it must not create a duplicate line automatically.
 - An upload is authorized against the requesting operator's exact active-event cart line. Replacing a photo atomically changes the line reference and retires the prior draft object; removing a photo changes only the draft line.
 - Cart responses expose bounded photo metadata and an authorized private image URL, never a filesystem path.
 - Checkout preserves the photo reference inside the immutable receipt-line payload. Clearing or removing an unsubmitted line retires its draft photo; finalization does not delete receipt evidence.
@@ -76,6 +78,7 @@ Client input cannot change identity, condition, recommendation, market evidence,
 - `Remove item` is visible on every line and the removed line does not appear after reload.
 - `Clear cart` removes all and only the requesting operator's saved active-event lines after explicit confirmation, leaves finalized receipts intact, and returns an empty persisted cart after reload.
 - A valid phone-camera or file-picker image can be attached, previewed, replaced, and removed from an owned line; invalid, oversized, foreign-line, and foreign-workspace requests fail closed.
+- A buyer can select and preview the photo inside Bulk intake before pressing `Add Bulk`; a successful add renders that same evidence on the resulting saved cart line.
 - A finalized receipt retains its attached photo and authorized retrieval while the source cart is empty.
 - Pending Case quantity remains within an edited exact purchase quantity.
 - Existing checkout, receipt, ledger, Inventory, Display Case, desktop, and phone gates pass.
@@ -99,4 +102,4 @@ Client input cannot change identity, condition, recommendation, market evidence,
 - Related tests: `tests/card-show-operations.test.ts` and `tests/snapshot-vendor-workspace.test.ts`.
 - Related release notes: `docs/release-notes/PHR-UX-020.md`.
 - Last modified: 2026-08-07.
-- Modification reason: Add operator-scoped Clear Cart and one durable private purchase-evidence photo per cart line, with Bulk intake as the primary use case.
+- Modification reason: Put photo intake directly inside the Bulk form while retaining operator-scoped Clear Cart and durable private per-line evidence.

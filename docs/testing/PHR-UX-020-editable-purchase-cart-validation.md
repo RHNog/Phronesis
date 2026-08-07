@@ -11,6 +11,7 @@ Verdict: **PASS — PRIVATELY LIVE; PRODUCT REVIEW READY**
 - Repository coverage proves exact-line unit value/quantity updates, Bulk total/count updates, identity/evidence preservation, invalid-value rejection, operator isolation, line removal, owner-scoped full-cart clearing, persisted cart reload, and corrected receipt totals.
 - Photo coverage proves signature validation, owner/workspace isolation, attach, replace, remove, draft retirement, immutable receipt retention, and receipt-authorized retrieval.
 - UI/route coverage proves the authorized `update-line` and `clear-cart` actions, guarded count-specific confirmation, labelled private image upload/preview controls, explicit Save/Remove actions, and the unsaved-change finalization guard.
+- Source coverage proves the Bulk-form picture control precedes `Add Bulk` and uses the same authorized evidence route after the created line returns.
 - Focused cart/Vendor tests pass 19/19 and the full supported suite passes 472/472.
 - Standalone TypeScript, warning-free ESLint, diff hygiene, and the Next.js 16.2.12 production build pass.
 
@@ -21,6 +22,8 @@ Verdict: **PASS — PRIVATELY LIVE; PRODUCT REVIEW READY**
 - Confirming `Clear 2 items` persisted an empty cart, removed the preview and Clear Cart action, and returned the success message that finalized receipts were unchanged.
 - The retired opaque image ID returned HTTP 404 immediately after clear, and the disposable object store contained no evidence file.
 - At 390×844, document scroll width equalled client width; Clear Cart, Keep cart, confirm-clear, Remove item, and image controls met the 44px touch target.
+- A second isolated 390×844 review began with an empty cart, opened Bulk entry, selected and previewed a PNG before submission, entered Pokémon/$125/850/notes, and pressed `Add Bulk` once. Exactly one saved Bulk line returned with the same private image metadata and preview.
+- The pre-add picture control and `Add Bulk` each measured 44px, the picker preceded the submit action, document/client width remained 375px with no overflow, and browser error/warning logs were empty.
 - The rebuilt private runtime returned HTTP 200 from loopback and `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`.
 
 ## Negative-Effect Declaration

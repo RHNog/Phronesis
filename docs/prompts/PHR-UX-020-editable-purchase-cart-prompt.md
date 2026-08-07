@@ -10,7 +10,7 @@ Project Phronesis is the internal evidence-driven decision operating system for 
 
 ## Objective
 
-Extend the secure editable Vendor Workspace purchase cart with a guarded full-cart clear action and one durable private purchase photo per exact or Bulk line without weakening receipt, inventory, or authorization integrity.
+Extend the secure editable Vendor Workspace purchase cart with a guarded full-cart clear action and one durable private purchase photo per exact or Bulk line. Make the picture intake visible inside the Bulk-entry form before the operator adds the line, without weakening receipt, inventory, or authorization integrity.
 
 ## Required Reading
 
@@ -40,6 +40,8 @@ Extend the secure editable Vendor Workspace purchase cart with a guarded full-ca
 - Add authorized upload, retrieval, replacement, and removal route methods. Bind each operation to one exact cart line; retrieval may continue from the immutable workspace-owned receipt reference after checkout.
 - Store only bounded attachment metadata in cart/receipt JSON. Do not expose local paths or inline base64 data.
 - Render a responsive image preview and a phone-friendly `Take or upload photo` control on every cart line, emphasizing Bulk evidence without restricting exact lines.
+- Render a prominent optional photo picker and local preview inside the open Bulk form before `Add Bulk`. After the server returns the new owned line, upload the selected file to that exact line and render it through the existing private evidence path.
+- If line creation succeeds but photo upload fails, preserve the single created line, reload it visibly, and give an explicit retry instruction; never retry line creation or silently report full success.
 
 ## Constraints
 
@@ -53,7 +55,7 @@ Extend the secure editable Vendor Workspace purchase cart with a guarded full-ca
 
 - Repository tests for exact and Bulk updates, totals, persistence, invalid input, and owner isolation.
 - Repository/store tests for scoped clear, foreign-operator isolation, photo validation, replacement/removal, receipt persistence, and private retrieval authorization.
-- Route/UI structure tests for the authorized clear and evidence actions, confirmation, labelled upload/preview, Save, Remove, and unsaved-change guard.
+- Route/UI structure tests for the authorized clear and evidence actions, confirmation, pre-add Bulk photo intake/preview, saved-line upload/preview, Save, Remove, and unsaved-change guard.
 - Full tests, TypeScript, warning-free lint, production build, diff hygiene, and live desktop/390px review.
 
 ## Documentation Updates

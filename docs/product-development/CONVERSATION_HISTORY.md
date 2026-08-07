@@ -12,12 +12,13 @@
 - Revised `PHR-UX-020` under assignment `PHR-BUYER-CART-EVIDENCE-20260807` rather than introducing a second cart or receipt model.
 - Added a count-confirmed Clear Cart mutation scoped to the requesting operator's unsubmitted lines in the exact active event. Colleague carts and finalized receipts remain immutable.
 - Added one optional private raster photo per exact or Bulk cart line, with phone/file selection, preview, replace, and remove. An 8 MB limit, byte-signature validation, SHA-256 metadata, opaque IDs, atomic storage, and per-request authorization protect the evidence boundary.
+- Product Owner review exposed that the first iteration hid picture intake until after `Add Bulk`. The corrected form now exposes picture selection and preview before submission, then attaches it to the one newly returned Bulk line. A photo-only failure keeps that line and directs an explicit retry rather than duplicating the purchase.
 - Draft deletion retires its private object. Checkout retains metadata in the immutable receipt-line payload, allowing authorized receipt evidence to remain readable after the cart is emptied.
 - Rebuilt and restarted only the private scanner-review runtime; the public gateway and public access policy were unchanged.
 
 ### Acceptance State
 
-Implementation and same-session conformance are privately live and Product Review ready. Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, private HTTP health, and isolated 390×844 upload/cancel/confirm-clear/object-retirement/no-overflow/44px checks pass. The next independent gate is a Product Owner review during a real bulk purchase; no live event or receipt was fabricated for acceptance.
+Implementation and same-session conformance are privately live and Product Review ready. Focused 19/19 and full 472/472 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, private HTTP health, and isolated 390×844 pre-add picture→single saved Bulk line, cancel/confirm-clear, object-retirement, no-overflow, and 44px checks pass. The next independent gate is a Product Owner review during a real bulk purchase; no live event or receipt was fabricated for acceptance.
 
 ## 2026-08-07 — Personal Market Intelligence, Provider History, And Typo Recovery
 
