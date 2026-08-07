@@ -14,6 +14,9 @@ export type ArbitrageState =
   | "REJECTED";
 
 export type RegionalMarketEvidence = {
+  providerId: "ligamagic" | "ligapokemon";
+  providerLabel: "LigaMagic" | "LigaPokémon";
+  sourceRunId: string;
   ligaIdentityKey: string;
   categoryId: string;
   sku: string;
@@ -22,6 +25,8 @@ export type RegionalMarketEvidence = {
   editionCode: string;
   collectorNumber: string;
   variant: string;
+  condition: string | null;
+  language: string | null;
   observedAt: string;
   consumerLowCentavos: number | null;
   consumerAverageCentavos: number | null;

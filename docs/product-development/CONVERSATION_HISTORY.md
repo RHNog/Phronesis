@@ -1,5 +1,25 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — Vendor Workspace Liga And PriceCharting Evidence Restoration
+
+### User Intent
+
+- Correct the prior scope mistake: LigaMagic/LigaPokémon belongs in Vendor Workspace selected-card pricing, not merely Settings.
+- Put PriceCharting in an expandable card below the TCGplayer/Liga raw-card information.
+- Reuse the prior agreed design and feed Vendor Workspace from the latest available LigaMagic snapshot.
+
+### Decision And Implementation
+
+- Reopened `PHR-UX-013` and recovered the approved combined composition from commit `dad5cb2` instead of redesigning the workflow again.
+- Restored one `Raw-card market evidence` card in Snapshot evidence, with TCGplayer first and exact LigaMagic/LigaPokémon evidence in the same boundary. Removed the duplicate regional panel from Buying decision.
+- Extended the regional read model from Magic-only to exact promoted Magic and Pokémon matches, including provider, source-run, condition, and language provenance and newest-match ordering.
+- Restored PriceCharting directly below the combined card as a closed lazy disclosure and kept the single certificate lookup inside it.
+- Rebuilt and restarted the current private `:9444` service while leaving the public gateway unchanged.
+
+### Acceptance State
+
+Implementation and same-session conformance are privately live and Product Review ready. Magic returns LigaMagic run `dry-run-20260730T203243818Z`; Pokémon returns LigaPokémon run `dry-run-20260805T070105248Z`. Live Vendor selection proves both headings and provider cards, closed-on-selection PriceCharting, successful expansion, and a narrow 364-pixel no-overflow evidence column. Full 461/461 tests, TypeScript, warning-free lint/build, diff hygiene, and live APIs pass. No acquisition, reauthentication, crosswalk rebuild, credential mutation, transaction, or public deployment occurred.
+
 ## 2026-08-07 — Provider Connections Regional Health And PriceCharting Placement
 
 ### User Intent
@@ -16,7 +36,7 @@
 
 ### Acceptance State
 
-Implementation and same-session conformance are privately live and Product Review ready. Current UI truth is LigaMagic `REAUTHENTICATION_REQUIRED`, LigaPokémon `SUCCESS` with promoted snapshot `dry-run-20260805T070105248Z`, JustTCG `DISABLED`, and PriceCharting `READY`. Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live API, Refresh interaction, semantic ordering, and visual layout checks pass. No provider mutation, credential change, acquisition, or public deployment occurred.
+Implementation and same-session conformance are privately live and Product Review ready for provider operational health. Current UI truth is LigaMagic `REAUTHENTICATION_REQUIRED`, LigaPokémon `SUCCESS` with promoted snapshot `dry-run-20260805T070105248Z`, JustTCG `DISABLED`, and PriceCharting `READY`. Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live API, Refresh interaction, semantic ordering, and visual layout checks pass. No provider mutation, credential change, acquisition, or public deployment occurred. The Product Owner subsequently identified this as a scope mismatch for the selected-card request; the preceding `PHR-UX-013` entry supersedes it for Vendor Workspace composition while retaining Settings health as a separate valid surface.
 
 ## 2026-08-07 — Remote Trusted Accounts Without Tailscale
 

@@ -5,6 +5,8 @@
 
 ### Added
 
+- Provider-aware LigaMagic/LigaPokémon selected-card evidence with promoted source-run provenance, exact newest-match selection, combined TCGplayer/Liga presentation, and a lazy collapsed PriceCharting card directly below (`PHR-UX-013`, `PHR-API-010`).
+
 - Read-only LigaMagic/LigaPokémon acquisition health, semantic provider groups, live Refresh status, and correct PriceCharting placement beside JustTCG in Settings → Providers (`PHR-UX-012`).
 
 - Cross-platform scanner appliance control plane with one-time pairing, revocable outbound agent credentials, readiness, durable Start/Cancel commands, front-only direct recognition ingest, portable agent setup, and macOS/Windows native build automation (`PHR-TECH-017`).

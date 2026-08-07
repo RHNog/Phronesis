@@ -1,5 +1,13 @@
 # PHR-UX-013 — Regional Vending And Arbitrage Presentation
 
+## 2026-08-07 — Vendor Evidence Stack Restored And Privately Live
+
+- Vendor Workspace again combines TCGplayer and exact regional raw-card evidence in one selected-card pricing card: LigaMagic for Magic and LigaPokémon for English Pokémon.
+- The regional read model now consumes the promoted Pokémon tables as well as Magic, returns provider/run provenance, preserves Pokémon condition/language, selects the newest exact match, and fails closed for unsupported games.
+- LigaMagic uses the latest complete last-good snapshot `dry-run-20260730T203243818Z`; a later reauthentication-required attempt does not erase or masquerade as usable evidence. LigaPokémon uses promoted run `dry-run-20260805T070105248Z`.
+- PriceCharting is once again an optional collapsed card directly below TCGplayer/Liga, loads only on expansion, resets when the selected printing changes, and retains grading-certificate lookup inside the same secondary disclosure.
+- Buying decision no longer duplicates or owns the regional evidence panel. TCGplayer valuation, offer calculation, artwork, checkout, and watch behavior remain unchanged.
+
 ## 2026-07-31 — Product Review Ready
 
 - `US → Brazil` and `Brazil → US` now reverse acquisition and exit markets explicitly, including benchmark meaning, currency, calculation, target profile, and explanatory copy.

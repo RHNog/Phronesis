@@ -11,6 +11,10 @@ function brl(centavos: number | null): string {
   }).format(centavos / 100);
 }
 
+function providerLabel(categoryId: string): "LigaMagic" | "LigaPokémon" {
+  return categoryId === "pokemon-en" ? "LigaPokémon" : "LigaMagic";
+}
+
 export default function RegionalMarketPanel({
   categoryId,
   sku,
@@ -44,14 +48,14 @@ export default function RegionalMarketPanel({
   if (evidence === undefined)
     return (
       <section className="rounded-xl border border-zinc-800 bg-zinc-950/70 p-4 text-sm text-zinc-500">
-        Loading Brazil market evidence…
+        Loading {providerLabel(categoryId)} evidence…
       </section>
     );
   if (!evidence)
     return (
       <section className="rounded-xl border border-dashed border-zinc-700 bg-zinc-950/70 p-4">
         <p className="text-sm font-semibold text-zinc-300">
-          Brazil market not reconciled
+          {providerLabel(categoryId)} evidence not reconciled
         </p>
         <p className="mt-1 text-xs text-zinc-500">
           This exact printing remains unmatched or quarantined. Phronesis will
@@ -67,10 +71,13 @@ export default function RegionalMarketPanel({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-            Brazil market · exact match
+            {evidence.providerLabel} · exact match
           </p>
           <p className="mt-1 text-xs text-zinc-500">
             Observed {new Date(evidence.observedAt).toLocaleString()}
+          </p>
+          <p className="mt-1 break-all font-mono text-[10px] text-zinc-600">
+            Snapshot {evidence.sourceRunId}
           </p>
         </div>
         <span className="rounded bg-zinc-900 px-2 py-1 text-[11px] text-zinc-300">
@@ -78,6 +85,12 @@ export default function RegionalMarketPanel({
           {evidence.variant}
         </span>
       </div>
+      {evidence.condition || evidence.language ? (
+        <p className="mt-3 text-xs text-zinc-500">
+          Source material: {evidence.condition ?? "Condition not supplied"} ·{" "}
+          {evidence.language ?? "Language not supplied"}
+        </p>
+      ) : null}
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
         <div className="rounded-lg bg-zinc-950 p-3">
           <p className="text-xs text-zinc-500">Retail evidence (Compra)</p>

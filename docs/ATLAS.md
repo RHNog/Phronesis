@@ -1,8 +1,16 @@
 # Project Atlas
 
+## Vendor Workspace Regional Evidence Composition
+
+- `PHR-UX-013` owns the selected-card raw-market hierarchy: one TCGplayer/Liga card inside Snapshot evidence, followed immediately by optional PriceCharting graded evidence.
+- `RegionalIntelligenceRepository.evidenceFor` selects only exact `MATCHED` rows. `magic-en` reads LigaMagic; `pokemon-en` reads LigaPokémon; every other catalogue fails closed without a regional claim.
+- The provider-aware response carries provider label, promoted source run, observation time, and optional condition/language. Operational last-good evidence survives a failed or reauthentication-required acquisition attempt.
+- `PriceChartingGradedArea` is closed on every selected printing, fetches only after expansion, and owns the single certificate lookup. It cannot overwrite TCGplayer/Liga evidence, artwork, or offer calculations.
+- The private live route is `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`.
+
 ## Provider Connections And Regional Acquisition Health
 
-- `PHR-UX-012` makes Settings → Providers the single operational catalogue for regional acquisition, valuation feeds, listing evidence, sealed products, and certificate services.
+- `PHR-UX-012` makes Settings → Providers the operational health catalogue for regional acquisition, valuation feeds, listing evidence, sealed products, and certificate services. Selected-card pricing composition remains owned by Vendor Workspace under `PHR-UX-013`.
 - `RegionalProviderHealth` projects the private `PHR-API-013` atomic receipt into allowlisted LigaMagic/LigaPokémon health. Configuration is an existence check only; secrets and browser-profile data never cross the server boundary.
 - Provider order is semantic and deterministic: LigaMagic, LigaPokémon; JustTCG, PriceCharting, eBay Browse, CardTrader; PkmnPrices Sealed, PSA Certificates.
 - The health Route Handler requires Administration view and Refresh performs a fresh uncached read. Liga authentication remains local and owner-operated; the UI cannot trigger acquisition or mutate a profile.

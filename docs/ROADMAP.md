@@ -1,5 +1,13 @@
 # Roadmap
 
+## Product Review Candidate: Vendor Workspace Regional Evidence Composition
+
+- Implemented and privately live: one TCGplayer plus LigaMagic/LigaPokémon raw-card card for the exact selected printing (`PHR-UX-013`).
+- Implemented: provider-aware newest promoted reads, source-run/condition/language provenance, unsupported-game fail-closed behavior, and last-good retention independent of acquisition health.
+- Implemented: PriceCharting immediately below the raw-card card as a closed lazy disclosure with the single certificate lookup (`PHR-API-010`).
+- Verified: 461/461 tests, TypeScript, warning-free lint/build, diff hygiene, live Magic/Pokémon APIs, deployed selection switching, expansion behavior, and narrow-column no-overflow/touch sizing.
+- Next: Product Owner reviews the deployed evidence hierarchy. A new LigaMagic acquisition still requires local reauthentication and is not part of this UI restoration.
+
 ## Product Review Candidate: Provider Connections And Regional Acquisition Health
 
 - Implemented and privately live: LigaMagic and LigaPokémon operational cards sourced from the canonical recurring-acquisition receipt (`PHR-UX-012`, `PHR-API-013`).

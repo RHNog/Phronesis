@@ -22,7 +22,6 @@ import {
 } from "@/data/seedStrategies";
 import EvaluationSummary from "@/features/vendor/components/EvaluationSummary";
 import VendorCheckout from "@/features/vendor/components/VendorCheckout";
-import GradingCertificateLookup from "@/features/vendor/components/GradingCertificateLookup";
 import RegionalMarketPanel from "@/features/vendor/components/RegionalMarketPanel";
 import PriceChartingGradedArea from "@/features/vendor/components/PriceChartingGradedArea";
 import {
@@ -90,6 +89,14 @@ function gameLabel(categoryId: string): string {
       (category) => category.id === categoryId,
     )?.label ?? categoryId
   );
+}
+
+function regionalProviderLabel(
+  categoryId: string,
+): "LigaMagic" | "LigaPokémon" | null {
+  if (categoryId === "magic-en") return "LigaMagic";
+  if (categoryId === "pokemon-en") return "LigaPokémon";
+  return null;
 }
 
 function money(cents: number | null | undefined): string {
@@ -961,117 +968,181 @@ export default function SnapshotVendorWorkspace({
                 </p>
               )}
 
-              {selectedMatch.productType === "SINGLE" ? <PriceChartingGradedArea match={selectedMatch} /> : null}
-
-              {!price ? (
-                <div className="mt-5 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
-                  <p className="font-semibold">No price in this condition.</p>
-                  {nearest ? (
-                    <p className="mt-1 text-amber-200">
-                      Nearest priced grade: {conditionLabel(nearest.condition)}{" "}
-                      · {money(bestReference(nearest.price).cents)}
+              <section
+                data-combined-pricing-card
+                aria-labelledby="combined-pricing-heading"
+                className="mt-5 rounded-xl border border-zinc-700 bg-zinc-900/70 p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                      Raw-card market evidence
                     </p>
+                    <h3
+                      id="combined-pricing-heading"
+                      className="mt-1 text-base font-semibold text-white"
+                    >
+                      {selectedMatch.productType === "SINGLE" &&
+                      regionalProviderLabel(selectedMatch.categoryId)
+                        ? `TCGplayer + ${regionalProviderLabel(
+                            selectedMatch.categoryId,
+                          )} pricing`
+                        : "TCGplayer pricing"}
+                    </h3>
+                  </div>
+                  <span className="rounded-full border border-zinc-700 bg-zinc-950 px-2.5 py-1 text-[11px] text-zinc-400">
+                    {selectedMatch.productType === "SINGLE"
+                      ? `${conditionCodes[condition]} · exact printing`
+                      : "Unopened product"}
+                  </span>
+                </div>
+
+                {!price ? (
+                  <div className="mt-4 rounded-lg border border-amber-900 bg-amber-950/30 p-4 text-sm text-amber-100">
+                    <p className="font-semibold">No price in this condition.</p>
+                    {nearest ? (
+                      <p className="mt-1 text-amber-200">
+                        Nearest priced grade: {conditionLabel(nearest.condition)}{" "}
+                        · {money(bestReference(nearest.price).cents)}
+                      </p>
+                    ) : (
+                      <p className="mt-1">
+                        No usable condition reference is present.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      {price.directLowCents !== null &&
+                      price.directLowCents !== undefined ? (
+                        <div className="rounded-lg border border-emerald-400/60 bg-emerald-950/40 p-3 sm:col-span-2">
+                          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
+                            Primary reference · TCG Direct Low
+                          </p>
+                          <p className="mt-1 text-3xl font-semibold tabular-nums text-emerald-200">
+                            {money(price.directLowCents)}
+                          </p>
+                          <p className="mt-1 text-xs text-emerald-100/70">
+                            Direct-qualified listing floor; takes precedence in
+                            the offer calculation.
+                          </p>
+                        </div>
+                      ) : null}
+                      <div className="rounded-lg bg-zinc-950 p-3">
+                        <p className="text-xs text-zinc-500">Market price</p>
+                        <p className="mt-1 text-xl font-semibold tabular-nums text-white">
+                          {money(price.marketPriceCents)}
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-zinc-950 p-3">
+                        <p className="text-xs text-zinc-500">Delivered low</p>
+                        <p className="mt-1 text-xl font-semibold tabular-nums text-white">
+                          {money(price.deliveredPriceCents)}
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-zinc-950 p-3">
+                        <p className="text-xs text-zinc-500">
+                          Listing + shipping
+                        </p>
+                        <p className="mt-1 text-sm font-semibold tabular-nums text-zinc-200">
+                          {money(price.listingPriceCents)} +{" "}
+                          {money(price.shippingCents)}
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-zinc-950 p-3">
+                        <p className="text-xs text-zinc-500">
+                          Evaluation reference
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-cyan-200">
+                          {reference.label} · {money(reference.cents)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 border-t border-zinc-800 pt-4 text-sm text-zinc-400">
+                      <p>
+                        {movement
+                          ? `${movement.percentage >= 0 ? "Up" : "Down"} ${Math.abs(movement.percentage).toFixed(1)}% since ${timestamp(movement.comparisonDate)}`
+                          : "No earlier price change yet."}
+                      </p>
+                      <p className="mt-1">
+                        Snapshot {timestamp(price.snapshotDate)} · Source SKU{" "}
+                        {price.sourceSku ?? "Unavailable"}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {selectedMatch.productType === "SINGLE" &&
+                regionalProviderLabel(selectedMatch.categoryId) ? (
+                  <div className="mt-4 border-t border-zinc-800 pt-4">
+                    <RegionalMarketPanel
+                      key={`${selectedMatch.categoryId}:${selectedMatch.sku}`}
+                      categoryId={selectedMatch.categoryId}
+                      sku={selectedMatch.sku}
+                    />
+                  </div>
+                ) : null}
+
+                <div className="mt-5 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
+                  <button
+                    type="button"
+                    aria-busy={
+                      tracking.pending &&
+                      tracking.key ===
+                        watchlistEntryKey(selectedMatch, condition)
+                    }
+                    disabled={
+                      (tracking.pending || Boolean(tracking.entryId)) &&
+                      tracking.key ===
+                        watchlistEntryKey(selectedMatch, condition)
+                    }
+                    onClick={handleTrackPrice}
+                    className="min-h-11 w-full rounded-lg bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {tracking.pending &&
+                    tracking.key ===
+                      watchlistEntryKey(selectedMatch, condition)
+                      ? "Tracking…"
+                      : tracking.entryId ===
+                          watchlistEntryKey(selectedMatch, condition)
+                        ? "Tracking price"
+                        : "Track price"}
+                  </button>
+                  {tracking.key ===
+                    watchlistEntryKey(selectedMatch, condition) &&
+                  tracking.message ? (
+                    <div
+                      aria-live="polite"
+                      className="mt-2 flex min-h-6 items-center justify-between gap-3 text-xs text-cyan-100"
+                    >
+                      <span>{tracking.message}</span>
+                      {tracking.created ? (
+                        <button
+                          type="button"
+                          onClick={handleUndoTrack}
+                          disabled={tracking.pending}
+                          className="min-h-11 shrink-0 px-2 font-semibold text-cyan-300 hover:text-cyan-200 disabled:opacity-60"
+                        >
+                          Undo
+                        </button>
+                      ) : null}
+                    </div>
                   ) : (
-                    <p className="mt-1">
-                      No usable condition reference is present.
+                    <p className="mt-2 text-xs text-zinc-500">
+                      Adds this exact finish and condition to your default
+                      Market Watch list. Target and alerts stay optional.
                     </p>
                   )}
                 </div>
-              ) : (
-                <>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {price.directLowCents !== null && price.directLowCents !== undefined ? <div className="rounded-lg border border-emerald-400/60 bg-emerald-950/40 p-3 sm:col-span-2"><p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">Primary reference · TCG Direct Low</p><p className="mt-1 text-3xl font-semibold tabular-nums text-emerald-200">{money(price.directLowCents)}</p><p className="mt-1 text-xs text-emerald-100/70">Direct-qualified listing floor; takes precedence in the offer calculation.</p></div> : null}
-                    <div className="rounded-lg bg-zinc-950 p-3">
-                      <p className="text-xs text-zinc-500">Market price</p>
-                      <p className="mt-1 text-xl font-semibold tabular-nums text-white">
-                        {money(price.marketPriceCents)}
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-zinc-950 p-3">
-                      <p className="text-xs text-zinc-500">Delivered low</p>
-                      <p className="mt-1 text-xl font-semibold tabular-nums text-white">
-                        {money(price.deliveredPriceCents)}
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-zinc-950 p-3">
-                      <p className="text-xs text-zinc-500">
-                        Listing + shipping
-                      </p>
-                      <p className="mt-1 text-sm font-semibold tabular-nums text-zinc-200">
-                        {money(price.listingPriceCents)} +{" "}
-                        {money(price.shippingCents)}
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-zinc-950 p-3">
-                      <p className="text-xs text-zinc-500">
-                        Evaluation reference
-                      </p>
-                      <p className="mt-1 text-sm font-semibold text-cyan-200">
-                        {reference.label} · {money(reference.cents)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 border-t border-zinc-800 pt-4 text-sm text-zinc-400">
-                    <p>
-                      {movement
-                        ? `${movement.percentage >= 0 ? "Up" : "Down"} ${Math.abs(movement.percentage).toFixed(1)}% since ${timestamp(movement.comparisonDate)}`
-                        : "No earlier price change yet."}
-                    </p>
-                    <p className="mt-1">
-                      Snapshot {timestamp(price.snapshotDate)} · Source SKU{" "}
-                      {price.sourceSku ?? "Unavailable"}
-                    </p>
-                  </div>
-                </>
-              )}
+              </section>
 
-              <div className="mt-5 rounded-lg border border-cyan-950 bg-cyan-950/20 p-3">
-                <button
-                  type="button"
-                  aria-busy={
-                    tracking.pending &&
-                    tracking.key === watchlistEntryKey(selectedMatch, condition)
-                  }
-                  disabled={
-                    (tracking.pending || Boolean(tracking.entryId)) &&
-                    tracking.key === watchlistEntryKey(selectedMatch, condition)
-                  }
-                  onClick={handleTrackPrice}
-                  className="min-h-11 w-full rounded-lg bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:cursor-wait disabled:opacity-70"
-                >
-                  {tracking.pending &&
-                  tracking.key === watchlistEntryKey(selectedMatch, condition)
-                    ? "Tracking…"
-                    : tracking.entryId ===
-                        watchlistEntryKey(selectedMatch, condition)
-                      ? "Tracking price"
-                      : "Track price"}
-                </button>
-                {tracking.key === watchlistEntryKey(selectedMatch, condition) &&
-                tracking.message ? (
-                  <div
-                    aria-live="polite"
-                    className="mt-2 flex min-h-6 items-center justify-between gap-3 text-xs text-cyan-100"
-                  >
-                    <span>{tracking.message}</span>
-                    {tracking.created ? (
-                      <button
-                        type="button"
-                        onClick={handleUndoTrack}
-                        disabled={tracking.pending}
-                        className="min-h-11 shrink-0 px-2 font-semibold text-cyan-300 hover:text-cyan-200 disabled:opacity-60"
-                      >
-                        Undo
-                      </button>
-                    ) : null}
-                  </div>
-                ) : (
-                  <p className="mt-2 text-xs text-zinc-500">
-                    Adds this exact finish and condition to your default Market
-                    Watch list. Target and alerts stay optional.
-                  </p>
-                )}
-              </div>
+              {selectedMatch.productType === "SINGLE" ? (
+                <PriceChartingGradedArea
+                  key={`${selectedMatch.categoryId}:${selectedMatch.sku}`}
+                  match={selectedMatch}
+                />
+              ) : null}
               {!selectedArtwork && !selectedMatch.imageUrl ? (
                 <div className="mt-3 rounded-lg border border-dashed border-zinc-700 p-3">
                   <label className="block text-xs font-medium text-zinc-300">
@@ -1143,14 +1214,6 @@ export default function SnapshotVendorWorkspace({
                 </select>
               </label>
             </div>
-            {selectedMatch ? (
-              <div className="mt-4">
-                <RegionalMarketPanel
-                  categoryId={selectedMatch.categoryId}
-                  sku={selectedMatch.sku}
-                />
-              </div>
-            ) : null}
             <label className="mt-4 block text-sm font-medium text-zinc-300">
               Seller asking price (USD) · optional comparison
               <input
@@ -1184,7 +1247,6 @@ export default function SnapshotVendorWorkspace({
                   : "The offer ladder is ready above. Enter the seller's asking price for a decision comparison."}
             </div>
           )}
-          <GradingCertificateLookup />
         </section>
       </div>
     </section>

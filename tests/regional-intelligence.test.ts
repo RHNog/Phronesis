@@ -860,6 +860,104 @@ test("repository persists nullable route targets and rejects inverted ranges", (
   database.close();
 });
 
+test("regional evidence selects the newest promoted LigaMagic and LigaPokemon match", () => {
+  const database = new DatabaseSync(":memory:");
+  const repository = new RegionalIntelligenceRepository(database);
+  database.exec(`
+    INSERT INTO regional_crosswalk VALUES
+      ('magic-old','magic-en','magic-sku','MATCHED','EXACT','old','dry-run-magic-old','hash-old','pricing','2026-07-30T20:00:00.000Z'),
+      ('magic-new','magic-en','magic-sku','MATCHED','EXACT','new','dry-run-magic-new','hash-new','pricing','2026-07-31T20:00:00.000Z');
+    INSERT INTO regional_evidence VALUES
+      ('magic-old','Card','Set','SET','1','Normal','2026-07-30T20:00:00.000Z',100,110,120,50,60,70),
+      ('magic-new','Card','Set','SET','1','Normal','2026-07-31T20:00:00.000Z',200,210,220,80,90,100);
+
+    CREATE TABLE regional_pokemon_crosswalk (
+      liga_identity_key TEXT PRIMARY KEY,
+      category_id TEXT,
+      sku TEXT,
+      status TEXT NOT NULL,
+      method TEXT NOT NULL,
+      reason TEXT NOT NULL,
+      source_run_id TEXT NOT NULL,
+      source_hash TEXT NOT NULL,
+      pricing_fingerprint TEXT NOT NULL,
+      reconciled_at TEXT NOT NULL
+    );
+    CREATE TABLE regional_pokemon_evidence (
+      liga_identity_key TEXT PRIMARY KEY,
+      card_name TEXT NOT NULL,
+      set_name TEXT NOT NULL,
+      set_code TEXT NOT NULL,
+      collector_number TEXT NOT NULL,
+      variant TEXT NOT NULL,
+      condition_key TEXT NOT NULL,
+      language TEXT NOT NULL,
+      observed_at TEXT NOT NULL,
+      consumer_low_centavos INTEGER,
+      consumer_average_centavos INTEGER,
+      consumer_high_centavos INTEGER,
+      store_buy_low_centavos INTEGER,
+      store_buy_average_centavos INTEGER,
+      store_buy_high_centavos INTEGER
+    );
+    INSERT INTO regional_pokemon_crosswalk VALUES
+      ('pokemon-old','pokemon-en','pokemon-sku','MATCHED','EXACT','old','dry-run-pokemon-old','hash-old','pricing','2026-08-04T07:00:00.000Z'),
+      ('pokemon-new','pokemon-en','pokemon-sku','MATCHED','EXACT','new','dry-run-pokemon-new','hash-new','pricing','2026-08-05T07:03:00.000Z'),
+      ('pokemon-unmatched','pokemon-en',NULL,'UNMATCHED','NONE','unmatched','dry-run-pokemon-new','hash-new','pricing','2026-08-06T07:03:00.000Z');
+    INSERT INTO regional_pokemon_evidence VALUES
+      ('pokemon-old','Pokémon','Set','SV1','1','Reverse Holofoil','LP','EN','2026-08-04T07:00:00.000Z',300,310,320,100,110,120),
+      ('pokemon-new','Pokémon','Set','SV1','1','Reverse Holofoil','NM','EN','2026-08-05T07:03:00.000Z',400,410,420,130,140,150),
+      ('pokemon-unmatched','Wrong card','Other','OTH','9','Normal','NM','EN','2026-08-06T07:03:00.000Z',999,999,999,999,999,999);
+  `);
+
+  assert.deepEqual(repository.evidenceFor("magic-en", "magic-sku"), {
+    providerId: "ligamagic",
+    providerLabel: "LigaMagic",
+    sourceRunId: "dry-run-magic-new",
+    ligaIdentityKey: "magic-new",
+    categoryId: "magic-en",
+    sku: "magic-sku",
+    cardName: "Card",
+    editionName: "Set",
+    editionCode: "SET",
+    collectorNumber: "1",
+    variant: "Normal",
+    condition: null,
+    language: null,
+    observedAt: "2026-07-31T20:00:00.000Z",
+    consumerLowCentavos: 200,
+    consumerAverageCentavos: 210,
+    consumerHighCentavos: 220,
+    storeBuyLowCentavos: 80,
+    storeBuyAverageCentavos: 90,
+    storeBuyHighCentavos: 100,
+  });
+  assert.deepEqual(repository.evidenceFor("pokemon-en", "pokemon-sku"), {
+    providerId: "ligapokemon",
+    providerLabel: "LigaPokémon",
+    sourceRunId: "dry-run-pokemon-new",
+    ligaIdentityKey: "pokemon-new",
+    categoryId: "pokemon-en",
+    sku: "pokemon-sku",
+    cardName: "Pokémon",
+    editionName: "Set",
+    editionCode: "SV1",
+    collectorNumber: "1",
+    variant: "Reverse Holofoil",
+    condition: "NM",
+    language: "EN",
+    observedAt: "2026-08-05T07:03:00.000Z",
+    consumerLowCentavos: 400,
+    consumerAverageCentavos: 410,
+    consumerHighCentavos: 420,
+    storeBuyLowCentavos: 130,
+    storeBuyAverageCentavos: 140,
+    storeBuyHighCentavos: 150,
+  });
+  assert.equal(repository.evidenceFor("onepiece-en", "onepiece-sku"), null);
+  database.close();
+});
+
 test("repository adopts one exact identity and quarantines Textless", () => {
   const directory = mkdtempSync(join(tmpdir(), "phronesis-regional-"));
   const pricing = new DatabaseSync(join(directory, "pricing.sqlite"));

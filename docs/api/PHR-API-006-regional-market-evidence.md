@@ -14,7 +14,7 @@ API / Market Evidence / Database / Business Rule
 
 ## Objective
 
-Expose LigaMagic and TCGplayer observations as separate, timestamped evidence and calculate cross-market economics only from official exchange-rate evidence and explicit cost inputs.
+Expose LigaMagic, LigaPokémon, and TCGplayer observations as separate, timestamped evidence and calculate cross-market economics only from official exchange-rate evidence and explicit cost inputs.
 
 ## Problem Statement
 
@@ -22,11 +22,13 @@ Raw `Compra` and `Venda` fields are valuable but semantically easy to reverse. C
 
 ## Proposed Solution
 
-Persist regional evidence with source semantics and freshness, plus official BCB PTAX FX and owner-managed cost profiles. `Compra` is Brazilian consumer retail evidence. `Venda` is a Brazilian store buy benchmark, not a guaranteed executable offer. Calculations expose gross and net spreads, missing-input reasons, and staleness.
+Persist regional evidence with provider/source semantics and freshness, plus official BCB PTAX FX and owner-managed cost profiles. `Compra` is Brazilian consumer retail evidence. `Venda` is a Brazilian store buy benchmark, not a guaranteed executable offer. Calculations expose gross and net spreads, missing-input reasons, and staleness.
 
 ## Functional Requirements
 
-- Preserve low, average, and high LigaMagic `Compra` and `Venda` observations in BRL.
+- Preserve low, average, and high LigaMagic and LigaPokémon `Compra` and `Venda` observations in BRL.
+- Read LigaMagic only for `magic-en` and LigaPokémon only for `pokemon-en`; unsupported catalogues return no regional evidence.
+- Require an exact promoted `MATCHED` crosswalk row, select the newest observation/reconciliation for the requested SKU, and return provider/source-run provenance plus optional condition/language.
 - Preserve TCGplayer market/listing/delivered observations in USD.
 - Use delivered/listing evidence as the US acquisition benchmark for US-to-Brazil analysis and market/listing evidence as the US resale benchmark for Brazil-to-US analysis; never reuse one side silently for both directions.
 - Store automatically refreshed official BCB PTAX closing buy/sell observations with provenance and last-good retention under `PHR-API-007`.
@@ -39,7 +41,7 @@ Persist regional evidence with source semantics and freshness, plus official BCB
 ## Reliability And Security
 
 - Last-good evidence survives failed refresh or rebuild.
-- Mutations require `INTELLIGENCE:ADMIN`; reads require `INTELLIGENCE:VIEW`.
+- Arbitrage mutations require `INTELLIGENCE:ADMIN`; arbitrage reads require `INTELLIGENCE:VIEW`. The selected-card evidence projection requires `VENDOR_WORKSPACE:VIEW` and remains read-only.
 - No provider credentials or browser-session state is returned to clients.
 - No marketplace transaction is executed.
 
@@ -55,8 +57,9 @@ Persist regional evidence with source semantics and freshness, plus official BCB
 - `PHR-API-005`
 - `PHR-API-003`
 - `PHR-API-007`
+- `PHR-API-013`
 
 ## Traceability
 
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
-- Last modified: 2026-07-30 for official BCB PTAX automation.
+- Last modified: 2026-08-07 for provider-aware Vendor Workspace LigaMagic/LigaPokémon evidence reads.

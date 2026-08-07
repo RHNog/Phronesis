@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented — Product Review Pending
+Implemented — Privately Live; Product Review Ready
 
 ## Priority
 
@@ -20,16 +20,32 @@ Make the selected-card decision useful for Brazilian vending immediately by show
 
 Vendor Workspace currently centres US-dollar catalogue evidence. Brazilian card-show decisions require the local market context without making the operator interpret raw export columns.
 
+The approved combined raw-card evidence composition was later regressed: PriceCharting became an always-expanded panel above TCGplayer values, while Liga evidence moved away from Snapshot evidence and into the separate Buying decision panel. The regional API also remained Magic-only even after an exact promoted LigaPokémon crosswalk became available. This makes the phone workflow long, obscures the primary raw-card comparison, and incorrectly suggests that PriceCharting graded evidence precedes TCGplayer/Liga raw-card evidence.
+
 ## Proposed Solution
 
-Extend the existing Buying Decision panel rather than creating a parallel engine. The immediate hierarchy is recommended offer, Brazilian market context, then secondary seller ask and detailed evidence. Pricing modes include quick-sale, market, and patient-listing views.
+Restore one selected-card raw-market evidence stack inside Snapshot evidence rather than creating another engine:
+
+1. TCGplayer plus the exact applicable Liga provider in one combined raw-card card.
+2. PriceCharting as a collapsed optional disclosure immediately below that combined card.
+3. Buying decision and seller ask remain separate decision controls and must not own the raw regional evidence panel.
+
+Magic uses LigaMagic; English Pokémon uses LigaPokémon. Other games show TCGplayer only. Regional reads use the promoted operational last-good snapshot and disclose provider, observation time, and source run ID. Pricing modes include quick-sale, market, and patient-listing views.
 
 ## Functional Requirements
 
 - Show LigaMagic consumer retail (`Compra`) and dealer buy benchmark (`Venda`) in BRL for the exact selected printing.
+- Show LigaPokémon consumer retail (`Compra`) and dealer buy benchmark (`Venda`) in BRL for an exact promoted English Pokémon printing, including its source condition and language when present.
+- Choose LigaMagic only for `magic-en`, LigaPokémon only for `pokemon-en`, and never imply Liga coverage for another catalogue.
+- Read the latest promoted last-good evidence already present in the operational pricing database. A failed or reauthentication-required acquisition must not erase or hide that snapshot.
+- Include the source provider and snapshot run ID in the regional evidence response and visible provenance.
 - Show source age and identity confidence before any recommendation.
 - Present recommended buy, quick-sale ask, market ask, and patient ask as explainable ranges.
 - Preserve the existing seller-asking-price comparison as secondary input.
+- Keep TCGplayer and Liga raw-card values inside one bordered `Raw-card market evidence` card in Snapshot evidence.
+- Place the PriceCharting card immediately after that combined card, closed by default, with a minimum 44-pixel summary control.
+- Do not issue a PriceCharting lookup until the disclosure is expanded; collapse must keep it secondary and reduce initial phone work.
+- PriceCharting values remain independent graded corroboration and never overwrite TCGplayer, Liga, artwork, or the offer reference.
 - Clearly distinguish unavailable, stale, unmatched, and ambiguous states.
 - Remain desktop-first with a single-column mobile adaptation.
 - Keep all four direction-specific cost inputs in Settings while allowing them to remain empty until the Product Owner defines policy.
@@ -45,10 +61,15 @@ Extend the existing Buying Decision panel rather than creating a parallel engine
 
 - Keyboard-accessible controls, semantic headings, visible focus, and non-colour status labels.
 - Desktop keeps evidence and decision visible together; mobile stacks recommendation before details.
+- On mobile, the selected-card order is identity/condition, combined TCGplayer/Liga raw-card card, collapsed PriceCharting disclosure, then later decision controls. No expanded PriceCharting grid may precede raw-card evidence.
 
 ## Acceptance Criteria
 
 - A matched fresh card exposes local evidence without manual catalogue switching.
+- A matched Magic card labels LigaMagic and the latest promoted LigaMagic snapshot run.
+- A matched Pokémon card labels LigaPokémon and the latest promoted LigaPokémon snapshot run.
+- The PriceCharting disclosure is closed on selection and appears after the combined TCGplayer/Liga card.
+- Expanding PriceCharting loads its evidence; leaving it closed performs no PriceCharting request.
 - No recommendation appears as certain when costs or evidence are incomplete.
 - Existing purchase evaluation and checkout paths remain unchanged unless the operator explicitly adds a line.
 - Empty costs are labelled as intentionally awaiting Product Owner policy and link the operator back to Settings.
@@ -63,10 +84,24 @@ Extend the existing Buying Decision panel rather than creating a parallel engine
 - `PHR-API-006`
 - `PHR-UX-011`
 - `PHR-WORKFLOW-006`
+- `PHR-API-010`
+- `PHR-API-013`
+- `PHR-UX-022`
 
 ## Traceability
 
 - Designer direction: `docs/design/PHR-UX-013-regional-vending-intelligence.md`.
 - Related implementation prompt: `docs/prompts/PHR-REGIONAL-INTELLIGENCE-20260730-prompt.md`.
-- Last modified: 2026-07-31.
-- Modification reason: Product Owner rejected direction-indistinguishable cards and required precise arbitrage targets plus closest-defensible catalogue matching.
+- Current revision work order: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
+- Last modified: 2026-08-07.
+- Modification reason: restore the previously approved combined TCGplayer/Liga evidence stack, add promoted LigaPokémon consumption, and return PriceCharting to a secondary collapsed position.
+
+## Implementation Evidence
+
+- Vendor Workspace now renders TCGplayer plus the applicable Liga provider inside one `Raw-card market evidence` card.
+- The provider-aware read model consumes only exact `MATCHED` rows and chooses the newest promoted observation/reconciliation for the requested SKU.
+- Live LigaMagic evidence resolves from last-good run `dry-run-20260730T203243818Z`; live LigaPokémon evidence resolves from run `dry-run-20260805T070105248Z` and preserves condition/language provenance.
+- PriceCharting is a closed-by-default disclosure immediately below the combined card, resets closed when selection changes, and begins its lookup only after expansion.
+- Validation: `docs/testing/PHR-UX-013-arbitrage-presentation-validation.md`.
+- Implementation report: `docs/implementation-reports/PHR-UX-013-vendor-evidence-composition-report.md`.
+- Same-session conformance: `docs/reviews/PHR-UX-013-vendor-evidence-composition-conformance-review.md`; Product Owner acceptance remains independent.

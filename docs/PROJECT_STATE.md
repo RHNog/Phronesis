@@ -1,11 +1,20 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-07 Vendor Workspace Regional Evidence State
+
+- `PHR-UX-013` is restored and privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.
+- Selected Magic and English Pokémon singles now show one `Raw-card market evidence` card containing TCGplayer plus LigaMagic or LigaPokémon respectively. Buying decision contains no duplicate regional panel.
+- Live LigaMagic reads use the newest complete last-good operational run `dry-run-20260730T203243818Z`. The later reauthentication-required acquisition state does not replace it. Live LigaPokémon reads use promoted run `dry-run-20260805T070105248Z` with condition/language provenance.
+- PriceCharting is directly below the combined card, closed on selection, lazy on expansion, and contains the single grading-certificate path. Live expansion returned provider candidates without changing raw-card valuation.
+- All 461 tests, TypeScript, warning-free lint, Next.js 16.2.12 production build, diff hygiene, live provider APIs, selection switching, lazy disclosure behavior, and 364-pixel evidence-column no-overflow checks pass.
+- No acquisition, reauthentication, crosswalk rebuild, credential mutation, transaction, or public deployment occurred. Product Owner visual acceptance is next.
+
 ## 2026-08-07 Provider Connections State
 
 - `PHR-UX-012` is rebuilt and privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/settings?panel=providers`.
 - LigaMagic and LigaPokémon lead the panel and read the canonical `PHR-API-013` receipt through a secret-free Administration-only projection. Current truth is LigaMagic `REAUTHENTICATION_REQUIRED` and LigaPokémon `SUCCESS` with promoted snapshot `dry-run-20260805T070105248Z`.
-- Market and valuation feeds now place PriceCharting immediately after JustTCG, before eBay Browse and CardTrader. Refresh status performs an uncached read and reports completion without reloading Settings.
+- Market and valuation feeds place PriceCharting immediately after JustTCG inside operational Settings. This is provider health/configuration context only; selected-card evidence placement is now restored separately under `PHR-UX-013`.
 - Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live HTTPS API, interaction, semantic order, and visual layout gates pass. No provider mutation or acquisition was run.
 
 ## 2026-08-07 Public Trusted Account Access State

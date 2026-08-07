@@ -1,7 +1,7 @@
 # PHR-API-010 — PriceCharting Graded Evidence
 
 ## Status
-Implemented — Credential Activation Pending
+Implemented — Privately Live; Independent Evidence Only
 
 ## Objective
 Add separately attributed graded-market evidence to Vendor Workspace without contaminating exact TCGplayer identity or artwork.
@@ -10,7 +10,7 @@ Add separately attributed graded-market evidence to Vendor Workspace without con
 PriceCharting requires a paid subscription and a private 40-character token transmitted as the `t` query parameter. The API is limited to one call per second; bulk CSV is limited to one call per ten minutes and generated daily. Prices are integer cents and current-only. Card keys represent Ungraded, grades 7/7.5, 8/8.5, 9, 9.5, PSA 10, BGS 10, CGC 10, and SGC 10. The documented Prices API exposes no artwork URL and therefore cannot close image gaps.
 
 ## Implemented Boundary
-Settings can securely register `PRICECHARTING_API_TOKEN`, provider health reports activation, and a selected single loads separately attributed Graded Area candidates. The owner explicitly authorized transmission through the vendor-required HTTPS `t` query parameter on 2026-08-01. A global request barrier enforces at least 1.05 seconds between calls, exact queries are cached for six hours, and collector/name screening occurs before detail calls.
+Settings can securely register `PRICECHARTING_API_TOKEN`, provider health reports activation, and a selected single exposes separately attributed Graded Area candidates through a disclosure immediately below the combined TCGplayer/Liga raw-card card. The disclosure is closed by default and performs no lookup until expanded. The owner explicitly authorized transmission through the vendor-required HTTPS `t` query parameter on 2026-08-01. A global request barrier enforces at least 1.05 seconds between calls, exact queries are cached for six hours, and collector/name screening occurs before detail calls.
 
 `PHR-API-011` separately specifies immutable bulk CSV receipts, collision-free local identity reconciliation, and active imported evidence. The live adapter remains a manual verification path and does not own bulk ingestion, scheduling, or canonical identity.
 
@@ -19,8 +19,9 @@ Settings can securely register `PRICECHARTING_API_TOKEN`, provider health report
 - Never expose the token to the browser, response body, UI state, or application logs.
 - Keep candidates untrusted until name, set, collector number, language, and variation are corroborated.
 - Never overwrite TCGplayer values or artwork; store PriceCharting as independent evidence.
+- Remain visually and operationally secondary to TCGplayer/Liga raw-card evidence: collapsed initially, loaded on expansion, and never positioned above the primary evidence card.
 
 ## Traceability
 - Official source: `https://www.pricecharting.com/api-documentation`
 - UI: `features/vendor/components/PriceChartingGradedArea.tsx`
-- Last modified: 2026-08-01
+- Last modified: 2026-08-07

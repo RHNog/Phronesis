@@ -7,9 +7,12 @@ The operator's first question is “What should I offer?” The second is “Why
 ## Vendor Workspace
 
 - Keep the existing three-column desktop workspace.
-- Add a compact `Brazil market` evidence band inside Buying Decision below the recommended offer.
+- Inside Snapshot evidence, use one `Raw-card market evidence` card containing the TCGplayer condition values followed by the exact regional band.
+- Label the combined heading `TCGplayer + LigaMagic pricing` for Magic and `TCGplayer + LigaPokémon pricing` for Pokémon. Other games remain `TCGplayer pricing`.
+- Put the PriceCharting card directly after the combined raw-card card. It is optional, closed by default, and loads only after expansion.
+- Do not place PriceCharting above TCGplayer/Liga evidence, and do not move raw regional evidence into the separate Buying decision controls.
 - Use two plainly named anchors: `Retail evidence (Compra)` and `Dealer-buy benchmark (Venda)`.
-- Put age, match state, and data-source timestamp beside the section title.
+- Put provider, age, exact match state, source timestamp, and promoted snapshot run beside the section title.
 - Use segmented pricing intent: `Quick sale`, `Market`, `Patient`.
 - Do not use green/red alone; every state needs a label and explanation.
 
@@ -29,6 +32,7 @@ The operator's first question is “What should I offer?” The second is “Why
 
 - Desktop: candidates left, selected economics centre, verification right.
 - Mobile: recommendation/economic state first, evidence second, verification action sticky near the bottom.
+- Vendor phone evidence: exact identity and material controls, combined TCGplayer/Liga card, collapsed PriceCharting disclosure, then later workflow controls. The collapsed summary remains at least 44 pixels tall.
 - Minimum 44px touch targets and no horizontal dependency.
 
 ## Empty And Risk States

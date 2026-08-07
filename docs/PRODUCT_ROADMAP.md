@@ -1,5 +1,12 @@
 # Product Roadmap
 
+## Product Review Candidate — Vendor Workspace Raw-Card Markets
+
+- A selected Magic or English Pokémon single now puts TCGplayer beside the applicable Brazilian raw-card provider in one decision card (`PHR-UX-013`).
+- Provider name, observation, promoted snapshot, and available source material make the local value auditable without leaving Vendor Workspace.
+- Optional PriceCharting graded evidence is collapsed immediately below the raw-card card and does no initial work until the operator asks for it (`PHR-API-010`).
+- Next: Product Owner validates the live hierarchy during real card buying. New LigaMagic acquisition remains a separate local reauthentication/operations task.
+
 ## Product Review Candidate — Provider Connections And Regional Health
 
 - Settings now presents LigaMagic and LigaPokémon first with their real local acquisition outcomes, then groups PriceCharting directly beside JustTCG as a valuation feed (`PHR-UX-012`).

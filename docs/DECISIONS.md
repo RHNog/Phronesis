@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — Raw-card markets stay together; PriceCharting stays secondary
+
+- **Status:** Implemented and privately live; Product Review ready (`PHR-UX-013`, `PHR-API-010`).
+- **Decision:** The selected-card Snapshot evidence owns one combined TCGplayer/Liga raw-card card. Magic uses LigaMagic, English Pokémon uses LigaPokémon, and unsupported catalogues receive no regional claim.
+- **Decision:** Consume only exact promoted operational matches, choose the newest observation/reconciliation for the requested SKU, expose source-run provenance, and retain last-good evidence when acquisition health is failed or reauthentication-required.
+- **Decision:** Place PriceCharting directly below the combined raw-card card as a closed, lazy disclosure. It remains independent graded corroboration and cannot own or overwrite raw-card valuation, artwork, or offers.
+- **Consequences:** The operator sees the two raw-card markets before optional graded detail; phone work is shorter, provider freshness is auditable, and Settings health no longer substitutes for the Vendor pricing workflow.
+
 ## 2026-08-07 — Regional acquisition health belongs in Provider Connections
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-UX-012`).

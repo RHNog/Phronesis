@@ -426,13 +426,68 @@ export class RegionalIntelligenceRepository {
   }
 
   evidenceFor(categoryId: string, sku: string): RegionalMarketEvidence | null {
-    const row = this.database
-      .prepare(
-        `SELECT e.*, c.category_id, c.sku FROM regional_crosswalk c JOIN regional_evidence e USING(liga_identity_key) WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?`,
-      )
-      .get(categoryId, sku) as Sql | undefined;
+    const row =
+      categoryId === "pokemon-en" &&
+      this.tableExists("regional_pokemon_crosswalk") &&
+      this.tableExists("regional_pokemon_evidence")
+        ? (this.database
+            .prepare(`
+          SELECT
+            'ligapokemon' AS provider_id,
+            c.source_run_id,
+            c.category_id,
+            c.sku,
+            e.liga_identity_key,
+            e.card_name,
+            e.set_name AS edition_name,
+            e.set_code AS edition_code,
+            e.collector_number,
+            e.variant,
+            e.condition_key,
+            e.language,
+            e.observed_at,
+            e.consumer_low_centavos,
+            e.consumer_average_centavos,
+            e.consumer_high_centavos,
+            e.store_buy_low_centavos,
+            e.store_buy_average_centavos,
+            e.store_buy_high_centavos
+          FROM regional_pokemon_crosswalk c
+          JOIN regional_pokemon_evidence e USING(liga_identity_key)
+          WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?
+          ORDER BY e.observed_at DESC, c.reconciled_at DESC, e.liga_identity_key
+          LIMIT 1
+        `)
+            .get(categoryId, sku) as Sql | undefined)
+        : categoryId === "magic-en"
+          ? (this.database
+              .prepare(`
+            SELECT
+              'ligamagic' AS provider_id,
+              c.source_run_id,
+              c.category_id,
+              c.sku,
+              e.*,
+              NULL AS condition_key,
+              NULL AS language
+            FROM regional_crosswalk c
+            JOIN regional_evidence e USING(liga_identity_key)
+            WHERE c.status='MATCHED' AND c.category_id=? AND c.sku=?
+            ORDER BY e.observed_at DESC, c.reconciled_at DESC, e.liga_identity_key
+            LIMIT 1
+          `)
+              .get(categoryId, sku) as Sql | undefined)
+          : undefined;
     if (!row) return null;
     return evidenceDto(row);
+  }
+
+  private tableExists(tableName: string): boolean {
+    return Boolean(
+      this.database
+        .prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?")
+        .get(tableName),
+    );
   }
 
   buildCrosswalk(
@@ -1825,7 +1880,15 @@ export function discoverLatestLigaSnapshot(
 }
 
 function evidenceDto(row: Sql): RegionalMarketEvidence {
+  const providerId =
+    String(row.provider_id) === "ligapokemon"
+      ? "ligapokemon"
+      : "ligamagic";
   return {
+    providerId,
+    providerLabel:
+      providerId === "ligapokemon" ? "LigaPokémon" : "LigaMagic",
+    sourceRunId: String(row.source_run_id),
     ligaIdentityKey: String(row.liga_identity_key),
     categoryId: String(row.category_id),
     sku: String(row.sku),
@@ -1834,6 +1897,8 @@ function evidenceDto(row: Sql): RegionalMarketEvidence {
     editionCode: String(row.edition_code),
     collectorNumber: String(row.collector_number),
     variant: String(row.variant),
+    condition: stringOrNull(row.condition_key),
+    language: stringOrNull(row.language),
     observedAt: String(row.observed_at),
     consumerLowCentavos: numberOrNull(row.consumer_low_centavos),
     consumerAverageCentavos: numberOrNull(row.consumer_average_centavos),

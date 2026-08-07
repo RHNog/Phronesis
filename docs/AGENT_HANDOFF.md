@@ -1,11 +1,20 @@
 # Agent Handoff
 
+## Product Review Candidate — Vendor Workspace Liga And PriceCharting Stack — 2026-08-07
+
+- `PHR-UX-013` is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.
+- The selected-card Snapshot evidence contains one TCGplayer + LigaMagic/LigaPokémon raw-card card. The provider-aware API returns only exact promoted matches and discloses provider, observation, source run, and Pokémon condition/language.
+- Magic currently resolves from latest complete last-good `dry-run-20260730T203243818Z`; Pokémon resolves from promoted `dry-run-20260805T070105248Z`. Acquisition health and usable last-good evidence are intentionally separate.
+- PriceCharting is closed by default immediately below the combined card, loads after expansion, resets closed when selection changes, and owns the single certificate lookup. Buying decision has no duplicate regional panel.
+- Full 461/461 tests, TypeScript, warning-free lint/build, diff hygiene, live APIs, live Magic/Pokémon selection, disclosure expansion, and 364-pixel evidence-column no-overflow/81-pixel summary checks pass.
+- No provider acquisition or credential change occurred. Next: Product Owner reviews the live Vendor Workspace. Same-session conformance is not independent approval.
+
 ## Product Review Candidate — Provider Connections And Regional Health — 2026-08-07
 
 - `PHR-UX-012` is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/settings?panel=providers` from branch `codex/phr-local-card-recognition-20260804`.
 - Regional marketplaces lead with LigaMagic and LigaPokémon. The Administration-only API reads the canonical `PHR-API-013` receipt and returns only allowlisted, path-redacted operational fields; Liga credential/profile controls remain local and absent from the page.
 - Current displayed evidence is LigaMagic `REAUTHENTICATION_REQUIRED` and LigaPokémon `SUCCESS` with snapshot `dry-run-20260805T070105248Z` promoted successfully.
-- JustTCG and PriceCharting now occupy the first valuation row; eBay Browse and CardTrader follow. Refresh status performs a fresh uncached read and announces the timestamp.
+- JustTCG and PriceCharting occupy the first Settings valuation row; eBay Browse and CardTrader follow. This placement describes provider health/configuration only; `PHR-UX-013` separately owns selected-card Vendor pricing composition.
 - Full 460/460 tests, TypeScript, warning-free lint/build, diff hygiene, live HTTPS API, Refresh interaction, semantic DOM, and visual card/order checks pass. No provider, credential, profile, snapshot, or public route was mutated.
 - Next: Product Owner reviews the live panel and completes LigaMagic reauthentication locally. Same-session conformance is not independent Product Owner approval.
 

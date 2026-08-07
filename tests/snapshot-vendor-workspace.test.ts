@@ -111,6 +111,20 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
     new URL("../app/vendor/page.tsx", import.meta.url),
     "utf8",
   );
+  const priceCharting = readFileSync(
+    new URL(
+      "../features/vendor/components/PriceChartingGradedArea.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const regionalPanel = readFileSync(
+    new URL(
+      "../features/vendor/components/RegionalMarketPanel.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
   const carousel = readFileSync(
     new URL("../components/cards/ProductArtworkCarousel.tsx", import.meta.url),
     "utf8",
@@ -128,6 +142,32 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
   assert.match(component, /Selection locked for evaluation/);
   assert.match(component, /Search another card/);
   assert.match(component, /PriceChartingGradedArea/);
+  assert.match(component, /data-combined-pricing-card/);
+  assert.match(component, /Raw-card market evidence/);
+  assert.match(component, /LigaMagic/);
+  assert.match(component, /LigaPokémon/);
+  assert.equal(component.match(/<RegionalMarketPanel/g)?.length, 1);
+  assert.ok(
+    component.indexOf("data-combined-pricing-card") <
+      component.indexOf("<RegionalMarketPanel"),
+  );
+  assert.ok(
+    component.indexOf("<RegionalMarketPanel") <
+      component.indexOf("<PriceChartingGradedArea"),
+  );
+  assert.ok(
+    component.indexOf("<PriceChartingGradedArea") <
+      component.indexOf("Buying decision"),
+  );
+  assert.match(priceCharting, /data-grading-disclosure/);
+  assert.match(priceCharting, /Optional evidence · PriceCharting/);
+  assert.match(priceCharting, /if \(!expanded\) return/);
+  assert.ok(
+    priceCharting.indexOf("if (!expanded) return") <
+      priceCharting.indexOf("/api/market/pricecharting"),
+  );
+  assert.match(regionalPanel, /evidence\.providerLabel/);
+  assert.match(regionalPanel, /Snapshot \{evidence\.sourceRunId\}/);
   assert.match(component, /Primary reference · TCG Direct Low/);
   assert.match(component, /tcgDirectLowCents/);
   assert.equal(component.match(/<VendorCheckout/g)?.length, 1);
@@ -195,5 +235,6 @@ test("Vendor Workspace is desktop-first, keyboard-operable, and mobile-adaptive 
   assert.match(checkout, /TCG Market/);
   assert.match(checkout, /Walk away/);
   assert.doesNotMatch(component, /function OfferFirstSummary/);
-  assert.match(component, /GradingCertificateLookup/);
+  assert.match(priceCharting, /GradingCertificateLookup/);
+  assert.doesNotMatch(component, /GradingCertificateLookup/);
 });

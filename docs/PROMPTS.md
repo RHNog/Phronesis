@@ -1,5 +1,13 @@
 # Prompt History
 
+## 2026-08-07 — Vendor Workspace Liga And PriceCharting Composition Restoration
+
+- Source: Product Owner corrected the scope mismatch and required LigaMagic/LigaPokémon inside Vendor Workspace, with PriceCharting as an expandable card below TCGplayer/Liga and the newest available LigaMagic snapshot.
+- Feature: additive `PHR-UX-013` restoration with `PHR-API-010` placement clarification.
+- Implementation prompt: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
+- Shortcut: recovered the previously approved composition from commit `dad5cb2`, then reconciled it with the current provider, certificate, authorization, and regional-data architecture.
+- Result: exact provider-aware Magic/Pokémon regional reads, visible source-run provenance, one combined raw-card card, lazy collapsed PriceCharting, private deployment, and 461/461 passing tests.
+
 ## 2026-08-07 — No-Client Public Trusted Account Access
 
 - Source: Product Owner required remote account creation and approved-module use without installing Tailscale.

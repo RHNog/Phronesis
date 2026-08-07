@@ -1,11 +1,24 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Vendor Workspace Liga And PriceCharting Evidence Stack
+
+- Assignment: `PHR-VENDOR-REGIONAL-EVIDENCE-20260807`
+- Feature: `PHR-UX-013`; related API placement contract: `PHR-API-010`
+- Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
+- Objective: show TCGplayer plus the exact applicable LigaMagic/LigaPokémon raw-card evidence inside Vendor Workspace, with PriceCharting as a collapsed optional card immediately below.
+- Data rule: read only exact promoted operational matches. Magic uses latest complete last-good run `dry-run-20260730T203243818Z`; Pokémon uses promoted run `dry-run-20260805T070105248Z`; failed acquisition health never replaces usable last-good evidence.
+- Composition rule: Snapshot evidence owns the combined raw-card card; Buying decision does not duplicate regional evidence; PriceCharting is closed on selection and loads only after expansion.
+- Work order: `docs/prompts/PHR-UX-013-vendor-evidence-composition-prompt.md`.
+- Verification: full 461/461 suite, TypeScript, warning-free lint/build, diff hygiene, live Magic/Pokémon APIs, live selection switching, expansion behavior, and 364-pixel evidence-column no-overflow/81-pixel summary checks pass.
+- Runtime: `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor`.
+- Next accountable role: Product Owner reviews the selected-card hierarchy. Same-session conformance is not independent approval.
+
 ## Active Revision — Provider Connections And Regional Acquisition Health
 
 - Assignment: `PHR-PROVIDER-CONNECTIONS-20260807`
 - Feature: `PHR-UX-012`
 - Status: `IMPLEMENTED AND PRIVATELY LIVE — PRODUCT REVIEW READY`
-- Objective: restore LigaMagic/LigaPokémon operational visibility and place PriceCharting correctly inside the focused Provider Connections panel.
+- Objective: expose LigaMagic/LigaPokémon acquisition health and semantic provider configuration inside the focused Provider Connections panel. This is operational Settings context, not the selected-card Vendor pricing surface.
 - Information architecture: Regional marketplaces first; Market and valuation feeds with JustTCG then PriceCharting; specialized services last.
 - Security rule: project only allowlisted `PHR-API-013` receipt fields behind `ADMINISTRATION:VIEW`; keep Liga profiles, credentials, reauthentication, and acquisition local and outside browser controls.
 - Work order: `docs/prompts/PHR-UX-012-provider-connections-settings-prompt.md`.

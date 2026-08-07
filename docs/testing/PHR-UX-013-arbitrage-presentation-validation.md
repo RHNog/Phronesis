@@ -1,5 +1,17 @@
 # PHR-UX-013 — Arbitrage Presentation Validation
 
+## 2026-08-07 — Vendor Evidence Composition Restoration
+
+- All 461 repository tests pass. Focused coverage verifies newest exact matched evidence for both LigaMagic and LigaPokémon, provider/run provenance, condition/language preservation, unsupported-category fail-closed behavior, one combined raw-card card, and lazy PriceCharting placement.
+- Standalone TypeScript, warning-free ESLint, the Next.js 16.2.12 production build, and diff hygiene pass.
+- The deployed Magic evidence Route Handler returns `LigaMagic`, card `+2 Mace`, and last-good run `dry-run-20260730T203243818Z` observed `2026-07-30T20:35:52.915Z`.
+- The deployed Pokémon evidence Route Handler returns `LigaPokémon`, card `AZ`, run `dry-run-20260805T070105248Z`, and exact `Reverse Holofoil · NM · EN` source material observed `2026-08-05T07:03:05.790Z`.
+- Live Vendor Workspace review confirms Pokémon renders `TCGplayer + LigaPokémon pricing`, then the provider evidence and closed PriceCharting disclosure; Magic renders the equivalent LigaMagic stack and resets PriceCharting closed on the new selection.
+- Expanding PriceCharting changes the summary from `Expand` to `Collapse`, then resolves live graded candidates. Closed initial state contains no graded content, matching the guarded fetch contract.
+- At the live 1280×720 review, the selected evidence column is 364.22 pixels wide. Both the combined card and PriceCharting disclosure report equal client/scroll widths (`362/362`), and the collapsed summary is 81 pixels high. This supplies a narrow-column no-overflow/touch-target check without claiming a separate emulated phone viewport.
+- The private `:9444` service was rebuilt and restarted on the exact `127.0.0.1:3200` listener; the separate public gateway remained untouched.
+- No provider acquisition, reauthentication, crosswalk rebuild, credential mutation, transaction, or public deployment occurred.
+
 ## 2026-07-31
 
 - The complete 271-test behavioral suite passes, including 17 focused regional intelligence cases.
