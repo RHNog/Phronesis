@@ -1,5 +1,15 @@
 # Agent Handoff
 
+## Confidential LoreShard Brand Decision — 2026-08-07
+
+- `PHR-BRAND-001` records LoreShard as the intended future public master-brand candidate with **GO WITH CONDITIONS** status pending U.S. and Brazilian counsel clearance.
+- Phronesis remains the internal codename and active build identity. Do not rename source, packages, apps, UI, repositories, deployments, environments, domains, or public assets.
+- LoreShard remains confidential and unlaunched. Do not publish, deploy, register, expose through SEO/DNS/landing pages, or represent it as legally cleared.
+- The founder reports acquiring `loreshard.com` and `loreshard.com.br`; independent control/renewal verification remains open.
+- Read `docs/brand/loreshard/README.md`, `13_AGENT_CONTEXT.md`, `08_TRADEMARK_USAGE_RULES.md`, `09_LAUNCH_GATES.md`, and `docs/adr/ADR-0001-loreshard-future-public-brand.md` before brand-related work.
+- Never use lore shards, market shards, data shards, evidence shards, or shards as generic product vocabulary. Use market signals, source observations, or market evidence.
+- Next: obtain counsel clearance, complete the namespace sweep, develop a private identity system, and approve a migration plan before any public action.
+
 ## Product Review Candidate — Buyer Cart Clear And Purchase Photos — 2026-08-07
 
 - The additive `PHR-UX-020` revision is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from `codex/phr-local-card-recognition-20260804`.

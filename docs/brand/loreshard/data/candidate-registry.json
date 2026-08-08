@@ -1,0 +1,952 @@
+[
+  {
+    "name": "LoreShard",
+    "family": "Lore",
+    "status": "WORKING_FINALIST",
+    "status_reason": "Strongest surviving compound; GO WITH CONDITIONS pending counsel.",
+    "concept": "Accumulated knowledge assembled from fragments.",
+    "pros": [
+      "Collector-native metaphor",
+      "Supports master-brand architecture",
+      "Reported .com and .com.br acquisition"
+    ],
+    "cons": [
+      "Natural fantasy vocabulary",
+      "Crowded component roots"
+    ],
+    "known_risks": [
+      "Fantasy/game usage",
+      "SHARD technical meaning",
+      "Moderate U.S. and Brazil risk"
+    ],
+    "domain_notes": "Founder reports loreshard.com and loreshard.com.br acquired; control not independently verified.",
+    "legal_notes": "Preliminary only; U.S. and Brazilian counsel clearance required.",
+    "current_role": "Intended future public master brand",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LiraWise",
+    "family": "Lira",
+    "status": "FALLBACK",
+    "status_reason": "Prior review was conditional, but founder resonance is weak.",
+    "concept": "Elegant practical wisdom.",
+    "pros": [
+      "Broad",
+      "Continuity with Phronesis"
+    ],
+    "cons": [
+      "Abstract",
+      "Wise fintech shadow"
+    ],
+    "known_risks": [
+      "LIRA/LYRA AI crowding",
+      "currency association"
+    ],
+    "domain_notes": "Availability must be rechecked if revived.",
+    "legal_notes": "No legal clearance; new search required.",
+    "current_role": "Fallback only",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MarketShard",
+    "family": "Shard",
+    "status": "CONCEPT_RETAINED_NAME_REJECTED",
+    "status_reason": "Name rejected; strategic thesis retained.",
+    "concept": "Fragmented markets assembled into intelligence.",
+    "pros": [
+      "Produced 'No single price is the market'"
+    ],
+    "cons": [
+      "Near MarketSharp",
+      "technical/crypto root"
+    ],
+    "known_risks": [
+      "phonetic confusion",
+      "SEO confusion"
+    ],
+    "domain_notes": "Domain position not relied upon.",
+    "legal_notes": "Do not adopt without a new legal review.",
+    "current_role": "Retained concept, rejected name",
+    "do_not_suggest": false
+  },
+  {
+    "name": "ArgoWise",
+    "family": "Argo",
+    "status": "HEAVY_HOLD",
+    "status_reason": "CargoWise and Argo ecosystem create unacceptable confusion burden.",
+    "concept": "Mission and practical wisdom.",
+    "pros": [
+      "Mythic voyage",
+      "Broad"
+    ],
+    "cons": [
+      "Contained visually in CargoWise",
+      "Brazil automobile noise"
+    ],
+    "known_risks": [
+      "software crowding",
+      "phonetic/visual conflict"
+    ],
+    "domain_notes": "Availability not relied upon.",
+    "legal_notes": "Do not suggest unless founder explicitly requests; new search required.",
+    "current_role": "Dormant heavy hold",
+    "do_not_suggest": true
+  },
+  {
+    "name": "PallasMind",
+    "family": "Pallas",
+    "status": "HOLD",
+    "status_reason": "Best Pallas survivor, but root is crowded.",
+    "concept": "Strategic intelligence.",
+    "pros": [
+      "Wisdom association"
+    ],
+    "cons": [
+      "Crowded root"
+    ],
+    "known_risks": [
+      "AI/software use",
+      "machine-vision adjacency"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "No clearance.",
+    "current_role": "Paused alternative",
+    "do_not_suggest": false
+  },
+  {
+    "name": "PallasPraxis",
+    "family": "Pallas",
+    "status": "HOLD",
+    "status_reason": "Obvious construction and crowded root.",
+    "concept": "Strategic wisdom applied.",
+    "pros": [
+      "Action-oriented"
+    ],
+    "cons": [
+      "Stiff compound"
+    ],
+    "known_risks": [
+      "Pallas crowding"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "No clearance.",
+    "current_role": "Paused alternative",
+    "do_not_suggest": false
+  },
+  {
+    "name": "PallasMetron",
+    "family": "Pallas",
+    "status": "HOLD",
+    "status_reason": "Measurement fit did not overcome root crowding.",
+    "concept": "Strategic measure.",
+    "pros": [
+      "Analytical"
+    ],
+    "cons": [
+      "Unfamiliar",
+      "crowded root"
+    ],
+    "known_risks": [
+      "Pallas crowding"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "No clearance.",
+    "current_role": "Paused alternative",
+    "do_not_suggest": false
+  },
+  {
+    "name": "PallasAegis",
+    "family": "Pallas",
+    "status": "HOLD",
+    "status_reason": "Mythic pairing is narrow and obvious.",
+    "concept": "Strategic protection.",
+    "pros": [
+      "Strong mythic logic"
+    ],
+    "cons": [
+      "Defensive rather than commercial"
+    ],
+    "known_risks": [
+      "Pallas crowding"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "No clearance.",
+    "current_role": "Paused alternative",
+    "do_not_suggest": false
+  },
+  {
+    "name": "CurioLogic",
+    "family": "Curio",
+    "status": "HOLD",
+    "status_reason": "CURIO collectible identification and valuation adjacency raised affiliation risk.",
+    "concept": "Collectible object plus reasoning.",
+    "pros": [
+      "Clear category meaning"
+    ],
+    "cons": [
+      "Potential extension perception"
+    ],
+    "known_risks": [
+      "active adjacent CURIO use"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "Abandoned due preliminary conflict risk.",
+    "current_role": "Abandoned hold",
+    "do_not_suggest": false
+  },
+  {
+    "name": "Skopos",
+    "family": "Greek",
+    "status": "NO_GO",
+    "status_reason": "Occupied and crowded across relevant services.",
+    "concept": "Aim, target, observer.",
+    "pros": [
+      "Excellent meaning"
+    ],
+    "cons": [
+      "Crowded"
+    ],
+    "known_risks": [
+      "software",
+      "finance",
+      "research",
+      "apps"
+    ],
+    "domain_notes": "Occupied-domain findings were preliminary.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "Pharos",
+    "family": "Greek",
+    "status": "NO_GO",
+    "status_reason": "Crowded enterprise and software use.",
+    "concept": "Lighthouse and beacon.",
+    "pros": [
+      "Guidance metaphor"
+    ],
+    "cons": [
+      "Crowded"
+    ],
+    "known_risks": [
+      "software marks",
+      "IT companies"
+    ],
+    "domain_notes": "Availability not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "Cerno",
+    "family": "Latin",
+    "status": "NO_GO",
+    "status_reason": "Active decision-management and BI adjacency.",
+    "concept": "Discern, perceive, decide.",
+    "pros": [
+      "Excellent decision meaning"
+    ],
+    "cons": [
+      "Direct sector conflict"
+    ],
+    "known_risks": [
+      "AI use",
+      "BI use"
+    ],
+    "domain_notes": "Availability not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "Arbiter",
+    "family": "Latin",
+    "status": "NO_GO",
+    "status_reason": "Crowded decision software and AI infrastructure.",
+    "concept": "Judge or decision-maker.",
+    "pros": [
+      "Authority"
+    ],
+    "cons": [
+      "Generic/crowded"
+    ],
+    "known_risks": [
+      "software use",
+      "AI use"
+    ],
+    "domain_notes": "Availability not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "Specula",
+    "family": "Latin",
+    "status": "ABANDONED",
+    "status_reason": "Weak fit and unwanted associations.",
+    "concept": "Watchtower or lookout.",
+    "pros": [
+      "Observation"
+    ],
+    "cons": [
+      "Poor resonance"
+    ],
+    "known_risks": [
+      "unwanted semantic associations"
+    ],
+    "domain_notes": "Not material.",
+    "legal_notes": "Abandoned before legal reliance.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetisWise",
+    "family": "Metis",
+    "status": "NO_GO",
+    "status_reason": "Exact MetisWISE footprint, root crowding, and cultural sensitivity.",
+    "concept": "Cunning practical wisdom.",
+    "pros": [
+      "Strong concept"
+    ],
+    "cons": [
+      "Cultural and collision risk"
+    ],
+    "known_risks": [
+      "Métis identity sensitivity",
+      "software crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; do not revive.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetisValue",
+    "family": "Metis",
+    "status": "NO_GO",
+    "status_reason": "METIS crowding and cultural sensitivity.",
+    "concept": "Wisdom applied to value.",
+    "pros": [
+      "Commercial meaning"
+    ],
+    "cons": [
+      "Cultural and collision risk"
+    ],
+    "known_risks": [
+      "Métis identity sensitivity",
+      "software crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; do not revive.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetisProof",
+    "family": "Metis",
+    "status": "NO_GO",
+    "status_reason": "METIS crowding and cultural sensitivity.",
+    "concept": "Wisdom and evidence.",
+    "pros": [
+      "Confidence framing"
+    ],
+    "cons": [
+      "Cultural and collision risk"
+    ],
+    "known_risks": [
+      "Métis identity sensitivity",
+      "software crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; do not revive.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "CardMetis",
+    "family": "Metis",
+    "status": "NO_GO",
+    "status_reason": "METIS crowding, cultural sensitivity, and card-only limitation.",
+    "concept": "Card intelligence.",
+    "pros": [
+      "Category clarity"
+    ],
+    "cons": [
+      "Narrow",
+      "cultural risk"
+    ],
+    "known_risks": [
+      "Métis identity sensitivity",
+      "software crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; do not revive.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetiLens",
+    "family": "Meti",
+    "status": "NO_GO",
+    "status_reason": "Every Meti_____ construction carries explicit Portuguese vulgar-language risk.",
+    "concept": "Compact intelligence lens.",
+    "pros": [
+      "Short"
+    ],
+    "cons": [
+      "Portuguese vulgarity risk"
+    ],
+    "known_risks": [
+      "language harm",
+      "brand embarrassment"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Rejected before legal reliance.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetiPilot",
+    "family": "Meti",
+    "status": "NO_GO",
+    "status_reason": "Every Meti_____ construction carries explicit Portuguese vulgar-language risk.",
+    "concept": "Decision navigation.",
+    "pros": [
+      "Operational"
+    ],
+    "cons": [
+      "Portuguese vulgarity risk"
+    ],
+    "known_risks": [
+      "language harm",
+      "brand embarrassment"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Rejected before legal reliance.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MetiValue",
+    "family": "Meti",
+    "status": "NO_GO",
+    "status_reason": "Every Meti_____ construction carries explicit Portuguese vulgar-language risk.",
+    "concept": "Value intelligence.",
+    "pros": [
+      "Commercial"
+    ],
+    "cons": [
+      "Portuguese vulgarity risk"
+    ],
+    "known_risks": [
+      "language harm",
+      "brand embarrassment"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Rejected before legal reliance.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LiraSight",
+    "family": "Lira",
+    "status": "MODULE_ONLY",
+    "status_reason": "Sight/site ambiguity weakens master-brand use.",
+    "concept": "Elegant foresight.",
+    "pros": [
+      "Evocative"
+    ],
+    "cons": [
+      "Brazil pronunciation ambiguity"
+    ],
+    "known_risks": [
+      "phonetic leakage"
+    ],
+    "domain_notes": "Must be rechecked if used.",
+    "legal_notes": "No clearance.",
+    "current_role": "Possible module only",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LiraSense",
+    "family": "Lira",
+    "status": "NO_GO",
+    "status_reason": "LyraSense/LiraSense-style software collision.",
+    "concept": "Elegant perception.",
+    "pros": [
+      "Accessible"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "active software use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "RuneLens",
+    "family": "Fantasy artifact",
+    "status": "NO_GO",
+    "status_reason": "Exact or near-exact game-context OCR/analysis software surfaced.",
+    "concept": "Artifact-like analysis.",
+    "pros": [
+      "Collector resonance"
+    ],
+    "cons": [
+      "Direct adjacency"
+    ],
+    "known_risks": [
+      "software collision",
+      "game context"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Do not revive",
+    "do_not_suggest": false
+  },
+  {
+    "name": "OrionProof",
+    "family": "Celestial",
+    "status": "NO_GO",
+    "status_reason": "Poor master-brand fit and collision concerns.",
+    "concept": "Celestial evidence.",
+    "pros": [
+      "Evocative"
+    ],
+    "cons": [
+      "Awkward compound"
+    ],
+    "known_risks": [
+      "name crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "MarketLore",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Reported taken or premium.",
+    "concept": "Market memory.",
+    "pros": [
+      "Direct thesis"
+    ],
+    "cons": [
+      "Unavailable"
+    ],
+    "known_risks": [
+      "domain/name conflict"
+    ],
+    "domain_notes": "Reported taken/premium; not independently verified.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "TradeLore",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Reported active use.",
+    "concept": "Commerce knowledge.",
+    "pros": [
+      "Dealer-native"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "active use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreLens",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Active traces surfaced.",
+    "concept": "Knowledge focus.",
+    "pros": [
+      "Clear metaphor"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "active use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreLogic",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Trademark or product footprints made it unclean.",
+    "concept": "Knowledge reasoning.",
+    "pros": [
+      "Clear"
+    ],
+    "cons": [
+      "Generic compound"
+    ],
+    "known_risks": [
+      "product footprints"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "TrueLore",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Authentication and provenance adjacency.",
+    "concept": "Authentic knowledge.",
+    "pros": [
+      "Trust"
+    ],
+    "cons": [
+      "Potential conflict"
+    ],
+    "known_risks": [
+      "authentication marks"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "DeepLore",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "AI/company collision.",
+    "concept": "Deep knowledge.",
+    "pros": [
+      "AI resonance"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "company use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreOS",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Active products surfaced.",
+    "concept": "Knowledge operating system.",
+    "pros": [
+      "Platform breadth"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "software products"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreGuild",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Exact active use surfaced.",
+    "concept": "Knowledge community.",
+    "pros": [
+      "Belonging"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "active use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreHouse",
+    "family": "Lore",
+    "status": "HOLD",
+    "status_reason": "Existing uses and weak leadership position.",
+    "concept": "Home for knowledge.",
+    "pros": [
+      "Broad"
+    ],
+    "cons": [
+      "Crowded"
+    ],
+    "known_risks": [
+      "existing uses"
+    ],
+    "domain_notes": "Must be rechecked.",
+    "legal_notes": "No clearance.",
+    "current_role": "Not leading",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreForge",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Active worldbuilding or fiction product.",
+    "concept": "Knowledge creation.",
+    "pros": [
+      "Artifact metaphor"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "worldbuilding product"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreKeeper",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Active TTRPG and worldbuilding tools.",
+    "concept": "Knowledge custody.",
+    "pros": [
+      "Collection fit"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "TTRPG tools"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreCraft",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Warcraft and TTRPG crowding.",
+    "concept": "Knowledge craftsmanship.",
+    "pros": [
+      "Skill"
+    ],
+    "cons": [
+      "Crowded"
+    ],
+    "known_risks": [
+      "gaming use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreMind",
+    "family": "Lore",
+    "status": "ABANDONED",
+    "status_reason": "Generic AI suffix lacked distinction.",
+    "concept": "Knowledge intelligence.",
+    "pros": [
+      "Clear"
+    ],
+    "cons": [
+      "Generic"
+    ],
+    "known_risks": [
+      "AI crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Abandoned.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreWise",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Wise fintech and software shadow.",
+    "concept": "Knowledge wisdom.",
+    "pros": [
+      "Phronesis continuity"
+    ],
+    "cons": [
+      "Brand shadow"
+    ],
+    "known_risks": [
+      "Wise conflict"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreSense",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Sense/LyraSense collision pattern.",
+    "concept": "Knowledge perception.",
+    "pros": [
+      "Accessible"
+    ],
+    "cons": [
+      "Collision pattern"
+    ],
+    "known_risks": [
+      "software crowding"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreAtlas",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Active app surfaced.",
+    "concept": "Knowledge map.",
+    "pros": [
+      "Comprehensive"
+    ],
+    "cons": [
+      "Collision"
+    ],
+    "known_risks": [
+      "app use"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreX",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Lorex security-camera collision.",
+    "concept": "Compact technology name.",
+    "pros": [
+      "Short"
+    ],
+    "cons": [
+      "Phonetic collision"
+    ],
+    "known_risks": [
+      "major adjacent brand"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreMark",
+    "family": "Lore",
+    "status": "ABANDONED",
+    "status_reason": "Reads like lorem or placeholder.",
+    "concept": "Knowledge mark.",
+    "pros": [
+      "Provenance idea"
+    ],
+    "cons": [
+      "Spelling trap"
+    ],
+    "known_risks": [
+      "semantic confusion"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Abandoned.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreEdge",
+    "family": "Lore",
+    "status": "ABANDONED",
+    "status_reason": "Spelling trap and generic advantage suffix.",
+    "concept": "Knowledge advantage.",
+    "pros": [
+      "Commercial"
+    ],
+    "cons": [
+      "Weak distinctiveness"
+    ],
+    "known_risks": [
+      "spelling confusion"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "Abandoned.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreSage",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Sage commerce/software brand shadow.",
+    "concept": "Knowledge wisdom.",
+    "pros": [
+      "Fits archetype"
+    ],
+    "cons": [
+      "Major brand shadow"
+    ],
+    "known_risks": [
+      "software conflict"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  },
+  {
+    "name": "LoreStand",
+    "family": "Lore",
+    "status": "NO_GO",
+    "status_reason": "Stand/estande implies a booth in Brazil.",
+    "concept": "Knowledge position.",
+    "pros": [
+      "Simple"
+    ],
+    "cons": [
+      "Wrong category signal"
+    ],
+    "known_risks": [
+      "Portuguese semantic issue"
+    ],
+    "domain_notes": "Not relied upon.",
+    "legal_notes": "No clearance; rejected.",
+    "current_role": "Closed",
+    "do_not_suggest": false
+  }
+]

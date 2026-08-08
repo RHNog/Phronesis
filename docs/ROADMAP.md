@@ -1,5 +1,15 @@
 # Roadmap
 
+## Confidential Future Brand Program: LoreShard
+
+- Completed: authoritative private archive, naming history, candidate/risk datasets, positioning, usage doctrine, proposed module architecture, launch gates, agent context, and counsel brief (`PHR-BRAND-001`, `ADR-0001`).
+- Current status: **GO WITH CONDITIONS** from preliminary desk research; LoreShard is not legally cleared and not public.
+- Preserved: Phronesis remains the internal codename and active build identity; no product or technical rename is authorized.
+- Gate 1: U.S. and Brazilian counsel search and filing strategy across likely Classes 9, 35, 36, and 42.
+- Gate 2: app-store, GitHub, npm, PyPI, Docker, social, and defensive-domain sweep.
+- Gates 3–5: private identity approval, migration plan, and controlled pre-launch strategy.
+- Gate 6: public launch only after all earlier evidence and explicit founder approval.
+
 ## Product Review Candidate: Personal Market Intelligence
 
 - Implemented and privately live: provider-specific 7D, 30D, 3M, and 1Y movement for TCGplayer, LigaMagic/LigaPokémon, and PriceCharting without currency merging or fabricated history (`PHR-API-017`, `PHR-UX-013`).

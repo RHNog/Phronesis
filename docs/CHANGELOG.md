@@ -5,6 +5,8 @@
 
 ### Added
 
+- Confidential LoreShard future-public-brand decision archive with naming history, candidate and risk datasets, positioning, usage doctrine, proposed product architecture, launch gates, domain stewardship, visual/voice direction, agent context, counsel brief, and ADR; Phronesis remains the active internal identity and public launch remains counsel-gated (`PHR-BRAND-001`).
+
 - Operator-scoped Buyer Cart clearing plus one private, content-validated purchase photo per exact or Bulk line; Bulk intake now selects/previews the picture before submission, with receipt retention and draft-object retirement (`PHR-UX-020`).
 
 - Provider-specific 7D/30D/3M/1Y price movement for retained TCGplayer, LigaMagic/LigaPokémon, and PriceCharting evidence, with separate currencies/lanes, honest one-point states, and responsive accessible controls (`PHR-API-017`, `PHR-UX-013`).

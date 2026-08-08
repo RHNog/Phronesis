@@ -12,6 +12,12 @@ Phronesis Product Identity and Repository Continuity
 
 Completed
 
+## 2026-08-07 Brand Boundary Amendment
+
+`PHR-BRAND-001` records **LoreShard** as the intended future public master-brand candidate with **GO WITH CONDITIONS** status pending U.S. and Brazilian counsel clearance. This does not supersede the present-tense identity contract in this architecture record: Phronesis remains the internal codename, active build identity, package/repository identity, application title, and current user-facing name until an independently approved migration plan is executed.
+
+No source, package, app, UI, repository, deployment, environment, domain, or public-asset rename is authorized by the LoreShard decision archive. Public launch remains separately gated.
+
 ## Priority
 
 Critical
@@ -99,6 +105,7 @@ This is a mechanical identity migration. Do not reinterpret the architecture or 
 ## Open Questions
 
 - Whether the external Git host repository and local checkout directory should be renamed in a separately coordinated operation.
+- Which Phronesis identifiers should remain permanently internal if the LoreShard public migration is approved.
 
 ## Traceability
 
@@ -106,5 +113,5 @@ This is a mechanical identity migration. Do not reinterpret the architecture or 
 - Related implementation prompt: `docs/prompts/PHR-ARCH-010-implementation-prompt.md`.
 - Related tests: `docs/testing/PHR-ARCH-010-product-identity-validation.md`.
 - Related release notes: `docs/release-notes/PHR-ARCH-010.md`.
-- Last modified: 2026-07-22.
-- Modification reason: Establish Phronesis as the sole repository identity.
+- Last modified: 2026-08-07.
+- Modification reason: Preserve Phronesis as the active technical identity while recording LoreShard as a confidential, counsel-gated future public-brand candidate.

@@ -1,8 +1,6 @@
 # Project Phronesis
 
-Project Phronesis is the engineering initiative responsible for building the Phronesis platform.
-
-It is not necessarily the future customer-facing product name.
+Project Phronesis is the engineering initiative responsible for building the Phronesis platform. LoreShard is the intended future public brand candidate, but remains confidential, counsel-gated, and unlaunched.
 
 ## Name Origin
 
@@ -52,15 +50,15 @@ It does not rename:
 - Imports.
 - Namespaces.
 - The legal entity.
-- The future commercial product.
+- The confidential LoreShard future-public-brand decision.
 - The application title.
 - GitHub assets.
 
 ## Not The Product Name
 
-The future customer-facing commercial product name remains intentionally undecided.
+LoreShard is the intended future customer-facing master-brand candidate under `PHR-BRAND-001`, with **GO WITH CONDITIONS** status pending U.S. and Brazilian counsel clearance.
 
-Project Phronesis can inform brand philosophy, but it should not be assumed to be the market-facing brand. The platform may eventually operate under a different commercial name that is easier to sell, remember, spell, or position.
+Project Phronesis informs the brand philosophy and remains the active internal build identity. No market-facing use or technical migration is authorized until the LoreShard launch gates and explicit founder approval are complete.
 
 ## Identity Model
 
@@ -71,7 +69,7 @@ Legal Entity
   -> Phronesis
 
 Future Commercial Product
-  -> intentionally undecided
+  -> LoreShard (intended; confidential and counsel-gated)
 
 Engineering Initiative
   -> Project Phronesis
@@ -79,7 +77,7 @@ Engineering Initiative
 
 These identities evolve independently.
 
-Phronesis can remain the legal or organizational container. The commercial product can be named later. Project Phronesis can remain the engineering initiative and philosophical anchor regardless of the eventual brand.
+Phronesis remains the internal and organizational container. Project Phronesis remains the engineering initiative and philosophical anchor while LoreShard proceeds through legal, namespace, identity, migration, and launch gates.
 
 ## Engineering Philosophy
 
@@ -123,7 +121,7 @@ For partnership, investor, provider, or integration discussions, describe Projec
 
 > The internal engineering initiative responsible for building an evidence-driven decision intelligence platform for collectible markets.
 
-Avoid presenting Project Phronesis as the commercial brand unless a future brand decision explicitly chooses it.
+Avoid presenting Project Phronesis as the future commercial brand. Do not disclose LoreShard or imply legal clearance until public launch is explicitly authorized.
 
 ## Documentation Usage
 

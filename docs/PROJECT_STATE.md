@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"PROJECT_STATE","owner":"human-and-agent","schema_version":"1"} -->
 # Project State
 
+## 2026-08-07 Confidential LoreShard Brand State
+
+- `PHR-BRAND-001` is the authoritative private archive for **LoreShard**, the intended future public master-brand candidate.
+- LoreShard is not public and carries **GO WITH CONDITIONS** status from preliminary desk research, not legal clearance. Formal U.S. and Brazilian counsel review remains required.
+- The founder reports acquiring `loreshard.com` and `loreshard.com.br`; registrar control and renewal posture remain a manual verification item.
+- **Phronesis remains the internal codename and active build identity.** No source, package, application, UI, repository, deployment, environment, domain, or public-asset rename is authorized.
+- The archive includes complete naming history, candidate and risk registries, positioning, proposed module architecture, trademark usage rules, launch gates, domain stewardship, visual/voice direction, agent context, and a counsel brief.
+
 ## 2026-08-07 Buyer Cart Clear And Purchase Photo State
 
 - The additive `PHR-UX-020` revision is privately live at `https://ramons-mac-studio.tailaa2d39.ts.net:9444/vendor` from branch `codex/phr-local-card-recognition-20260804`.

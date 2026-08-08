@@ -1,0 +1,291 @@
+{
+  "metadata": {
+    "document_id": "PHR-BRAND-001-RISKS-DATA",
+    "status": "INTERNAL — CONFIDENTIAL — PRE-LAUNCH BRAND STRATEGY",
+    "last_updated": "2026-08-07",
+    "legal_notice": "PRELIMINARY BRAND STRATEGY / NOT LEGAL ADVICE — HUMAN / COUNSEL VERIFICATION REQUIRED",
+    "severity_values": [
+      "LOW",
+      "MODERATE",
+      "HIGH",
+      "CRITICAL"
+    ]
+  },
+  "risks": [
+    {
+      "risk": "USPTO refusal",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Weak/crowded roots and possible descriptiveness.",
+      "mitigation": "Full search, registrability opinion, and filing strategy.",
+      "owner": "U.S. trademark counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Written U.S. counsel memo"
+    },
+    {
+      "risk": "INPI refusal",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Brazil register and local use are not cleared.",
+      "mitigation": "INPI and market search.",
+      "owner": "Brazil trademark counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Written Brazil counsel memo"
+    },
+    {
+      "risk": "Opposition",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Owners of related LORE or SHARD marks may object.",
+      "mitigation": "Similarity analysis and watch plan.",
+      "owner": "Trademark counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Search results or publication"
+    },
+    {
+      "risk": "Cease-and-desist",
+      "probability": "LOW_MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Common-law or sector users may assert rights.",
+      "mitigation": "Common-law search and staged rollout.",
+      "owner": "Counsel and founder",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Conflicting use discovered"
+    },
+    {
+      "risk": "Common-law conflict",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Unregistered use may not appear in registers.",
+      "mitigation": "Web, trade, marketplace, and entity search.",
+      "owner": "U.S. trademark counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Common-law search complete"
+    },
+    {
+      "risk": "Existing fantasy/game usage",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "HIGH",
+      "evidence_rationale": "Lore shard(s) is natural fantasy/game vocabulary.",
+      "mitigation": "Search variants and use strong source-identifying presentation.",
+      "owner": "Counsel and brand lead",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Counsel and app-store sweep"
+    },
+    {
+      "risk": "Existing software/app use",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Adjacent apps may use related roots.",
+      "mitigation": "Software, app, company, and repository sweep.",
+      "owner": "Counsel and product lead",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Namespace sweep"
+    },
+    {
+      "risk": "SHARD technical/generic risk",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "HIGH",
+      "evidence_rationale": "Shard is common in databases and distributed systems.",
+      "mitigation": "Never name generic units shards; claim the compound.",
+      "owner": "Brand lead and counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Usage-system review"
+    },
+    {
+      "risk": "LORE root crowding",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "HIGH",
+      "evidence_rationale": "Lore is common in culture and software.",
+      "mitigation": "Emphasize full compound and narrow claims.",
+      "owner": "Brand lead and counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Clearance memo"
+    },
+    {
+      "risk": "Crypto/blockchain confusion",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "Sharding is prominent crypto vocabulary.",
+      "mitigation": "Avoid Web3 language, tokens, hexagons, and neon crypto cues.",
+      "owner": "Brand and design leads",
+      "status": "OPEN",
+      "next_review_trigger": "Identity review"
+    },
+    {
+      "risk": "App-store collision",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Mobile names have not been verified.",
+      "mitigation": "Search App Store and Google Play.",
+      "owner": "Product lead and counsel",
+      "status": "OPEN",
+      "next_review_trigger": "Gate 2 review"
+    },
+    {
+      "risk": "Developer/package namespace collision",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "GitHub, npm, PyPI, and Docker are unchecked.",
+      "mitigation": "Complete and document a sweep after authorization.",
+      "owner": "Engineering lead",
+      "status": "OPEN",
+      "next_review_trigger": "Gate 2 approval"
+    },
+    {
+      "risk": "SEO contamination",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "Fantasy items and technical shards may dominate search.",
+      "mitigation": "Analyze search results and create a compound-first content plan.",
+      "owner": "Marketing lead",
+      "status": "OPEN",
+      "next_review_trigger": "Pre-launch SEO review"
+    },
+    {
+      "risk": "Domain leakage",
+      "probability": "LOW_MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "DNS, certificates, redirects, WHOIS, or email may disclose the brand.",
+      "mitigation": "Keep holdings private and monitor exposure.",
+      "owner": "Founder and IT",
+      "status": "OPEN",
+      "next_review_trigger": "Any DNS or hosting change"
+    },
+    {
+      "risk": "Social-handle fragmentation",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "Handles are not recorded as secured.",
+      "mitigation": "Sweep major networks and define a fallback convention.",
+      "owner": "Brand lead",
+      "status": "OPEN",
+      "next_review_trigger": "Gate 2 review"
+    },
+    {
+      "risk": "Portuguese pronunciation/spelling",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "English compound may vary in Brazilian speech.",
+      "mitigation": "Native-speaker testing and pronunciation guidance.",
+      "owner": "Brazil brand lead",
+      "status": "OPEN",
+      "next_review_trigger": "Naming research session"
+    },
+    {
+      "risk": "Fantasy/game-item perception",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "HIGH",
+      "evidence_rationale": "Literal name can sound like an in-game item.",
+      "mitigation": "Use a professional descriptor and restrained design.",
+      "owner": "Brand and design leads",
+      "status": "OPEN",
+      "next_review_trigger": "Concept testing"
+    },
+    {
+      "risk": "Enterprise credibility",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "Mythic tone may weaken seriousness.",
+      "mitigation": "Use Sage-Merchant voice and evidence proof.",
+      "owner": "Brand and product leads",
+      "status": "OPEN",
+      "next_review_trigger": "B2B concept testing"
+    },
+    {
+      "risk": "Future expansion limitation",
+      "probability": "LOW_MEDIUM",
+      "impact": "HIGH",
+      "severity": "MODERATE",
+      "evidence_rationale": "Collectible resonance may not transfer to every asset class.",
+      "mitigation": "Test architecture across planned categories.",
+      "owner": "Product lead",
+      "status": "OPEN",
+      "next_review_trigger": "Expansion decision"
+    },
+    {
+      "risk": "Inability to enforce the mark broadly",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "severity": "HIGH",
+      "evidence_rationale": "LORE and SHARD are weak/common independently.",
+      "mitigation": "Protect the compound and distinctive presentation.",
+      "owner": "Trademark counsel",
+      "status": "OPEN — COUNSEL REVIEW REQUIRED",
+      "next_review_trigger": "Enforcement opinion"
+    },
+    {
+      "risk": "Genericization through shards vocabulary",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Internal usage can turn the root into a product noun.",
+      "mitigation": "Enforce usage doctrine in copy, schemas, and APIs.",
+      "owner": "Brand lead",
+      "status": "OPEN",
+      "next_review_trigger": "Any naming or copy review"
+    },
+    {
+      "risk": "Premature public disclosure",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "The brand is confidential and not cleared.",
+      "mitigation": "Use access controls and prohibit public materials.",
+      "owner": "Founder and team",
+      "status": "OPEN",
+      "next_review_trigger": "Any external sharing request"
+    },
+    {
+      "risk": "Premature codebase rename",
+      "probability": "LOW_MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Renaming creates cost and leakage before approval.",
+      "mitigation": "Keep Phronesis and require the Gate 4 plan.",
+      "owner": "CTO and engineering lead",
+      "status": "OPEN",
+      "next_review_trigger": "Any rename proposal"
+    },
+    {
+      "risk": "Premature public landing page",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "severity": "HIGH",
+      "evidence_rationale": "Indexing creates legal and strategic exposure.",
+      "mitigation": "No page before Gates 1–5 and founder approval.",
+      "owner": "Founder and marketing lead",
+      "status": "OPEN",
+      "next_review_trigger": "Any website proposal"
+    },
+    {
+      "risk": "Internal/external naming confusion between Phronesis and LoreShard",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "severity": "MODERATE",
+      "evidence_rationale": "Dual identity can create inconsistent docs, support, or deployments.",
+      "mitigation": "Create explicit naming and migration maps.",
+      "owner": "CTO and brand lead",
+      "status": "OPEN",
+      "next_review_trigger": "Gate 4 planning"
+    }
+  ]
+}

@@ -1,6 +1,14 @@
 <!-- handoff: {"document":"DECISIONS","owner":"human-and-agent","schema_version":"1"} -->
 # Decisions
 
+## 2026-08-07 — LoreShard is the confidential future public brand candidate
+
+- **Status:** Documented as **GO WITH CONDITIONS**; counsel and launch gates remain open (`PHR-BRAND-001`, `ADR-0001`).
+- **Decision:** Use LoreShard as the intended future public master-brand candidate while Phronesis remains the internal codename and active build identity.
+- **Decision:** Keep LoreShard confidential and unlaunched. The founder reports acquiring `loreshard.com` and `loreshard.com.br`; acquisition does not establish trademark clearance or launch authority.
+- **Decision:** Own the full LoreShard compound, not the independent words. Never genericize product inputs as lore shards, market shards, data shards, evidence shards, or shards.
+- **Consequences:** U.S. and Brazilian counsel clearance, namespace review, private identity work, a controlled naming-migration plan, product readiness, and founder approval are required before public launch. No current product or technical name changes.
+
 ## 2026-08-07 — Purchase photos are private line evidence; Clear Cart remains operator scoped
 
 - **Status:** Implemented and privately live; Product Review ready (`PHR-UX-020`).

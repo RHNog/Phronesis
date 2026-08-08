@@ -1,5 +1,18 @@
 # Current Phronesis CTO Structure
 
+## Active Revision — Confidential LoreShard Brand Decision Archive
+
+- Assignment: `PHR-BRAND-DECISION-20260807`
+- Feature: `PHR-BRAND-001`
+- Status: `DOCUMENTED — CONFIDENTIAL — PUBLIC LAUNCH GATED`
+- Decision: LoreShard is the intended future public master-brand candidate; Phronesis remains the internal codename and active build identity.
+- Legal state: preliminary **GO WITH CONDITIONS**, not legal clearance. U.S. and Brazilian counsel review remains mandatory.
+- Domain state: founder reports `loreshard.com` and `loreshard.com.br` acquired; control and renewal evidence remain to be verified.
+- Vocabulary rule: LoreShard is source-identifying. Never use lore shards, market shards, data shards, evidence shards, or shards as generic product units.
+- Technical boundary: no source, package, app, UI, repository, deployment, environment, domain, or public-asset rename is authorized.
+- Source of truth: `docs/brand/loreshard/README.md`; decision record: `docs/adr/ADR-0001-loreshard-future-public-brand.md`.
+- Next accountable role: founder engages U.S. and Brazilian trademark counsel, then evaluates namespace and private identity gates. Public launch remains blocked.
+
 ## Active Revision — Buyer Cart Clear And Purchase Photos
 
 - Assignment: `PHR-BUYER-CART-EVIDENCE-20260807`

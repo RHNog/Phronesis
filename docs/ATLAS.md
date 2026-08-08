@@ -1,5 +1,13 @@
 # Project Atlas
 
+## Confidential Future Public Brand Decision
+
+- `PHR-BRAND-001` records **LoreShard** as the intended future public master-brand candidate with **GO WITH CONDITIONS** status pending U.S. and Brazilian counsel clearance.
+- **Phronesis** remains the internal codename and active build identity. No code, package, app, UI, repository, deployment, environment, domain, or public-asset rename is authorized.
+- The founder reports acquiring `loreshard.com` and `loreshard.com.br`; control was not independently verified by the documentation task and neither domain is authorized for public content yet.
+- The authoritative confidential archive is `docs/brand/loreshard/README.md`. Its usage doctrine prohibits “lore shards,” “market shards,” or “shards” as generic data vocabulary; use market signals, source observations, and market evidence.
+- Public launch remains blocked by legal clearance, namespace review, identity approval, a product migration plan, product readiness, and explicit founder approval.
+
 ## Personal Market Intelligence And Provider History
 
 - `PHR-API-017` projects one exact printing's retained TCGplayer, LigaMagic/LigaPokémon, and PriceCharting observations into bounded 7D, 30D, 3M, and 1Y series. Provider, lane, currency, timestamp, source receipt/run, and regional match quality remain explicit; currencies are never merged and missing history is never interpolated.

@@ -1,5 +1,26 @@
 # CTO Product Development Conversation History
 
+## 2026-08-07 — LoreShard Future Public Brand Decision Archive
+
+### User Intent
+
+- Preserve the complete historical naming effort from Phronesis to LoreShard as a confidential authoritative internal record.
+- Keep Phronesis as the current internal codename and build identity while LoreShard remains a private future public-brand identity.
+- Record meaning, positioning, rejected candidates, preliminary clearance risks, usage doctrine, product architecture, launch gates, domains, design/voice direction, agent context, and a counsel brief.
+
+### Decision And Documentation
+
+- Assigned permanent Feature ID `PHR-BRAND-001` and decision ID `BRAND-ADR-LORESHARD-001`.
+- Recorded LoreShard as the intended future public master-brand candidate with **GO WITH CONDITIONS** status pending independent U.S. and Brazilian counsel clearance.
+- Recorded founder-supplied acquisition of `loreshard.com` and `loreshard.com.br` without treating domain ownership as trademark clearance.
+- Preserved the full naming history and explicit do-not-revive list, plus machine-readable candidate, decision, and risk datasets.
+- Established the source-identifying usage rule: ordinary inputs are market signals, source observations, or market evidence, never “shards.”
+- Prohibited public disclosure, public landing pages, technical renaming, deployment, registration, or launch until the documented gates and founder approval are complete.
+
+### Acceptance State
+
+The confidential documentation package, ADR, specification, release note, and validation record are complete. Structure, metadata, local-link, JSON, candidate, risk, and documentation-only scope checks pass. This is brand-strategy documentation, not legal clearance or launch approval.
+
 ## 2026-08-07 — Buyer Cart Clear And Purchase Photos
 
 ### User Intent

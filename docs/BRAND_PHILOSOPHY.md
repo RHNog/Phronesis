@@ -1,6 +1,6 @@
 # Brand Philosophy
 
-This document records brand philosophy without selecting a final commercial product name.
+This document records the continuing Phronesis philosophy and its relationship to the confidential future public-brand decision in `PHR-BRAND-001`.
 
 ## Current Identity Position
 
@@ -11,7 +11,7 @@ Legal Entity
   -> Phronesis
 
 Future Commercial Product
-  -> intentionally undecided
+  -> LoreShard (intended future public brand; confidential and counsel-gated)
 
 Engineering Initiative
   -> Project Phronesis
@@ -19,7 +19,7 @@ Engineering Initiative
 
 These identities should evolve independently.
 
-Project Phronesis gives the engineering work a durable philosophical identity. It does not force a customer-facing brand decision.
+Project Phronesis gives the engineering work a durable philosophical identity. LoreShard is now the intended future public brand candidate, but that decision does not change the active Phronesis identity or authorize public use.
 
 ## Project Phronesis As Engineering Identity
 
@@ -34,9 +34,9 @@ It signals:
 - Human agency supported by software.
 - Discipline around provider observations, market evidence, and business conclusions.
 
-## Commercial Product Name
+## Future Public Brand
 
-The commercial product name remains intentionally undecided.
+LoreShard is the intended future public master-brand candidate with **GO WITH CONDITIONS** status pending U.S. and Brazilian counsel clearance. It remains confidential and unlaunched. The authoritative decision archive is `docs/brand/loreshard/README.md`.
 
 Future brand evaluation should consider:
 
@@ -49,7 +49,7 @@ Future brand evaluation should consider:
 - Expansion beyond trading cards into collectible markets.
 - Compatibility with AI assistant, API, inventory, and portfolio surfaces.
 
-Project Phronesis may remain internal even if the commercial product launches under another name.
+Project Phronesis remains internal while the LoreShard decision proceeds through legal, namespace, identity, migration, product-readiness, and founder-approval gates.
 
 ## Brand Principles
 
@@ -93,7 +93,8 @@ When writing future partnership documents:
 - Use `Project Phronesis (Engineering Initiative)` for the internal build effort.
 - Describe it as the internal engineering initiative responsible for building an evidence-driven decision intelligence platform for collectible markets.
 - Do not present Project Phronesis as the commercial brand.
-- Do not imply the future product name has been selected.
+- Do not disclose LoreShard externally until launch is authorized.
+- Do not imply that LoreShard is legally cleared.
 - Preserve Phronesis as the current legal or organizational reference where appropriate.
 
 Suggested phrasing:
@@ -116,13 +117,13 @@ Do not rename:
 - GitHub assets.
 - Existing historical documentation.
 
-Introduce Project Phronesis only as an engineering identity and philosophy.
+Keep Project Phronesis as the engineering identity and philosophy until an approved LoreShard migration explicitly changes an external surface.
 
 ## Open Brand Questions
 
-- Should the commercial product name be literal and category-clear or philosophical and ownable?
-- Should the future brand focus on trading cards first or collectible markets broadly?
+- Will U.S. and Brazilian counsel clear LoreShard for the intended classes and use?
+- How should the future brand lead with collectible commerce while remaining extensible to other physical assets?
 - Should the AI assistant, if launched, have a separate name?
 - Should store plans and professional plans share the same product brand?
-- Should API or white-label offerings use the same commercial brand?
+- Should API or white-label offerings use LoreShard or a separately reviewed sub-brand?
 - How much of the Phronesis philosophy should be visible to customers?

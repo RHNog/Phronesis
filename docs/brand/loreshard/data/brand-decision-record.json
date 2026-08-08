@@ -1,0 +1,40 @@
+{
+  "confidentiality": "INTERNAL — CONFIDENTIAL — PRE-LAUNCH BRAND STRATEGY",
+  "legal_notice": "PRELIMINARY BRAND STRATEGY / NOT LEGAL ADVICE — HUMAN / COUNSEL VERIFICATION REQUIRED",
+  "decision_id": "BRAND-ADR-LORESHARD-001",
+  "feature_id": "PHR-BRAND-001",
+  "decision_date": "2026-08-07",
+  "internal_codename": "Phronesis",
+  "future_public_brand": "LoreShard",
+  "public_launch_status": "not_public",
+  "domains_acquired": [
+    "loreshard.com",
+    "loreshard.com.br"
+  ],
+  "domain_evidence": "Founder-supplied; control not independently verified in this documentation task.",
+  "recommendation": "GO_WITH_CONDITIONS",
+  "best_use": "MASTER_BRAND",
+  "primary_positioning": "Practical intelligence for collectible commerce.",
+  "strategic_proposition": "No single price is the market.",
+  "explainer": "LoreShard turns scattered market evidence into collectible-commerce intelligence.",
+  "brand_thesis": "Markets are made of fragments. LoreShard makes them intelligible.",
+  "practical_promise": "Know what you’re looking at. Know what it’s worth. Know what to do next.",
+  "operational_pitch": "Identify inventory. Understand value. Act with confidence.",
+  "brand_doctrine": [
+    "Own LoreShard as the full compound.",
+    "Do not try to own lore.",
+    "Do not try to own shard.",
+    "Do not use lore shards, market shards, data shards, evidence shards, or shards as generic product vocabulary."
+  ],
+  "required_before_public_launch": [
+    "U.S. trademark counsel clearance",
+    "Brazil trademark counsel clearance",
+    "App Store and Google Play name checks",
+    "developer namespace checks",
+    "social handle checks",
+    "brand identity approval",
+    "product rename/migration plan"
+  ],
+  "technical_migration_authorized": false,
+  "trademark_filing_established": false
+}
