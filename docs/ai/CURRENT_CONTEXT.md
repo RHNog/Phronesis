@@ -1,4 +1,4 @@
-<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-07T21:36:43Z","generation_id":"4845c326aa8e3f231eb4","head":"a3993b4bd50c670903f267491770187c5d4f90ec","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
+<!-- handoff: {"branch":"codex/phr-local-card-recognition-20260804","config_digest":"24af9188f29175240948655dcb0825cf42575569652aa5b2f688a4110d8542af","document":"CURRENT_CONTEXT","generated":true,"generated_at":"2026-08-08T12:02:38Z","generation_id":"0c97a316d81ce7150bdf","head":"69969446b90c6a0208412bfdf9e6a111fd3f9863","schema_version":"1","worktree_fingerprint":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"} -->
 # Current Context
 
 ## Operational state
@@ -6,39 +6,24 @@
 - **Project:** Phronesis
 - **Repository:** `Phronesis`
 - **Branch:** `codex/phr-local-card-recognition-20260804`
-- **HEAD:** `a3993b4bd50c670903f267491770187c5d4f90ec`
+- **HEAD:** `69969446b90c6a0208412bfdf9e6a111fd3f9863`
 - **Worktree fingerprint:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - **Validation:** PASSED
-- **Generated:** 2026-08-07T21:36:43Z
+- **Generated:** 2026-08-08T12:02:38Z
 
 ## Current objective
 
-Complete and hand off `PHR-MARKET-PERSONALIZATION-20260807`: expanded defensible LigaPokémon coverage, provider-specific retained price history, personal market settings, and conservative typo recovery, while preserving exact-only identity and transaction boundaries.
+Complete and hand off `PHR-BRAND-001`: the confidential LoreShard future-public-brand decision archive, while preserving Phronesis as the internal codename and active build identity and prohibiting public launch or technical renaming.
 
 ## Acceptance criteria
 
-- [x] Expand only explicit LigaPokémon special-distribution comparison families while preserving 30,864 exact targets, strict-crosswalk Arbitrage authority, and fail-closed ambiguity.
-- [x] Expose separate TCGplayer, LigaMagic/LigaPokémon, and PriceCharting 7D/30D/3M/1Y history without merging currencies or fabricating points.
-- [x] Give every active permanent member `My settings`, default-enabled providers, nullable personal cost overrides, workspace inheritance, audited writes, and no Administration/module/credential broadening.
-- [x] Recover dominant category-scoped alphabetic typos only after zero literal results and keep structured identifiers, reconciliation, and selection unchanged.
-- [x] Back up, migrate, reconcile, backfill, deploy privately, and pass full tests, TypeScript, lint, build, database integrity, live API, and 390-pixel mobile gates.
-
-- [x] Pair and revoke macOS/Windows appliance identities through short-lived one-time codes without storing plaintext credentials server-side.
-- [x] Report readiness and control durable Start/Cancel commands from Scanner-to-Offer through existing permanent-admin and Vendor Workspace authorization.
-- [x] Admit only command-bound, checksum-verified, bounded front images to the exact active recognition session.
-- [x] Provide a dependency-free local agent with local-only adapter configuration, doctor/run workflows, safe capture, retry, spool preservation, and exact child cancellation.
-- [x] Build a current-host native executable and define independent macOS/Windows CI artifact builds.
-
-- [x] Preserve legacy `v1` bundles as unpaired evidence without guessing from sequence or filenames.
-- [x] Add and validate a `v2` adjacent-duplex-front-first manifest with reciprocal pairs and complete-pair enforcement.
-- [x] Schedule recognition only for declared fronts and retain backs as immutable linked evidence.
-- [x] Expose paired reverse evidence, or a labelled unavailable state, beside the active card while keeping condition manual.
-- [x] Pass Node bridge, repository, full-suite, TypeScript, lint, build, live API, and private browser gates.
-- [x] Run the extended PowerShell self-test in the Windows VM current-user context.
-- [x] Persist append-only batch condition/finish, lock it after the first resolution, and enforce it in pricing and exact-candidate resolution.
-- [x] Remove per-card material entry and explain that scanner images do not grade condition or classify finish in this release.
-- [x] Consolidate exact duplicate offer bindings into quantities while retaining scan evidence and server-authoritative currency totals.
-- [x] Complete one new low-value `v2` duplex capture in the interactive Windows session.
+- [x] Create the complete `docs/brand/loreshard/` package and three machine-readable datasets.
+- [x] Preserve the supplied naming history, rejected-name rationale, legal/commercial risks, positioning, usage doctrine, proposed module architecture, launch gates, domain state, visual direction, voice, agent context, and counsel brief.
+- [x] Record LoreShard as the intended future public master-brand candidate with `GO WITH CONDITIONS` status, not legal clearance.
+- [x] Record `loreshard.com` and `loreshard.com.br` as founder-reported acquisitions without treating them as verified trademark or launch authority.
+- [x] Keep Phronesis as the active internal/build identity and make no source, package, app, UI, repository, deployment, environment, domain, or public-asset rename.
+- [x] Update feature registry, Atlas, decisions, roadmap, changelog, project state, identity records, CTO structure, conversation memory, and agent handoff.
+- [x] Validate required files, metadata, confidentiality labels, local links, JSON schemas, 46 candidates, 25 risks, and documentation-only scope.
 
 ## Constraints
 
@@ -49,4 +34,4 @@ Complete and hand off `PHR-MARKET-PERSONALIZATION-20260807`: expanded defensible
 
 ## Exact next action
 
-Sign in with the permanent owner account, open `/user-settings`, review/save one provider and cost preference, then confirm Vendor Workspace history/provider visibility and one regional Arbitrage read. Do not treat same-session conformance as independent Product Owner acceptance.
+Send `docs/brand/loreshard/14_COUNSEL_BRIEF.md` to qualified U.S. and Brazilian trademark counsel under confidentiality, obtain written clearance advice, and record the resulting evidence without erasing the historical naming record.
